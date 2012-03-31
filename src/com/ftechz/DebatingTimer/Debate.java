@@ -25,11 +25,12 @@ public class Debate
     private DebateStatus debateStatus;
 
     private ArrayList<Speaker> mSpeakers;
-
+    private DebatingTimerService.NotificationControl mNofiNotificationControl;
     //
     // Methods
-    public Debate()
+    public Debate(DebatingTimerService.NotificationControl notificationControl)
     {
+        mNofiNotificationControl = notificationControl;
         debateStatus = DebateStatus.setup;
         mStages = new LinkedList<AlarmChain>();
         mStageIterator = mStages.iterator();
@@ -68,6 +69,8 @@ public class Debate
             tickTimer.purge();
             mCurrentStage.resetState();
             tickTimer.schedule(mCurrentStage, 1000, 1000);
+            mNofiNotificationControl.showNotification("Debating Timer",
+                    mCurrentStage.getNotificationText());
         }
     }
 
@@ -77,6 +80,7 @@ public class Debate
         {
             if(mCurrentStage != null)
             {
+                mNofiNotificationControl.hideNotification();
                 mCurrentStage.cancel();
                 if(mStageIterator.hasNext())
                 {

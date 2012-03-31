@@ -68,7 +68,12 @@ public class SpeakerTimer extends AlarmChain
 
         alert.alert();
     }
-    
+
+    @Override
+    public String getNotificationText() {
+        return String.format("Speaker: %s", getSpeakerName());
+    }
+
     public String getStateText()
     {
         String text = "";

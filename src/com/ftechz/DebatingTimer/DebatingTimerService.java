@@ -1,6 +1,8 @@
 package com.ftechz.DebatingTimer;
 
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
@@ -17,15 +19,12 @@ import java.util.TimerTask;
 public class DebatingTimerService extends IntentService
 {
     public static final String BROADCAST_ACTION = "com.ftechz.DebatingTimer.update";
+    public static final int ONGOING_NOTIFICATION = 1;
     Intent intent;
-
-    public DebatingTimerService() {
-        super("DebatingTimerService");
-    }
 
     private Timer tickTimer;
     private final IBinder mBinder = new DebatingTimerServiceBinder();
-    
+
     private Debate mDebate;
     private Speaker mSpeaker1;      // Affirmative
     private Speaker mSpeaker2;
@@ -36,6 +35,13 @@ public class DebatingTimerService extends IntentService
     private AlarmChain.AlarmChainAlert replySpeechAlerts[];
 
     private AlertManager mAlertManager;
+
+
+    private NotificationControl mNofiNotificationControl;
+
+    public DebatingTimerService() {
+        super("DebatingTimerService");
+    }
 
     @Override
     public void onCreate() {
@@ -66,7 +72,9 @@ public class DebatingTimerService extends IntentService
             new SpeakerTimer.OvertimeAlert(5, 2, mAlertManager)
         };
 
-        mDebate = new Debate();
+        mNofiNotificationControl = new NotificationControl();
+
+        mDebate = new Debate(mNofiNotificationControl);
         // Set up speakers
         mSpeaker1 = new Speaker("Speaker1");
         mSpeaker2 = new Speaker("Speaker2");
@@ -103,6 +111,51 @@ public class DebatingTimerService extends IntentService
             return mDebate;
         }
     }
+
+    public class NotificationControl
+    {
+        private Intent notificationIntent;
+        private Notification notification;
+        private PendingIntent pendingIntent;
+        private boolean mShowingNotification = false;
+
+        public NotificationControl()
+        {
+            notificationIntent = new Intent(DebatingTimerService.this,
+                    DebatingTimer.class);
+            pendingIntent = PendingIntent.getActivity(
+                    DebatingTimerService.this, 0, notificationIntent, 0);
+        }
+
+        public void showNotification(String title, String message)
+        {
+            if(!mShowingNotification)
+            {
+                notification = new Notification(R.drawable.icon, getText(R.string.ticker_text),
+                        System.currentTimeMillis());
+
+                notification.setLatestEventInfo(DebatingTimerService.this,
+                        title, message, pendingIntent);
+                startForeground(ONGOING_NOTIFICATION, notification);
+                mShowingNotification = true;
+            }
+        }
+
+        public void setNotificationText()
+        {
+
+        }
+
+        public void hideNotification()
+        {
+            if(mShowingNotification)
+            {
+                stopForeground(true);
+                mShowingNotification = false;
+            }
+        }
+    }
+
 
     public IBinder onBind(Intent intent) {
         return mBinder;

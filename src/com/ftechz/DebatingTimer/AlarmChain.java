@@ -218,6 +218,8 @@ public abstract class AlarmChain extends TimerTask
         }
     }
 
+    public abstract String getNotificationText();
+    
     // Required for rescheduling...
     public abstract AlarmChain newCopy();
 }
