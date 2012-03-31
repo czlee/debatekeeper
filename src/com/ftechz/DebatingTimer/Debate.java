@@ -1,9 +1,6 @@
 package com.ftechz.DebatingTimer;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Timer;
+import java.util.*;
 
 /**
  * Debate class
@@ -78,10 +75,17 @@ public class Debate
     {
         if(debateStatus == DebateStatus.speaking)
         {
-            mCurrentStage.cancel();
-            if(mStageIterator.hasNext())
+            if(mCurrentStage != null)
             {
-                debateStatus = DebateStatus.transitioning;
+                mCurrentStage.cancel();
+                if(mStageIterator.hasNext())
+                {
+                    debateStatus = DebateStatus.transitioning;
+                }
+                else
+                {
+                    debateStatus = DebateStatus.setup;
+                }
             }
             else
             {
@@ -170,11 +174,36 @@ public class Debate
         }
     }
 
+    public void reset()
+    {
+        // Stop current stage timer, if on
+        if(mCurrentStage != null)
+        {
+            mCurrentStage.cancel();
+        }
+        mCurrentStage = null;
+        tickTimer.purge();
+        tickTimer.cancel();
+        tickTimer = new Timer();
+
+        ListIterator<AlarmChain> stageIterator = mStages.listIterator();
+        while(stageIterator.hasNext())
+        {
+            AlarmChain stage = stageIterator.next();
+            stage.cancel();
+            stageIterator.set(stage.newCopy());
+        }
+
+        mStageIterator = mStages.iterator();
+        debateStatus = DebateStatus.setup;
+    }
+
     public void release()
     {
         mCurrentStage = null;
 
         tickTimer.cancel();
+        tickTimer.purge();
         tickTimer = null;
 
         mStages = null;

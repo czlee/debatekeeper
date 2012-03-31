@@ -1,6 +1,5 @@
 package com.ftechz.DebatingTimer;
 
-import android.os.Handler;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -122,16 +121,16 @@ public abstract class AlarmChain extends TimerTask
     //
     // Members
     private long mSecondCounter;
-    private ArrayList<AlarmChainAlert> mAlerts;
+    protected ArrayList<AlarmChainAlert> mAlerts;
 
-    private int state;
-    private AlarmChainAlertCompare alertComparator = new AlarmChainAlertCompare();
+    private int mState;
+    private AlarmChainAlertCompare mAlertComparator = new AlarmChainAlertCompare();
 
     //
     // Methods
     private void init() {
         mAlerts = new ArrayList<AlarmChainAlert>();
-        state = 0;
+        mState = 0;
         mSecondCounter = 0;
     }
 
@@ -154,27 +153,27 @@ public abstract class AlarmChain extends TimerTask
     @Override
     public void run() {
         mSecondCounter++;
-        if(state < mAlerts.size())
+        if(mState < mAlerts.size())
         {
-            if(mSecondCounter == mAlerts.get(state).time)
+            if(mSecondCounter == mAlerts.get(mState).time)
             {
                 do {
-                    handleAlert(mAlerts.get(state));
-                    if(state < mAlerts.size() - 1)
+                    handleAlert(mAlerts.get(mState));
+                    if(mState < mAlerts.size() - 1)
                     {
-                        state++;
+                        mState++;
                     }
                     else
                     {
                         break;
                     }
-                } while(mSecondCounter == mAlerts.get(state).time); // Handle multiple with the same time
+                } while(mSecondCounter == mAlerts.get(mState).time); // Handle multiple with the same time
             }
-            else if(mSecondCounter > mAlerts.get(state).time)
+            else if(mSecondCounter > mAlerts.get(mState).time)
             {
-                if(state < mAlerts.size() - 1)
+                if(mState < mAlerts.size() - 1)
                 {
-                    state++;
+                    mState++;
                 }
             }
         }
@@ -182,7 +181,7 @@ public abstract class AlarmChain extends TimerTask
 
     public void addTime(AlarmChainAlert alert) {
         mAlerts.add(alert);
-        sort(mAlerts, alertComparator);
+        sort(mAlerts, mAlertComparator);
     }
 
     public long getSeconds() {
@@ -191,8 +190,8 @@ public abstract class AlarmChain extends TimerTask
 
     public long getNextTime()
     {
-        if(state < mAlerts.size()) {
-            return mAlerts.get(state).time;
+        if(mState < mAlerts.size()) {
+            return mAlerts.get(mState).time;
         } else {
             return 0;
         }
@@ -212,9 +211,13 @@ public abstract class AlarmChain extends TimerTask
     
     public void resetState()
     {
-        state = 0;
+        mSecondCounter = 0;
+        mState = 0;
         for(AlarmChainAlert alert : mAlerts){
             alert.reset();
         }
     }
+
+    // Required for rescheduling...
+    public abstract AlarmChain newCopy();
 }

@@ -1,5 +1,7 @@
 package com.ftechz.DebatingTimer;
 
+import java.util.ArrayList;
+
 /**
  * SpeakerTimer class
  * Exist as a stage in a debate, keeping the timer of the stage
@@ -85,5 +87,11 @@ public class SpeakerTimer extends AlarmChain
                 break;
         }
         return text;
+    }
+
+    @Override
+    public SpeakerTimer newCopy()
+    {
+        return new SpeakerTimer(mSpeaker, mAlerts.toArray(new AlarmChainAlert[mAlerts.size()]));
     }
 }

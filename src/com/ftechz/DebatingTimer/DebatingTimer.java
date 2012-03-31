@@ -74,7 +74,7 @@ public class DebatingTimer extends Activity
         resetDebateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View pV) {
-
+                debate.reset();
             }
         });
 
