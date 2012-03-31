@@ -1,13 +1,9 @@
 package com.ftechz.DebatingTimer;
 
-import android.util.Log;
-
 /**
- * Created by IntelliJ IDEA.
- * User: Phil
- * Date: 3/26/12
- * Time: 7:20 PM
- * To change this template use File | Settings | File Templates.
+ * SpeakerTimer class
+ * Exist as a stage in a debate, keeping the timer of the stage
+ * and its own internal state according on the AlarmChainAlerts provided
  */
 public class SpeakerTimer extends AlarmChain
 {

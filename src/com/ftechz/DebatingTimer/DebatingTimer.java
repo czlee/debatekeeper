@@ -8,6 +8,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+/**
+ * DebatingTimer
+ * The first Activity shown when application is started... for now
+ *
+ */
 public class DebatingTimer extends Activity
 {
     private TextView mStateText;

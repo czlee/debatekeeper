@@ -6,11 +6,8 @@ import java.util.LinkedList;
 import java.util.Timer;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Phil
- * Date: 3/26/12
- * Time: 9:22 PM
- * To change this template use File | Settings | File Templates.
+ * Debate class
+ * In charge of the flow of stages (speakers) in the debate
  */
 public class Debate
 {
@@ -19,7 +16,6 @@ public class Debate
         setup,
         speaking,
         transitioning
-
     }
 
     //
@@ -172,5 +168,15 @@ public class Debate
         {
             return "Setup";
         }
+    }
+
+    public void release()
+    {
+        mCurrentStage = null;
+
+        tickTimer.cancel();
+        tickTimer = null;
+
+        mStages = null;
     }
 }

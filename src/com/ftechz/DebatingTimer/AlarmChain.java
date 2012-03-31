@@ -1,23 +1,18 @@
 package com.ftechz.DebatingTimer;
 
-import android.media.*;
-import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.TimerTask;
 
 import static java.util.Collections.sort;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Phil
- * Date: 3/26/12
- * Time: 12:57 AM
- * To change this template use File | Settings | File Templates.
+ * AlarmChain class
+ * Keeps the time and calls alerts at associated alert times
+ * When last alert has been reached, it continues to check the last alert for match
  */
 public abstract class AlarmChain extends TimerTask
 {
@@ -34,7 +29,7 @@ public abstract class AlarmChain extends TimerTask
 
         public void reset()
         {
-            return;
+
         }
     }
 
@@ -52,68 +47,29 @@ public abstract class AlarmChain extends TimerTask
     }
 
     public static class WarningAlert extends AlarmChain.AlarmChainAlert {
-        private final double duration = 0.5; // seconds
-        private final int sampleRate = 8000;
-        private final int numSamples = (int)(duration * sampleRate);
-        private final double sample[] = new double[numSamples];
-        private final double freqOfTone = 1300; // hz
-        private final byte generatedSnd[] = new byte[2 * numSamples];
+        private AlertManager mAudioManager;
 
-        public WarningAlert(long seconds)
+        public WarningAlert(long seconds, AlertManager audioManager)
         {
             super(seconds);
-            genTone();
-        }
-        void genTone(){
-// fill out the array
-            for (int i = 0; i < numSamples; ++i) {
-                sample[i] = Math.sin(2 * Math.PI * i / (sampleRate/freqOfTone));
-            }
-
-// convert to 16 bit pcm sound array
-// assumes the sample buffer is normalised.
-            int idx = 0;
-            for (double dVal : sample) {
-                short val = (short) (dVal * 32767);
-                generatedSnd[idx++] = (byte) (val & 0x00ff);
-                generatedSnd[idx++] = (byte) ((val & 0xff00) >>> 8);
-            }
+            mAudioManager = audioManager;
         }
 
-        void playSound(){
-            AudioTrack audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC,
-                    8000, AudioFormat.CHANNEL_CONFIGURATION_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT, numSamples,
-                    AudioTrack.MODE_STATIC);
-            audioTrack.write(generatedSnd, 0, numSamples);
-            audioTrack.play();
-        }
-
-        Handler handler = new Handler();
         @Override
         public void alert()
         {
             Log.i(this.getClass().getSimpleName(), "Warning Alert.");
-
-            Thread thread = new Thread(new Runnable() {
-                public void run() {
-                    handler.post(new Runnable() {
-
-                        public void run() {
-                            playSound();
-                        }
-                    });
-                }
-            });
-            thread.start();
-            // Do an do alert
+            mAudioManager.playAlert(R.raw.beep1);
         }
     }
 
     public static class FinishAlert extends AlarmChain.AlarmChainAlert {
-        public FinishAlert(long seconds)
+        private AlertManager mAudioManager;
+
+        public FinishAlert(long seconds, AlertManager audioManager)
         {
             super(seconds);
+            mAudioManager = audioManager;
         }
 
         @Override
@@ -121,19 +77,23 @@ public abstract class AlarmChain extends TimerTask
         {
             Log.i(this.getClass().getSimpleName(), "Finish.");
             // Do an do-do alert
+            mAudioManager.playAlert(R.raw.beep2);
 
         }
     }
 
     public static class OvertimeAlert extends AlarmChain.AlarmChainAlert {
+        private AlertManager mAudioManager;
+
         private long mRepeatPeriod = 0;
         private long initTime;
 
-        public OvertimeAlert(long seconds, long repeatPeriod)
+        public OvertimeAlert(long seconds, long repeatPeriod, AlertManager audioManager)
         {
             super(seconds);
             initTime = seconds;
             mRepeatPeriod = repeatPeriod;
+            mAudioManager = audioManager;
         }
 
         @Override
@@ -142,6 +102,8 @@ public abstract class AlarmChain extends TimerTask
             time += mRepeatPeriod;
             Log.i(this.getClass().getSimpleName(), "OVERTIME!");
             // Do an do-do-do alert
+            mAudioManager.playAlert(R.raw.beep3);
+
         }
 
         @Override

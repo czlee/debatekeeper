@@ -1,22 +1,18 @@
 package com.ftechz.DebatingTimer;
 
 import android.app.IntentService;
-import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.os.SystemClock;
 
-import java.util.*;
-
-import static java.util.Collections.sort;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Phil
- * Date: 3/24/12
- * Time: 11:47 PM
- * To change this template use File | Settings | File Templates.
+ * DebatingTimerService class
+ * The background service for the application
+ * Keeps the debate/timers ticking in the background
+ * Uses a broadcast (though not the best way IMO) to update the main UI
  */
 public class DebatingTimerService extends IntentService
 {
@@ -30,23 +26,16 @@ public class DebatingTimerService extends IntentService
     private Timer tickTimer;
     private final IBinder mBinder = new DebatingTimerServiceBinder();
     
-    private Debate debate;
+    private Debate mDebate;
     private Speaker mSpeaker1;      // Affirmative
     private Speaker mSpeaker2;
     private Speaker mSpeaker3;      // Negative
     private Speaker mSpeaker4;
 
-    private final AlarmChain.AlarmChainAlert substativeSpeechAlerts[] = {
-            new SpeakerTimer.WarningAlert(5),
-            new SpeakerTimer.FinishAlert(10),
-            new SpeakerTimer.OvertimeAlert(15, 2)
-    };
+    private AlarmChain.AlarmChainAlert substativeSpeechAlerts[];
+    private AlarmChain.AlarmChainAlert replySpeechAlerts[];
 
-    private final AlarmChain.AlarmChainAlert replySpeechAlerts[] = {
-            new SpeakerTimer.WarningAlert(2),
-            new SpeakerTimer.FinishAlert(3),
-            new SpeakerTimer.OvertimeAlert(5, 2)
-    };
+    private AlertManager mAlertManager;
 
     @Override
     public void onCreate() {
@@ -61,28 +50,57 @@ public class DebatingTimerService extends IntentService
                 sendBroadcast(DebatingTimerService.this.intent);
             }
         };
-        tickTimer.schedule(mRunnable, 0, 1000);
+        tickTimer.schedule(mRunnable, 0, 200);
 
-        debate = new Debate();
+        mAlertManager = new AlertManager(this);
+
+        substativeSpeechAlerts = new AlarmChain.AlarmChainAlert[] {
+            new SpeakerTimer.WarningAlert(5, mAlertManager),
+            new SpeakerTimer.FinishAlert(10, mAlertManager),
+            new SpeakerTimer.OvertimeAlert(15, 2, mAlertManager)
+        };
+
+        replySpeechAlerts = new AlarmChain.AlarmChainAlert[] {
+            new SpeakerTimer.WarningAlert(2, mAlertManager),
+            new SpeakerTimer.FinishAlert(3, mAlertManager),
+            new SpeakerTimer.OvertimeAlert(5, 2, mAlertManager)
+        };
+
+        mDebate = new Debate();
         // Set up speakers
         mSpeaker1 = new Speaker("Speaker1");
         mSpeaker2 = new Speaker("Speaker2");
         mSpeaker3 = new Speaker("Speaker3");
         mSpeaker4 = new Speaker("Speaker4");
 
-        debate.addStage(mSpeaker1, substativeSpeechAlerts);
-        debate.addStage(mSpeaker3, substativeSpeechAlerts);
-        debate.addStage(mSpeaker2, substativeSpeechAlerts);
-        debate.addStage(mSpeaker4, substativeSpeechAlerts);
-        debate.addStage(mSpeaker3, replySpeechAlerts);
-        debate.addStage(mSpeaker1, replySpeechAlerts);
+        mDebate.addStage(mSpeaker1, substativeSpeechAlerts);
+        mDebate.addStage(mSpeaker3, substativeSpeechAlerts);
+        mDebate.addStage(mSpeaker2, substativeSpeechAlerts);
+        mDebate.addStage(mSpeaker4, substativeSpeechAlerts);
+        mDebate.addStage(mSpeaker3, replySpeechAlerts);
+        mDebate.addStage(mSpeaker1, replySpeechAlerts);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        // Clean up stuff
+        tickTimer.cancel();
+        tickTimer = null;
+
+        mAlertManager.release();
+        mAlertManager = null;
+
+        mDebate.release();
+        mDebate = null;
     }
 
     public class DebatingTimerServiceBinder extends Binder
     {
         public Debate getDebate()
         {
-            return debate;
+            return mDebate;
         }
     }
 
