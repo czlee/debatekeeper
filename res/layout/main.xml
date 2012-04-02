@@ -8,22 +8,26 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text=""
+            android:text="State"
+            android:textSize="10pt"
             android:id="@+id/stateText"
             />
     <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text=""
+            android:text="Speaker"
+            android:textSize="15pt"
             android:id="@+id/speakerName"
             />
     <TextView
+        style="@style/MainTimerText"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:layout_weight="1"
         android:text="00:00"
         android:id="@+id/currentTime"
+        android:textSize="32pt"
         />
     <TextView
         android:layout_width="fill_parent"
@@ -39,17 +43,26 @@
         android:text="00:00"
         android:id="@+id/finalTime"
             />
-    <Button
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/startTimer"
-        android:id="@+id/startTimerButton"
-        />
-    <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/restartDebate"
-            android:id="@+id/resetDebateButton"
-            />
+            >
+        <Button
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:text="@string/startTimer"
+                android:id="@+id/startTimerButton"
+                android:layout_weight="1"
+                />
+        <Button
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:text="@string/restartDebate"
+                android:id="@+id/resetDebateButton"
+                android:layout_weight="1"
+                />
+    </LinearLayout>
+
 </LinearLayout>
 

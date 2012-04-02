@@ -1,0 +1,11 @@
+<resources>
+    <style name="Normal">
+
+    </style>
+    <style name="WarningAlert">
+
+    </style>
+    <style name="MainTimerText">
+        <item name="android:gravity">center</item>
+    </style>
+</resources>

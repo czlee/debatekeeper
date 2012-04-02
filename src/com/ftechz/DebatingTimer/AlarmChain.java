@@ -46,29 +46,29 @@ public abstract class AlarmChain extends TimerTask
     }
 
     public static class WarningAlert extends AlarmChain.AlarmChainAlert {
-        private AlertManager mAudioManager;
+        private AlertManager mAlertManager;
 
-        public WarningAlert(long seconds, AlertManager audioManager)
+        public WarningAlert(long seconds, AlertManager alertManager)
         {
             super(seconds);
-            mAudioManager = audioManager;
+            mAlertManager = alertManager;
         }
 
         @Override
         public void alert()
         {
             Log.i(this.getClass().getSimpleName(), "Warning Alert.");
-            mAudioManager.playAlert(R.raw.beep1);
+            mAlertManager.triggerAlert(R.raw.beep1);
         }
     }
 
     public static class FinishAlert extends AlarmChain.AlarmChainAlert {
-        private AlertManager mAudioManager;
+        private AlertManager mAlertManager;
 
-        public FinishAlert(long seconds, AlertManager audioManager)
+        public FinishAlert(long seconds, AlertManager alertManager)
         {
             super(seconds);
-            mAudioManager = audioManager;
+            mAlertManager = alertManager;
         }
 
         @Override
@@ -76,23 +76,23 @@ public abstract class AlarmChain extends TimerTask
         {
             Log.i(this.getClass().getSimpleName(), "Finish.");
             // Do an do-do alert
-            mAudioManager.playAlert(R.raw.beep2);
+            mAlertManager.triggerAlert(R.raw.beep2);
 
         }
     }
 
     public static class OvertimeAlert extends AlarmChain.AlarmChainAlert {
-        private AlertManager mAudioManager;
+        private AlertManager mAlertManager;
 
         private long mRepeatPeriod = 0;
         private long initTime;
 
-        public OvertimeAlert(long seconds, long repeatPeriod, AlertManager audioManager)
+        public OvertimeAlert(long seconds, long repeatPeriod, AlertManager alertManager)
         {
             super(seconds);
             initTime = seconds;
             mRepeatPeriod = repeatPeriod;
-            mAudioManager = audioManager;
+            mAlertManager = alertManager;
         }
 
         @Override
@@ -101,7 +101,7 @@ public abstract class AlarmChain extends TimerTask
             time += mRepeatPeriod;
             Log.i(this.getClass().getSimpleName(), "OVERTIME!");
             // Do an do-do-do alert
-            mAudioManager.playAlert(R.raw.beep3);
+            mAlertManager.triggerAlert(R.raw.beep3);
 
         }
 
