@@ -213,7 +213,7 @@ public abstract class AlarmChain extends TimerTask
     public long getSeconds() {
         if(mCountdown)
         {
-            long time = mFinishTime - mSecondCounter;
+            long time = getFinishTime() - mSecondCounter;
             if(time > 0) {
                 return time;
             } else {
@@ -230,7 +230,7 @@ public abstract class AlarmChain extends TimerTask
     {
         if(mState < mAlerts.size()) {
             if(mCountdown) {
-                return mFinishTime - mAlerts.get(mState).time;
+                return getFinishTime() - mAlerts.get(mState).time;
             } else {
                 return mAlerts.get(mState).time;
             }
@@ -242,9 +242,9 @@ public abstract class AlarmChain extends TimerTask
     public long getFinalTime() {
         if(mAlerts.size() > 0) {
             if(mCountdown) {
-                return mFinishTime - mAlerts.get(mAlerts.size()-1).time;
+                return 0;
             } else {
-                return mAlerts.get(mAlerts.size()-1).time;
+                return getFinishTime();
             }
         } else {
             return 0;
@@ -265,6 +265,7 @@ public abstract class AlarmChain extends TimerTask
     }
 
     public abstract String getNotificationText();
+    public abstract String getNotificationTickerText();
     
     // Required for rescheduling...
     public abstract AlarmChain newCopy();
@@ -279,4 +280,9 @@ public abstract class AlarmChain extends TimerTask
     protected abstract void onStart();
     
     public abstract String getTitleText();
+
+    private long getFinishTime()
+    {
+        return (mFinishTime > 0) ? mFinishTime : mAlerts.get(mAlerts.size()-1).time;
+    }
 }

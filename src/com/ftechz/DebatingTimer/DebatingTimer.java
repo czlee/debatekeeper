@@ -29,7 +29,7 @@ public class DebatingTimer extends Activity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.debate);
 
         mStateText = (TextView) findViewById(R.id.stateText);
         mSpeakerNameText = (TextView) findViewById(R.id.titleText);

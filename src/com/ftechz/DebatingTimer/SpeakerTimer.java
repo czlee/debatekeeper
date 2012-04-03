@@ -1,7 +1,5 @@
 package com.ftechz.DebatingTimer;
 
-import java.util.ArrayList;
-
 /**
  * SpeakerTimer class
  * Exist as a stage in a debate, keeping the timer of the stage
@@ -72,7 +70,12 @@ public class SpeakerTimer extends AlarmChain
 
     @Override
     public String getNotificationText() {
-        return String.format("Speaker: %s", getSpeakerName());
+        return String.format("%s: %s", getSpeakerName(), getStateText());
+    }
+
+    @Override
+    public String getNotificationTickerText() {
+        return "Speaker started";
     }
 
     public String getStateText()

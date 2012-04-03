@@ -20,6 +20,7 @@ public class AlertManager
     private Notification mNotification;
     private PendingIntent mPendingIntent;
     private boolean mShowingNotification = false;
+    private AlarmChain mStage;
 
     public AlertManager(DebatingTimerService debatingTimerService)
     {
@@ -31,15 +32,19 @@ public class AlertManager
                 debatingTimerService, 0, mNotificationIntent, 0);
     }
 
-    public void showNotification(String title, String message)
+    public void showNotification(AlarmChain stage)
     {
         if(!mShowingNotification)
         {
-            mNotification = new Notification(R.drawable.icon, mDebatingTimerService.getText(R.string.ticker_text),
+            mStage = stage;
+
+            mNotification = new Notification(R.drawable.icon,
+                    stage.getNotificationTickerText(),
                     System.currentTimeMillis());
 
             mNotification.setLatestEventInfo(mDebatingTimerService,
-                    title, message, mPendingIntent);
+                    mDebatingTimerService.getText(R.string.notification_title),
+                    mStage.getNotificationText(), mPendingIntent);
             mDebatingTimerService.startForeground(NOTIFICATION_ID, mNotification);
             mShowingNotification = true;
 
@@ -50,7 +55,12 @@ public class AlertManager
 
     public void updateNotification()
     {
-
+        if(mStage != null)
+        {
+            mNotification.setLatestEventInfo(mDebatingTimerService,
+                    mDebatingTimerService.getText(R.string.notification_title),
+                    mStage.getNotificationText(), mPendingIntent);
+        }
     }
 
     public void hideNotification()
@@ -64,6 +74,7 @@ public class AlertManager
 
     public void triggerAlert(int soundId)
     {
+        updateNotification();
         if(mShowingNotification)
         {
             mNotification.sound = Uri.parse("android.resource://com.ftechz.DebatingTimer/" + soundId);

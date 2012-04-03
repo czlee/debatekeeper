@@ -55,7 +55,12 @@ public class PrepTimer extends AlarmChain
 
     @Override
     public String getNotificationText() {
-        return String.format("Stage: %s", getStateText());
+        return String.format("%s: %s", getTitleText(), getStateText());
+    }
+
+    @Override
+    public String getNotificationTickerText() {
+        return "Preparation started";
     }
 
     public String getStateText()

@@ -6,6 +6,5 @@
     <string name="startNext">Start next</string>
     <string name="restartDebate">Restart debate</string>
     <string name="ticker_text">Speaker started</string>
-    <string name="notification_title">notification_title</string>
-    <string name="notification_message">notification_message</string>
+    <string name="notification_title">Debating Timer</string>
 </resources>

@@ -74,8 +74,7 @@ public class Debate
         {
             tickTimer.purge();
             mCurrentStage.start(tickTimer);
-            mNotificationControl.showNotification("Debating Timer",
-                    mCurrentStage.getNotificationText());
+            mNotificationControl.showNotification(mCurrentStage);
         }
     }
 
