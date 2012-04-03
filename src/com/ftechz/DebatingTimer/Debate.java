@@ -36,7 +36,13 @@ public class Debate
         mStageIterator = mStages.iterator();
         tickTimer = new Timer();
     }
-    
+
+    public void addPrep(final AlarmChain.AlarmChainAlert[] alerts)
+    {
+        mStages.add(new PrepTimer(alerts));
+        mStageIterator = mStages.iterator();
+    }
+
     public void addStage(Speaker speaker, final AlarmChain.AlarmChainAlert[] alerts)
     {
         mStages.add(new SpeakerTimer(speaker, alerts));
@@ -67,8 +73,7 @@ public class Debate
         if(mCurrentStage != null)
         {
             tickTimer.purge();
-            mCurrentStage.resetState();
-            tickTimer.schedule(mCurrentStage, 1000, 1000);
+            mCurrentStage.start(tickTimer);
             mNotificationControl.showNotification("Debating Timer",
                     mCurrentStage.getNotificationText());
         }
@@ -117,20 +122,16 @@ public class Debate
         return debateStatus;
     }
 
-    public String getSpeakerName()
+    public String getTitleText()
     {
         if(mCurrentStage != null)
         {
-            if(mCurrentStage.getClass() == SpeakerTimer.class)
-            {
-                SpeakerTimer speakerTimer = (SpeakerTimer) mCurrentStage;
-                return speakerTimer.getSpeakerName();
-            }
+            return mCurrentStage.getTitleText();
         }
         return "";
     }
 
-    public long getCurrentSpeakerCurrentTime()
+    public long getStageCurrentTime()
     {
         if(mCurrentStage != null)
         {
@@ -142,7 +143,7 @@ public class Debate
         }
     }
 
-    public long getCurrentSpeakerNextTime()
+    public long getStageNextTime()
     {
         if(mCurrentStage != null)
         {
@@ -154,7 +155,7 @@ public class Debate
         }
     }
 
-    public long getCurrentSpeakerFinalTime()
+    public long getStageFinalTime()
     {
         if(mCurrentStage != null)
         {
@@ -166,15 +167,12 @@ public class Debate
         }
     }
     
-    public String getCurrentStateText()
+    public String getStageStateText()
     {
-        if(debateStatus == DebateStatus.speaking)
-        {
+        if(mCurrentStage != null) {
             return mCurrentStage.getStateText();
-        }
-        else
-        {
-            return "Setup";
+        } else {
+            return "";
         }
     }
 

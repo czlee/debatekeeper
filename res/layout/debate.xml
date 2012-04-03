@@ -9,7 +9,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:text=""
-            android:id="@+id/speakerName"
+            android:id="@+id/titleText"
             />
     <TextView
         android:layout_width="fill_parent"

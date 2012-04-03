@@ -28,6 +28,7 @@ public class DebatingTimerService extends IntentService
     private Speaker mSpeaker3;      // Negative
     private Speaker mSpeaker4;
 
+    private AlarmChain.AlarmChainAlert prepAlerts[];
     private AlarmChain.AlarmChainAlert substativeSpeechAlerts[];
     private AlarmChain.AlarmChainAlert replySpeechAlerts[];
 
@@ -54,6 +55,12 @@ public class DebatingTimerService extends IntentService
 
         mAlertManager = new AlertManager(this);
 
+        prepAlerts = new AlarmChain.AlarmChainAlert[] {
+                new SpeakerTimer.WarningAlert(2, mAlertManager),
+                new SpeakerTimer.WarningAlert(4, mAlertManager),
+                new SpeakerTimer.FinishAlert(7, mAlertManager)
+        };
+
         substativeSpeechAlerts = new AlarmChain.AlarmChainAlert[] {
             new SpeakerTimer.WarningAlert(5, mAlertManager),
             new SpeakerTimer.FinishAlert(10, mAlertManager),
@@ -73,6 +80,7 @@ public class DebatingTimerService extends IntentService
         mSpeaker3 = new Speaker("Speaker3");
         mSpeaker4 = new Speaker("Speaker4");
 
+        mDebate.addPrep(prepAlerts);
         mDebate.addStage(mSpeaker1, substativeSpeechAlerts);
         mDebate.addStage(mSpeaker3, substativeSpeechAlerts);
         mDebate.addStage(mSpeaker2, substativeSpeechAlerts);

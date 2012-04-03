@@ -32,7 +32,7 @@ public class DebatingTimer extends Activity
         setContentView(R.layout.main);
 
         mStateText = (TextView) findViewById(R.id.stateText);
-        mSpeakerNameText = (TextView) findViewById(R.id.speakerName);
+        mSpeakerNameText = (TextView) findViewById(R.id.titleText);
         mCurrentTimeText = (TextView) findViewById(R.id.currentTime);
         mNextTimeText = (TextView) findViewById(R.id.nextTime);
         mFinalTimeText = (TextView) findViewById(R.id.finalTime);
@@ -100,11 +100,11 @@ public class DebatingTimer extends Activity
     public void updateGui() {
         if(debate != null)
         {
-            mStateText.setText(debate.getCurrentStateText());
-            mSpeakerNameText.setText(debate.getSpeakerName());
-            mCurrentTimeText.setText(secsToMinuteSecText(debate.getCurrentSpeakerCurrentTime()));
-            mNextTimeText.setText(secsToMinuteSecText(debate.getCurrentSpeakerNextTime()));
-            mFinalTimeText.setText(secsToMinuteSecText(debate.getCurrentSpeakerFinalTime()));
+            mStateText.setText(debate.getStageStateText());
+            mSpeakerNameText.setText(debate.getTitleText());
+            mCurrentTimeText.setText(secsToMinuteSecText(debate.getStageCurrentTime()));
+            mNextTimeText.setText(secsToMinuteSecText(debate.getStageNextTime()));
+            mFinalTimeText.setText(secsToMinuteSecText(debate.getStageFinalTime()));
         }
     }
 

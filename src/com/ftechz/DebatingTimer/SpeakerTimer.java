@@ -10,13 +10,14 @@ import java.util.ArrayList;
 public class SpeakerTimer extends AlarmChain
 {
     enum SpeakerState {
+        setup,
         normal,
         warning,
         overtime
     }
     
     private Speaker mSpeaker;
-    private SpeakerState mSpeakerState = SpeakerState.normal;
+    private SpeakerState mSpeakerState = SpeakerState.setup;
 
     public SpeakerTimer(Speaker speaker)
     {
@@ -79,6 +80,9 @@ public class SpeakerTimer extends AlarmChain
         String text = "";
         switch(mSpeakerState)
         {
+            case setup:
+                text = "Setup";
+                break;
             case normal:
                 text = "Normal";
                 break;
@@ -95,8 +99,18 @@ public class SpeakerTimer extends AlarmChain
     }
 
     @Override
+    protected void onStart() {
+        mSpeakerState = SpeakerState.normal;
+    }
+
+    @Override
     public SpeakerTimer newCopy()
     {
         return new SpeakerTimer(mSpeaker, mAlerts.toArray(new AlarmChainAlert[mAlerts.size()]));
+    }
+
+    @Override
+    public String getTitleText() {
+        return getSpeakerName();
     }
 }

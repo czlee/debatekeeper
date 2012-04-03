@@ -8,17 +8,17 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="State"
-            android:textSize="10pt"
-            android:id="@+id/stateText"
+            android:text="Speaker"
+            android:textSize="15pt"
+            android:id="@+id/titleText"
             />
     <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="Speaker"
-            android:textSize="15pt"
-            android:id="@+id/speakerName"
+            android:text="State"
+            android:textSize="10pt"
+            android:id="@+id/stateText"
             />
     <TextView
         style="@style/MainTimerText"
