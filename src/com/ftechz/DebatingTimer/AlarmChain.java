@@ -149,6 +149,7 @@ public abstract class AlarmChain extends TimerTask
     private AlarmChainAlertCompare mAlertComparator = new AlarmChainAlertCompare();
     protected boolean mCountdown = false;
     protected long mFinishTime = 0;
+    protected boolean mPaused = false;
 
     //
     // Methods
@@ -197,6 +198,11 @@ public abstract class AlarmChain extends TimerTask
     @Override
     public void run()
     {
+        if(mPaused)
+        {
+            return;
+        }
+
         mSecondCounter++;
 
         if(mState < mAlerts.size())
@@ -297,6 +303,16 @@ public abstract class AlarmChain extends TimerTask
         resetState();
         onStart();
         timer.schedule(this, 1000, 1000);
+    }
+
+    public void pause()
+    {
+        mPaused = true;
+    }
+
+    public void resume()
+    {
+        mPaused = false;
     }
 
     protected abstract void onStart();

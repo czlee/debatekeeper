@@ -16,7 +16,7 @@ import java.util.TimerTask;
  */
 public class DebatingTimerService extends IntentService
 {
-    public static final String BROADCAST_ACTION = "com.ftechz.DebatingTimer.update";
+    public static final String BROADCAST_ACTION = "com.ftechz.DebatingTimerActivity.update";
     Intent intent;
 
     private Timer tickTimer;
@@ -77,6 +77,10 @@ public class DebatingTimerService extends IntentService
 
         public Debate createDebate()
         {
+            if(mDebate != null)
+            {
+                mDebate.release();
+            }
             mDebate = new Debate(mAlertManager);
             return mDebate;
         }

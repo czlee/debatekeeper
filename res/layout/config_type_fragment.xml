@@ -8,7 +8,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="Type"
+            android:text="Easters!"
             android:textSize="15pt"
             android:id="@+id/titleText"
             />

@@ -1,7 +1,11 @@
 package com.ftechz.DebatingTimer;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -16,9 +20,18 @@ import java.util.HashMap;
  */
 public class ConfigActivity extends FragmentActivity implements TabHost.OnTabChangeListener {
     private TabHost mTabHost;
-    private HashMap mMapTabInfo = new HashMap();
+    private HashMap<String, TabInfo> mMapTabInfo = new HashMap<String, TabInfo>();
     private TabInfo mLastTab = null;
     private Button createDebateButton;
+
+    private Speaker mSpeaker1;      // Affirmative
+    private Speaker mSpeaker2;
+    private Speaker mSpeaker3;      // Negative
+    private Speaker mSpeaker4;
+
+    private AlarmChain.AlarmChainAlert prepAlerts[];
+    private AlarmChain.AlarmChainAlert substativeSpeechAlerts[];
+    private AlarmChain.AlarmChainAlert replySpeechAlerts[];
 
     private class TabInfo {
         private String tag;
@@ -58,7 +71,13 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
         createDebateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View pV) {
-
+                if(mBinder != null)
+                {
+                    Debate debate =  mBinder.createDebate();
+                    setupDebate(debate);
+                    Intent intent = new Intent(ConfigActivity.this, DebatingTimerActivity.class);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -68,11 +87,25 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
         if (savedInstanceState != null) {
             mTabHost.setCurrentTabByTag(savedInstanceState.getString("tab")); //set the tab as per the saved state
         }
+
+        Intent intent = new Intent(this, DebatingTimerService.class);
+        startService(intent);
+
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString("tab", mTabHost.getCurrentTabTag()); //save the tab selected
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        unbindService(mConnection);
+        Intent intent = new Intent(this, DebatingTimerService.class);
+        stopService(intent);
     }
 
     /*
@@ -141,4 +174,64 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
         }
     }
 
+    DebatingTimerService.DebatingTimerServiceBinder mBinder;
+
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+
+            mBinder = (DebatingTimerService.DebatingTimerServiceBinder) service;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+
+        }
+    };
+
+
+    public void setupDebate(Debate debate)
+    {
+        prepAlerts = new AlarmChain.AlarmChainAlert[] {
+                new SpeakerTimer.WarningAlert(60),  // 1 minute
+                new SpeakerTimer.WarningAlert(120), // 2 minutes
+                new SpeakerTimer.FinishAlert(420)   // 7 minutes
+        };
+
+        substativeSpeechAlerts = new AlarmChain.AlarmChainAlert[] {
+                new SpeakerTimer.WarningAlert(240), // 4 minutes
+                new SpeakerTimer.FinishAlert(360),  // 6 minutes
+                new SpeakerTimer.OvertimeAlert(375, 15)  // 6:15, repeating every 5
+        };
+
+        replySpeechAlerts = new AlarmChain.AlarmChainAlert[] {
+                new SpeakerTimer.WarningAlert(120),
+                new SpeakerTimer.FinishAlert(180),
+                new SpeakerTimer.OvertimeAlert(195, 2)
+        };
+
+        // Set up speakers
+        ConfigSpeakersFragment speakersFragment = (ConfigSpeakersFragment) mMapTabInfo.get("Speakers").mFragment;
+        mSpeaker1 = new Speaker(speakersFragment.speaker1Field.getText().toString());
+        mSpeaker2 = new Speaker(speakersFragment.speaker2Field.getText().toString());
+        mSpeaker3 = new Speaker(speakersFragment.speaker3Field.getText().toString());
+        mSpeaker4 = new Speaker(speakersFragment.speaker4Field.getText().toString());
+
+        //Add in the alarm sets
+        debate.addAlarmSet("prep", prepAlerts);
+        debate.addAlarmSet("substantiveSpeech", substativeSpeechAlerts);
+        debate.addAlarmSet("replySpeech", replySpeechAlerts);
+
+        // Add in the stages
+        debate.addPrep("prep");
+        debate.addStage(mSpeaker1, "substantiveSpeech");
+        debate.addStage(mSpeaker3, "substantiveSpeech");
+        debate.addStage(mSpeaker2, "substantiveSpeech");
+        debate.addStage(mSpeaker4, "substantiveSpeech");
+        debate.addStage(mSpeaker3, "replySpeech");
+        debate.addStage(mSpeaker1, "replySpeech");
+    }
 }

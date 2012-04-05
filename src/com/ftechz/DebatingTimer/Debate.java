@@ -216,6 +216,8 @@ public class Debate
         tickTimer.cancel();
         tickTimer = new Timer();
 
+        mAlertManager.hideNotification();
+
         ListIterator<AlarmChain> stageIterator = mStages.listIterator();
         while(stageIterator.hasNext())
         {
@@ -230,6 +232,11 @@ public class Debate
 
     public void release()
     {
+        if(mAlertManager != null)
+        {
+            mAlertManager.hideNotification();
+        }
+
         mCurrentStage = null;
 
         tickTimer.cancel();

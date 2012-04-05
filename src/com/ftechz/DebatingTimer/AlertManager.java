@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.PowerManager;
 
 /**
 *
@@ -21,15 +22,21 @@ public class AlertManager
     private PendingIntent mPendingIntent;
     private boolean mShowingNotification = false;
     private AlarmChain mStage;
+    PowerManager.WakeLock mWakeLock;
 
     public AlertManager(DebatingTimerService debatingTimerService)
     {
         mDebatingTimerService = debatingTimerService;
         mNotificationManager = (NotificationManager) debatingTimerService.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationIntent = new Intent(debatingTimerService,
-                DebatingTimer.class);
+                DebatingTimerActivity.class);
         mPendingIntent = PendingIntent.getActivity(
                 debatingTimerService, 0, mNotificationIntent, 0);
+
+        PowerManager pm = (PowerManager) debatingTimerService.getSystemService(Context.POWER_SERVICE);
+
+        mWakeLock = pm.newWakeLock(
+                pm.SCREEN_DIM_WAKE_LOCK, "My MyAppWakeLock");
     }
 
     public void showNotification(AlarmChain stage)
@@ -50,6 +57,7 @@ public class AlertManager
 
             //Enable notifications for latter alerts
             mNotification.defaults = Notification.DEFAULT_VIBRATE;
+            mWakeLock.acquire();
         }
     }
 
@@ -67,6 +75,7 @@ public class AlertManager
     {
         if(mShowingNotification)
         {
+            mWakeLock.release();
             mDebatingTimerService.stopForeground(true);
             mShowingNotification = false;
         }
