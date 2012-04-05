@@ -20,10 +20,24 @@ public abstract class AlarmChain extends TimerTask
     // Classes
     public static abstract class AlarmChainAlert {
         public long time;
+        protected AlertManager mAlertManager;
+
         public AlarmChainAlert(long seconds)
         {
             time = seconds;
         }
+
+        public AlarmChainAlert(long seconds, AlertManager alertManager)
+        {
+            time = seconds;
+            mAlertManager = alertManager;
+        }
+
+        public void setAlertManager(AlertManager alertManager)
+        {
+            mAlertManager = alertManager;
+        }
+
         public abstract void alert();
 
         public void reset()
@@ -46,12 +60,14 @@ public abstract class AlarmChain extends TimerTask
     }
 
     public static class WarningAlert extends AlarmChain.AlarmChainAlert {
-        private AlertManager mAlertManager;
-
         public WarningAlert(long seconds, AlertManager alertManager)
         {
+            super(seconds, alertManager);
+        }
+
+        public WarningAlert(long seconds)
+        {
             super(seconds);
-            mAlertManager = alertManager;
         }
 
         @Override
@@ -63,12 +79,14 @@ public abstract class AlarmChain extends TimerTask
     }
 
     public static class FinishAlert extends AlarmChain.AlarmChainAlert {
-        private AlertManager mAlertManager;
-
         public FinishAlert(long seconds, AlertManager alertManager)
         {
+            super(seconds, alertManager);
+        }
+
+        public FinishAlert(long seconds)
+        {
             super(seconds);
-            mAlertManager = alertManager;
         }
 
         @Override
@@ -82,17 +100,21 @@ public abstract class AlarmChain extends TimerTask
     }
 
     public static class OvertimeAlert extends AlarmChain.AlarmChainAlert {
-        private AlertManager mAlertManager;
-
         private long mRepeatPeriod = 0;
         private long initTime;
 
         public OvertimeAlert(long seconds, long repeatPeriod, AlertManager alertManager)
         {
+            super(seconds, alertManager);
+            initTime = seconds;
+            mRepeatPeriod = repeatPeriod;
+        }
+
+        public OvertimeAlert(long seconds, long repeatPeriod)
+        {
             super(seconds);
             initTime = seconds;
             mRepeatPeriod = repeatPeriod;
-            mAlertManager = alertManager;
         }
 
         @Override

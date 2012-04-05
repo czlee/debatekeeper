@@ -25,28 +25,57 @@ public class Debate
     private DebateStatus debateStatus;
 
     private ArrayList<Speaker> mSpeakers;
-    private AlertManager mNotificationControl;
+    private AlertManager mAlertManager;
+    private HashMap<String, AlarmChain.AlarmChainAlert[]> mAlertSets;
+
     //
     // Methods
-    public Debate(AlertManager notificationControl)
+    public Debate(AlertManager alertManager)
     {
-        mNotificationControl = notificationControl;
+        mAlertManager = alertManager;
         debateStatus = DebateStatus.setup;
         mStages = new LinkedList<AlarmChain>();
+        mSpeakers = new ArrayList<Speaker>();
+        mAlertSets = new HashMap<String, AlarmChain.AlarmChainAlert[]>();
         mStageIterator = mStages.iterator();
         tickTimer = new Timer();
     }
 
-    public void addPrep(final AlarmChain.AlarmChainAlert[] alerts)
+    public boolean addPrep(String alarmSetName)
     {
-        mStages.add(new PrepTimer(alerts));
-        mStageIterator = mStages.iterator();
+        if(mAlertSets.containsKey(alarmSetName))
+        {
+            mStages.add(new PrepTimer(mAlertSets.get(alarmSetName)));
+            mStageIterator = mStages.iterator();
+            return true;
+        }
+        return false;
     }
 
-    public void addStage(Speaker speaker, final AlarmChain.AlarmChainAlert[] alerts)
+    public boolean addStage(Speaker speaker, String alarmSetName)
     {
-        mStages.add(new SpeakerTimer(speaker, alerts));
-        mStageIterator = mStages.iterator();
+        if(mAlertSets.containsKey(alarmSetName))
+        {
+            mStages.add(new SpeakerTimer(speaker, mAlertSets.get(alarmSetName)));
+            mStageIterator = mStages.iterator();
+            return true;
+        }
+        return false;
+    }
+
+    public void addAlarmSet(String name, AlarmChain.AlarmChainAlert[] alarmSet)
+    {
+        for(AlarmChain.AlarmChainAlert alarm : alarmSet)
+        {
+            alarm.setAlertManager(mAlertManager);
+        }
+
+        mAlertSets.put(name, alarmSet);
+    }
+
+    public void addSpeaker(Speaker speaker)
+    {
+        mSpeakers.add(speaker);
     }
 
     public boolean prepareNextSpeaker()
@@ -74,7 +103,7 @@ public class Debate
         {
             tickTimer.purge();
             mCurrentStage.start(tickTimer);
-            mNotificationControl.showNotification(mCurrentStage);
+            mAlertManager.showNotification(mCurrentStage);
         }
     }
 
@@ -84,7 +113,7 @@ public class Debate
         {
             if (mCurrentStage != null)
             {
-                mNotificationControl.hideNotification();
+                mAlertManager.hideNotification();
                 mCurrentStage.cancel();
                 if(mStageIterator.hasNext())
                 {

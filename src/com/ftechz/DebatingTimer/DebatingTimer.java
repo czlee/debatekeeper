@@ -139,7 +139,8 @@ public class DebatingTimer extends Activity
                                        IBinder service) {
 
             mBinder = (DebatingTimerService.DebatingTimerServiceBinder) service;
-            debate = mBinder.getDebate();
+            debate = mBinder.createDebate();
+            setupDebate();
         }
 
         @Override
@@ -147,4 +148,54 @@ public class DebatingTimer extends Activity
             debate = null;
         }
     };
+
+    private Speaker mSpeaker1;      // Affirmative
+    private Speaker mSpeaker2;
+    private Speaker mSpeaker3;      // Negative
+    private Speaker mSpeaker4;
+
+    private AlarmChain.AlarmChainAlert prepAlerts[];
+    private AlarmChain.AlarmChainAlert substativeSpeechAlerts[];
+    private AlarmChain.AlarmChainAlert replySpeechAlerts[];
+
+    public void setupDebate()
+    {
+        prepAlerts = new AlarmChain.AlarmChainAlert[] {
+                new SpeakerTimer.WarningAlert(2),
+                new SpeakerTimer.WarningAlert(4),
+                new SpeakerTimer.FinishAlert(7)
+        };
+
+        substativeSpeechAlerts = new AlarmChain.AlarmChainAlert[] {
+                new SpeakerTimer.WarningAlert(5),
+                new SpeakerTimer.FinishAlert(10),
+                new SpeakerTimer.OvertimeAlert(15, 2)
+        };
+
+        replySpeechAlerts = new AlarmChain.AlarmChainAlert[] {
+                new SpeakerTimer.WarningAlert(2),
+                new SpeakerTimer.FinishAlert(3),
+                new SpeakerTimer.OvertimeAlert(5, 2)
+        };
+
+        // Set up speakers
+        mSpeaker1 = new Speaker("Speaker1");
+        mSpeaker2 = new Speaker("Speaker2");
+        mSpeaker3 = new Speaker("Speaker3");
+        mSpeaker4 = new Speaker("Speaker4");
+
+        //Add in the alarm sets
+        debate.addAlarmSet("prep", prepAlerts);
+        debate.addAlarmSet("substantiveSpeech", substativeSpeechAlerts);
+        debate.addAlarmSet("replySpeech", replySpeechAlerts);
+
+        // Add in the stages
+        debate.addPrep("prep");
+        debate.addStage(mSpeaker1, "substantiveSpeech");
+        debate.addStage(mSpeaker3, "substantiveSpeech");
+        debate.addStage(mSpeaker2, "substantiveSpeech");
+        debate.addStage(mSpeaker4, "substantiveSpeech");
+        debate.addStage(mSpeaker3, "replySpeech");
+        debate.addStage(mSpeaker1, "replySpeech");
+    }
 }

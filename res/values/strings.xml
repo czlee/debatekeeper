@@ -7,4 +7,5 @@
     <string name="restartDebate">Restart debate</string>
     <string name="ticker_text">Speaker started</string>
     <string name="notification_title">Debating Timer</string>
+    <string name="createDebate">Create debate</string>
 </resources>

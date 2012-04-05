@@ -23,14 +23,6 @@ public class DebatingTimerService extends IntentService
     private final IBinder mBinder = new DebatingTimerServiceBinder();
 
     private Debate mDebate;
-    private Speaker mSpeaker1;      // Affirmative
-    private Speaker mSpeaker2;
-    private Speaker mSpeaker3;      // Negative
-    private Speaker mSpeaker4;
-
-    private AlarmChain.AlarmChainAlert prepAlerts[];
-    private AlarmChain.AlarmChainAlert substativeSpeechAlerts[];
-    private AlarmChain.AlarmChainAlert replySpeechAlerts[];
 
     private AlertManager mAlertManager;
 
@@ -44,6 +36,7 @@ public class DebatingTimerService extends IntentService
 
         tickTimer = new Timer();
 
+        // Start a new timertask to broadcast a ui update
         intent = new Intent(BROADCAST_ACTION);
         TimerTask mRunnable = new TimerTask() {
             @Override
@@ -55,56 +48,36 @@ public class DebatingTimerService extends IntentService
 
         mAlertManager = new AlertManager(this);
 
-        prepAlerts = new AlarmChain.AlarmChainAlert[] {
-                new SpeakerTimer.WarningAlert(2, mAlertManager),
-                new SpeakerTimer.WarningAlert(4, mAlertManager),
-                new SpeakerTimer.FinishAlert(7, mAlertManager)
-        };
-
-        substativeSpeechAlerts = new AlarmChain.AlarmChainAlert[] {
-            new SpeakerTimer.WarningAlert(5, mAlertManager),
-            new SpeakerTimer.FinishAlert(10, mAlertManager),
-            new SpeakerTimer.OvertimeAlert(15, 2, mAlertManager)
-        };
-
-        replySpeechAlerts = new AlarmChain.AlarmChainAlert[] {
-            new SpeakerTimer.WarningAlert(2, mAlertManager),
-            new SpeakerTimer.FinishAlert(3, mAlertManager),
-            new SpeakerTimer.OvertimeAlert(5, 2, mAlertManager)
-        };
-
-        mDebate = new Debate(mAlertManager);
-        // Set up speakers
-        mSpeaker1 = new Speaker("Speaker1");
-        mSpeaker2 = new Speaker("Speaker2");
-        mSpeaker3 = new Speaker("Speaker3");
-        mSpeaker4 = new Speaker("Speaker4");
-
-        mDebate.addPrep(prepAlerts);
-        mDebate.addStage(mSpeaker1, substativeSpeechAlerts);
-        mDebate.addStage(mSpeaker3, substativeSpeechAlerts);
-        mDebate.addStage(mSpeaker2, substativeSpeechAlerts);
-        mDebate.addStage(mSpeaker4, substativeSpeechAlerts);
-        mDebate.addStage(mSpeaker3, replySpeechAlerts);
-        mDebate.addStage(mSpeaker1, replySpeechAlerts);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-        // Clean up stuff
-        tickTimer.cancel();
-        tickTimer = null;
+        if(tickTimer != null)
+        {
+            // Clean up stuff
+            tickTimer.cancel();
+            tickTimer = null;
+        }
 
-        mDebate.release();
-        mDebate = null;
+        if(mDebate != null)
+        {
+            mDebate.release();
+            mDebate = null;
+        }
     }
 
     public class DebatingTimerServiceBinder extends Binder
     {
         public Debate getDebate()
         {
+            return mDebate;
+        }
+
+        public Debate createDebate()
+        {
+            mDebate = new Debate(mAlertManager);
             return mDebate;
         }
     }
@@ -117,5 +90,4 @@ public class DebatingTimerService extends IntentService
     protected void onHandleIntent(Intent intent) {
 
     }
-
 }
