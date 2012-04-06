@@ -75,7 +75,7 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
                 {
                     Debate debate =  mBinder.createDebate();
                     setupDebate(debate);
-                    Intent intent = new Intent(ConfigActivity.this, DebatingTimerActivity.class);
+                    Intent intent = new Intent(ConfigActivity.this, DebatingActivity.class);
                     startActivity(intent);
                 }
             }
@@ -201,17 +201,35 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
                 new SpeakerTimer.FinishAlert(420)   // 7 minutes
         };
 
+//        prepAlerts = new AlarmChain.AlarmChainAlert[] {
+//                new SpeakerTimer.WarningAlert(5),  //
+//                new SpeakerTimer.WarningAlert(10), //
+//                new SpeakerTimer.FinishAlert(15)   //
+//        };
+
         substativeSpeechAlerts = new AlarmChain.AlarmChainAlert[] {
                 new SpeakerTimer.WarningAlert(240), // 4 minutes
                 new SpeakerTimer.FinishAlert(360),  // 6 minutes
                 new SpeakerTimer.OvertimeAlert(375, 15)  // 6:15, repeating every 5
         };
 
+//        substativeSpeechAlerts = new AlarmChain.AlarmChainAlert[] {
+//                new SpeakerTimer.WarningAlert(5),
+//                new SpeakerTimer.FinishAlert(10),
+//                new SpeakerTimer.OvertimeAlert(15, 3)
+//        };
+
         replySpeechAlerts = new AlarmChain.AlarmChainAlert[] {
                 new SpeakerTimer.WarningAlert(120),
                 new SpeakerTimer.FinishAlert(180),
-                new SpeakerTimer.OvertimeAlert(195, 2)
+                new SpeakerTimer.OvertimeAlert(195, 15)
         };
+
+//        replySpeechAlerts = new AlarmChain.AlarmChainAlert[] {
+//                new SpeakerTimer.WarningAlert(3),
+//                new SpeakerTimer.FinishAlert(6),
+//                new SpeakerTimer.OvertimeAlert(9, 3)
+//        };
 
         // Set up speakers
         ConfigSpeakersFragment speakersFragment = (ConfigSpeakersFragment) mMapTabInfo.get("Speakers").mFragment;

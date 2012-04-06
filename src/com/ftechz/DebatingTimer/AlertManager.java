@@ -29,14 +29,14 @@ public class AlertManager
         mDebatingTimerService = debatingTimerService;
         mNotificationManager = (NotificationManager) debatingTimerService.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationIntent = new Intent(debatingTimerService,
-                DebatingTimerActivity.class);
+                DebatingActivity.class);
         mPendingIntent = PendingIntent.getActivity(
                 debatingTimerService, 0, mNotificationIntent, 0);
 
         PowerManager pm = (PowerManager) debatingTimerService.getSystemService(Context.POWER_SERVICE);
 
         mWakeLock = pm.newWakeLock(
-                pm.SCREEN_DIM_WAKE_LOCK, "My MyAppWakeLock");
+                pm.SCREEN_DIM_WAKE_LOCK, "DebatingWakeLock");
     }
 
     public void showNotification(AlarmChain stage)

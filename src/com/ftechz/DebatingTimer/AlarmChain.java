@@ -140,16 +140,24 @@ public abstract class AlarmChain extends TimerTask
         }
     }
 
+    public enum RunningState {
+        Stopped,
+        Running,
+        Paused,
+        Finished
+    }
+
     //
     // Members
     private long mSecondCounter;
     protected ArrayList<AlarmChainAlert> mAlerts;
 
-    private int mState;
+    private int mAlertNumber;
     private AlarmChainAlertCompare mAlertComparator = new AlarmChainAlertCompare();
     protected boolean mCountdown = false;
     protected long mFinishTime = 0;
-    protected boolean mPaused = false;
+
+    protected RunningState mRunningState = RunningState.Stopped;
 
     //
     // Methods
@@ -173,7 +181,7 @@ public abstract class AlarmChain extends TimerTask
 
     private void init() {
         mAlerts = new ArrayList<AlarmChainAlert>();
-        mState = 0;
+        mAlertNumber = 0;
         mSecondCounter = 0;
     }
 
@@ -198,31 +206,31 @@ public abstract class AlarmChain extends TimerTask
     @Override
     public void run()
     {
-        if(mPaused)
+        if(mRunningState != RunningState.Running)
         {
             return;
         }
 
         mSecondCounter++;
 
-        if(mState < mAlerts.size())
+        if(mAlertNumber < mAlerts.size())
         {
-            if(mSecondCounter == mAlerts.get(mState).time)
+            if(mSecondCounter == mAlerts.get(mAlertNumber).time)
             {
                 do
                 {
-                    handleAlert(mAlerts.get(mState));
-                    if(mState < mAlerts.size() - 1) {
-                        mState++;
+                    handleAlert(mAlerts.get(mAlertNumber));
+                    if(mAlertNumber < mAlerts.size() - 1) {
+                        mAlertNumber++;
                     } else {
                         break;
                     }
-                } while(mSecondCounter == mAlerts.get(mState).time); // Handle multiple with the same time
+                } while(mSecondCounter == mAlerts.get(mAlertNumber).time); // Handle multiple with the same time
             }
-            else if(mSecondCounter > mAlerts.get(mState).time)
+            else if(mSecondCounter > mAlerts.get(mAlertNumber).time)
             {
-                if(mState < mAlerts.size() - 1) {
-                    mState++;
+                if(mAlertNumber < mAlerts.size() - 1) {
+                    mAlertNumber++;
                 }
             }
         }
@@ -256,11 +264,11 @@ public abstract class AlarmChain extends TimerTask
 
     public long getNextTime()
     {
-        if(mState < mAlerts.size()) {
+        if(mAlertNumber < mAlerts.size()) {
             if(mCountdown) {
-                return getFinishTime() - mAlerts.get(mState).time;
+                return getFinishTime() - mAlerts.get(mAlertNumber).time;
             } else {
-                return mAlerts.get(mState).time;
+                return mAlerts.get(mAlertNumber).time;
             }
         } else {
             return 0;
@@ -286,7 +294,7 @@ public abstract class AlarmChain extends TimerTask
     public void resetState()
     {
         mSecondCounter = 0;
-        mState = 0;
+        mAlertNumber = 0;
         for(AlarmChainAlert alert : mAlerts){
             alert.reset();
         }
@@ -300,6 +308,7 @@ public abstract class AlarmChain extends TimerTask
 
     public void start(Timer timer)
     {
+        mRunningState = RunningState.Running;
         resetState();
         onStart();
         timer.schedule(this, 1000, 1000);
@@ -307,12 +316,12 @@ public abstract class AlarmChain extends TimerTask
 
     public void pause()
     {
-        mPaused = true;
+        mRunningState = RunningState.Paused;
     }
 
     public void resume()
     {
-        mPaused = false;
+        mRunningState = RunningState.Running;
     }
 
     protected abstract void onStart();
@@ -322,5 +331,16 @@ public abstract class AlarmChain extends TimerTask
     private long getFinishTime()
     {
         return (mFinishTime > 0) ? mFinishTime : mAlerts.get(mAlerts.size()-1).time;
+    }
+
+    @Override
+    public boolean cancel() {
+        mRunningState = RunningState.Finished;
+        return super.cancel();
+    }
+
+    public RunningState getRunningState()
+    {
+        return mRunningState;
     }
 }

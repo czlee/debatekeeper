@@ -40,10 +40,12 @@ public class PrepTimer extends AlarmChain
             {
                 mPrepState = PrepState.Prepare;
             }
+            this.pause();
         }
         else if(alertClass == FinishAlert.class)
         {
             mPrepState = PrepState.Finish;
+            this.cancel();
         }
         else if(alertClass == OvertimeAlert.class)
         {

@@ -12,7 +12,9 @@ public class Debate
     {
         setup,
         speaking,
-        transitioning
+        paused,
+        transitioning,
+        finished
     }
 
     //
@@ -20,9 +22,7 @@ public class Debate
     private LinkedList<AlarmChain> mStages;
     private AlarmChain mCurrentStage;
     private Iterator<AlarmChain> mStageIterator;
-    private Timer tickTimer;
-
-    private DebateStatus debateStatus;
+    private Timer mTickTimer;
 
     private ArrayList<Speaker> mSpeakers;
     private AlertManager mAlertManager;
@@ -33,14 +33,20 @@ public class Debate
     public Debate(AlertManager alertManager)
     {
         mAlertManager = alertManager;
-        debateStatus = DebateStatus.setup;
         mStages = new LinkedList<AlarmChain>();
         mSpeakers = new ArrayList<Speaker>();
         mAlertSets = new HashMap<String, AlarmChain.AlarmChainAlert[]>();
         mStageIterator = mStages.iterator();
-        tickTimer = new Timer();
+        mTickTimer = new Timer();
     }
 
+    /**
+     * Add a preparation stage
+     * This should usually be added before speakers
+     *
+     * @param alarmSetName
+     * @return
+     */
     public boolean addPrep(String alarmSetName)
     {
         if(mAlertSets.containsKey(alarmSetName))
@@ -52,6 +58,14 @@ public class Debate
         return false;
     }
 
+    /**
+     * Add a speaker stage to the debate
+     * Has to be added in the order of the debate
+     *
+     * @param speaker   The speaker for this stage
+     * @param alarmSetName  The name of the alarmset specified when added to the debate
+     * @return
+     */
     public boolean addStage(Speaker speaker, String alarmSetName)
     {
         if(mAlertSets.containsKey(alarmSetName))
@@ -63,6 +77,12 @@ public class Debate
         return false;
     }
 
+    /**
+     * Add an alarm set that will be used in this debate
+     *
+     * @param name
+     * @param alarmSet
+     */
     public void addAlarmSet(String name, AlarmChain.AlarmChainAlert[] alarmSet)
     {
         for(AlarmChain.AlarmChainAlert alarm : alarmSet)
@@ -73,6 +93,11 @@ public class Debate
         mAlertSets.put(name, alarmSet);
     }
 
+    /**
+     * Add a speaker to the debate
+     * Will be used to allow grabbing of information about speakers later...
+     * @param speaker
+     */
     public void addSpeaker(Speaker speaker)
     {
         mSpeakers.add(speaker);
@@ -101,45 +126,32 @@ public class Debate
     {
         if(mCurrentStage != null)
         {
-            tickTimer.purge();
-            mCurrentStage.start(tickTimer);
+            mTickTimer.purge();
+            mCurrentStage.start(mTickTimer);
             mAlertManager.showNotification(mCurrentStage);
         }
     }
 
     public void stop()
     {
-        if(debateStatus == DebateStatus.speaking)
+        if(getDebateStatus() == DebateStatus.speaking)
         {
             if (mCurrentStage != null)
             {
                 mAlertManager.hideNotification();
                 mCurrentStage.cancel();
-                if(mStageIterator.hasNext())
-                {
-                    debateStatus = DebateStatus.transitioning;
-                }
-                else
-                {
-                    debateStatus = DebateStatus.setup;
-                }
-            }
-            else
-            {
-                debateStatus = DebateStatus.setup;
             }
         }
     }
 
     public boolean start()
     {
-        if((debateStatus == DebateStatus.setup) ||
-                (debateStatus == DebateStatus.transitioning))
+        if((getDebateStatus() == DebateStatus.setup) ||
+                (getDebateStatus() == DebateStatus.transitioning))
         {
             if(prepareNextSpeaker())
             {
                 startNextSpeaker();
-                debateStatus = DebateStatus.speaking;
                 return true;
             }
         }
@@ -147,7 +159,28 @@ public class Debate
     }
 
     public DebateStatus getDebateStatus() {
-        return debateStatus;
+        if(mCurrentStage != null)
+        {
+            switch (mCurrentStage.getRunningState())
+            {
+                case Running:
+                    return DebateStatus.speaking;
+                case Paused:
+                    return DebateStatus.paused;
+                case Finished:
+                    if(!mStageIterator.hasNext())
+                    {
+                        return DebateStatus.finished;
+                    }
+                case Stopped:
+                default:
+                    return DebateStatus.transitioning;
+            }
+        }
+        else
+        {
+            return DebateStatus.setup;
+        }
     }
 
     public String getTitleText()
@@ -212,9 +245,9 @@ public class Debate
             mCurrentStage.cancel();
         }
         mCurrentStage = null;
-        tickTimer.purge();
-        tickTimer.cancel();
-        tickTimer = new Timer();
+        mTickTimer.purge();
+        mTickTimer.cancel();
+        mTickTimer = new Timer();
 
         mAlertManager.hideNotification();
 
@@ -227,7 +260,6 @@ public class Debate
         }
 
         mStageIterator = mStages.iterator();
-        debateStatus = DebateStatus.setup;
     }
 
     public void release()
@@ -239,10 +271,27 @@ public class Debate
 
         mCurrentStage = null;
 
-        tickTimer.cancel();
-        tickTimer.purge();
-        tickTimer = null;
+        mTickTimer.cancel();
+        mTickTimer.purge();
+        mTickTimer = null;
 
         mStages = null;
     }
+
+    public void resume()
+    {
+        if(mCurrentStage != null)
+        {
+            mCurrentStage.resume();
+        }
+    }
+
+    public void pause()
+    {
+        if(mCurrentStage != null)
+        {
+            mCurrentStage.pause();
+        }
+    }
+
 }

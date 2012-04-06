@@ -9,11 +9,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 /**
- * DebatingTimerActivity
+ * DebatingActivity
  * The first Activity shown when application is started... for now
  *
  */
-public class DebatingTimerActivity extends Activity
+public class DebatingActivity extends Activity
 {
     private TextView mStateText;
     private TextView mSpeakerNameText;
@@ -29,7 +29,7 @@ public class DebatingTimerActivity extends Activity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.debate);
+        setContentView(R.layout.debate_activity);
 
         mStateText = (TextView) findViewById(R.id.stateText);
         mSpeakerNameText = (TextView) findViewById(R.id.titleText);
@@ -46,22 +46,13 @@ public class DebatingTimerActivity extends Activity
                 {
                     case setup:
                     case transitioning:
-                        if(mDebate.start())
-                        {
-                            startTimerButton.setText(R.string.stopTimer);
-                        }
+                        mDebate.start();
                         break;
                     case speaking:
                         mDebate.stop();
-                        // Update button depending on the status
-                        if(mDebate.getDebateStatus() == Debate.DebateStatus.setup)
-                        {
-                            startTimerButton.setText(R.string.startTimer);
-                        }
-                        else
-                        {
-                            startTimerButton.setText(R.string.startNext);
-                        }
+                        break;
+                    case paused:
+                        mDebate.resume();
                         break;
                     default:
                         break;
@@ -75,6 +66,7 @@ public class DebatingTimerActivity extends Activity
             @Override
             public void onClick(View pV) {
                 mDebate.reset();
+                updateGui();
             }
         });
 
@@ -82,6 +74,30 @@ public class DebatingTimerActivity extends Activity
         startService(intent);
 
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    private void updateStartTimerButtonText()
+    {
+        switch (mDebate.getDebateStatus())
+        {
+            case setup:
+                startTimerButton.setText(R.string.startTimer);
+                break;
+            case transitioning:
+                startTimerButton.setText(R.string.startNext);
+                break;
+            case speaking:
+                startTimerButton.setText(R.string.stopTimer);
+                break;
+            case paused:
+                startTimerButton.setText(R.string.resumeTimer);
+                break;
+            case finished:
+                startTimerButton.setText("Finished");
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -105,6 +121,8 @@ public class DebatingTimerActivity extends Activity
             mCurrentTimeText.setText(secsToMinuteSecText(mDebate.getStageCurrentTime()));
             mNextTimeText.setText(secsToMinuteSecText(mDebate.getStageNextTime()));
             mFinalTimeText.setText(secsToMinuteSecText(mDebate.getStageFinalTime()));
+
+            updateStartTimerButtonText();
         }
     }
 
