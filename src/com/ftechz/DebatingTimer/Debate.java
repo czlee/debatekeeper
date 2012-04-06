@@ -128,6 +128,7 @@ public class Debate
         {
             mTickTimer.purge();
             mCurrentStage.start(mTickTimer);
+            mAlertManager.hideNotification();   // Hide if already showing
             mAlertManager.showNotification(mCurrentStage);
         }
     }

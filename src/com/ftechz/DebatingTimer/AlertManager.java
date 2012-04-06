@@ -27,7 +27,8 @@ public class AlertManager
     public AlertManager(DebatingTimerService debatingTimerService)
     {
         mDebatingTimerService = debatingTimerService;
-        mNotificationManager = (NotificationManager) debatingTimerService.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager = (NotificationManager) debatingTimerService.getSystemService(
+                Context.NOTIFICATION_SERVICE);
         mNotificationIntent = new Intent(debatingTimerService,
                 DebatingActivity.class);
         mPendingIntent = PendingIntent.getActivity(
@@ -36,29 +37,27 @@ public class AlertManager
         PowerManager pm = (PowerManager) debatingTimerService.getSystemService(Context.POWER_SERVICE);
 
         mWakeLock = pm.newWakeLock(
-                pm.SCREEN_DIM_WAKE_LOCK, "DebatingWakeLock");
+                PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE,
+                "DebatingWakeLock");
     }
 
     public void showNotification(AlarmChain stage)
     {
+        mStage = stage;
+
         if(!mShowingNotification)
         {
-            mStage = stage;
-
             mNotification = new Notification(R.drawable.icon,
                     stage.getNotificationTickerText(),
                     System.currentTimeMillis());
 
-            mNotification.setLatestEventInfo(mDebatingTimerService,
-                    mDebatingTimerService.getText(R.string.notification_title),
-                    mStage.getNotificationText(), mPendingIntent);
+            updateNotification();
             mDebatingTimerService.startForeground(NOTIFICATION_ID, mNotification);
-            mShowingNotification = true;
 
-            //Enable notifications for latter alerts
-            mNotification.defaults = Notification.DEFAULT_VIBRATE;
-            mWakeLock.acquire();
+            mShowingNotification = true;
         }
+
+        mWakeLock.acquire();
     }
 
     public void updateNotification()
