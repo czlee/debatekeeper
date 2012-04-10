@@ -174,7 +174,7 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
         }
     }
 
-    DebatingTimerService.DebatingTimerServiceBinder mBinder;
+    private DebatingTimerService.DebatingTimerServiceBinder mBinder;
 
     /** Defines callbacks for service binding, passed to bindService() */
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -233,10 +233,17 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
 
         // Set up speakers
         ConfigSpeakersFragment speakersFragment = (ConfigSpeakersFragment) mMapTabInfo.get("Speakers").mFragment;
-        mSpeaker1 = new Speaker(speakersFragment.speaker1Field.getText().toString());
-        mSpeaker2 = new Speaker(speakersFragment.speaker2Field.getText().toString());
-        mSpeaker3 = new Speaker(speakersFragment.speaker3Field.getText().toString());
-        mSpeaker4 = new Speaker(speakersFragment.speaker4Field.getText().toString());
+        debate.addSpeaker(new Speaker(speakersFragment.speaker1Field.getText().toString()),
+                0, true);
+        debate.addSpeaker(new Speaker(speakersFragment.speaker2Field.getText().toString()),
+                0, false);
+        debate.addSpeaker(new Speaker(speakersFragment.speaker3Field.getText().toString()),
+                1, true);
+        debate.addSpeaker(new Speaker(speakersFragment.speaker4Field.getText().toString()),
+                1, false);
+
+        debate.setSides(0, SpeakersManager.SpeakerSide.Affirmative);
+        debate.setSides(1, SpeakersManager.SpeakerSide.Negative);
 
         //Add in the alarm sets
         debate.addAlarmSet("prep", prepAlerts);
@@ -244,12 +251,18 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
         debate.addAlarmSet("replySpeech", replySpeechAlerts);
 
         // Add in the stages
-        debate.addPrep("prep");
-        debate.addStage(mSpeaker1, "substantiveSpeech");
-        debate.addStage(mSpeaker3, "substantiveSpeech");
-        debate.addStage(mSpeaker2, "substantiveSpeech");
-        debate.addStage(mSpeaker4, "substantiveSpeech");
-        debate.addStage(mSpeaker3, "replySpeech");
-        debate.addStage(mSpeaker1, "replySpeech");
+        debate.addStage(new PrepTimer(), "prep");
+        debate.addStage(new SpeakerTimer(SpeakersManager.SpeakerSide.Affirmative, 1),
+                "substantiveSpeech");
+        debate.addStage(new SpeakerTimer(SpeakersManager.SpeakerSide.Negative, 1),
+                "substantiveSpeech");
+        debate.addStage(new SpeakerTimer(SpeakersManager.SpeakerSide.Affirmative, 2),
+                "substantiveSpeech");
+        debate.addStage(new SpeakerTimer(SpeakersManager.SpeakerSide.Negative, 2),
+                "substantiveSpeech");
+        debate.addStage(new SpeakerTimer(SpeakersManager.SpeakerSide.Negative, 0),
+                "replySpeech");
+        debate.addStage(new SpeakerTimer(SpeakersManager.SpeakerSide.Affirmative, 0),
+                "replySpeech");
     }
 }

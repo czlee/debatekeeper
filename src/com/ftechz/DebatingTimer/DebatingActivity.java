@@ -56,7 +56,6 @@ public class DebatingActivity extends Activity
                         break;
                     default:
                         break;
-
                 }
                 updateGui();
             }
@@ -147,7 +146,7 @@ public class DebatingActivity extends Activity
         unregisterReceiver(broadcastReceiver);
     }
 
-    DebatingTimerService.DebatingTimerServiceBinder mBinder;
+    private DebatingTimerService.DebatingTimerServiceBinder mBinder;
 
     /** Defines callbacks for service binding, passed to bindService() */
     private ServiceConnection mConnection = new ServiceConnection() {

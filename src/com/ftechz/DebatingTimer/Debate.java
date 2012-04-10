@@ -22,9 +22,9 @@ public class Debate
     private LinkedList<AlarmChain> mStages;
     private AlarmChain mCurrentStage;
     private Iterator<AlarmChain> mStageIterator;
+    private SpeakersManager mSpeakersManager;
     private Timer mTickTimer;
 
-    private ArrayList<Speaker> mSpeakers;
     private AlertManager mAlertManager;
     private HashMap<String, AlarmChain.AlarmChainAlert[]> mAlertSets;
 
@@ -34,43 +34,34 @@ public class Debate
     {
         mAlertManager = alertManager;
         mStages = new LinkedList<AlarmChain>();
-        mSpeakers = new ArrayList<Speaker>();
         mAlertSets = new HashMap<String, AlarmChain.AlarmChainAlert[]>();
         mStageIterator = mStages.iterator();
+        mSpeakersManager = new SpeakersManager();
         mTickTimer = new Timer();
     }
 
     /**
-     * Add a preparation stage
-     * This should usually be added before speakers
-     *
-     * @param alarmSetName
-     * @return
-     */
-    public boolean addPrep(String alarmSetName)
-    {
-        if(mAlertSets.containsKey(alarmSetName))
-        {
-            mStages.add(new PrepTimer(mAlertSets.get(alarmSetName)));
-            mStageIterator = mStages.iterator();
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Add a speaker stage to the debate
+     * Add a stage to the debate
      * Has to be added in the order of the debate
      *
-     * @param speaker   The speaker for this stage
+     * @param alarmChain
      * @param alarmSetName  The name of the alarmset specified when added to the debate
      * @return
      */
-    public boolean addStage(Speaker speaker, String alarmSetName)
+    public boolean addStage(AlarmChain alarmChain, String alarmSetName)
     {
         if(mAlertSets.containsKey(alarmSetName))
         {
-            mStages.add(new SpeakerTimer(speaker, mAlertSets.get(alarmSetName)));
+            alarmChain.addTimes(mAlertSets.get(alarmSetName));
+
+            if(alarmChain.getClass() == SpeakerTimer.class)
+            {
+                SpeakerTimer speakerTimer = (SpeakerTimer) alarmChain;
+                speakerTimer.setSpeakersManager(mSpeakersManager);
+            }
+
+            mStages.add(alarmChain);
+
             mStageIterator = mStages.iterator();
             return true;
         }
@@ -98,9 +89,14 @@ public class Debate
      * Will be used to allow grabbing of information about speakers later...
      * @param speaker
      */
-    public void addSpeaker(Speaker speaker)
+    public void addSpeaker(Speaker speaker, int team, boolean leader)
     {
-        mSpeakers.add(speaker);
+        mSpeakersManager.addSpeaker(speaker, team, leader);
+    }
+
+    public void setSides(int team, SpeakersManager.SpeakerSide side)
+    {
+        mSpeakersManager.setSides(team, side);
     }
 
     public boolean prepareNextSpeaker()

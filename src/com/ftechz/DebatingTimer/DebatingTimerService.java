@@ -17,7 +17,7 @@ import java.util.TimerTask;
 public class DebatingTimerService extends IntentService
 {
     public static final String BROADCAST_ACTION = "com.ftechz.DebatingTimer.update";
-    Intent intent;
+    private Intent intent;
 
     private Timer tickTimer;
     private final IBinder mBinder = new DebatingTimerServiceBinder();

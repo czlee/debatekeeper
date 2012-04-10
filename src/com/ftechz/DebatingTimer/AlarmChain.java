@@ -188,17 +188,7 @@ public abstract class AlarmChain extends TimerTask
     private void init(AlarmChainAlert[] alerts)
     {
         init();
-        if(alerts != null)
-        {
-            for(AlarmChainAlert alert : alerts){
-                if(alert.getClass() == FinishAlert.class)
-                {
-                    mFinishTime = alert.time;
-                }
-                mAlerts.add(alert);
-            }
-        }
-        sort(mAlerts, mAlertComparator);
+        addTimes(alerts);
     }
 
     // Assumed to execute every second
@@ -241,6 +231,22 @@ public abstract class AlarmChain extends TimerTask
         if(alert.getClass() == FinishAlert.class)
         {
             mFinishTime = alert.time;
+        }
+
+        sort(mAlerts, mAlertComparator);
+    }
+
+    public void addTimes(AlarmChainAlert[] alerts)
+    {
+        if(alerts != null)
+        {
+            for(AlarmChainAlert alert : alerts){
+                if(alert.getClass() == FinishAlert.class)
+                {
+                    mFinishTime = alert.time;
+                }
+                mAlerts.add(alert);
+            }
         }
 
         sort(mAlerts, mAlertComparator);

@@ -17,6 +17,11 @@ public class PrepTimer extends AlarmChain
 
     private PrepState mPrepState = PrepState.Setup;
 
+    public PrepTimer()
+    {
+        super();
+    }
+
     public PrepTimer(AlarmChainAlert alarmChainAlert[])
     {
         super(alarmChainAlert, true);

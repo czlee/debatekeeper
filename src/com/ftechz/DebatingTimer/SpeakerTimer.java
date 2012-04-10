@@ -13,35 +13,39 @@ public class SpeakerTimer extends AlarmChain
         warning,
         overtime
     }
-    
-    private Speaker mSpeaker;
+
+    private SpeakersManager mSpeakersManager;
+    private SpeakersManager.SpeakerSide mSpeakerSide;
+    private int mSpeakerNumber;
+
     private SpeakerState mSpeakerState = SpeakerState.setup;
 
-    public SpeakerTimer(Speaker speaker)
+    public SpeakerTimer(SpeakersManager.SpeakerSide speakerSide,
+                        int speakerNumber)
     {
         super();
-        mSpeaker = speaker;
+        mSpeakerSide = speakerSide;
+        mSpeakerNumber = speakerNumber;
     }
 
-    public SpeakerTimer(AlarmChainAlert alarmChainAlert[])
+    SpeakerTimer(SpeakersManager speakersManager,
+                    SpeakersManager.SpeakerSide speakerSide,
+                    int speakerNumber, AlarmChainAlert[] alarms)
     {
-        super(alarmChainAlert);
+        super();
+        mSpeakersManager = speakersManager;
+        mSpeakerSide = speakerSide;
+        mSpeakerNumber = speakerNumber;
     }
 
-    public SpeakerTimer(Speaker speaker, AlarmChainAlert alarmChainAlert[])
+    void setSpeakersManager(SpeakersManager speakersManager)
     {
-        super(alarmChainAlert);
-        mSpeaker = speaker;
-    }
-
-    public void setSpeaker(Speaker speaker)
-    {
-        mSpeaker = speaker;
+        mSpeakersManager = speakersManager;
     }
 
     public String getSpeakerName()
     {
-        return mSpeaker.getName();
+        return mSpeakersManager.getSpeaker(mSpeakerSide, mSpeakerNumber).getName();
     }
 
     @Override
@@ -109,7 +113,8 @@ public class SpeakerTimer extends AlarmChain
     @Override
     public SpeakerTimer newCopy()
     {
-        return new SpeakerTimer(mSpeaker, mAlerts.toArray(new AlarmChainAlert[mAlerts.size()]));
+        return new SpeakerTimer(mSpeakersManager, mSpeakerSide,
+                mSpeakerNumber, mAlerts.toArray(new AlarmChainAlert[mAlerts.size()]));
     }
 
     @Override

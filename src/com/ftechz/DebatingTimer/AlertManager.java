@@ -17,19 +17,18 @@ public class AlertManager
 
     private DebatingTimerService mDebatingTimerService;
     private NotificationManager mNotificationManager;
-    private Intent mNotificationIntent;
     private Notification mNotification;
     private PendingIntent mPendingIntent;
     private boolean mShowingNotification = false;
     private AlarmChain mStage;
-    PowerManager.WakeLock mWakeLock;
+    private PowerManager.WakeLock mWakeLock;
 
     public AlertManager(DebatingTimerService debatingTimerService)
     {
         mDebatingTimerService = debatingTimerService;
         mNotificationManager = (NotificationManager) debatingTimerService.getSystemService(
                 Context.NOTIFICATION_SERVICE);
-        mNotificationIntent = new Intent(debatingTimerService,
+        Intent mNotificationIntent = new Intent(debatingTimerService,
                 DebatingActivity.class);
         mPendingIntent = PendingIntent.getActivity(
                 debatingTimerService, 0, mNotificationIntent, 0);
