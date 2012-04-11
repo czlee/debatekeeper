@@ -17,14 +17,16 @@ public class PrepTimer extends AlarmChain
 
     private PrepState mPrepState = PrepState.Setup;
 
-    public PrepTimer()
+    public PrepTimer(String name)
     {
         super();
+        mName = name;
     }
 
-    public PrepTimer(AlarmChainAlert alarmChainAlert[])
+    public PrepTimer(String name, AlarmChainAlert alarmChainAlert[])
     {
         super(alarmChainAlert, true);
+        mName = name;
     }
 
     @Override
@@ -109,6 +111,6 @@ public class PrepTimer extends AlarmChain
     @Override
     public PrepTimer newCopy()
     {
-        return new PrepTimer(mAlerts.toArray(new AlarmChainAlert[mAlerts.size()]));
+        return new PrepTimer(mName, mAlerts.toArray(new AlarmChainAlert[mAlerts.size()]));
     }
 }

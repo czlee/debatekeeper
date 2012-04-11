@@ -116,7 +116,7 @@ public class DebatingActivity extends Activity
         if(mDebate != null)
         {
             mStateText.setText(mDebate.getStageStateText());
-            mSpeakerNameText.setText(mDebate.getTitleText());
+            mSpeakerNameText.setText(mDebate.getStageName());
             mCurrentTimeText.setText(secsToMinuteSecText(mDebate.getStageCurrentTime()));
             mNextTimeText.setText(secsToMinuteSecText(mDebate.getStageNextTime()));
             mFinalTimeText.setText(secsToMinuteSecText(mDebate.getStageFinalTime()));

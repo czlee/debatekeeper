@@ -37,10 +37,10 @@ public class TeamsManager {
 
     public int addTeam(Team team) {
         mTeams.add(team);
-        return mTeams.size()-1;
+        return mTeams.size() - 1;
     }
 
-    public void setSides(int teamIndex, SpeakerSide side) {
+    public void setSide(int teamIndex, SpeakerSide side) {
         mSpeakingTeams.put(side, mTeams.get(teamIndex));
     }
 }

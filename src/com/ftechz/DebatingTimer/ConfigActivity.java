@@ -24,11 +24,6 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
     private TabInfo mLastTab = null;
     private Button createDebateButton;
 
-    private Speaker mSpeaker1;      // Affirmative
-    private Speaker mSpeaker2;
-    private Speaker mSpeaker3;      // Negative
-    private Speaker mSpeaker4;
-
     private AlarmChain.AlarmChainAlert prepAlerts[];
     private AlarmChain.AlarmChainAlert substativeSpeechAlerts[];
     private AlarmChain.AlarmChainAlert replySpeechAlerts[];
@@ -244,8 +239,8 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
         int team1Index = debate.addTeam(team1);
         int team2Index = debate.addTeam(team2);
 
-        debate.setSides(team1Index, TeamsManager.SpeakerSide.Affirmative);
-        debate.setSides(team2Index, TeamsManager.SpeakerSide.Negative);
+        debate.setSide(team1Index, TeamsManager.SpeakerSide.Affirmative);
+        debate.setSide(team2Index, TeamsManager.SpeakerSide.Negative);
 
         //Add in the alarm sets
         debate.addAlarmSet("prep", prepAlerts);
@@ -253,18 +248,24 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
         debate.addAlarmSet("replySpeech", replySpeechAlerts);
 
         // Add in the stages
-        debate.addStage(new PrepTimer(), "prep");
-        debate.addStage(new SpeakerTimer(TeamsManager.SpeakerSide.Affirmative, 1),
+        debate.addStage(new PrepTimer("Preparation"), "prep");
+        debate.addStage(
+                new SpeakerTimer("1st Affirmative", TeamsManager.SpeakerSide.Affirmative, 1),
                 "substantiveSpeech");
-        debate.addStage(new SpeakerTimer(TeamsManager.SpeakerSide.Negative, 1),
+        debate.addStage(
+                new SpeakerTimer("1st Negative", TeamsManager.SpeakerSide.Negative, 1),
                 "substantiveSpeech");
-        debate.addStage(new SpeakerTimer(TeamsManager.SpeakerSide.Affirmative, 2),
+        debate.addStage(
+                new SpeakerTimer("2nd Affirmative", TeamsManager.SpeakerSide.Affirmative, 2),
                 "substantiveSpeech");
-        debate.addStage(new SpeakerTimer(TeamsManager.SpeakerSide.Negative, 2),
+        debate.addStage(
+                new SpeakerTimer("2nd Negative", TeamsManager.SpeakerSide.Negative, 2),
                 "substantiveSpeech");
-        debate.addStage(new SpeakerTimer(TeamsManager.SpeakerSide.Negative, 0),
+        debate.addStage(
+                new SpeakerTimer("Negative Leader's Reply", TeamsManager.SpeakerSide.Negative, 0),
                 "replySpeech");
-        debate.addStage(new SpeakerTimer(TeamsManager.SpeakerSide.Affirmative, 0),
+        debate.addStage(
+                new SpeakerTimer("Affirmative Leader's Reply", TeamsManager.SpeakerSide.Affirmative, 0),
                 "replySpeech");
     }
 }

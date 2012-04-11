@@ -20,19 +20,21 @@ public class SpeakerTimer extends AlarmChain
 
     private SpeakerState mSpeakerState = SpeakerState.setup;
 
-    public SpeakerTimer(TeamsManager.SpeakerSide speakerSide,
+    public SpeakerTimer(String name, TeamsManager.SpeakerSide speakerSide,
                         int speakerNumber)
     {
         super();
+        mName = name;
         mSpeakerSide = speakerSide;
         mSpeakerNumber = speakerNumber;
     }
 
-    SpeakerTimer(TeamsManager teamsManager,
+    SpeakerTimer(String name, TeamsManager teamsManager,
                     TeamsManager.SpeakerSide speakerSide,
                     int speakerNumber, AlarmChainAlert[] alarms)
     {
         super();
+        mName = name;
         mTeamsManager = teamsManager;
         mSpeakerSide = speakerSide;
         mSpeakerNumber = speakerNumber;
@@ -120,7 +122,7 @@ public class SpeakerTimer extends AlarmChain
     @Override
     public SpeakerTimer newCopy()
     {
-        return new SpeakerTimer(mTeamsManager, mSpeakerSide,
+        return new SpeakerTimer(mName, mTeamsManager, mSpeakerSide,
                 mSpeakerNumber, mAlerts.toArray(new AlarmChainAlert[mAlerts.size()]));
     }
 

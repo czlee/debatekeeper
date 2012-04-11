@@ -84,8 +84,8 @@ public class Debate {
         return mTeamsManager.addTeam(team);
     }
 
-    public void setSides(int team, TeamsManager.SpeakerSide side) {
-        mTeamsManager.setSides(team, side);
+    public void setSide(int team, TeamsManager.SpeakerSide side) {
+        mTeamsManager.setSide(team, side);
     }
 
     public boolean prepareNextSpeaker() {
@@ -151,9 +151,9 @@ public class Debate {
         }
     }
 
-    public String getTitleText() {
+    public String getStageName() {
         if (mCurrentStage != null) {
-            return mCurrentStage.getTitleText();
+            return mCurrentStage.getName();
         }
         return "";
     }
