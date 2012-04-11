@@ -233,17 +233,19 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
 
         // Set up speakers
         ConfigSpeakersFragment speakersFragment = (ConfigSpeakersFragment) mMapTabInfo.get("Speakers").mFragment;
-        debate.addSpeaker(new Speaker(speakersFragment.speaker1Field.getText().toString()),
-                0, true);
-        debate.addSpeaker(new Speaker(speakersFragment.speaker2Field.getText().toString()),
-                0, false);
-        debate.addSpeaker(new Speaker(speakersFragment.speaker3Field.getText().toString()),
-                1, true);
-        debate.addSpeaker(new Speaker(speakersFragment.speaker4Field.getText().toString()),
-                1, false);
+        Team team1 = new Team();
+        team1.addMember(new Speaker(speakersFragment.speaker1Field.getText().toString()), true);
+        team1.addMember(new Speaker(speakersFragment.speaker2Field.getText().toString()), false);
+        
+        Team team2 = new Team();
+        team2.addMember(new Speaker(speakersFragment.speaker3Field.getText().toString()), true);
+        team2.addMember(new Speaker(speakersFragment.speaker4Field.getText().toString()), false);
 
-        debate.setSides(0, SpeakersManager.SpeakerSide.Affirmative);
-        debate.setSides(1, SpeakersManager.SpeakerSide.Negative);
+        int team1Index = debate.addTeam(team1);
+        int team2Index = debate.addTeam(team2);
+
+        debate.setSides(team1Index, TeamsManager.SpeakerSide.Affirmative);
+        debate.setSides(team2Index, TeamsManager.SpeakerSide.Negative);
 
         //Add in the alarm sets
         debate.addAlarmSet("prep", prepAlerts);
@@ -252,17 +254,17 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
 
         // Add in the stages
         debate.addStage(new PrepTimer(), "prep");
-        debate.addStage(new SpeakerTimer(SpeakersManager.SpeakerSide.Affirmative, 1),
+        debate.addStage(new SpeakerTimer(TeamsManager.SpeakerSide.Affirmative, 1),
                 "substantiveSpeech");
-        debate.addStage(new SpeakerTimer(SpeakersManager.SpeakerSide.Negative, 1),
+        debate.addStage(new SpeakerTimer(TeamsManager.SpeakerSide.Negative, 1),
                 "substantiveSpeech");
-        debate.addStage(new SpeakerTimer(SpeakersManager.SpeakerSide.Affirmative, 2),
+        debate.addStage(new SpeakerTimer(TeamsManager.SpeakerSide.Affirmative, 2),
                 "substantiveSpeech");
-        debate.addStage(new SpeakerTimer(SpeakersManager.SpeakerSide.Negative, 2),
+        debate.addStage(new SpeakerTimer(TeamsManager.SpeakerSide.Negative, 2),
                 "substantiveSpeech");
-        debate.addStage(new SpeakerTimer(SpeakersManager.SpeakerSide.Negative, 0),
+        debate.addStage(new SpeakerTimer(TeamsManager.SpeakerSide.Negative, 0),
                 "replySpeech");
-        debate.addStage(new SpeakerTimer(SpeakersManager.SpeakerSide.Affirmative, 0),
+        debate.addStage(new SpeakerTimer(TeamsManager.SpeakerSide.Affirmative, 0),
                 "replySpeech");
     }
 }

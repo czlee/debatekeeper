@@ -6,10 +6,8 @@ import java.util.*;
  * Debate class
  * In charge of the flow of stages (speakers) in the debate
  */
-public class Debate
-{
-    public enum DebateStatus
-    {
+public class Debate {
+    public enum DebateStatus {
         setup,
         speaking,
         paused,
@@ -22,7 +20,7 @@ public class Debate
     private LinkedList<AlarmChain> mStages;
     private AlarmChain mCurrentStage;
     private Iterator<AlarmChain> mStageIterator;
-    private SpeakersManager mSpeakersManager;
+    private TeamsManager mTeamsManager;
     private Timer mTickTimer;
 
     private AlertManager mAlertManager;
@@ -30,13 +28,12 @@ public class Debate
 
     //
     // Methods
-    public Debate(AlertManager alertManager)
-    {
+    public Debate(AlertManager alertManager) {
         mAlertManager = alertManager;
         mStages = new LinkedList<AlarmChain>();
         mAlertSets = new HashMap<String, AlarmChain.AlarmChainAlert[]>();
         mStageIterator = mStages.iterator();
-        mSpeakersManager = new SpeakersManager();
+        mTeamsManager = new TeamsManager();
         mTickTimer = new Timer();
     }
 
@@ -45,19 +42,16 @@ public class Debate
      * Has to be added in the order of the debate
      *
      * @param alarmChain
-     * @param alarmSetName  The name of the alarmset specified when added to the debate
+     * @param alarmSetName The name of the alarmset specified when added to the debate
      * @return
      */
-    public boolean addStage(AlarmChain alarmChain, String alarmSetName)
-    {
-        if(mAlertSets.containsKey(alarmSetName))
-        {
+    public boolean addStage(AlarmChain alarmChain, String alarmSetName) {
+        if (mAlertSets.containsKey(alarmSetName)) {
             alarmChain.addTimes(mAlertSets.get(alarmSetName));
 
-            if(alarmChain.getClass() == SpeakerTimer.class)
-            {
+            if (alarmChain.getClass() == SpeakerTimer.class) {
                 SpeakerTimer speakerTimer = (SpeakerTimer) alarmChain;
-                speakerTimer.setSpeakersManager(mSpeakersManager);
+                speakerTimer.setSpeakersManager(mTeamsManager);
             }
 
             mStages.add(alarmChain);
@@ -74,10 +68,8 @@ public class Debate
      * @param name
      * @param alarmSet
      */
-    public void addAlarmSet(String name, AlarmChain.AlarmChainAlert[] alarmSet)
-    {
-        for(AlarmChain.AlarmChainAlert alarm : alarmSet)
-        {
+    public void addAlarmSet(String name, AlarmChain.AlarmChainAlert[] alarmSet) {
+        for (AlarmChain.AlarmChainAlert alarm : alarmSet) {
             alarm.setAlertManager(mAlertManager);
         }
 
@@ -85,43 +77,33 @@ public class Debate
     }
 
     /**
-     * Add a speaker to the debate
-     * Will be used to allow grabbing of information about speakers later...
-     * @param speaker
+     *
+     * @param team
      */
-    public void addSpeaker(Speaker speaker, int team, boolean leader)
-    {
-        mSpeakersManager.addSpeaker(speaker, team, leader);
+    public int addTeam(Team team) {
+        return mTeamsManager.addTeam(team);
     }
 
-    public void setSides(int team, SpeakersManager.SpeakerSide side)
-    {
-        mSpeakersManager.setSides(team, side);
+    public void setSides(int team, TeamsManager.SpeakerSide side) {
+        mTeamsManager.setSides(team, side);
     }
 
-    public boolean prepareNextSpeaker()
-    {
-        if(mStageIterator.hasNext())
-        {
-            if(mCurrentStage != null)
-            {
+    public boolean prepareNextSpeaker() {
+        if (mStageIterator.hasNext()) {
+            if (mCurrentStage != null) {
                 mCurrentStage.cancel();
             }
             mCurrentStage = mStageIterator.next();
             return true;
-        }
-        else
-        {
+        } else {
             mCurrentStage = null;
         }
 
         return false;
     }
 
-    public void startNextSpeaker()
-    {
-        if(mCurrentStage != null)
-        {
+    public void startNextSpeaker() {
+        if (mCurrentStage != null) {
             mTickTimer.purge();
             mCurrentStage.start(mTickTimer);
             mAlertManager.hideNotification();   // Hide if already showing
@@ -129,25 +111,19 @@ public class Debate
         }
     }
 
-    public void stop()
-    {
-        if(getDebateStatus() == DebateStatus.speaking)
-        {
-            if (mCurrentStage != null)
-            {
+    public void stop() {
+        if (getDebateStatus() == DebateStatus.speaking) {
+            if (mCurrentStage != null) {
                 mAlertManager.hideNotification();
                 mCurrentStage.cancel();
             }
         }
     }
 
-    public boolean start()
-    {
-        if((getDebateStatus() == DebateStatus.setup) ||
-                (getDebateStatus() == DebateStatus.transitioning))
-        {
-            if(prepareNextSpeaker())
-            {
+    public boolean start() {
+        if ((getDebateStatus() == DebateStatus.setup) ||
+                (getDebateStatus() == DebateStatus.transitioning)) {
+            if (prepareNextSpeaker()) {
                 startNextSpeaker();
                 return true;
             }
@@ -156,89 +132,67 @@ public class Debate
     }
 
     public DebateStatus getDebateStatus() {
-        if(mCurrentStage != null)
-        {
-            switch (mCurrentStage.getRunningState())
-            {
+        if (mCurrentStage != null) {
+            switch (mCurrentStage.getRunningState()) {
                 case Running:
                     return DebateStatus.speaking;
                 case Paused:
                     return DebateStatus.paused;
                 case Finished:
-                    if(!mStageIterator.hasNext())
-                    {
+                    if (!mStageIterator.hasNext()) {
                         return DebateStatus.finished;
                     }
                 case Stopped:
                 default:
                     return DebateStatus.transitioning;
             }
-        }
-        else
-        {
+        } else {
             return DebateStatus.setup;
         }
     }
 
-    public String getTitleText()
-    {
-        if(mCurrentStage != null)
-        {
+    public String getTitleText() {
+        if (mCurrentStage != null) {
             return mCurrentStage.getTitleText();
         }
         return "";
     }
 
-    public long getStageCurrentTime()
-    {
-        if(mCurrentStage != null)
-        {
+    public long getStageCurrentTime() {
+        if (mCurrentStage != null) {
             return mCurrentStage.getSeconds();
-        }
-        else
-        {
+        } else {
             return 0;
         }
     }
 
-    public long getStageNextTime()
-    {
-        if(mCurrentStage != null)
-        {
+    public long getStageNextTime() {
+        if (mCurrentStage != null) {
             return mCurrentStage.getNextTime();
-        }
-        else
-        {
+        } else {
             return 0;
         }
     }
 
-    public long getStageFinalTime()
-    {
-        if(mCurrentStage != null)
-        {
+    public long getStageFinalTime() {
+        if (mCurrentStage != null) {
             return mCurrentStage.getFinalTime();
-        }
-        else
-        {
+        } else {
             return 0;
         }
     }
-    
-    public String getStageStateText()
-    {
-        if(mCurrentStage != null) {
+
+    public String getStageStateText() {
+        if (mCurrentStage != null) {
             return mCurrentStage.getStateText();
         } else {
             return "";
         }
     }
 
-    public void reset()
-    {
+    public void reset() {
         // Stop current stage timer, if on
-        if(mCurrentStage != null)
-        {
+        if (mCurrentStage != null) {
             mCurrentStage.cancel();
         }
         mCurrentStage = null;
@@ -249,8 +203,7 @@ public class Debate
         mAlertManager.hideNotification();
 
         ListIterator<AlarmChain> stageIterator = mStages.listIterator();
-        while(stageIterator.hasNext())
-        {
+        while (stageIterator.hasNext()) {
             AlarmChain stage = stageIterator.next();
             stage.cancel();
             stageIterator.set(stage.newCopy());
@@ -259,10 +212,8 @@ public class Debate
         mStageIterator = mStages.iterator();
     }
 
-    public void release()
-    {
-        if(mAlertManager != null)
-        {
+    public void release() {
+        if (mAlertManager != null) {
             mAlertManager.hideNotification();
         }
 
@@ -275,18 +226,14 @@ public class Debate
         mStages = null;
     }
 
-    public void resume()
-    {
-        if(mCurrentStage != null)
-        {
+    public void resume() {
+        if (mCurrentStage != null) {
             mCurrentStage.resume();
         }
     }
 
-    public void pause()
-    {
-        if(mCurrentStage != null)
-        {
+    public void pause() {
+        if (mCurrentStage != null) {
             mCurrentStage.pause();
         }
     }

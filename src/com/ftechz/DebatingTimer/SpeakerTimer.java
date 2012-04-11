@@ -14,13 +14,13 @@ public class SpeakerTimer extends AlarmChain
         overtime
     }
 
-    private SpeakersManager mSpeakersManager;
-    private SpeakersManager.SpeakerSide mSpeakerSide;
+    private TeamsManager mTeamsManager;
+    private TeamsManager.SpeakerSide mSpeakerSide;
     private int mSpeakerNumber;
 
     private SpeakerState mSpeakerState = SpeakerState.setup;
 
-    public SpeakerTimer(SpeakersManager.SpeakerSide speakerSide,
+    public SpeakerTimer(TeamsManager.SpeakerSide speakerSide,
                         int speakerNumber)
     {
         super();
@@ -28,24 +28,31 @@ public class SpeakerTimer extends AlarmChain
         mSpeakerNumber = speakerNumber;
     }
 
-    SpeakerTimer(SpeakersManager speakersManager,
-                    SpeakersManager.SpeakerSide speakerSide,
+    SpeakerTimer(TeamsManager teamsManager,
+                    TeamsManager.SpeakerSide speakerSide,
                     int speakerNumber, AlarmChainAlert[] alarms)
     {
         super();
-        mSpeakersManager = speakersManager;
+        mTeamsManager = teamsManager;
         mSpeakerSide = speakerSide;
         mSpeakerNumber = speakerNumber;
     }
 
-    void setSpeakersManager(SpeakersManager speakersManager)
+    void setSpeakersManager(TeamsManager teamsManager)
     {
-        mSpeakersManager = speakersManager;
+        mTeamsManager = teamsManager;
     }
 
     public String getSpeakerName()
     {
-        return mSpeakersManager.getSpeaker(mSpeakerSide, mSpeakerNumber).getName();
+        Speaker speaker = mTeamsManager.getSpeaker(mSpeakerSide, mSpeakerNumber);
+        if(speaker != null) {
+            return speaker.getName();
+        }
+        else
+        {
+            return "";
+        }
     }
 
     @Override
@@ -113,7 +120,7 @@ public class SpeakerTimer extends AlarmChain
     @Override
     public SpeakerTimer newCopy()
     {
-        return new SpeakerTimer(mSpeakersManager, mSpeakerSide,
+        return new SpeakerTimer(mTeamsManager, mSpeakerSide,
                 mSpeakerNumber, mAlerts.toArray(new AlarmChainAlert[mAlerts.size()]));
     }
 
