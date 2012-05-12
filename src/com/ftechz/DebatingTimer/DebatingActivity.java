@@ -105,19 +105,19 @@ public class DebatingActivity extends Activity {
 		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	}
 
-	private void updateButtonText() {
+	private void updateButtons() {
 		switch (mDebate.getDebateStatus()) {
 		case startOfSpeaker:
-		    setButtonText(R.string.startTimer, R.string.nullButtonText, R.string.nextSpeaker);
+		    setButtons(R.string.startTimer, R.string.nullButtonText, R.string.nextSpeaker);
 			break;
 		case timerRunning:
-            setButtonText(R.string.stopTimer, R.string.nullButtonText, R.string.nullButtonText);
+		    setButtons(R.string.stopTimer, R.string.nullButtonText, R.string.nullButtonText);
 			break;
 		case timerStoppedByAlarm:
-            setButtonText(R.string.resumeTimerAfterAlarm, R.string.nullButtonText, R.string.nullButtonText);
+		    setButtons(R.string.resumeTimerAfterAlarm, R.string.nullButtonText, R.string.nullButtonText);
 			break;
 		case timerStoppedByUser:
-            setButtonText(R.string.resumeTimerAfterUserStop, R.string.resetTimer, R.string.nextSpeaker);
+		    setButtons(R.string.resumeTimerAfterUserStop, R.string.resetTimer, R.string.nextSpeaker);
 			break;
 		case endOfDebate:
 			break;
@@ -126,10 +126,18 @@ public class DebatingActivity extends Activity {
 		}
 	}
 	
-	private void setButtonText(int leftResid, int centreResid, int rightResid) {
-	    leftControlButton.setText(leftResid);
-	    centreControlButton.setText(centreResid);
-	    rightControlButton.setText(rightResid);
+	// Sets the text and visibility of all buttons
+	private void setButtons(int leftResid, int centreResid, int rightResid) {
+	    setButton(leftControlButton, leftResid);
+	    setButton(centreControlButton, centreResid);
+	    setButton(rightControlButton, rightResid);
+	}
+	
+	// Sets the text and visibility of a button
+	private void setButton(Button button, int resid) {
+	    button.setText(resid);
+	    int visibility = (resid == R.string.nullButtonText) ? View.GONE : View.VISIBLE;
+	    button.setVisibility(visibility);
 	}
 
 	@Override
@@ -156,7 +164,7 @@ public class DebatingActivity extends Activity {
 			mFinalTimeText.setText(secsToMinuteSecText(mDebate
 					.getStageFinalTime()));
 
-			updateButtonText();
+			updateButtons();
 		}
 	}
 
