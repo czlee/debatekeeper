@@ -10,15 +10,14 @@
 
     <application android:label="@string/app_name" >
         <activity android:name=".DebatingActivity"
-                  android:label="@string/app_name"
-                  android:theme="@android:style/Theme.Holo.NoActionBar">
-        </activity>
-        <activity android:name=".ConfigActivity"
                   android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".ConfigActivity"
+                  android:label="@string/app_name">
         </activity>
         <service android:name=".DebatingTimerService"/>
     </application>

@@ -16,7 +16,12 @@ import android.widget.TabHost.TabContentFactory;
 import java.util.HashMap;
 
 /**
- * Activity for configuring a debate
+ * This activity allows the user to configure a debate.
+ * 
+ * TODO: In the future, this Activity should be subordinate to DebatingActivity.
+ * It should allow the user to:
+ *   - Change the current configuration (which should be part of the saved state for DebatingActivity)
+ *   - Define new configurations and remove configurations
  */
 public class ConfigActivity extends FragmentActivity implements TabHost.OnTabChangeListener {
     private TabHost mTabHost;
@@ -187,7 +192,7 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
         }
     };
 
-
+    // TODO: Move this to DebatingActivity and delete it from here
     public void setupDebate(Debate debate)
     {
 //        prepAlerts = new AlarmChain.AlarmChainAlert[] {

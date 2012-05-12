@@ -52,14 +52,14 @@
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:text="@string/startTimer"
-                android:id="@+id/startTimerButton"
+                android:id="@+id/leftControlButton"
                 android:layout_weight="1"
                 />
         <Button
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:text="@string/restartDebate"
-                android:id="@+id/resetDebateButton"
+                android:id="@+id/rightControlButton"
                 android:layout_weight="1"
                 />
     </LinearLayout>

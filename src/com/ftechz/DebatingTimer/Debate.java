@@ -4,7 +4,7 @@ import java.util.*;
 
 /**
  * Debate class
- * In charge of the flow of stages (speakers) in the debate
+ * This class manages a debate, i.e. a series of AlarmChains.
  */
 public class Debate {
     public enum DebateStatus {
