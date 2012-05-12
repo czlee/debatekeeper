@@ -200,7 +200,7 @@ public class Debate {
         
     }
     
-    // TODO This method is not actually currently used, and may not even be correct
+    // TODO: This method is not actually currently used, and may not even be correct
     public void resetDebate() {
         // Stop current stage timer, if on
         if (mCurrentStage != null) {

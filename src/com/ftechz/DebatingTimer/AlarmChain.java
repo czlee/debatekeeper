@@ -16,7 +16,7 @@ import static java.util.Collections.sort;
  * It keeps the time and calls alerts at associated alert times
  * When last alert has been reached, it continues to check the last alert for match
  */
-// TODO Make a new passive info class AlarmChainInfo, so that AlarmChain is instantitated
+// TODO: Make a new passive info class AlarmChainInfo, so that AlarmChain is instantitated
 // from an AlarmChainInfo and is instantiated only when it is needed.
 // REASON: TimerTask can't be scheduled more than once, which wreaks havoc if we need to
 // restart a speaker or go back to a previous speaker.
@@ -331,8 +331,10 @@ public abstract class AlarmChain extends TimerTask {
         return mName;
     }
     
-    // TODO this runs all the time, even when the timer is not actually incrementing.
+    // TODO: This runs all the time, even when the timer is not actually incrementing.
     // Should find a neater way to implement this timer so it doesn't run when it doesn't need to.
+    // The best way is probably to make AlarmChain exist only when needed, see the to-do at the top
+    // of this file.
     public void setTimer(Timer timer) {
         if (mIsScheduled == false) {
             onStart();
