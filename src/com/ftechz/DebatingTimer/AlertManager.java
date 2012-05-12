@@ -7,10 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.PowerManager;
+import android.media.MediaPlayer;
 
 /**
 *
 */
+// TODO: Reduce notifications to a single ongoing one that exists when and only when a timer
+// is running.
 public class AlertManager
 {
     public static final int NOTIFICATION_ID = 1;
@@ -22,6 +25,7 @@ public class AlertManager
     private boolean mShowingNotification = false;
     private AlarmChain mStage;
     private PowerManager.WakeLock mWakeLock;
+    private MediaPlayer mMediaPlayer;
 
     public AlertManager(DebatingTimerService debatingTimerService)
     {
@@ -79,13 +83,34 @@ public class AlertManager
         }
     }
 
-    public void triggerAlert(int soundId)
+    public void triggerAlert(int soundResid)
     {
         updateNotification();
         if(mShowingNotification)
         {
-            mNotification.sound = Uri.parse("android.resource://com.ftechz.DebatingTimer/" + soundId);
+            //mNotification.sound = Uri.parse("android.resource://com.ftechz.DebatingTimer/" + soundId);
             mNotificationManager.notify(NOTIFICATION_ID, mNotification);
+            
+            if (mMediaPlayer != null) {
+                mMediaPlayer.release();
+                mMediaPlayer = null;
+            }
+            // This could be inefficient -- MediaPlayer.create() blocks until the file is loaded, which
+            // supposedly can take a while.  But it seems to be working fine, so we'll just leave it
+            // here until it becomes a problem...
+            mMediaPlayer = MediaPlayer.create(mDebatingTimerService.getApplicationContext(), soundResid);
+            mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    mp.release();
+                    mp = null;
+                }
+            });
+            // Set to maximum volume possible (!)
+            mMediaPlayer.setVolume((float) 1, (float) 1);
+            mMediaPlayer.start();
+            
         }
     }
 }

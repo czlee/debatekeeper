@@ -133,7 +133,7 @@ public class DebatingActivity extends Activity {
 	    setButton(rightControlButton, rightResid);
 	}
 	
-	// Sets the text and visibility of a button
+	// Sets the text and visibility of a single button
 	private void setButton(Button button, int resid) {
 	    button.setText(resid);
 	    int visibility = (resid == R.string.nullButtonText) ? View.GONE : View.VISIBLE;
