@@ -338,11 +338,10 @@ public abstract class AlarmChain extends TimerTask {
     public void setTimer(Timer timer) {
         if (mIsScheduled == false) {
             onStart();
-            // TODO change this to scheduleAtFixedRate
             String hashCodesString;
             hashCodesString = String.format("Hash codes: timer is %x, task is %x", timer.hashCode(), this.hashCode());
             Log.i(this.getClass().getSimpleName(), hashCodesString);
-            timer.schedule(this, 1000 , 1000);
+            timer.scheduleAtFixedRate(this, 500, 500);
             mIsScheduled = true;
         }
     }
