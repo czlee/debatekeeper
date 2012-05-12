@@ -8,11 +8,11 @@ import java.util.*;
  */
 public class Debate {
     public enum DebateStatus {
-        setup,
-        speaking,
-        paused,
-        transitioning,
-        finished
+        startOfSpeaker,      // After a speaker's screen is loaded, but before the timer starts
+        timerRunning,        // While the timer is running (including overtime)
+        timerStoppedByAlarm, // The timer is paused by an alarm
+        timerStoppedByUser,  // The timer is stopped by the user
+        endOfDebate          // After the very last speaker, i.e. the debate is over
     }
 
     //
@@ -42,7 +42,7 @@ public class Debate {
      * Has to be added in the order of the debate
      *
      * @param alarmChain
-     * @param alarmSetName The name of the alarmset specified when added to the debate
+     * @param alarmSetName The name of the alarmSet specified when added to the debate
      * @return
      */
     public boolean addStage(AlarmChain alarmChain, String alarmSetName) {
@@ -94,6 +94,7 @@ public class Debate {
                 mCurrentStage.cancel();
             }
             mCurrentStage = mStageIterator.next();
+            mCurrentStage.resetState();
             return true;
         } else {
             mCurrentStage = null;
@@ -102,31 +103,26 @@ public class Debate {
         return false;
     }
 
-    public void startNextSpeaker() {
-        if (mCurrentStage != null) {
-            mTickTimer.purge();
-            mCurrentStage.start(mTickTimer);
-            mAlertManager.hideNotification();   // Hide if already showing
-            mAlertManager.showNotification(mCurrentStage);
-        }
-    }
-
     public void stop() {
-        if (getDebateStatus() == DebateStatus.speaking) {
+        if (getDebateStatus() == DebateStatus.timerRunning) {
             if (mCurrentStage != null) {
                 mAlertManager.hideNotification();
-                mCurrentStage.cancel();
+                mCurrentStage.stop();
             }
         }
     }
 
     public boolean start() {
-        if ((getDebateStatus() == DebateStatus.setup) ||
-                (getDebateStatus() == DebateStatus.transitioning)) {
-            if (prepareNextSpeaker()) {
-                startNextSpeaker();
-                return true;
-            }
+        if ((getDebateStatus() == DebateStatus.startOfSpeaker) ||
+                (getDebateStatus() == DebateStatus.timerStoppedByUser)) {
+                if (mCurrentStage != null) {
+                    mTickTimer.purge();
+                    mCurrentStage.setTimer(mTickTimer);
+                    mCurrentStage.start();
+                    mAlertManager.hideNotification();   // Hide if already showing
+                    mAlertManager.showNotification(mCurrentStage);
+                }
+            return true;
         }
         return false;
     }
@@ -135,19 +131,17 @@ public class Debate {
         if (mCurrentStage != null) {
             switch (mCurrentStage.getRunningState()) {
                 case Running:
-                    return DebateStatus.speaking;
-                case Paused:
-                    return DebateStatus.paused;
-                case Finished:
-                    if (!mStageIterator.hasNext()) {
-                        return DebateStatus.finished;
-                    }
-                case Stopped:
+                    return DebateStatus.timerRunning;
+                case StoppedByAlarm:
+                    return DebateStatus.timerStoppedByAlarm;
+                case StoppedByUser:
+                    return DebateStatus.timerStoppedByUser;
+                case BeforeStart:
                 default:
-                    return DebateStatus.transitioning;
+                    return DebateStatus.startOfSpeaker;
             }
         } else {
-            return DebateStatus.setup;
+            return DebateStatus.startOfSpeaker;
         }
     }
 
@@ -190,7 +184,24 @@ public class Debate {
         }
     }
 
-    public void reset() {
+    public void resetSpeaker() {
+        // If there is a current timer, stop and reset it
+        if (mCurrentStage != null) {
+            mCurrentStage.resetState();
+        }
+        
+        // If there is no current timer, retrieve the first
+        else {
+            mStageIterator = mStages.iterator();
+            prepareNextSpeaker(); // This sets mCurrentStage
+        }
+        
+        mAlertManager.hideNotification(); // if it exists
+        
+    }
+    
+    // TODO This method is not actually currently used, and may not even be correct
+    public void resetDebate() {
         // Stop current stage timer, if on
         if (mCurrentStage != null) {
             mCurrentStage.cancel();

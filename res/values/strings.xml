@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Debating Timer</string>
-    <string name="startTimer">Start debate</string>
+    <string name="startTimer">Start</string>
     <string name="stopTimer">Stop</string>
-    <string name="startNext">Start next</string>
-    <string name="resumeTimer">Resume</string>
-    <string name="restartDebate">Restart debate</string>
+    <string name="resumeTimerAfterAlarm">Resume</string>
+    <string name="resumeTimerAfterUserStop">Resume</string>
+    <string name="resetTimer">Reset</string>
+    <string name="nextSpeaker">Next Speaker</string>
+    <string name="nullButtonText">&lt;None&gt;</string>
     <string name="ticker_text">Speaker started</string>
     <string name="notification_title">Debating Timer</string>
     <string name="createDebate">Create debate</string>

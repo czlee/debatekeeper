@@ -11,9 +11,15 @@ import static java.util.Collections.sort;
 
 /**
  * AlarmChain class
- * Keeps the time and calls alerts at associated alert times
+ * This class manages a single contiguous ordered series of alerts,
+ * for example, a single speaker in a debate or a single period of a match.
+ * It keeps the time and calls alerts at associated alert times
  * When last alert has been reached, it continues to check the last alert for match
  */
+// TODO Make a new passive info class AlarmChainInfo, so that AlarmChain is instantitated
+// from an AlarmChainInfo and is instantiated only when it is needed.
+// REASON: TimerTask can't be scheduled more than once, which wreaks havoc if we need to
+// restart a speaker or go back to a previous speaker.
 public abstract class AlarmChain extends TimerTask {
     //
     // Classes
@@ -125,14 +131,15 @@ public abstract class AlarmChain extends TimerTask {
     }
 
     public enum RunningState {
-        Stopped,
+        BeforeStart,
         Running,
-        Paused,
-        Finished
+        StoppedByUser,    // "StoppedByUser" means it was stopped by the user
+        StoppedByAlarm    // "StoppedByAlarm" means it was stopped by an alarm
     }
 
     //
     // Members
+    private boolean mIsScheduled = false;
     private long mSecondCounter;
     protected ArrayList<AlarmChainAlert> mAlerts;
 
@@ -143,7 +150,7 @@ public abstract class AlarmChain extends TimerTask {
     protected boolean mCountdown = false;
     protected long mFinishTime = 0;
 
-    protected RunningState mRunningState = RunningState.Stopped;
+    protected RunningState mRunningState = RunningState.BeforeStart;
 
     //
     // Methods
@@ -265,7 +272,9 @@ public abstract class AlarmChain extends TimerTask {
 
     public abstract String getStateText();
 
+    // Resets the timer to zero
     public void resetState() {
+        mRunningState = RunningState.BeforeStart;
         mSecondCounter = 0;
         mAlertNumber = 0;
         for (AlarmChainAlert alert : mAlerts) {
@@ -279,18 +288,19 @@ public abstract class AlarmChain extends TimerTask {
 
     // Required for rescheduling...
     public abstract AlarmChain newCopy();
-
-    public void start(Timer timer) {
+    
+    public void start() {
         mRunningState = RunningState.Running;
-        resetState();
-        onStart();
-        timer.schedule(this, 1000, 1000);
     }
 
     public void pause() {
-        mRunningState = RunningState.Paused;
+        mRunningState = RunningState.StoppedByAlarm;
     }
 
+    public void stop() {
+        mRunningState = RunningState.StoppedByUser;
+    }
+    
     public void resume() {
         mRunningState = RunningState.Running;
     }
@@ -309,7 +319,7 @@ public abstract class AlarmChain extends TimerTask {
 
     @Override
     public boolean cancel() {
-        mRunningState = RunningState.Finished;
+        mRunningState = RunningState.StoppedByUser;
         return super.cancel();
     }
 
@@ -319,5 +329,19 @@ public abstract class AlarmChain extends TimerTask {
 
     public String getName() {
         return mName;
+    }
+    
+    // TODO this runs all the time, even when the timer is not actually incrementing.
+    // Should find a neater way to implement this timer so it doesn't run when it doesn't need to.
+    public void setTimer(Timer timer) {
+        if (mIsScheduled == false) {
+            onStart();
+            // TODO change this to scheduleAtFixedRate
+            String hashCodesString;
+            hashCodesString = String.format("Hash codes: timer is %x, task is %x", timer.hashCode(), this.hashCode());
+            Log.i(this.getClass().getSimpleName(), hashCodesString);
+            timer.schedule(this, 1000 , 1000);
+            mIsScheduled = true;
+        }
     }
 }

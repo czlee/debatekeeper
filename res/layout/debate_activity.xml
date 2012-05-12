@@ -48,6 +48,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             >
+
         <Button
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
@@ -56,12 +57,18 @@
                 android:layout_weight="1"
                 />
         <Button
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:text="@string/restartDebate"
-                android:id="@+id/rightControlButton"
-                android:layout_weight="1"
-                />
+            android:id="@+id/centreControlButton"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/resetTimer" />
+        <Button
+            android:id="@+id/rightControlButton"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/nextSpeaker" />
+
     </LinearLayout>
 
 </LinearLayout>

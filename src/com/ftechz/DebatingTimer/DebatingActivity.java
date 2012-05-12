@@ -21,7 +21,14 @@ public class DebatingActivity extends Activity {
 	private TextView mCurrentTimeText;
 	private TextView mNextTimeText;
 	private TextView mFinalTimeText;
+	
+	// The buttons are allocated as follows:
+	// When at startOfSpeaker: [Start] [Next Speaker]
+	// When running:           [Stop]
+	// When stopped by user:   [Resume] [Restart] [Next Speaker]
+	// When stopped by alarm:  [Resume]
 	private Button leftControlButton;
+	private Button centreControlButton;
 	private Button rightControlButton;
 
 	private Debate mDebate;
@@ -37,20 +44,21 @@ public class DebatingActivity extends Activity {
 		mNextTimeText = (TextView) findViewById(R.id.nextTime);
 		mFinalTimeText = (TextView) findViewById(R.id.finalTime);
 		leftControlButton = (Button) findViewById(R.id.leftControlButton);
+		centreControlButton = (Button) findViewById(R.id.centreControlButton);
 		rightControlButton = (Button) findViewById(R.id.rightControlButton);
 
 		leftControlButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View pV) {
 				switch (mDebate.getDebateStatus()) {
-				case setup:
-				case transitioning:
+				case startOfSpeaker:
 					mDebate.start();
 					break;
-				case speaking:
+				case timerRunning:
 					mDebate.stop();
 					break;
-				case paused:
+				case timerStoppedByAlarm:
+				case timerStoppedByUser:
 					mDebate.resume();
 					break;
 				default:
@@ -59,13 +67,35 @@ public class DebatingActivity extends Activity {
 				updateGui();
 			}
 		});
+		
+		centreControlButton.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View pV) {
+                switch (mDebate.getDebateStatus()) {
+                case timerStoppedByUser:
+                    mDebate.resetSpeaker();
+                    break;
+                default:
+                    break;
+                }
+                updateGui();
+            }
+        });
 
 		rightControlButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View pV) {
-				mDebate.reset();
-				updateGui();
-			}
+			    switch (mDebate.getDebateStatus()) {
+			    case startOfSpeaker:
+			    case timerStoppedByUser:
+			        mDebate.prepareNextSpeaker();
+	                break;
+                default:
+                    break;
+			    }
+                updateGui();
+            }
 		});
 
 		Intent intent = new Intent(this, DebatingTimerService.class);
@@ -76,24 +106,29 @@ public class DebatingActivity extends Activity {
 
 	private void updateButtonText() {
 		switch (mDebate.getDebateStatus()) {
-		case setup:
-			leftControlButton.setText(R.string.startTimer);
+		case startOfSpeaker:
+		    setButtonText(R.string.startTimer, R.string.nullButtonText, R.string.nextSpeaker);
 			break;
-		case transitioning:
-			leftControlButton.setText(R.string.startNext);
+		case timerRunning:
+            setButtonText(R.string.stopTimer, R.string.nullButtonText, R.string.nullButtonText);
 			break;
-		case speaking:
-		    leftControlButton.setText(R.string.stopTimer);
+		case timerStoppedByAlarm:
+            setButtonText(R.string.resumeTimerAfterAlarm, R.string.nullButtonText, R.string.nullButtonText);
 			break;
-		case paused:
-			leftControlButton.setText(R.string.resumeTimer);
+		case timerStoppedByUser:
+            setButtonText(R.string.resumeTimerAfterUserStop, R.string.resetTimer, R.string.nextSpeaker);
 			break;
-		case finished:
-			leftControlButton.setText("Finished");
+		case endOfDebate:
 			break;
 		default:
 			break;
 		}
+	}
+	
+	private void setButtonText(int leftResid, int centreResid, int rightResid) {
+	    leftControlButton.setText(leftResid);
+	    centreControlButton.setText(centreResid);
+	    rightControlButton.setText(rightResid);
 	}
 
 	@Override
@@ -158,6 +193,7 @@ public class DebatingActivity extends Activity {
 			if (mDebate == null) {
 				mDebate = mBinder.createDebate();
 				setupDefaultDebate(mDebate);
+				mDebate.resetSpeaker();
 			}
 		}
 
