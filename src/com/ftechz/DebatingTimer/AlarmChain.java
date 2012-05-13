@@ -1,13 +1,13 @@
 package com.ftechz.DebatingTimer;
 
-import android.util.Log;
+import static java.util.Collections.sort;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static java.util.Collections.sort;
+import android.util.Log;
 
 /**
  * AlarmChain class
@@ -16,7 +16,7 @@ import static java.util.Collections.sort;
  * It keeps the time and calls alerts at associated alert times
  * When last alert has been reached, it continues to check the last alert for match
  */
-// TODO: Make a new passive info class AlarmChainInfo, so that AlarmChain is instantitated
+// TODO: Make a new passive info class AlarmChainInfo, so that AlarmChain is instantiated
 // from an AlarmChainInfo and is instantiated only when it is needed.
 // REASON: TimerTask can't be scheduled more than once, which wreaks havoc if we need to
 // restart a speaker or go back to a previous speaker.
@@ -25,110 +25,166 @@ import static java.util.Collections.sort;
 public abstract class AlarmChain extends TimerTask {
     //
     // Classes
-    public static abstract class AlarmChainAlert {
-        public long time;
-        protected AlertManager mAlertManager;
+    // Period holds information about a period *between* Events.
+    // This information is drawn to the GUI straight *after* the event is triggered.
+    public static class PeriodInfo {
+
+        // The meaning of "null" in both these objects is "do not change from what it is currently".
+        protected String  mDescription      = null;
+        protected Integer mBackgroundColor  = null; // Use Integer so that we can also use null.
+
+        public PeriodInfo(String description, Integer backgroundColor) {
+            mDescription     = description;
+            mBackgroundColor = backgroundColor;
+        }
+
+        public String  getDescription()     { return mDescription;     }
+        public Integer getBackgroundColor() { return mBackgroundColor; }
+
+        /*
+         * Updates the object using the information in another PeriodInfo.
+         * It replaces members if they are not null, and leaves them as they are if they are null.
+         */
+        public void update(PeriodInfo pi) {
+            if (pi.mDescription != null)     mDescription     = pi.mDescription;
+            if (pi.mBackgroundColor != null) mBackgroundColor = pi.mBackgroundColor;
+        }
+    }
+
+    // AlarmChainAlert is a mostly-passive data structure that contains information about
+    // an alert.  It has one non-data method, alert(), which triggers the alert function
+    // in its AlertManager.
+    // TODO: Change name to "Event"
+    public static class AlarmChainAlert {
+
+        protected long         mAlertTime    = 0;
+        protected int          mSoundResid   = R.raw.desk_bell; // default sound
+        protected int          mTimesToPlay  = 1;               // default times to play
+        protected boolean      mPauseOnEvent = false;
+        protected AlertManager mAlertManager = null;
+        protected PeriodInfo   mPeriodInfo   = new PeriodInfo(null, null);
 
         public AlarmChainAlert(long seconds) {
-            time = seconds;
+            setAlertTime(seconds);
         }
 
-        public AlarmChainAlert(long seconds, AlertManager alertManager) {
-            time = seconds;
-            mAlertManager = alertManager;
+        public AlarmChainAlert(long seconds, String periodDescription) {
+            setAlertTime(seconds);
+            setPeriodInfo(periodDescription, null);
         }
 
-        public void setAlertManager(AlertManager alertManager) {
-            mAlertManager = alertManager;
+        public AlarmChainAlert(long seconds, String periodDescription, Integer backgroundColor) {
+            setAlertTime(seconds);
+            setPeriodInfo(periodDescription, backgroundColor);
         }
 
-        public abstract void alert();
-
-        public void reset() {
-
-        }
-    }
-
-    public static class IntermediateAlert extends AlarmChain.AlarmChainAlert {
-        public IntermediateAlert(long seconds) {
-            super(seconds);
+        public AlarmChainAlert(long seconds, int timesToPlay) {
+            setAlertTime(seconds);
+            setTimesToPlay(timesToPlay);
         }
 
-        @Override
+        public AlarmChainAlert(long seconds, int timesToPlay, String periodDescription) {
+            setAlertTime(seconds);
+            setTimesToPlay(timesToPlay);
+            setPeriodInfo(periodDescription, null);
+        }
+
+        public AlarmChainAlert(long seconds, int timesToPlay, String periodDescription, Integer backgroundColor) {
+            setAlertTime(seconds);
+            setTimesToPlay(timesToPlay);
+            setPeriodInfo(periodDescription, backgroundColor);
+        }
+
+        public AlarmChainAlert(long seconds, AlertManager alertManager, String periodDescription) {
+            setAlertTime(seconds);
+            setAlertManager(alertManager);
+            setPeriodInfo(periodDescription, null);
+        }
+
+        public AlarmChainAlert(long seconds, AlertManager alertManager, String periodDescription, Integer backgroundColor) {
+            setAlertTime(seconds);
+            setAlertManager(alertManager);
+            setPeriodInfo(periodDescription, backgroundColor);
+        }
+
+        public AlarmChainAlert(long seconds, AlertManager alertManager, int soundResid, int timesToPlay, String periodDescription, Integer backgroundColor) {
+            setAlertTime(seconds);
+            setAlertManager(alertManager);
+            setSound(soundResid, timesToPlay);
+            setPeriodInfo(periodDescription, backgroundColor);
+        }
+
+        public void setAlertTime(long seconds)                 { mAlertTime    = seconds;      }
+        public void setAlertManager(AlertManager alertManager) { mAlertManager = alertManager; }
+        public void setSoundResid(int soundResid)              { mSoundResid   = soundResid;   }
+        public void setTimesToPlay(int timesToPlay)            { mTimesToPlay  = timesToPlay;  }
+        public void setPauseOnEvent(boolean pauseOnEvent)      { mPauseOnEvent = pauseOnEvent; }
+
+        public void setSound(int soundResid, int timesToPlay) {
+            setSoundResid(soundResid);
+            setTimesToPlay(timesToPlay);
+        }
+
+        public void setPeriodInfo(String description, Integer backgroundColor) {
+            mPeriodInfo = new PeriodInfo(description, backgroundColor);
+        }
+
+        public long       getAlertTime()        { return mAlertTime;    }
+        public int        getSoundResid()       { return mSoundResid;   }
+        public int        getSoundTimesToPlay() { return mTimesToPlay;  }
+        public PeriodInfo getPeriodInfo()       { return mPeriodInfo;   }
+        public boolean     isPauseOnEvent()     { return mPauseOnEvent; }
+
         public void alert() {
-            Log.i(this.getClass().getSimpleName(), "Intermediate Alert.");
+            Log.i(this.getClass().getSimpleName(), String.format("Alert at %d seconds", mAlertTime));
+            if (mSoundResid != 0 && mTimesToPlay > 0) {
+                mAlertManager.triggerAlert(this);
+            }
         }
+
+        public void reset() {}
     }
 
-    public static class WarningAlert extends AlarmChain.AlarmChainAlert {
-        public WarningAlert(long seconds, AlertManager alertManager) {
-            super(seconds, alertManager);
-        }
-
-        public WarningAlert(long seconds) {
-            super(seconds);
-        }
-
-        @Override
-        public void alert() {
-            Log.i(this.getClass().getSimpleName(), "Warning Alert.");
-            mAlertManager.triggerAlert(R.raw.bell_small_001);
-        }
-    }
-
-    public static class FinishAlert extends AlarmChain.AlarmChainAlert {
-        public FinishAlert(long seconds, AlertManager alertManager) {
-            super(seconds, alertManager);
-        }
-
-        public FinishAlert(long seconds) {
-            super(seconds);
-        }
-
-        @Override
-        public void alert() {
-            Log.i(this.getClass().getSimpleName(), "Finish.");
-            // Do an do-do alert
-            mAlertManager.triggerAlert(R.raw.beep1);
-
-        }
-    }
-
+    // TODO: Change name to "RepeatedEvent"
+    // This class extends AlarmChainAlert to trigger again every x seconds after the first alert time
     public static class OvertimeAlert extends AlarmChain.AlarmChainAlert {
         private long mRepeatPeriod = 0;
-        private long initTime;
+        private final long mInitTime;
 
-        public OvertimeAlert(long seconds, long repeatPeriod, AlertManager alertManager) {
-            super(seconds, alertManager);
-            initTime = seconds;
+        public OvertimeAlert(long seconds, long repeatPeriod, AlertManager alertManager, String periodDescription) {
+            super(seconds, alertManager, periodDescription);
+            mInitTime = seconds;
             mRepeatPeriod = repeatPeriod;
         }
 
-        public OvertimeAlert(long seconds, long repeatPeriod) {
-            super(seconds);
-            initTime = seconds;
+        public OvertimeAlert(long seconds, long repeatPeriod, AlertManager alertManager, String periodDescription, Integer backgroundColor) {
+            super(seconds, alertManager, periodDescription, backgroundColor);
+            mInitTime = seconds;
+            mRepeatPeriod = repeatPeriod;
+        }
+
+        public OvertimeAlert(long seconds, long repeatPeriod, int timesToPlay) {
+            super(seconds, timesToPlay);
+            mInitTime = seconds;
             mRepeatPeriod = repeatPeriod;
         }
 
         @Override
         public void alert() {
-            time += mRepeatPeriod;
-            Log.i(this.getClass().getSimpleName(), "OVERTIME!");
-            // Do an do-do-do alert
-            mAlertManager.triggerAlert(R.raw.desk_bell);
-
+            super.alert();
+            mAlertTime += mRepeatPeriod;
         }
 
         @Override
         public void reset() {
-            time = initTime;
+            mAlertTime = mInitTime;
         }
     }
 
     public class AlarmChainAlertCompare implements Comparator<AlarmChainAlert> {
         @Override
         public int compare(AlarmChainAlert alert1, AlarmChainAlert alert2) {
-            return (int) (alert1.time - alert2.time);
+            return (int) (alert1.getAlertTime() - alert2.getAlertTime());
         }
     }
 
@@ -148,9 +204,17 @@ public abstract class AlarmChain extends TimerTask {
     protected String mName;
 
     private int mAlertNumber;
-    private AlarmChainAlertCompare mAlertComparator = new AlarmChainAlertCompare();
+    private final AlarmChainAlertCompare mAlertComparator = new AlarmChainAlertCompare();
     protected boolean mCountdown = false;
     protected long mFinishTime = 0;
+    protected PeriodInfo mInitialPeriodInfo = new PeriodInfo("Initial", null);
+
+    // mCurrentPeriodInfo is a working copy of the current period information (PeriodInfo).
+    // It should NOT be initialised to have any null members, as this risks invoking a
+    // NullPointerException!
+    // Note: NEVER assign directly to mCurrentPeriodInfo unless you are absolutely certain
+    // that none of its members are null.  Use mCurrentPeriodInfo.update(pi) instead.
+    protected PeriodInfo mCurrentPeriodInfo = new PeriodInfo("Not started", 0);
 
     protected RunningState mRunningState = RunningState.BeforeStart;
 
@@ -161,16 +225,28 @@ public abstract class AlarmChain extends TimerTask {
         init();
     }
 
-    public AlarmChain(AlarmChainAlert[] alerts) {
+    public AlarmChain(long finishTime, AlarmChainAlert[] alerts) {
         super();
         init(alerts);
+        setFinishTime(finishTime);
     }
 
-    public AlarmChain(AlarmChainAlert[] alerts, boolean countdown) {
+    public AlarmChain(long finishTime, AlarmChainAlert[] alerts, boolean countdown) {
         super();
         init(alerts);
+        setFinishTime(finishTime);
         mCountdown = countdown;
     }
+
+    public void setFinishTime(long finishTime) { mFinishTime = finishTime; }
+
+    public void setInitialPeriodInfo(PeriodInfo periodInfo) { mInitialPeriodInfo = periodInfo; }
+
+    public void setInitialPeriodInfo(String description, Integer backgroundColor) {
+        mInitialPeriodInfo = new PeriodInfo(description, backgroundColor);
+    }
+
+    public PeriodInfo getInitialPeriodInfo() { return mInitialPeriodInfo; }
 
     private void init() {
         mAlerts = new ArrayList<AlarmChainAlert>();
@@ -194,7 +270,7 @@ public abstract class AlarmChain extends TimerTask {
         mSecondCounter++;
 
         if (mAlertNumber < mAlerts.size()) {
-            if (mSecondCounter == mAlerts.get(mAlertNumber).time) {
+            if (mSecondCounter == mAlerts.get(mAlertNumber).getAlertTime()) {
                 do {
                     handleAlert(mAlerts.get(mAlertNumber));
                     if (mAlertNumber < mAlerts.size() - 1) {
@@ -202,8 +278,8 @@ public abstract class AlarmChain extends TimerTask {
                     } else {
                         break;
                     }
-                } while (mSecondCounter == mAlerts.get(mAlertNumber).time); // Handle multiple with the same time
-            } else if (mSecondCounter > mAlerts.get(mAlertNumber).time) {
+                } while (mSecondCounter == mAlerts.get(mAlertNumber).getAlertTime()); // Handle multiple with the same time
+            } else if (mSecondCounter > mAlerts.get(mAlertNumber).getAlertTime()) {
                 if (mAlertNumber < mAlerts.size() - 1) {
                     mAlertNumber++;
                 }
@@ -213,19 +289,12 @@ public abstract class AlarmChain extends TimerTask {
 
     public void addTime(AlarmChainAlert alert) {
         mAlerts.add(alert);
-        if (alert.getClass() == FinishAlert.class) {
-            mFinishTime = alert.time;
-        }
-
         sort(mAlerts, mAlertComparator);
     }
 
     public void addTimes(AlarmChainAlert[] alerts) {
         if (alerts != null) {
             for (AlarmChainAlert alert : alerts) {
-                if (alert.getClass() == FinishAlert.class) {
-                    mFinishTime = alert.time;
-                }
                 mAlerts.add(alert);
             }
         }
@@ -249,9 +318,9 @@ public abstract class AlarmChain extends TimerTask {
     public long getNextTime() {
         if (mAlertNumber < mAlerts.size()) {
             if (mCountdown) {
-                return getFinishTime() - mAlerts.get(mAlertNumber).time;
+                return getFinishTime() - mAlerts.get(mAlertNumber).getAlertTime();
             } else {
-                return mAlerts.get(mAlertNumber).time;
+                return mAlerts.get(mAlertNumber).getAlertTime();
             }
         } else {
             return 0;
@@ -270,9 +339,17 @@ public abstract class AlarmChain extends TimerTask {
         }
     }
 
-    protected abstract void handleAlert(AlarmChainAlert alert);
+    protected void handleAlert(AlarmChainAlert alert){
+        mCurrentPeriodInfo.update(alert.getPeriodInfo());
+        if (alert.isPauseOnEvent()) {
+            this.pause();
+        }
+        alert.alert();
+    }
 
-    public abstract String getStateText();
+    public String getStateText(){
+        return mCurrentPeriodInfo.getDescription();
+    }
 
     // Resets the timer to zero
     public void resetState() {
@@ -284,13 +361,15 @@ public abstract class AlarmChain extends TimerTask {
         }
     }
 
-    public abstract String getNotificationText();
+    public String getNotificationText(){
+        return String.format("%s: %s", getName(), getStateText());
+    }
 
     public abstract String getNotificationTickerText();
 
     // Required for rescheduling...
     public abstract AlarmChain newCopy();
-    
+
     public void start() {
         mRunningState = RunningState.Running;
     }
@@ -302,20 +381,20 @@ public abstract class AlarmChain extends TimerTask {
     public void stop() {
         mRunningState = RunningState.StoppedByUser;
     }
-    
+
     public void resume() {
         mRunningState = RunningState.Running;
     }
 
-    protected abstract void onStart();
-
-    public abstract String getTitleText();
+    protected void onStart(){
+        mCurrentPeriodInfo.update(mInitialPeriodInfo);
+    }
 
     private long getFinishTime() {
         if (mFinishTime > 0) {
             return mFinishTime;
         } else {
-            return mAlerts.get(mAlerts.size() - 1).time;
+            return mAlerts.get(mAlerts.size() - 1).getAlertTime();
         }
     }
 
@@ -332,7 +411,7 @@ public abstract class AlarmChain extends TimerTask {
     public String getName() {
         return mName;
     }
-    
+
     // TODO: This runs all the time, even when the timer is not actually incrementing.
     // Should find a neater way to implement this timer so it doesn't run when it doesn't need to.
     // The best way is probably to make AlarmChain exist only when needed, see the to-do at the top

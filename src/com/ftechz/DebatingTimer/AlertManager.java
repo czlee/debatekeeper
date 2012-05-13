@@ -10,7 +10,9 @@ import android.os.PowerManager;
 import android.media.MediaPlayer;
 
 /**
-*
+* AlertManager class
+* Manages all alerts for the application
+* Only a single instance of this should exist
 */
 // TODO: Reduce notifications to a single ongoing one that exists when and only when a timer
 // is running.
@@ -83,11 +85,13 @@ public class AlertManager
         }
     }
 
-    public void triggerAlert(int soundResid)
+    public void triggerAlert(AlarmChain.AlarmChainAlert alert)
     {
         updateNotification();
         if(mShowingNotification)
         {
+            // TODO: Make this use timesToPlay, the number of times the sound is to be repeated
+            
             //mNotification.sound = Uri.parse("android.resource://com.ftechz.DebatingTimer/" + soundId);
             mNotificationManager.notify(NOTIFICATION_ID, mNotification);
             
@@ -98,7 +102,7 @@ public class AlertManager
             // This could be inefficient -- MediaPlayer.create() blocks until the file is loaded, which
             // supposedly can take a while.  But it seems to be working fine, so we'll just leave it
             // here until it becomes a problem...
-            mMediaPlayer = MediaPlayer.create(mDebatingTimerService.getApplicationContext(), soundResid);
+            mMediaPlayer = MediaPlayer.create(mDebatingTimerService.getApplicationContext(), alert.getSoundResid());
             mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 
                 @Override

@@ -1,6 +1,10 @@
 package com.ftechz.DebatingTimer;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.ListIterator;
+import java.util.Timer;
 
 /**
  * Debate class
@@ -8,11 +12,11 @@ import java.util.*;
  */
 public class Debate {
     public enum DebateStatus {
-        startOfSpeaker,      // After a speaker's screen is loaded, but before the timer starts
-        timerRunning,        // While the timer is running (including overtime)
-        timerStoppedByAlarm, // The timer is paused by an alarm
-        timerStoppedByUser,  // The timer is stopped by the user
-        endOfDebate          // After the very last speaker, i.e. the debate is over
+        StartOfSpeaker,      // After a speaker's screen is loaded, but before the timer starts
+        TimerRunning,        // While the timer is running (including overtime)
+        TimerStoppedByAlarm, // The timer is paused by an alarm
+        TimerStoppedByUser,  // The timer is stopped by the user
+        EndOfDebate          // After the very last speaker, i.e. the debate is over
     }
 
     //
@@ -20,11 +24,12 @@ public class Debate {
     private LinkedList<AlarmChain> mStages;
     private AlarmChain mCurrentStage;
     private Iterator<AlarmChain> mStageIterator;
-    private TeamsManager mTeamsManager;
+    private final TeamsManager mTeamsManager;
     private Timer mTickTimer;
 
-    private AlertManager mAlertManager;
-    private HashMap<String, AlarmChain.AlarmChainAlert[]> mAlertSets;
+    private final AlertManager mAlertManager;
+    private final HashMap<String, AlarmChain.AlarmChainAlert[]> mAlertSets;
+    private final HashMap<String, Long> mFinishTimes; // We can't use primitive longs in HashMap, so we use Longs instead
 
     //
     // Methods
@@ -32,6 +37,7 @@ public class Debate {
         mAlertManager = alertManager;
         mStages = new LinkedList<AlarmChain>();
         mAlertSets = new HashMap<String, AlarmChain.AlarmChainAlert[]>();
+        mFinishTimes = new HashMap<String, Long>();
         mStageIterator = mStages.iterator();
         mTeamsManager = new TeamsManager();
         mTickTimer = new Timer();
@@ -48,6 +54,10 @@ public class Debate {
     public boolean addStage(AlarmChain alarmChain, String alarmSetName) {
         if (mAlertSets.containsKey(alarmSetName)) {
             alarmChain.addTimes(mAlertSets.get(alarmSetName));
+
+            if (mFinishTimes.containsKey(alarmSetName)) {
+                alarmChain.setFinishTime(mFinishTimes.get(alarmSetName).longValue());
+            }
 
             if (alarmChain.getClass() == SpeakerTimer.class) {
                 SpeakerTimer speakerTimer = (SpeakerTimer) alarmChain;
@@ -68,12 +78,13 @@ public class Debate {
      * @param name
      * @param alarmSet
      */
-    public void addAlarmSet(String name, AlarmChain.AlarmChainAlert[] alarmSet) {
+    public void addAlarmSet(String name, AlarmChain.AlarmChainAlert[] alarmSet, long finishTime) {
         for (AlarmChain.AlarmChainAlert alarm : alarmSet) {
             alarm.setAlertManager(mAlertManager);
         }
 
         mAlertSets.put(name, alarmSet);
+        mFinishTimes.put(name, new Long(finishTime));
     }
 
     /**
@@ -104,7 +115,7 @@ public class Debate {
     }
 
     public void stop() {
-        if (getDebateStatus() == DebateStatus.timerRunning) {
+        if (getDebateStatus() == DebateStatus.TimerRunning) {
             if (mCurrentStage != null) {
                 mAlertManager.hideNotification();
                 mCurrentStage.stop();
@@ -113,8 +124,8 @@ public class Debate {
     }
 
     public boolean start() {
-        if ((getDebateStatus() == DebateStatus.startOfSpeaker) ||
-                (getDebateStatus() == DebateStatus.timerStoppedByUser)) {
+        if ((getDebateStatus() == DebateStatus.StartOfSpeaker) ||
+                (getDebateStatus() == DebateStatus.TimerStoppedByUser)) {
                 if (mCurrentStage != null) {
                     mTickTimer.purge();
                     mCurrentStage.setTimer(mTickTimer);
@@ -131,17 +142,17 @@ public class Debate {
         if (mCurrentStage != null) {
             switch (mCurrentStage.getRunningState()) {
                 case Running:
-                    return DebateStatus.timerRunning;
+                    return DebateStatus.TimerRunning;
                 case StoppedByAlarm:
-                    return DebateStatus.timerStoppedByAlarm;
+                    return DebateStatus.TimerStoppedByAlarm;
                 case StoppedByUser:
-                    return DebateStatus.timerStoppedByUser;
+                    return DebateStatus.TimerStoppedByUser;
                 case BeforeStart:
                 default:
-                    return DebateStatus.startOfSpeaker;
+                    return DebateStatus.StartOfSpeaker;
             }
         } else {
-            return DebateStatus.startOfSpeaker;
+            return DebateStatus.StartOfSpeaker;
         }
     }
 
@@ -189,17 +200,17 @@ public class Debate {
         if (mCurrentStage != null) {
             mCurrentStage.resetState();
         }
-        
+
         // If there is no current timer, retrieve the first
         else {
             mStageIterator = mStages.iterator();
             prepareNextSpeaker(); // This sets mCurrentStage
         }
-        
+
         mAlertManager.hideNotification(); // if it exists
-        
+
     }
-    
+
     // TODO: This method is not actually currently used, and may not even be correct
     public void resetDebate() {
         // Stop current stage timer, if on

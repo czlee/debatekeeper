@@ -1,19 +1,24 @@
 package com.ftechz.DebatingTimer;
 
-import com.ftechz.DebatingTimer.AlarmChain.AlarmChainAlert;
-
 import android.app.Activity;
-import android.content.*;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.ftechz.DebatingTimer.AlarmChain.AlarmChainAlert;
+
 /**
  * DebatingActivity The first Activity shown when application is started... for
  * now
- * 
+ *
  */
 public class DebatingActivity extends Activity {
 	private TextView mStateText;
@@ -21,7 +26,7 @@ public class DebatingActivity extends Activity {
 	private TextView mCurrentTimeText;
 	private TextView mNextTimeText;
 	private TextView mFinalTimeText;
-	
+
 	// The buttons are allocated as follows:
 	// When at startOfSpeaker: [Start] [Next Speaker]
 	// When running:           [Stop]
@@ -52,14 +57,14 @@ public class DebatingActivity extends Activity {
 			@Override
 			public void onClick(View pV) {
 				switch (mDebate.getDebateStatus()) {
-				case startOfSpeaker:
+				case StartOfSpeaker:
 					mDebate.start();
 					break;
-				case timerRunning:
+				case TimerRunning:
 					mDebate.stop();
 					break;
-				case timerStoppedByAlarm:
-				case timerStoppedByUser:
+				case TimerStoppedByAlarm:
+				case TimerStoppedByUser:
 					mDebate.resume();
 					break;
 				default:
@@ -68,13 +73,13 @@ public class DebatingActivity extends Activity {
 				updateGui();
 			}
 		});
-		
+
 		centreControlButton.setOnClickListener(new View.OnClickListener() {
-            
+
             @Override
             public void onClick(View pV) {
                 switch (mDebate.getDebateStatus()) {
-                case timerStoppedByUser:
+                case TimerStoppedByUser:
                     mDebate.resetSpeaker();
                     break;
                 default:
@@ -88,8 +93,8 @@ public class DebatingActivity extends Activity {
 			@Override
 			public void onClick(View pV) {
 			    switch (mDebate.getDebateStatus()) {
-			    case startOfSpeaker:
-			    case timerStoppedByUser:
+			    case StartOfSpeaker:
+			    case TimerStoppedByUser:
 			        mDebate.prepareNextSpeaker();
 	                break;
                 default:
@@ -105,34 +110,35 @@ public class DebatingActivity extends Activity {
 		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	}
 
+	// Updates the buttons according to the current status of the debate
 	private void updateButtons() {
 		switch (mDebate.getDebateStatus()) {
-		case startOfSpeaker:
+		case StartOfSpeaker:
 		    setButtons(R.string.startTimer, R.string.nullButtonText, R.string.nextSpeaker);
 			break;
-		case timerRunning:
+		case TimerRunning:
 		    setButtons(R.string.stopTimer, R.string.nullButtonText, R.string.nullButtonText);
 			break;
-		case timerStoppedByAlarm:
+		case TimerStoppedByAlarm:
 		    setButtons(R.string.resumeTimerAfterAlarm, R.string.nullButtonText, R.string.nullButtonText);
 			break;
-		case timerStoppedByUser:
+		case TimerStoppedByUser:
 		    setButtons(R.string.resumeTimerAfterUserStop, R.string.resetTimer, R.string.nextSpeaker);
 			break;
-		case endOfDebate:
+		case EndOfDebate:
 			break;
 		default:
 			break;
 		}
 	}
-	
+
 	// Sets the text and visibility of all buttons
 	private void setButtons(int leftResid, int centreResid, int rightResid) {
 	    setButton(leftControlButton, leftResid);
 	    setButton(centreControlButton, centreResid);
 	    setButton(rightControlButton, rightResid);
 	}
-	
+
 	// Sets the text and visibility of a single button
 	private void setButton(Button button, int resid) {
 	    button.setText(resid);
@@ -169,7 +175,7 @@ public class DebatingActivity extends Activity {
 	}
 
 	// Second tick broadcast
-	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			updateGui();
@@ -192,7 +198,7 @@ public class DebatingActivity extends Activity {
 	private DebatingTimerService.DebatingTimerServiceBinder mBinder;
 
 	/** Defines callbacks for service binding, passed to bindService() */
-	private ServiceConnection mConnection = new ServiceConnection() {
+	private final ServiceConnection mConnection = new ServiceConnection() {
 
 		@Override
 		public void onServiceConnected(ComponentName className, IBinder service) {
@@ -233,20 +239,21 @@ public class DebatingActivity extends Activity {
 		// };
 
 		AlarmChainAlert[] prepAlerts = new AlarmChain.AlarmChainAlert[] {
-				new SpeakerTimer.WarningAlert(5), //
-				new SpeakerTimer.WarningAlert(10), //
-				new SpeakerTimer.FinishAlert(15) //
+				new SpeakerTimer.AlarmChainAlert(5, 1, "Choose moot"), //
+				new SpeakerTimer.AlarmChainAlert(10, 1, "Choose side"), //
+				new SpeakerTimer.AlarmChainAlert(15, 2, "Prepare debate") //
 		};
 
 		AlarmChainAlert[] substativeSpeechAlerts = new AlarmChain.AlarmChainAlert[] {
-				new SpeakerTimer.WarningAlert(5),
-				new SpeakerTimer.FinishAlert(10),
-				new SpeakerTimer.OvertimeAlert(15, 3) };
+                new SpeakerTimer.AlarmChainAlert(5, 1, "Points of information allowed"),
+				new SpeakerTimer.AlarmChainAlert(10, 1, "Warning bell rung"),
+				new SpeakerTimer.AlarmChainAlert(15, 2, "Overtime"),
+				new SpeakerTimer.OvertimeAlert(20, 3, 3) };
 
 		AlarmChainAlert[] replySpeechAlerts = new AlarmChain.AlarmChainAlert[] {
-				new SpeakerTimer.WarningAlert(3),
-				new SpeakerTimer.FinishAlert(6),
-				new SpeakerTimer.OvertimeAlert(9, 3) };
+				new SpeakerTimer.AlarmChainAlert(3, 1, "Warning bell rung"),
+				new SpeakerTimer.AlarmChainAlert(6, 2, "Overtime"),
+				new SpeakerTimer.OvertimeAlert(9, 3, 3) };
 
 		// Set up speakers
 		Team team1 = new Team();
@@ -266,9 +273,9 @@ public class DebatingActivity extends Activity {
 		debate.setSide(team2Index, TeamsManager.SpeakerSide.Negative);
 
 		// Add in the alarm sets
-		debate.addAlarmSet("prep", prepAlerts);
-		debate.addAlarmSet("substantiveSpeech", substativeSpeechAlerts);
-		debate.addAlarmSet("replySpeech", replySpeechAlerts);
+		debate.addAlarmSet("prep", prepAlerts, 15);
+		debate.addAlarmSet("substantiveSpeech", substativeSpeechAlerts, 20);
+		debate.addAlarmSet("replySpeech", replySpeechAlerts, 15);
 
 		// Add in the stages
 		// debate.addStage(new PrepTimer("Preparation"), "prep");

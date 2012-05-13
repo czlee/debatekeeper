@@ -214,21 +214,21 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
 //        };
 
         prepAlerts = new AlarmChain.AlarmChainAlert[] {
-                new SpeakerTimer.WarningAlert(5),  //
-                new SpeakerTimer.WarningAlert(10), //
-                new SpeakerTimer.FinishAlert(15)   //
+                new SpeakerTimer.AlarmChainAlert(5, 1),  //
+                new SpeakerTimer.AlarmChainAlert(10, 1), //
+                new SpeakerTimer.AlarmChainAlert(15, 2)   //
         };
 
         substativeSpeechAlerts = new AlarmChain.AlarmChainAlert[] {
-                new SpeakerTimer.WarningAlert(5),
-                new SpeakerTimer.FinishAlert(10),
-                new SpeakerTimer.OvertimeAlert(15, 3)
+                new SpeakerTimer.AlarmChainAlert(5, 1),
+                new SpeakerTimer.AlarmChainAlert(10, 2),
+                new SpeakerTimer.OvertimeAlert(15, 3, 3)
         };
 
         replySpeechAlerts = new AlarmChain.AlarmChainAlert[] {
-                new SpeakerTimer.WarningAlert(3),
-                new SpeakerTimer.FinishAlert(6),
-                new SpeakerTimer.OvertimeAlert(9, 3)
+                new SpeakerTimer.AlarmChainAlert(3, 1),
+                new SpeakerTimer.AlarmChainAlert(6, 2),
+                new SpeakerTimer.OvertimeAlert(9, 3, 3)
         };
 
         // Set up speakers
@@ -248,9 +248,9 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
         debate.setSide(team2Index, TeamsManager.SpeakerSide.Negative);
 
         //Add in the alarm sets
-        debate.addAlarmSet("prep", prepAlerts);
-        debate.addAlarmSet("substantiveSpeech", substativeSpeechAlerts);
-        debate.addAlarmSet("replySpeech", replySpeechAlerts);
+        debate.addAlarmSet("prep", prepAlerts, 15);
+        debate.addAlarmSet("substantiveSpeech", substativeSpeechAlerts, 15);
+        debate.addAlarmSet("replySpeech", replySpeechAlerts, 9);
 
         // Add in the stages
         debate.addStage(new PrepTimer("Preparation"), "prep");
