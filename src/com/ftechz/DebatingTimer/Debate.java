@@ -240,7 +240,9 @@ public class Debate {
     public void resume() {
         if (mCurrentStage != null) {
             mCurrentStage.resume();
-        }
+            mAlertManager.hideNotification();   // Hide if already showing
+            mAlertManager.showNotification(mCurrentStage);
+       }
     }
 
     public void pause() {
