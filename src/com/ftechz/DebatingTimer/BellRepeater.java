@@ -105,6 +105,18 @@ public class BellRepeater extends TimerTask {
             mMediaPlayer = MediaPlayer.create(mContext, mBellInfo.getSoundResid());
             // Set to maximum volume possible (it's really soft!)
             mMediaPlayer.setVolume(1, 1);
+            // On Error, release it and shut it down and put it away.
+            // But log a message so that we know...
+            mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+
+                @Override
+                public boolean onError(MediaPlayer mp, int what, int extra) {
+                    Log.e("BellRepeater", "The media player went into an errored state! Releasing.");
+                    mp.release();
+                    mp = null;
+                    return false;
+                }
+            });
 
             mRepetitionsSoFar = 0;
 
@@ -120,8 +132,7 @@ public class BellRepeater extends TimerTask {
     public void stop() {
         mState = BellRepeaterState.STOPPED;
         if (mMediaPlayer != null) {
-            // TODO: This line sometimes runs into an IllegalStateException with mMediaPlayer
-            if (mMediaPlayer.isPlaying()) mMediaPlayer.stop();
+            mMediaPlayer.stop();
             mMediaPlayer.release();
             mMediaPlayer = null;
             Log.i("BellRepeater", "Stopped");
