@@ -117,7 +117,7 @@ public class Debate {
     public void stop() {
         if (getDebateStatus() == DebateStatus.TimerRunning) {
             if (mCurrentStage != null) {
-                mAlertManager.hideNotification();
+                mAlertManager.makeInactive();
                 mCurrentStage.stop();
             }
         }
@@ -130,8 +130,8 @@ public class Debate {
                     mTickTimer.purge();
                     mCurrentStage.setTimer(mTickTimer);
                     mCurrentStage.start();
-                    mAlertManager.hideNotification();   // Hide if already showing
-                    mAlertManager.showNotification(mCurrentStage);
+                    mAlertManager.makeInactive();   // Hide if already showing
+                    mAlertManager.makeActive(mCurrentStage);
                 }
             return true;
         }
@@ -207,7 +207,7 @@ public class Debate {
             prepareNextSpeaker(); // This sets mCurrentStage
         }
 
-        mAlertManager.hideNotification(); // if it exists
+        mAlertManager.makeInactive(); // if it exists
 
     }
 
@@ -222,7 +222,7 @@ public class Debate {
         mTickTimer.cancel();
         mTickTimer = new Timer();
 
-        mAlertManager.hideNotification();
+        mAlertManager.makeInactive();
 
         ListIterator<AlarmChain> stageIterator = mStages.listIterator();
         while (stageIterator.hasNext()) {
@@ -236,7 +236,7 @@ public class Debate {
 
     public void release() {
         if (mAlertManager != null) {
-            mAlertManager.hideNotification();
+            mAlertManager.makeInactive();
         }
 
         mCurrentStage = null;
@@ -251,8 +251,8 @@ public class Debate {
     public void resume() {
         if (mCurrentStage != null) {
             mCurrentStage.resume();
-            mAlertManager.hideNotification();   // Hide if already showing
-            mAlertManager.showNotification(mCurrentStage);
+            mAlertManager.makeInactive();   // Hide if already showing
+            mAlertManager.makeActive(mCurrentStage);
        }
     }
 

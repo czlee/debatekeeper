@@ -30,19 +30,16 @@ public class AlertManager
         mDebatingTimerService = debatingTimerService;
         mNotificationManager = (NotificationManager) debatingTimerService.getSystemService(
                 Context.NOTIFICATION_SERVICE);
-        Intent mNotificationIntent = new Intent(debatingTimerService,
-                DebatingActivity.class);
-        mPendingIntent = PendingIntent.getActivity(
-                debatingTimerService, 0, mNotificationIntent, 0);
+        Intent notificationIntent = new Intent(debatingTimerService, DebatingActivity.class);
+        mPendingIntent = PendingIntent.getActivity(debatingTimerService, 0, notificationIntent, 0);
 
         PowerManager pm = (PowerManager) debatingTimerService.getSystemService(Context.POWER_SERVICE);
-
         mWakeLock = pm.newWakeLock(
                 PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE,
                 "DebatingWakeLock");
     }
 
-    public void showNotification(AlarmChain stage)
+    public void makeActive(AlarmChain stage)
     {
         mStage = stage;
 
@@ -71,7 +68,7 @@ public class AlertManager
         }
     }
 
-    public void hideNotification()
+    public void makeInactive()
     {
         if(mShowingNotification)
         {
