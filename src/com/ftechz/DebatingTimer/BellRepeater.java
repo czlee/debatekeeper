@@ -132,6 +132,7 @@ public class BellRepeater extends TimerTask {
     public void stop() {
         mState = BellRepeaterState.STOPPED;
         if (mMediaPlayer != null) {
+            // TODO: Check why MediaPlayer is raising info/warning(1, 44)
             mMediaPlayer.stop();
             mMediaPlayer.release();
             mMediaPlayer = null;
