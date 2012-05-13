@@ -357,16 +357,8 @@ public abstract class AlarmChain extends TimerTask {
         }
     }
 
-    public long getFinalTimeForDisplay() {
-        if (mAlerts.size() > 0) {
-            if (mCountdown) {
-                return 0;
-            } else {
-                return getFinishTime();
-            }
-        } else {
-            return 0;
-        }
+    public long getFinishTimeForDisplay() {
+        return getFinishTime();
     }
 
     protected void handleAlert(Event alert){
@@ -418,11 +410,13 @@ public abstract class AlarmChain extends TimerTask {
         mCurrentPeriodInfo.update(mInitialPeriodInfo);
     }
 
-    private long getFinishTime() {
+    protected long getFinishTime() {
         if (mFinishTime > 0) {
             return mFinishTime;
-        } else {
+        } else if (mAlerts.size() > 0) {
             return mAlerts.get(mAlerts.size() - 1).getAlertTime();
+        } else {
+            return 0;
         }
     }
 

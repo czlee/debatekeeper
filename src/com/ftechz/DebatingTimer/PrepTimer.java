@@ -23,7 +23,7 @@ public class PrepTimer extends AlarmChain
 
     @Override
     protected void handleAlert(Event alert) {
-        if (alert.getAlertTime() == this.mFinishTime){
+        if (alert.getAlertTime() == this.getFinishTime()){
             this.cancel();
         }
         super.handleAlert(alert);

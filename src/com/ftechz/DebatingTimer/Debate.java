@@ -181,7 +181,7 @@ public class Debate {
 
     public long getStageFinalTime() {
         if (mCurrentStage != null) {
-            return mCurrentStage.getFinalTimeForDisplay();
+            return mCurrentStage.getFinishTimeForDisplay();
         } else {
             return 0;
         }
