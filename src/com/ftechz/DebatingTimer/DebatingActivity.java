@@ -9,6 +9,8 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -37,6 +39,13 @@ public class DebatingActivity extends Activity {
 	private Button rightControlButton;
 
 	private Debate mDebate;
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.debating_activity_menu, menu);
+	    return true;
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

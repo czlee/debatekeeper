@@ -14,4 +14,8 @@
     <string name="notificationTicker">Debating Timer is running</string>
     <string name="nextBell">The next bell is at %s</string>
     <string name="speechLength">The length of this speech is %s</string>
+    
+    <!-- Menu -->
+    <string name="restartDebate">Restart Debate</string>
+    <string name="settings">Settings</string>
 </resources>
