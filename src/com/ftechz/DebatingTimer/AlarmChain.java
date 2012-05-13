@@ -332,6 +332,10 @@ public abstract class AlarmChain extends TimerTask {
         sort(mAlerts, mAlertComparator);
     }
 
+    public int getCurrentBackgroundColor() {
+        return mCurrentPeriodInfo.getBackgroundColor();
+    }
+
     public long getSecondsForDisplay() {
         if (mCountdown) {
             long time = getFinishTime() - mSecondCounter;

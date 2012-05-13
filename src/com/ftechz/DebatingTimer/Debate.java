@@ -195,6 +195,13 @@ public class Debate {
         }
     }
 
+    public int getStageBackgroundColor() {
+        if (mCurrentStage != null) {
+            return mCurrentStage.getCurrentBackgroundColor();
+        } else {
+            return 0;
+        }
+    }
     public void resetSpeaker() {
         // If there is a current timer, stop and reset it
         if (mCurrentStage != null) {

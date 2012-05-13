@@ -24,7 +24,7 @@ import com.ftechz.DebatingTimer.AlarmChain.Event;
  */
 public class DebatingActivity extends Activity {
 	private TextView mStateText;
-	private TextView mSpeakerNameText;
+	private TextView mStageText;
 	private TextView mCurrentTimeText;
 	private TextView mNextTimeText;
 	private TextView mFinalTimeText;
@@ -53,7 +53,7 @@ public class DebatingActivity extends Activity {
 		setContentView(R.layout.debate_activity);
 
 		mStateText = (TextView) findViewById(R.id.stateText);
-		mSpeakerNameText = (TextView) findViewById(R.id.titleText);
+		mStageText = (TextView) findViewById(R.id.titleText);
 		mCurrentTimeText = (TextView) findViewById(R.id.currentTime);
 		mNextTimeText = (TextView) findViewById(R.id.nextTime);
 		mFinalTimeText = (TextView) findViewById(R.id.finalTime);
@@ -170,7 +170,9 @@ public class DebatingActivity extends Activity {
 	public void updateGui() {
 		if (mDebate != null) {
 			mStateText.setText(mDebate.getStageStateText());
-			mSpeakerNameText.setText(mDebate.getStageName());
+			mStageText.setText(mDebate.getStageName());
+			mStateText.setBackgroundColor(mDebate.getStageBackgroundColor());
+			mStageText.setBackgroundColor(mDebate.getStageBackgroundColor());
 			mCurrentTimeText.setText(secsToMinuteSecText(mDebate.getStageCurrentTime()));
 			mNextTimeText.setText(String.format(
 		        this.getString(R.string.nextBell),
@@ -256,14 +258,14 @@ public class DebatingActivity extends Activity {
 		};
 
 		Event[] substativeSpeechAlerts = new AlarmChain.Event[] {
-                new SpeakerTimer.Event(5, 1, "Points of information allowed"),
-				new SpeakerTimer.Event(10, 1, "Warning bell rung"),
-				new SpeakerTimer.Event(15, 2, "Overtime"),
+                new SpeakerTimer.Event(5, 1, "Points of information allowed", 0x7200ff00),
+				new SpeakerTimer.Event(10, 1, "Warning bell rung", 0x72ffff00),
+				new SpeakerTimer.Event(15, 2, "Overtime", 0x72ff0000),
 				new SpeakerTimer.RepeatedEvent(20, 3, 3) };
 
 		Event[] replySpeechAlerts = new AlarmChain.Event[] {
-				new SpeakerTimer.Event(3, 1, "Warning bell rung"),
-				new SpeakerTimer.Event(6, 2, "Overtime"),
+				new SpeakerTimer.Event(3, 1, "Warning bell rung", 0x72ffff00),
+				new SpeakerTimer.Event(6, 2, "Overtime", 0x72ff0000),
 				new SpeakerTimer.RepeatedEvent(9, 3, 3) };
 
 		// Set up speakers
@@ -285,8 +287,8 @@ public class DebatingActivity extends Activity {
 
 		// Add in the alarm sets
 		debate.addAlarmSet("prep", prepAlerts, 15);
-		debate.addAlarmSet("substantiveSpeech", substativeSpeechAlerts, 20);
-		debate.addAlarmSet("replySpeech", replySpeechAlerts, 15);
+		debate.addAlarmSet("substantiveSpeech", substativeSpeechAlerts, 15);
+		debate.addAlarmSet("replySpeech", replySpeechAlerts, 9);
 
 		// Add in the stages
 		// debate.addStage(new PrepTimer("Preparation"), "prep");
