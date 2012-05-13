@@ -1,9 +1,12 @@
 package com.ftechz.DebatingTimer;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -11,6 +14,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -40,11 +44,51 @@ public class DebatingActivity extends Activity {
 
 	private Debate mDebate;
 
+	static final int DIALOG_SETTINGS_NOT_IMPLEMENTED = 0;
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.debating_activity_menu, menu);
 	    return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	    case R.id.restartDebate:
+	        mDebate.resetDebate();
+	        updateGui();
+	        return true;
+	    case R.id.settings:
+	        showDialog(DIALOG_SETTINGS_NOT_IMPLEMENTED);
+	        return true;
+        default:
+            return super.onOptionsItemSelected(item);
+	    }
+	}
+
+	@Override
+	protected Dialog onCreateDialog(int id) {
+        Dialog dialog;
+        switch (id) {
+        case DIALOG_SETTINGS_NOT_IMPLEMENTED:
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Sorry!")
+                   .setMessage("I haven't implemented the settings part yet.")
+                   .setCancelable(true)
+                   .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+            dialog = builder.create();
+            break;
+        default:
+            dialog = null;
+        }
+        return dialog;
 	}
 
 	@Override
@@ -259,12 +303,12 @@ public class DebatingActivity extends Activity {
 
 		Event[] substativeSpeechAlerts = new AlarmChain.Event[] {
                 new SpeakerTimer.Event(5, 1, "Points of information allowed", 0x7200ff00),
-				new SpeakerTimer.Event(10, 1, "Warning bell rung", 0x72ffff00),
+				new SpeakerTimer.Event(10, 1, "Warning bell rung", 0x72ff9900),
 				new SpeakerTimer.Event(15, 2, "Overtime", 0x72ff0000),
 				new SpeakerTimer.RepeatedEvent(20, 3, 3) };
 
 		Event[] replySpeechAlerts = new AlarmChain.Event[] {
-				new SpeakerTimer.Event(3, 1, "Warning bell rung", 0x72ffff00),
+				new SpeakerTimer.Event(3, 1, "Warning bell rung", 0x72ff9900),
 				new SpeakerTimer.Event(6, 2, "Overtime", 0x72ff0000),
 				new SpeakerTimer.RepeatedEvent(9, 3, 3) };
 
@@ -288,7 +332,7 @@ public class DebatingActivity extends Activity {
 		// Add in the alarm sets
 		debate.addAlarmSet("prep", prepAlerts, 15);
 		debate.addAlarmSet("substantiveSpeech", substativeSpeechAlerts, 15);
-		debate.addAlarmSet("replySpeech", replySpeechAlerts, 9);
+		debate.addAlarmSet("replySpeech", replySpeechAlerts, 6);
 
 		// Add in the stages
 		// debate.addStage(new PrepTimer("Preparation"), "prep");

@@ -20,8 +20,6 @@ import android.util.Log;
 // from an AlarmChainInfo and is instantiated only when it is needed.
 // REASON: TimerTask can't be scheduled more than once, which wreaks havoc if we need to
 // restart a speaker or go back to a previous speaker.
-// TODO: Currently, overtime alarms don't continue if the timer is resumed after a stop-by-
-// user, because the TimerTask was stopped.  This needs to be fixed.
 public abstract class AlarmChain extends TimerTask {
     //
     // Classes
@@ -385,6 +383,8 @@ public abstract class AlarmChain extends TimerTask {
         for (Event alert : mAlerts) {
             alert.reset();
         }
+        mCurrentPeriodInfo = new PeriodInfo("Not started", 0);
+        mCurrentPeriodInfo.update(mInitialPeriodInfo);
     }
 
     public String getNotificationText(){

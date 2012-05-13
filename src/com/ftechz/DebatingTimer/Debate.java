@@ -202,6 +202,7 @@ public class Debate {
             return 0;
         }
     }
+
     public void resetSpeaker() {
         // If there is a current timer, stop and reset it
         if (mCurrentStage != null) {
@@ -218,12 +219,12 @@ public class Debate {
 
     }
 
-    // TODO: This method is not actually currently used, and may not even be correct
     public void resetDebate() {
         // Stop current stage timer, if on
         if (mCurrentStage != null) {
             mCurrentStage.cancel();
         }
+
         mCurrentStage = null;
         mTickTimer.purge();
         mTickTimer.cancel();
@@ -239,6 +240,7 @@ public class Debate {
         }
 
         mStageIterator = mStages.iterator();
+        resetSpeaker();
     }
 
     public void release() {
