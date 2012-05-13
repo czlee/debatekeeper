@@ -51,11 +51,6 @@ public class SpeakerTimer extends AlarmChain
     }
 
     @Override
-    public String getNotificationTickerText() {
-        return "Speaker started";
-    }
-
-    @Override
     public SpeakerTimer newCopy()
     {
         return new SpeakerTimer(mName, mTeamsManager, mSpeakerSide,

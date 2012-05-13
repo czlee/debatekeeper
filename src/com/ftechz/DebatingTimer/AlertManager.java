@@ -51,7 +51,7 @@ public class AlertManager
         if(!mShowingNotification)
         {
             mNotification = new Notification(R.drawable.icon,
-                    stage.getNotificationTickerText(),
+                    mDebatingTimerService.getText(R.string.notificationTicker),
                     System.currentTimeMillis());
 
             updateNotification();

@@ -395,8 +395,6 @@ public abstract class AlarmChain extends TimerTask {
         return String.format("%s: %s", getName(), getStateText());
     }
 
-    public abstract String getNotificationTickerText();
-
     // Required for rescheduling...
     public abstract AlarmChain newCopy();
 

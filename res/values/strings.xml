@@ -11,4 +11,5 @@
     <string name="ticker_text">Speaker started</string>
     <string name="notification_title">Debating Timer</string>
     <string name="createDebate">Create debate</string>
+    <string name="notificationTicker">Debating Timer is running</string>
 </resources>

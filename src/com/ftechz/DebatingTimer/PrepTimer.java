@@ -30,11 +30,6 @@ public class PrepTimer extends AlarmChain
     }
 
     @Override
-    public String getNotificationTickerText() {
-        return "Preparation started";
-    }
-
-    @Override
     public PrepTimer newCopy()
     {
         return new PrepTimer(mName, mFinishTime, mAlerts.toArray(new Event[mAlerts.size()]));

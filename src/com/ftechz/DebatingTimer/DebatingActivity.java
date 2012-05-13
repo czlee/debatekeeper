@@ -32,7 +32,6 @@ public class DebatingActivity extends Activity {
 	// When running:           [Stop]
 	// When stopped by user:   [Resume] [Restart] [Next Speaker]
 	// When stopped by alarm:  [Resume]
-	// TODO: Make buttons disappear when they don't do anything
 	private Button leftControlButton;
 	private Button centreControlButton;
 	private Button rightControlButton;
