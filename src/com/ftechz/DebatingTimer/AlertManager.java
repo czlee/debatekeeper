@@ -85,7 +85,7 @@ public class AlertManager
         }
     }
 
-    public void triggerAlert(AlarmChain.AlarmChainAlert alert)
+    public void triggerAlert(AlarmChain.Event alert)
     {
         updateNotification();
         if(mShowingNotification)

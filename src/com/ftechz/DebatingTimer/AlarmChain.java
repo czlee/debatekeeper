@@ -55,7 +55,7 @@ public abstract class AlarmChain extends TimerTask {
     // an alert.  It has one non-data method, alert(), which triggers the alert function
     // in its AlertManager.
     // TODO: Change name to "Event"
-    public static class AlarmChainAlert {
+    public static class Event {
 
         protected long         mAlertTime    = 0;
         protected int          mSoundResid   = R.raw.desk_bell; // default sound
@@ -64,50 +64,50 @@ public abstract class AlarmChain extends TimerTask {
         protected AlertManager mAlertManager = null;
         protected PeriodInfo   mPeriodInfo   = new PeriodInfo(null, null);
 
-        public AlarmChainAlert(long seconds) {
+        public Event(long seconds) {
             setAlertTime(seconds);
         }
 
-        public AlarmChainAlert(long seconds, String periodDescription) {
+        public Event(long seconds, String periodDescription) {
             setAlertTime(seconds);
             setPeriodInfo(periodDescription, null);
         }
 
-        public AlarmChainAlert(long seconds, String periodDescription, Integer backgroundColor) {
+        public Event(long seconds, String periodDescription, Integer backgroundColor) {
             setAlertTime(seconds);
             setPeriodInfo(periodDescription, backgroundColor);
         }
 
-        public AlarmChainAlert(long seconds, int timesToPlay) {
+        public Event(long seconds, int timesToPlay) {
             setAlertTime(seconds);
             setTimesToPlay(timesToPlay);
         }
 
-        public AlarmChainAlert(long seconds, int timesToPlay, String periodDescription) {
+        public Event(long seconds, int timesToPlay, String periodDescription) {
             setAlertTime(seconds);
             setTimesToPlay(timesToPlay);
             setPeriodInfo(periodDescription, null);
         }
 
-        public AlarmChainAlert(long seconds, int timesToPlay, String periodDescription, Integer backgroundColor) {
+        public Event(long seconds, int timesToPlay, String periodDescription, Integer backgroundColor) {
             setAlertTime(seconds);
             setTimesToPlay(timesToPlay);
             setPeriodInfo(periodDescription, backgroundColor);
         }
 
-        public AlarmChainAlert(long seconds, AlertManager alertManager, String periodDescription) {
+        public Event(long seconds, AlertManager alertManager, String periodDescription) {
             setAlertTime(seconds);
             setAlertManager(alertManager);
             setPeriodInfo(periodDescription, null);
         }
 
-        public AlarmChainAlert(long seconds, AlertManager alertManager, String periodDescription, Integer backgroundColor) {
+        public Event(long seconds, AlertManager alertManager, String periodDescription, Integer backgroundColor) {
             setAlertTime(seconds);
             setAlertManager(alertManager);
             setPeriodInfo(periodDescription, backgroundColor);
         }
 
-        public AlarmChainAlert(long seconds, AlertManager alertManager, int soundResid, int timesToPlay, String periodDescription, Integer backgroundColor) {
+        public Event(long seconds, AlertManager alertManager, int soundResid, int timesToPlay, String periodDescription, Integer backgroundColor) {
             setAlertTime(seconds);
             setAlertManager(alertManager);
             setSound(soundResid, timesToPlay);
@@ -147,23 +147,23 @@ public abstract class AlarmChain extends TimerTask {
 
     // TODO: Change name to "RepeatedEvent"
     // This class extends AlarmChainAlert to trigger again every x seconds after the first alert time
-    public static class OvertimeAlert extends AlarmChain.AlarmChainAlert {
+    public static class OvertimeEvent extends AlarmChain.Event {
         private long mRepeatPeriod = 0;
         private final long mInitTime;
 
-        public OvertimeAlert(long seconds, long repeatPeriod, AlertManager alertManager, String periodDescription) {
+        public OvertimeEvent(long seconds, long repeatPeriod, AlertManager alertManager, String periodDescription) {
             super(seconds, alertManager, periodDescription);
             mInitTime = seconds;
             mRepeatPeriod = repeatPeriod;
         }
 
-        public OvertimeAlert(long seconds, long repeatPeriod, AlertManager alertManager, String periodDescription, Integer backgroundColor) {
+        public OvertimeEvent(long seconds, long repeatPeriod, AlertManager alertManager, String periodDescription, Integer backgroundColor) {
             super(seconds, alertManager, periodDescription, backgroundColor);
             mInitTime = seconds;
             mRepeatPeriod = repeatPeriod;
         }
 
-        public OvertimeAlert(long seconds, long repeatPeriod, int timesToPlay) {
+        public OvertimeEvent(long seconds, long repeatPeriod, int timesToPlay) {
             super(seconds, timesToPlay);
             mInitTime = seconds;
             mRepeatPeriod = repeatPeriod;
@@ -181,9 +181,9 @@ public abstract class AlarmChain extends TimerTask {
         }
     }
 
-    public class AlarmChainAlertCompare implements Comparator<AlarmChainAlert> {
+    public class AlarmChainAlertCompare implements Comparator<Event> {
         @Override
-        public int compare(AlarmChainAlert alert1, AlarmChainAlert alert2) {
+        public int compare(Event alert1, Event alert2) {
             return (int) (alert1.getAlertTime() - alert2.getAlertTime());
         }
     }
@@ -199,7 +199,7 @@ public abstract class AlarmChain extends TimerTask {
     // Members
     private boolean mIsScheduled = false;
     private long mSecondCounter;
-    protected ArrayList<AlarmChainAlert> mAlerts;
+    protected ArrayList<Event> mAlerts;
 
     protected String mName;
 
@@ -225,13 +225,13 @@ public abstract class AlarmChain extends TimerTask {
         init();
     }
 
-    public AlarmChain(long finishTime, AlarmChainAlert[] alerts) {
+    public AlarmChain(long finishTime, Event[] alerts) {
         super();
         init(alerts);
         setFinishTime(finishTime);
     }
 
-    public AlarmChain(long finishTime, AlarmChainAlert[] alerts, boolean countdown) {
+    public AlarmChain(long finishTime, Event[] alerts, boolean countdown) {
         super();
         init(alerts);
         setFinishTime(finishTime);
@@ -249,12 +249,12 @@ public abstract class AlarmChain extends TimerTask {
     public PeriodInfo getInitialPeriodInfo() { return mInitialPeriodInfo; }
 
     private void init() {
-        mAlerts = new ArrayList<AlarmChainAlert>();
+        mAlerts = new ArrayList<Event>();
         mAlertNumber = 0;
         mSecondCounter = 0;
     }
 
-    private void init(AlarmChainAlert[] alerts) {
+    private void init(Event[] alerts) {
         init();
         addTimes(alerts);
     }
@@ -287,14 +287,14 @@ public abstract class AlarmChain extends TimerTask {
         }
     }
 
-    public void addTime(AlarmChainAlert alert) {
+    public void addTime(Event alert) {
         mAlerts.add(alert);
         sort(mAlerts, mAlertComparator);
     }
 
-    public void addTimes(AlarmChainAlert[] alerts) {
+    public void addTimes(Event[] alerts) {
         if (alerts != null) {
-            for (AlarmChainAlert alert : alerts) {
+            for (Event alert : alerts) {
                 mAlerts.add(alert);
             }
         }
@@ -339,7 +339,7 @@ public abstract class AlarmChain extends TimerTask {
         }
     }
 
-    protected void handleAlert(AlarmChainAlert alert){
+    protected void handleAlert(Event alert){
         mCurrentPeriodInfo.update(alert.getPeriodInfo());
         if (alert.isPauseOnEvent()) {
             this.pause();
@@ -356,7 +356,7 @@ public abstract class AlarmChain extends TimerTask {
         mRunningState = RunningState.BeforeStart;
         mSecondCounter = 0;
         mAlertNumber = 0;
-        for (AlarmChainAlert alert : mAlerts) {
+        for (Event alert : mAlerts) {
             alert.reset();
         }
     }

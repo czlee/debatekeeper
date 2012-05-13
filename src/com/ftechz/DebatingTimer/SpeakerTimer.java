@@ -24,7 +24,7 @@ public class SpeakerTimer extends AlarmChain
 
     SpeakerTimer(String name, TeamsManager teamsManager,
                     TeamsManager.SpeakerSide speakerSide,
-                    int speakerNumber, long finishTime, AlarmChainAlert[] alarms)
+                    int speakerNumber, long finishTime, Event[] alarms)
     {
         super(finishTime, alarms);
         mName = name;
@@ -59,7 +59,7 @@ public class SpeakerTimer extends AlarmChain
     public SpeakerTimer newCopy()
     {
         return new SpeakerTimer(mName, mTeamsManager, mSpeakerSide,
-                mSpeakerNumber, mFinishTime, mAlerts.toArray(new AlarmChainAlert[mAlerts.size()]));
+                mSpeakerNumber, mFinishTime, mAlerts.toArray(new Event[mAlerts.size()]));
     }
 
 }

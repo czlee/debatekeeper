@@ -13,7 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.ftechz.DebatingTimer.AlarmChain.AlarmChainAlert;
+import com.ftechz.DebatingTimer.AlarmChain.Event;
 
 /**
  * DebatingActivity The first Activity shown when application is started... for
@@ -238,22 +238,22 @@ public class DebatingActivity extends Activity {
 		// new SpeakerTimer.OvertimeAlert(195, 15)
 		// };
 
-		AlarmChainAlert[] prepAlerts = new AlarmChain.AlarmChainAlert[] {
-				new SpeakerTimer.AlarmChainAlert(5, 1, "Choose moot"), //
-				new SpeakerTimer.AlarmChainAlert(10, 1, "Choose side"), //
-				new SpeakerTimer.AlarmChainAlert(15, 2, "Prepare debate") //
+		Event[] prepAlerts = new AlarmChain.Event[] {
+				new SpeakerTimer.Event(5, 1, "Choose moot"), //
+				new SpeakerTimer.Event(10, 1, "Choose side"), //
+				new SpeakerTimer.Event(15, 2, "Prepare debate") //
 		};
 
-		AlarmChainAlert[] substativeSpeechAlerts = new AlarmChain.AlarmChainAlert[] {
-                new SpeakerTimer.AlarmChainAlert(5, 1, "Points of information allowed"),
-				new SpeakerTimer.AlarmChainAlert(10, 1, "Warning bell rung"),
-				new SpeakerTimer.AlarmChainAlert(15, 2, "Overtime"),
-				new SpeakerTimer.OvertimeAlert(20, 3, 3) };
+		Event[] substativeSpeechAlerts = new AlarmChain.Event[] {
+                new SpeakerTimer.Event(5, 1, "Points of information allowed"),
+				new SpeakerTimer.Event(10, 1, "Warning bell rung"),
+				new SpeakerTimer.Event(15, 2, "Overtime"),
+				new SpeakerTimer.OvertimeEvent(20, 3, 3) };
 
-		AlarmChainAlert[] replySpeechAlerts = new AlarmChain.AlarmChainAlert[] {
-				new SpeakerTimer.AlarmChainAlert(3, 1, "Warning bell rung"),
-				new SpeakerTimer.AlarmChainAlert(6, 2, "Overtime"),
-				new SpeakerTimer.OvertimeAlert(9, 3, 3) };
+		Event[] replySpeechAlerts = new AlarmChain.Event[] {
+				new SpeakerTimer.Event(3, 1, "Warning bell rung"),
+				new SpeakerTimer.Event(6, 2, "Overtime"),
+				new SpeakerTimer.OvertimeEvent(9, 3, 3) };
 
 		// Set up speakers
 		Team team1 = new Team();

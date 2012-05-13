@@ -28,7 +28,7 @@ public class Debate {
     private Timer mTickTimer;
 
     private final AlertManager mAlertManager;
-    private final HashMap<String, AlarmChain.AlarmChainAlert[]> mAlertSets;
+    private final HashMap<String, AlarmChain.Event[]> mAlertSets;
     private final HashMap<String, Long> mFinishTimes; // We can't use primitive longs in HashMap, so we use Longs instead
 
     //
@@ -36,7 +36,7 @@ public class Debate {
     public Debate(AlertManager alertManager) {
         mAlertManager = alertManager;
         mStages = new LinkedList<AlarmChain>();
-        mAlertSets = new HashMap<String, AlarmChain.AlarmChainAlert[]>();
+        mAlertSets = new HashMap<String, AlarmChain.Event[]>();
         mFinishTimes = new HashMap<String, Long>();
         mStageIterator = mStages.iterator();
         mTeamsManager = new TeamsManager();
@@ -78,8 +78,8 @@ public class Debate {
      * @param name
      * @param alarmSet
      */
-    public void addAlarmSet(String name, AlarmChain.AlarmChainAlert[] alarmSet, long finishTime) {
-        for (AlarmChain.AlarmChainAlert alarm : alarmSet) {
+    public void addAlarmSet(String name, AlarmChain.Event[] alarmSet, long finishTime) {
+        for (AlarmChain.Event alarm : alarmSet) {
             alarm.setAlertManager(mAlertManager);
         }
 

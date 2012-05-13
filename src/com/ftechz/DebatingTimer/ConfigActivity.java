@@ -29,9 +29,9 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
     private TabInfo mLastTab = null;
     private Button createDebateButton;
 
-    private AlarmChain.AlarmChainAlert prepAlerts[];
-    private AlarmChain.AlarmChainAlert substativeSpeechAlerts[];
-    private AlarmChain.AlarmChainAlert replySpeechAlerts[];
+    private AlarmChain.Event prepAlerts[];
+    private AlarmChain.Event substativeSpeechAlerts[];
+    private AlarmChain.Event replySpeechAlerts[];
 
     private class TabInfo {
         private String tag;
@@ -213,22 +213,22 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
 //                new SpeakerTimer.OvertimeAlert(195, 15)
 //        };
 
-        prepAlerts = new AlarmChain.AlarmChainAlert[] {
-                new SpeakerTimer.AlarmChainAlert(5, 1),  //
-                new SpeakerTimer.AlarmChainAlert(10, 1), //
-                new SpeakerTimer.AlarmChainAlert(15, 2)   //
+        prepAlerts = new AlarmChain.Event[] {
+                new SpeakerTimer.Event(5, 1),  //
+                new SpeakerTimer.Event(10, 1), //
+                new SpeakerTimer.Event(15, 2)   //
         };
 
-        substativeSpeechAlerts = new AlarmChain.AlarmChainAlert[] {
-                new SpeakerTimer.AlarmChainAlert(5, 1),
-                new SpeakerTimer.AlarmChainAlert(10, 2),
-                new SpeakerTimer.OvertimeAlert(15, 3, 3)
+        substativeSpeechAlerts = new AlarmChain.Event[] {
+                new SpeakerTimer.Event(5, 1),
+                new SpeakerTimer.Event(10, 2),
+                new SpeakerTimer.OvertimeEvent(15, 3, 3)
         };
 
-        replySpeechAlerts = new AlarmChain.AlarmChainAlert[] {
-                new SpeakerTimer.AlarmChainAlert(3, 1),
-                new SpeakerTimer.AlarmChainAlert(6, 2),
-                new SpeakerTimer.OvertimeAlert(9, 3, 3)
+        replySpeechAlerts = new AlarmChain.Event[] {
+                new SpeakerTimer.Event(3, 1),
+                new SpeakerTimer.Event(6, 2),
+                new SpeakerTimer.OvertimeEvent(9, 3, 3)
         };
 
         // Set up speakers

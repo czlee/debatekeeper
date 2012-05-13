@@ -15,14 +15,14 @@ public class PrepTimer extends AlarmChain
         mName = name;
     }
 
-    public PrepTimer(String name, long finishTime, AlarmChainAlert alarmChainAlert[])
+    public PrepTimer(String name, long finishTime, Event alarmChainAlert[])
     {
         super(finishTime, alarmChainAlert, true);
         mName = name;
     }
 
     @Override
-    protected void handleAlert(AlarmChainAlert alert) {
+    protected void handleAlert(Event alert) {
         if (alert.getAlertTime() == this.mFinishTime){
             this.cancel();
         }
@@ -37,6 +37,6 @@ public class PrepTimer extends AlarmChain
     @Override
     public PrepTimer newCopy()
     {
-        return new PrepTimer(mName, mFinishTime, mAlerts.toArray(new AlarmChainAlert[mAlerts.size()]));
+        return new PrepTimer(mName, mFinishTime, mAlerts.toArray(new Event[mAlerts.size()]));
     }
 }
