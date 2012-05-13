@@ -248,12 +248,12 @@ public class DebatingActivity extends Activity {
                 new SpeakerTimer.Event(5, 1, "Points of information allowed"),
 				new SpeakerTimer.Event(10, 1, "Warning bell rung"),
 				new SpeakerTimer.Event(15, 2, "Overtime"),
-				new SpeakerTimer.OvertimeEvent(20, 3, 3) };
+				new SpeakerTimer.RepeatedEvent(20, 3, 3) };
 
 		Event[] replySpeechAlerts = new AlarmChain.Event[] {
 				new SpeakerTimer.Event(3, 1, "Warning bell rung"),
 				new SpeakerTimer.Event(6, 2, "Overtime"),
-				new SpeakerTimer.OvertimeEvent(9, 3, 3) };
+				new SpeakerTimer.RepeatedEvent(9, 3, 3) };
 
 		// Set up speakers
 		Team team1 = new Team();

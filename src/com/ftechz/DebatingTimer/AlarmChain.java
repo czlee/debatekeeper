@@ -145,25 +145,24 @@ public abstract class AlarmChain extends TimerTask {
         public void reset() {}
     }
 
-    // TODO: Change name to "RepeatedEvent"
     // This class extends AlarmChainAlert to trigger again every x seconds after the first alert time
-    public static class OvertimeEvent extends AlarmChain.Event {
+    public static class RepeatedEvent extends AlarmChain.Event {
         private long mRepeatPeriod = 0;
         private final long mInitTime;
 
-        public OvertimeEvent(long seconds, long repeatPeriod, AlertManager alertManager, String periodDescription) {
+        public RepeatedEvent(long seconds, long repeatPeriod, AlertManager alertManager, String periodDescription) {
             super(seconds, alertManager, periodDescription);
             mInitTime = seconds;
             mRepeatPeriod = repeatPeriod;
         }
 
-        public OvertimeEvent(long seconds, long repeatPeriod, AlertManager alertManager, String periodDescription, Integer backgroundColor) {
+        public RepeatedEvent(long seconds, long repeatPeriod, AlertManager alertManager, String periodDescription, Integer backgroundColor) {
             super(seconds, alertManager, periodDescription, backgroundColor);
             mInitTime = seconds;
             mRepeatPeriod = repeatPeriod;
         }
 
-        public OvertimeEvent(long seconds, long repeatPeriod, int timesToPlay) {
+        public RepeatedEvent(long seconds, long repeatPeriod, int timesToPlay) {
             super(seconds, timesToPlay);
             mInitTime = seconds;
             mRepeatPeriod = repeatPeriod;

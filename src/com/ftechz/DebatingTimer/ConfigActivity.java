@@ -222,13 +222,13 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
         substativeSpeechAlerts = new AlarmChain.Event[] {
                 new SpeakerTimer.Event(5, 1),
                 new SpeakerTimer.Event(10, 2),
-                new SpeakerTimer.OvertimeEvent(15, 3, 3)
+                new SpeakerTimer.RepeatedEvent(15, 3, 3)
         };
 
         replySpeechAlerts = new AlarmChain.Event[] {
                 new SpeakerTimer.Event(3, 1),
                 new SpeakerTimer.Event(6, 2),
-                new SpeakerTimer.OvertimeEvent(9, 3, 3)
+                new SpeakerTimer.RepeatedEvent(9, 3, 3)
         };
 
         // Set up speakers
