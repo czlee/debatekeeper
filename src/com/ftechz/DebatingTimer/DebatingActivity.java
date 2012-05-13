@@ -46,6 +46,10 @@ public class DebatingActivity extends Activity {
 
 	static final int DIALOG_SETTINGS_NOT_IMPLEMENTED = 0;
 
+	// TODO This is a temporary mechanism to switch between real-world and test modes
+	// (It just changes the speech times.)
+	private int mTestMode = 0;
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuInflater inflater = getMenuInflater();
@@ -58,6 +62,15 @@ public class DebatingActivity extends Activity {
 	    switch (item.getItemId()) {
 	    case R.id.restartDebate:
 	        mDebate.resetDebate();
+	        updateGui();
+	        return true;
+	    case R.id.switchMode:
+	        mDebate.release();
+	        mDebate = null;
+	        mDebate = mBinder.createDebate();
+	        mTestMode = (mTestMode == 0) ? 1 : 0;
+	        setupDefaultDebate(mDebate, mTestMode);
+	        mDebate.resetSpeaker();
 	        updateGui();
 	        return true;
 	    case R.id.settings:
@@ -264,7 +277,7 @@ public class DebatingActivity extends Activity {
 			mDebate = mBinder.getDebate();
 			if (mDebate == null) {
 				mDebate = mBinder.createDebate();
-				setupDefaultDebate(mDebate);
+				setupDefaultDebate(mDebate, mTestMode);
 				mDebate.resetSpeaker();
 			}
 		}
@@ -276,41 +289,58 @@ public class DebatingActivity extends Activity {
 	};
 
 	// TODO: Remove this from ConfigActivity (it is called setupDebate() there)
-	public void setupDefaultDebate(Debate debate) {
-		// prepAlerts = new AlarmChain.AlarmChainAlert[] {
-		// new SpeakerTimer.WarningAlert(60), // 1 minute
-		// new SpeakerTimer.WarningAlert(120), // 2 minutes
-		// new SpeakerTimer.FinishAlert(420) // 7 minutes
-		// };
-		//
-		// substativeSpeechAlerts = new AlarmChain.AlarmChainAlert[] {
-		// new SpeakerTimer.WarningAlert(240), // 4 minutes
-		// new SpeakerTimer.FinishAlert(360), // 6 minutes
-		// new SpeakerTimer.OvertimeAlert(375, 15) // 6:15, repeating every 5
-		// };
-		//
-		// replySpeechAlerts = new AlarmChain.AlarmChainAlert[] {
-		// new SpeakerTimer.WarningAlert(120),
-		// new SpeakerTimer.FinishAlert(180),
-		// new SpeakerTimer.OvertimeAlert(195, 15)
-		// };
+	public void setupDefaultDebate(Debate debate, int testMode) {
+	    Event[] prepAlerts;
+	    Event[] substantiveSpeechAlerts;
+	    Event[] replySpeechAlerts;
 
-		Event[] prepAlerts = new AlarmChain.Event[] {
-				new SpeakerTimer.Event(5, 1, "Choose moot"), //
-				new SpeakerTimer.Event(10, 1, "Choose side"), //
-				new SpeakerTimer.Event(15, 2, "Prepare debate") //
-		};
+	    switch (testMode) {
+        case 1:
+            // This is a special test mode
+            prepAlerts = new AlarmChain.Event[] {
+                    new SpeakerTimer.Event(5, 1, "Choose moot"),
+                    new SpeakerTimer.Event(10, 1, "Choose side"),
+                    new SpeakerTimer.Event(15, 2, "Prepare debate") };
+            substantiveSpeechAlerts = new AlarmChain.Event[] {
+                    new SpeakerTimer.Event(5, 1, "Points of information allowed", 0x7200ff00),
+                    new SpeakerTimer.Event(10, 1, "Warning bell rung", 0x72ff9900),
+                    new SpeakerTimer.Event(15, 2, "Overtime", 0x72ff0000),
+                    new SpeakerTimer.RepeatedEvent(20, 3, 3) };
 
-		Event[] substativeSpeechAlerts = new AlarmChain.Event[] {
-                new SpeakerTimer.Event(5, 1, "Points of information allowed", 0x7200ff00),
-				new SpeakerTimer.Event(10, 1, "Warning bell rung", 0x72ff9900),
-				new SpeakerTimer.Event(15, 2, "Overtime", 0x72ff0000),
-				new SpeakerTimer.RepeatedEvent(20, 3, 3) };
+            replySpeechAlerts = new AlarmChain.Event[] {
+                    new SpeakerTimer.Event(3, 1, "Warning bell rung", 0x72ff9900),
+                    new SpeakerTimer.Event(6, 2, "Overtime", 0x72ff0000),
+                    new SpeakerTimer.RepeatedEvent(9, 3, 3) };
+            // Add in the alarm sets
+            debate.addAlarmSet("prep", prepAlerts, 15);
+            debate.addAlarmSet("substantiveSpeech", substantiveSpeechAlerts, 15);
+            debate.addAlarmSet("replySpeech", replySpeechAlerts, 6);
+            break;
+        case 0:
+        default:
+            // prepAlerts isn't actually used (it's only used in NZ Easters;
+            // the format described below is Thropy).
+            prepAlerts = new AlarmChain.Event[] {
+                    new SpeakerTimer.Event(1*60, 1, "Choose moot"),
+                    new SpeakerTimer.Event(2*60, 1, "Choose side"),
+                    new SpeakerTimer.Event(7*60, 2, "Prepare debate") };
+            substantiveSpeechAlerts = new AlarmChain.Event[] {
+                    new SpeakerTimer.Event(1*60, 1, "Points of information allowed", 0x7200ff00),
+                    new SpeakerTimer.Event(5*60, 1, "Warning bell rung", 0x72ff9900),
+                    new SpeakerTimer.Event(6*60, 2, "Overtime", 0x72ff0000),
+                    new SpeakerTimer.RepeatedEvent(6*60+20, 20, 3) };
 
-		Event[] replySpeechAlerts = new AlarmChain.Event[] {
-				new SpeakerTimer.Event(3, 1, "Warning bell rung", 0x72ff9900),
-				new SpeakerTimer.Event(6, 2, "Overtime", 0x72ff0000),
-				new SpeakerTimer.RepeatedEvent(9, 3, 3) };
+            replySpeechAlerts = new AlarmChain.Event[] {
+                    new SpeakerTimer.Event(2*60, 1, "Warning bell rung", 0x72ff9900),
+                    new SpeakerTimer.Event(3*60, 2, "Overtime", 0x72ff0000),
+                    new SpeakerTimer.RepeatedEvent(2*60+20, 20, 3) };
+            // Add in the alarm sets
+            debate.addAlarmSet("prep", prepAlerts, 7*60);
+            debate.addAlarmSet("substantiveSpeech", substantiveSpeechAlerts, 6*60);
+            debate.addAlarmSet("replySpeech", replySpeechAlerts, 3*60);
+            break;
+	    }
+
 
 		// Set up speakers
 		Team team1 = new Team();
@@ -328,11 +358,6 @@ public class DebatingActivity extends Activity {
 
 		debate.setSide(team1Index, TeamsManager.SpeakerSide.Affirmative);
 		debate.setSide(team2Index, TeamsManager.SpeakerSide.Negative);
-
-		// Add in the alarm sets
-		debate.addAlarmSet("prep", prepAlerts, 15);
-		debate.addAlarmSet("substantiveSpeech", substativeSpeechAlerts, 15);
-		debate.addAlarmSet("replySpeech", replySpeechAlerts, 6);
 
 		// Add in the stages
 		// debate.addStage(new PrepTimer("Preparation"), "prep");

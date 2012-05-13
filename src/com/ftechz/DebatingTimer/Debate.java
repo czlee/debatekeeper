@@ -250,9 +250,11 @@ public class Debate {
 
         mCurrentStage = null;
 
-        mTickTimer.cancel();
-        mTickTimer.purge();
-        mTickTimer = null;
+        if (mTickTimer != null) {
+            mTickTimer.cancel();
+            mTickTimer.purge();
+            mTickTimer = null;
+        }
 
         mStages = null;
     }
