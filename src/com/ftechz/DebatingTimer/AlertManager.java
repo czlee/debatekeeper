@@ -74,7 +74,9 @@ public class AlertManager
         {
             mWakeLock.release();
             mDebatingTimerService.stopForeground(true);
-            mBellRepeater.stop();
+            if (mBellRepeater != null){
+                mBellRepeater.stop();
+            }
             mShowingNotification = false;
         }
     }
