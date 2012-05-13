@@ -332,7 +332,7 @@ public abstract class AlarmChain extends TimerTask {
         sort(mAlerts, mAlertComparator);
     }
 
-    public long getSeconds() {
+    public long getSecondsForDisplay() {
         if (mCountdown) {
             long time = getFinishTime() - mSecondCounter;
             if (time > 0) {
@@ -345,7 +345,7 @@ public abstract class AlarmChain extends TimerTask {
         }
     }
 
-    public long getNextTime() {
+    public long getNextTimeForDisplay() {
         if (mAlertNumber < mAlerts.size()) {
             if (mCountdown) {
                 return getFinishTime() - mAlerts.get(mAlertNumber).getAlertTime();
@@ -357,7 +357,7 @@ public abstract class AlarmChain extends TimerTask {
         }
     }
 
-    public long getFinalTime() {
+    public long getFinalTimeForDisplay() {
         if (mAlerts.size() > 0) {
             if (mCountdown) {
                 return 0;

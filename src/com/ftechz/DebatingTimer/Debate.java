@@ -165,7 +165,7 @@ public class Debate {
 
     public long getStageCurrentTime() {
         if (mCurrentStage != null) {
-            return mCurrentStage.getSeconds();
+            return mCurrentStage.getSecondsForDisplay();
         } else {
             return 0;
         }
@@ -173,7 +173,7 @@ public class Debate {
 
     public long getStageNextTime() {
         if (mCurrentStage != null) {
-            return mCurrentStage.getNextTime();
+            return mCurrentStage.getNextTimeForDisplay();
         } else {
             return 0;
         }
@@ -181,7 +181,7 @@ public class Debate {
 
     public long getStageFinalTime() {
         if (mCurrentStage != null) {
-            return mCurrentStage.getFinalTime();
+            return mCurrentStage.getFinalTimeForDisplay();
         } else {
             return 0;
         }

@@ -162,12 +162,15 @@ public class DebatingActivity extends Activity {
 		if (mDebate != null) {
 			mStateText.setText(mDebate.getStageStateText());
 			mSpeakerNameText.setText(mDebate.getStageName());
-			mCurrentTimeText.setText(secsToMinuteSecText(mDebate
-					.getStageCurrentTime()));
-			mNextTimeText.setText(secsToMinuteSecText(mDebate
-					.getStageNextTime()));
-			mFinalTimeText.setText(secsToMinuteSecText(mDebate
-					.getStageFinalTime()));
+			mCurrentTimeText.setText(secsToMinuteSecText(mDebate.getStageCurrentTime()));
+			mNextTimeText.setText(String.format(
+		        this.getString(R.string.nextBell),
+		        secsToMinuteSecText(mDebate.getStageNextTime())
+	        ));
+			mFinalTimeText.setText(String.format(
+                this.getString(R.string.speechLength),
+                secsToMinuteSecText(mDebate.getStageFinalTime())
+            ));
 
 			updateButtons();
 		}
