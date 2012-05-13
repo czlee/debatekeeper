@@ -12,8 +12,6 @@ import android.os.PowerManager;
 * Manages all alerts for the application
 * Only a single instance of this should exist
 */
-// TODO: Reduce notifications to a single ongoing one that exists when and only when a timer
-// is running.
 public class AlertManager
 {
     public static final int NOTIFICATION_ID = 1;
