@@ -5,9 +5,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.PowerManager;
 import android.media.MediaPlayer;
+import android.os.PowerManager;
 
 /**
 * AlertManager class
@@ -20,13 +19,13 @@ public class AlertManager
 {
     public static final int NOTIFICATION_ID = 1;
 
-    private DebatingTimerService mDebatingTimerService;
-    private NotificationManager mNotificationManager;
+    private final DebatingTimerService mDebatingTimerService;
+    private final NotificationManager mNotificationManager;
     private Notification mNotification;
-    private PendingIntent mPendingIntent;
+    private final PendingIntent mPendingIntent;
     private boolean mShowingNotification = false;
     private AlarmChain mStage;
-    private PowerManager.WakeLock mWakeLock;
+    private final PowerManager.WakeLock mWakeLock;
     private MediaPlayer mMediaPlayer;
 
     public AlertManager(DebatingTimerService debatingTimerService)
@@ -81,6 +80,11 @@ public class AlertManager
         {
             mWakeLock.release();
             mDebatingTimerService.stopForeground(true);
+            if (mMediaPlayer != null) {
+                if (mMediaPlayer.isPlaying()) mMediaPlayer.stop();
+                mMediaPlayer.release();
+                mMediaPlayer = null;
+            }
             mShowingNotification = false;
         }
     }
@@ -91,10 +95,10 @@ public class AlertManager
         if(mShowingNotification)
         {
             // TODO: Make this use timesToPlay, the number of times the sound is to be repeated
-            
+
             //mNotification.sound = Uri.parse("android.resource://com.ftechz.DebatingTimer/" + soundId);
             mNotificationManager.notify(NOTIFICATION_ID, mNotification);
-            
+
             if (mMediaPlayer != null) {
                 mMediaPlayer.release();
                 mMediaPlayer = null;
@@ -104,7 +108,7 @@ public class AlertManager
             // here until it becomes a problem...
             mMediaPlayer = MediaPlayer.create(mDebatingTimerService.getApplicationContext(), alert.getSoundResid());
             mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                
+
                 @Override
                 public void onCompletion(MediaPlayer mp) {
                     mp.release();
@@ -112,9 +116,9 @@ public class AlertManager
                 }
             });
             // Set to maximum volume possible (!)
-            mMediaPlayer.setVolume((float) 1, (float) 1);
+            mMediaPlayer.setVolume(1, 1);
             mMediaPlayer.start();
-            
+
         }
     }
 }
