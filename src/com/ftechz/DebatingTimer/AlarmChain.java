@@ -72,7 +72,7 @@ public abstract class AlarmChain extends TimerTask {
         @Override
         public void alert() {
             Log.i(this.getClass().getSimpleName(), "Warning Alert.");
-            mAlertManager.triggerAlert(R.raw.beep1);
+            mAlertManager.triggerAlert(R.raw.bell_small_001);
         }
     }
 
@@ -89,7 +89,7 @@ public abstract class AlarmChain extends TimerTask {
         public void alert() {
             Log.i(this.getClass().getSimpleName(), "Finish.");
             // Do an do-do alert
-            mAlertManager.triggerAlert(R.raw.beep2);
+            mAlertManager.triggerAlert(R.raw.beep1);
 
         }
     }
@@ -115,7 +115,7 @@ public abstract class AlarmChain extends TimerTask {
             time += mRepeatPeriod;
             Log.i(this.getClass().getSimpleName(), "OVERTIME!");
             // Do an do-do-do alert
-            mAlertManager.triggerAlert(R.raw.beep3);
+            mAlertManager.triggerAlert(R.raw.desk_bell);
 
         }
 
@@ -343,7 +343,7 @@ public abstract class AlarmChain extends TimerTask {
             String hashCodesString;
             hashCodesString = String.format("Hash codes: timer is %x, task is %x", timer.hashCode(), this.hashCode());
             Log.i(this.getClass().getSimpleName(), hashCodesString);
-            timer.scheduleAtFixedRate(this, 500, 500);
+            timer.scheduleAtFixedRate(this, 1000, 1000);
             mIsScheduled = true;
         }
     }
