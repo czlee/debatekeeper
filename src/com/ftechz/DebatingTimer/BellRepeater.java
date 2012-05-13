@@ -145,7 +145,9 @@ public class BellRepeater extends TimerTask {
             mMediaPlayer = null;
             Log.i("BellRepeater", "Stopped");
         }
-        mTimer.cancel();
+        if (mTimer != null) {
+            mTimer.cancel();
+        }
     }
 
     // Returns True if the BellRepeater can be said to be "busy".
