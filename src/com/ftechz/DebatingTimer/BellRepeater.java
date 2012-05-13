@@ -86,8 +86,12 @@ public class BellRepeater extends TimerTask {
 
                 @Override
                 public void onCompletion(MediaPlayer mp) {
-                    mp.release();
-                    mp = null;
+                    // The MediaPlayer coming here should be the same one as mMediaPlayer in the BellRepeater class
+                    if (mp != mMediaPlayer){
+                        Log.e(this.getClass().getSimpleName(), "OnCompletionListener mp wasn't the same as mMediaPlayer!");
+                    }
+                    mMediaPlayer.release();
+                    mMediaPlayer = null;
                     mState = BellRepeaterState.FINISHED;
                     Log.i("BellRepeater", "Over and out");
                 }
@@ -112,8 +116,12 @@ public class BellRepeater extends TimerTask {
                 @Override
                 public boolean onError(MediaPlayer mp, int what, int extra) {
                     Log.e("BellRepeater", "The media player went into an errored state! Releasing.");
-                    mp.release();
-                    mp = null;
+                    // The MediaPlayer coming here should be the same one as mMediaPlayer in the BellRepeater class
+                    if (mp != mMediaPlayer){
+                        Log.e(this.getClass().getSimpleName(), "OnErrorListener mp wasn't the same as mMediaPlayer!");
+                    }
+                    mMediaPlayer.release();
+                    mMediaPlayer = null;
                     return false;
                 }
             });
@@ -132,7 +140,6 @@ public class BellRepeater extends TimerTask {
     public void stop() {
         mState = BellRepeaterState.STOPPED;
         if (mMediaPlayer != null) {
-            // TODO: Check why MediaPlayer is raising info/warning(1, 44)
             mMediaPlayer.stop();
             mMediaPlayer.release();
             mMediaPlayer = null;

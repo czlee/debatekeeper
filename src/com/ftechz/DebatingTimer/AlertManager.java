@@ -88,7 +88,7 @@ public class AlertManager
             mNotificationManager.notify(NOTIFICATION_ID, mNotification);
 
             if (mBellRepeater != null) {
-                if (mBellRepeater.isPlaying()) mBellRepeater.stop();
+                mBellRepeater.stop();
             }
 
             mBellRepeater = new BellRepeater(mDebatingTimerService.getApplicationContext(), alert.getBellInfo());
