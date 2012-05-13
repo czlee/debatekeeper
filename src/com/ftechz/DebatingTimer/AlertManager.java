@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.os.PowerManager;
 
 /**
@@ -26,7 +25,7 @@ public class AlertManager
     private boolean mShowingNotification = false;
     private AlarmChain mStage;
     private final PowerManager.WakeLock mWakeLock;
-    private MediaPlayer mMediaPlayer;
+    private BellRepeater mBellRepeater = null;
 
     public AlertManager(DebatingTimerService debatingTimerService)
     {
@@ -80,11 +79,7 @@ public class AlertManager
         {
             mWakeLock.release();
             mDebatingTimerService.stopForeground(true);
-            if (mMediaPlayer != null) {
-                if (mMediaPlayer.isPlaying()) mMediaPlayer.stop();
-                mMediaPlayer.release();
-                mMediaPlayer = null;
-            }
+            mBellRepeater.stop();
             mShowingNotification = false;
         }
     }
@@ -94,30 +89,15 @@ public class AlertManager
         updateNotification();
         if(mShowingNotification)
         {
-            // TODO: Make this use timesToPlay, the number of times the sound is to be repeated
 
-            //mNotification.sound = Uri.parse("android.resource://com.ftechz.DebatingTimer/" + soundId);
             mNotificationManager.notify(NOTIFICATION_ID, mNotification);
 
-            if (mMediaPlayer != null) {
-                mMediaPlayer.release();
-                mMediaPlayer = null;
+            if (mBellRepeater != null) {
+                if (mBellRepeater.isPlaying()) mBellRepeater.stop();
             }
-            // This could be inefficient -- MediaPlayer.create() blocks until the file is loaded, which
-            // supposedly can take a while.  But it seems to be working fine, so we'll just leave it
-            // here until it becomes a problem...
-            mMediaPlayer = MediaPlayer.create(mDebatingTimerService.getApplicationContext(), alert.getSoundResid());
-            mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    mp.release();
-                    mp = null;
-                }
-            });
-            // Set to maximum volume possible (!)
-            mMediaPlayer.setVolume(1, 1);
-            mMediaPlayer.start();
+            mBellRepeater = new BellRepeater(mDebatingTimerService.getApplicationContext(), alert.getBellInfo());
+            mBellRepeater.play();
 
         }
     }

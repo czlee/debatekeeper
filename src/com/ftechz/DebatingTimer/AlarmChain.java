@@ -25,8 +25,10 @@ import android.util.Log;
 public abstract class AlarmChain extends TimerTask {
     //
     // Classes
-    // Period holds information about a period *between* Events.
-    // This information is drawn to the GUI straight *after* the event is triggered.
+    /**
+     * PeriodInfo is a passive data class that holds information about a period *between* Events.
+     * This information is drawn to the GUI straight *after* the event is triggered.
+     */
     public static class PeriodInfo {
 
         // The meaning of "null" in both these objects is "do not change from what it is currently".
@@ -51,18 +53,50 @@ public abstract class AlarmChain extends TimerTask {
         }
     }
 
-    // AlarmChainAlert is a mostly-passive data structure that contains information about
-    // an alert.  It has one non-data method, alert(), which triggers the alert function
-    // in its AlertManager.
-    // TODO: Change name to "Event"
+    /**
+     * Event is a mostly-passive data structure that contains information about an event.
+     * It has one non-data method, alert(), which triggers the alert function in its AlertManager.
+     */
     public static class Event {
 
+        /**
+         * BellInfo is a passive data class containing information about a bell.
+         */
+        public static class BellInfo {
+            protected int  mSoundResid  = R.raw.desk_bell; // default sound
+            protected int  mTimesToPlay = 1;               // default times to play
+            protected long mRepeatPeriod = 300;
+
+            public BellInfo() {}
+
+            public BellInfo(int soundResid, int timesToPlay) {
+                mSoundResid  = soundResid;
+                mTimesToPlay = timesToPlay;
+            }
+
+            public BellInfo(int soundResid, int timesToPlay, long repeatPeriod) {
+                mSoundResid   = soundResid;
+                mTimesToPlay  = timesToPlay;
+                mRepeatPeriod = repeatPeriod;
+            }
+
+            public void setSoundResid(int soundResid)     { mSoundResid   = soundResid;   }
+            public void setTimesToPlay(int timesToPlay)   { mTimesToPlay  = timesToPlay;  }
+            public void setRepeatPeriod(int repeatPeriod) { mRepeatPeriod = repeatPeriod; }
+            public int  getSoundResid()   { return mSoundResid;   }
+            public int  getTimesToPlay()  { return mTimesToPlay;  }
+            public long getRepeatPeriod() { return mRepeatPeriod; }
+
+            public boolean isPlayable() {
+                return mSoundResid != 0 && mTimesToPlay != 0;
+            }
+        }
+
         protected long         mAlertTime    = 0;
-        protected int          mSoundResid   = R.raw.desk_bell; // default sound
-        protected int          mTimesToPlay  = 1;               // default times to play
         protected boolean      mPauseOnEvent = false;
         protected AlertManager mAlertManager = null;
         protected PeriodInfo   mPeriodInfo   = new PeriodInfo(null, null);
+        protected BellInfo     mBellInfo     = new BellInfo();
 
         public Event(long seconds) {
             setAlertTime(seconds);
@@ -80,18 +114,18 @@ public abstract class AlarmChain extends TimerTask {
 
         public Event(long seconds, int timesToPlay) {
             setAlertTime(seconds);
-            setTimesToPlay(timesToPlay);
+            mBellInfo.setTimesToPlay(timesToPlay);
         }
 
         public Event(long seconds, int timesToPlay, String periodDescription) {
             setAlertTime(seconds);
-            setTimesToPlay(timesToPlay);
+            mBellInfo.setTimesToPlay(timesToPlay);
             setPeriodInfo(periodDescription, null);
         }
 
         public Event(long seconds, int timesToPlay, String periodDescription, Integer backgroundColor) {
             setAlertTime(seconds);
-            setTimesToPlay(timesToPlay);
+            mBellInfo.setTimesToPlay(timesToPlay);
             setPeriodInfo(periodDescription, backgroundColor);
         }
 
@@ -116,28 +150,25 @@ public abstract class AlarmChain extends TimerTask {
 
         public void setAlertTime(long seconds)                 { mAlertTime    = seconds;      }
         public void setAlertManager(AlertManager alertManager) { mAlertManager = alertManager; }
-        public void setSoundResid(int soundResid)              { mSoundResid   = soundResid;   }
-        public void setTimesToPlay(int timesToPlay)            { mTimesToPlay  = timesToPlay;  }
         public void setPauseOnEvent(boolean pauseOnEvent)      { mPauseOnEvent = pauseOnEvent; }
 
         public void setSound(int soundResid, int timesToPlay) {
-            setSoundResid(soundResid);
-            setTimesToPlay(timesToPlay);
+            mBellInfo.setSoundResid(soundResid);
+            mBellInfo.setTimesToPlay(timesToPlay);
         }
 
         public void setPeriodInfo(String description, Integer backgroundColor) {
             mPeriodInfo = new PeriodInfo(description, backgroundColor);
         }
 
-        public long       getAlertTime()        { return mAlertTime;    }
-        public int        getSoundResid()       { return mSoundResid;   }
-        public int        getSoundTimesToPlay() { return mTimesToPlay;  }
-        public PeriodInfo getPeriodInfo()       { return mPeriodInfo;   }
-        public boolean     isPauseOnEvent()     { return mPauseOnEvent; }
+        public long       getAlertTime()   { return mAlertTime;    }
+        public PeriodInfo getPeriodInfo()  { return mPeriodInfo;   }
+        public BellInfo   getBellInfo()    { return mBellInfo;     }
+        public boolean    isPauseOnEvent() { return mPauseOnEvent; }
 
         public void alert() {
             Log.i(this.getClass().getSimpleName(), String.format("Alert at %d seconds", mAlertTime));
-            if (mSoundResid != 0 && mTimesToPlay > 0) {
+            if (mBellInfo.isPlayable()) {
                 mAlertManager.triggerAlert(this);
             }
         }
