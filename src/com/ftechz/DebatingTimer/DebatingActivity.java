@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -142,10 +143,8 @@ public class DebatingActivity extends Activity {
         registerReceiver(broadcastReceiver, new IntentFilter(
                 DebatingTimerService.BROADCAST_ACTION));
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (mDebate != null) {
-            mDebate.setSilentMode(prefs.getBoolean("silentMode", false));
-        }
+        if (!applyPreferences())
+            Log.w(this.getClass().getSimpleName(), "onResume: Couldn't restore preferences; mDebate doesn't yet exist");
     }
 
     @Override
@@ -262,6 +261,21 @@ public class DebatingActivity extends Activity {
 		}
 	}
 
+    public boolean applyPreferences() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (mDebate != null) {
+            try {
+                mDebate.setSilentMode(prefs.getBoolean("silentMode", false));
+            } catch (ClassCastException e) {
+                Log.e(this.getClass().getSimpleName(), "applyPreferences: caught ClassCastException!");
+                return false;
+            }
+            Log.i(this.getClass().getSimpleName(), "applyPreferences: successfully applied");
+            return true;
+        }
+        else return false;
+    }
+
 	// Second tick broadcast
 	private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
@@ -285,6 +299,7 @@ public class DebatingActivity extends Activity {
 				setupDefaultDebate(mDebate, mTestMode);
 				mDebate.resetSpeaker();
 			}
+			applyPreferences();
 		}
 
 		@Override
