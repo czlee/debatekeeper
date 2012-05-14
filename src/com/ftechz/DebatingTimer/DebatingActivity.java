@@ -17,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ftechz.DebatingTimer.AlarmChain.Event;
@@ -201,11 +202,16 @@ public class DebatingActivity extends Activity {
 		}
 	}
 
-	// Sets the text and visibility of all buttons
+	// Sets the text, visibility and "weight" of all buttons
 	private void setButtons(int leftResid, int centreResid, int rightResid) {
 	    setButton(leftControlButton, leftResid);
 	    setButton(centreControlButton, centreResid);
 	    setButton(rightControlButton, rightResid);
+
+	    // If there are exactly two buttons, make the weight of the left button double,
+	    // so that it fills two-thirds of the width of the screen.
+	    float leftControlButtonWeight = (float) ((centreResid == R.string.nullButtonText && rightResid != R.string.nullButtonText) ? 2.0 : 1.0);
+	    leftControlButton.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, leftControlButtonWeight));
 	}
 
 	// Sets the text and visibility of a single button

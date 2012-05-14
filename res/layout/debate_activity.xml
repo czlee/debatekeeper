@@ -46,27 +46,30 @@
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dip"
             >
 
         <Button
             android:layout_width="0dip"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:text="@string/startTimer"
             android:id="@+id/leftControlButton"
+            android:layout_gravity="center"
             android:layout_weight="1"
                 />
         <Button
             android:id="@+id/centreControlButton"
             android:layout_width="0dip"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:layout_weight="1"
+            android:layout_gravity="center"
             android:text="@string/resetTimer" />
         <Button
             android:id="@+id/rightControlButton"
             android:layout_width="0dip"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:layout_weight="1"
+            android:layout_gravity="center"
             android:text="@string/nextSpeaker" />
 
     </LinearLayout>
