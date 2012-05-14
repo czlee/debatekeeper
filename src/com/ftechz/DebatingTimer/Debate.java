@@ -99,6 +99,10 @@ public class Debate {
         mTeamsManager.setSide(team, side);
     }
 
+    public boolean isLastSpeaker() {
+        return !mStageIterator.hasNext();
+    }
+
     public boolean prepareNextSpeaker() {
         if (mStageIterator.hasNext()) {
             if (mCurrentStage != null) {

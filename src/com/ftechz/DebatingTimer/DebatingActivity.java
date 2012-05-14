@@ -160,7 +160,8 @@ public class DebatingActivity extends Activity {
 			    switch (mDebate.getDebateStatus()) {
 			    case StartOfSpeaker:
 			    case TimerStoppedByUser:
-			        mDebate.prepareNextSpeaker();
+			        if (mDebate.isLastSpeaker()) mDebate.resetDebate();
+			        else mDebate.prepareNextSpeaker();
 	                break;
                 default:
                     break;
@@ -177,9 +178,12 @@ public class DebatingActivity extends Activity {
 
 	// Updates the buttons according to the current status of the debate
 	private void updateButtons() {
-		switch (mDebate.getDebateStatus()) {
+	    // If it's the last speaker, don't show a "next speaker" button.
+	    // Show a "restart debate" button instead.
+	    int nextSpeakerString = (mDebate.isLastSpeaker()) ? R.string.restartDebate : R.string.nextSpeaker;
+	    switch (mDebate.getDebateStatus()) {
 		case StartOfSpeaker:
-		    setButtons(R.string.startTimer, R.string.nullButtonText, R.string.nextSpeaker);
+		    setButtons(R.string.startTimer, R.string.nullButtonText, nextSpeakerString);
 			break;
 		case TimerRunning:
 		    setButtons(R.string.stopTimer, R.string.nullButtonText, R.string.nullButtonText);
@@ -188,7 +192,7 @@ public class DebatingActivity extends Activity {
 		    setButtons(R.string.resumeTimerAfterAlarm, R.string.nullButtonText, R.string.nullButtonText);
 			break;
 		case TimerStoppedByUser:
-		    setButtons(R.string.resumeTimerAfterUserStop, R.string.resetTimer, R.string.nextSpeaker);
+		    setButtons(R.string.resumeTimerAfterUserStop, R.string.resetTimer, nextSpeakerString);
 			break;
 		case EndOfDebate:
 			break;
