@@ -25,6 +25,8 @@ public class AlertManager
     private final PowerManager.WakeLock mWakeLock;
     private BellRepeater mBellRepeater = null;
 
+    private boolean mSilentMode = false;
+
     public AlertManager(DebatingTimerService debatingTimerService)
     {
         mDebatingTimerService = debatingTimerService;
@@ -37,6 +39,14 @@ public class AlertManager
         mWakeLock = pm.newWakeLock(
                 PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE,
                 "DebatingWakeLock");
+    }
+
+    public boolean isSilentMode() {
+        return mSilentMode;
+    }
+
+    public void setSilentMode(boolean mSilentMode) {
+        this.mSilentMode = mSilentMode;
     }
 
     public void makeActive(AlarmChain stage)
@@ -93,8 +103,10 @@ public class AlertManager
                 mBellRepeater.stop();
             }
 
-            mBellRepeater = new BellRepeater(mDebatingTimerService.getApplicationContext(), alert.getBellInfo());
-            mBellRepeater.play();
+            if (!mSilentMode) {
+                mBellRepeater = new BellRepeater(mDebatingTimerService.getApplicationContext(), alert.getBellInfo());
+                mBellRepeater.play();
+            }
 
         }
     }

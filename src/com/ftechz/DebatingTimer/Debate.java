@@ -142,6 +142,14 @@ public class Debate {
         return false;
     }
 
+    public boolean isSilentMode() {
+        return mAlertManager.isSilentMode();
+    }
+
+    public void setSilentMode(boolean silentMode) {
+        mAlertManager.setSilentMode(silentMode);
+    }
+
     public DebateStatus getDebateStatus() {
         if (mCurrentStage != null) {
             switch (mCurrentStage.getRunningState()) {

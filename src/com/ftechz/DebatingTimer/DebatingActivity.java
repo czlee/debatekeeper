@@ -1,17 +1,16 @@
 package com.ftechz.DebatingTimer;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -39,9 +38,9 @@ public class DebatingActivity extends Activity {
 	// When running:           [Stop]
 	// When stopped by user:   [Resume] [Restart] [Next Speaker]
 	// When stopped by alarm:  [Resume]
-	private Button leftControlButton;
-	private Button centreControlButton;
-	private Button rightControlButton;
+	private Button mLeftControlButton;
+	private Button mCentreControlButton;
+	private Button mRightControlButton;
 
 	private Debate mDebate;
 
@@ -50,6 +49,99 @@ public class DebatingActivity extends Activity {
 	// TODO This is a temporary mechanism to switch between real-world and test modes
 	// (It just changes the speech times.)
 	private int mTestMode = 0;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.debate_activity);
+
+        mStateText = (TextView) findViewById(R.id.stateText);
+        mStageText = (TextView) findViewById(R.id.titleText);
+        mCurrentTimeText = (TextView) findViewById(R.id.currentTime);
+        mNextTimeText = (TextView) findViewById(R.id.nextTime);
+        mFinalTimeText = (TextView) findViewById(R.id.finalTime);
+        mLeftControlButton = (Button) findViewById(R.id.leftControlButton);
+        mCentreControlButton = (Button) findViewById(R.id.centreControlButton);
+        mRightControlButton = (Button) findViewById(R.id.rightControlButton);
+
+        //
+        // OnClickListeners
+        mLeftControlButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View pV) {
+                switch (mDebate.getDebateStatus()) {
+                case StartOfSpeaker:
+                    mDebate.start();
+                    break;
+                case TimerRunning:
+                    mDebate.stop();
+                    break;
+                case TimerStoppedByAlarm:
+                case TimerStoppedByUser:
+                    mDebate.resume();
+                    break;
+                default:
+                    break;
+                }
+                updateGui();
+            }
+        });
+
+        mCentreControlButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View pV) {
+                switch (mDebate.getDebateStatus()) {
+                case TimerStoppedByUser:
+                    mDebate.resetSpeaker();
+                    break;
+                default:
+                    break;
+                }
+                updateGui();
+            }
+        });
+
+        mRightControlButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View pV) {
+                switch (mDebate.getDebateStatus()) {
+                case StartOfSpeaker:
+                case TimerStoppedByUser:
+                    if (mDebate.isLastSpeaker()) mDebate.resetDebate();
+                    else mDebate.prepareNextSpeaker();
+                    break;
+                default:
+                    break;
+                }
+                updateGui();
+            }
+        });
+
+        Intent intent = new Intent(this, DebatingTimerService.class);
+        startService(intent);
+
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        registerReceiver(broadcastReceiver, new IntentFilter(
+                DebatingTimerService.BROADCAST_ACTION));
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (mDebate != null) {
+            mDebate.setSilentMode(prefs.getBoolean("silentMode", false));
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        unregisterReceiver(broadcastReceiver);
+    }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -75,106 +167,11 @@ public class DebatingActivity extends Activity {
 	        updateGui();
 	        return true;
 	    case R.id.settings:
-	        showDialog(DIALOG_SETTINGS_NOT_IMPLEMENTED);
+	        startActivity(new Intent(this, GlobalSettingsActivity.class));
 	        return true;
         default:
             return super.onOptionsItemSelected(item);
 	    }
-	}
-
-	@Override
-	protected Dialog onCreateDialog(int id) {
-        Dialog dialog;
-        switch (id) {
-        case DIALOG_SETTINGS_NOT_IMPLEMENTED:
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Sorry!")
-                   .setMessage("I haven't implemented the settings part yet.")
-                   .setCancelable(true)
-                   .setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-            dialog = builder.create();
-            break;
-        default:
-            dialog = null;
-        }
-        return dialog;
-	}
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.debate_activity);
-
-		mStateText = (TextView) findViewById(R.id.stateText);
-		mStageText = (TextView) findViewById(R.id.titleText);
-		mCurrentTimeText = (TextView) findViewById(R.id.currentTime);
-		mNextTimeText = (TextView) findViewById(R.id.nextTime);
-		mFinalTimeText = (TextView) findViewById(R.id.finalTime);
-		leftControlButton = (Button) findViewById(R.id.leftControlButton);
-		centreControlButton = (Button) findViewById(R.id.centreControlButton);
-		rightControlButton = (Button) findViewById(R.id.rightControlButton);
-
-		leftControlButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View pV) {
-				switch (mDebate.getDebateStatus()) {
-				case StartOfSpeaker:
-					mDebate.start();
-					break;
-				case TimerRunning:
-					mDebate.stop();
-					break;
-				case TimerStoppedByAlarm:
-				case TimerStoppedByUser:
-					mDebate.resume();
-					break;
-				default:
-					break;
-				}
-				updateGui();
-			}
-		});
-
-		centreControlButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View pV) {
-                switch (mDebate.getDebateStatus()) {
-                case TimerStoppedByUser:
-                    mDebate.resetSpeaker();
-                    break;
-                default:
-                    break;
-                }
-                updateGui();
-            }
-        });
-
-		rightControlButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View pV) {
-			    switch (mDebate.getDebateStatus()) {
-			    case StartOfSpeaker:
-			    case TimerStoppedByUser:
-			        if (mDebate.isLastSpeaker()) mDebate.resetDebate();
-			        else mDebate.prepareNextSpeaker();
-	                break;
-                default:
-                    break;
-			    }
-                updateGui();
-            }
-		});
-
-		Intent intent = new Intent(this, DebatingTimerService.class);
-		startService(intent);
-
-		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	}
 
 	// Updates the buttons according to the current status of the debate
@@ -204,14 +201,14 @@ public class DebatingActivity extends Activity {
 
 	// Sets the text, visibility and "weight" of all buttons
 	private void setButtons(int leftResid, int centreResid, int rightResid) {
-	    setButton(leftControlButton, leftResid);
-	    setButton(centreControlButton, centreResid);
-	    setButton(rightControlButton, rightResid);
+	    setButton(mLeftControlButton, leftResid);
+	    setButton(mCentreControlButton, centreResid);
+	    setButton(mRightControlButton, rightResid);
 
 	    // If there are exactly two buttons, make the weight of the left button double,
 	    // so that it fills two-thirds of the width of the screen.
 	    float leftControlButtonWeight = (float) ((centreResid == R.string.nullButtonText && rightResid != R.string.nullButtonText) ? 2.0 : 1.0);
-	    leftControlButton.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, leftControlButtonWeight));
+	    mLeftControlButton.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, leftControlButtonWeight));
 	}
 
 	// Sets the text and visibility of a single button
@@ -261,19 +258,6 @@ public class DebatingActivity extends Activity {
 			updateGui();
 		}
 	};
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		registerReceiver(broadcastReceiver, new IntentFilter(
-				DebatingTimerService.BROADCAST_ACTION));
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-		unregisterReceiver(broadcastReceiver);
-	}
 
 	private DebatingTimerService.DebatingTimerServiceBinder mBinder;
 
