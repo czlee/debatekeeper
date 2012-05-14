@@ -38,9 +38,11 @@ public class DebatingActivity extends Activity {
 	// When running:           [Stop]
 	// When stopped by user:   [Resume] [Restart] [Next Speaker]
 	// When stopped by alarm:  [Resume]
+	// The [Bell] button always is on the right of any of the above three buttons.
 	private Button mLeftControlButton;
 	private Button mCentreControlButton;
 	private Button mRightControlButton;
+	private Button mPlayBellButton;
 
 	private Debate mDebate;
 
@@ -63,6 +65,7 @@ public class DebatingActivity extends Activity {
         mLeftControlButton = (Button) findViewById(R.id.leftControlButton);
         mCentreControlButton = (Button) findViewById(R.id.centreControlButton);
         mRightControlButton = (Button) findViewById(R.id.rightControlButton);
+        mPlayBellButton = (Button) findViewById(R.id.playBellButton);
 
         //
         // OnClickListeners
@@ -115,6 +118,14 @@ public class DebatingActivity extends Activity {
                     break;
                 }
                 updateGui();
+            }
+        });
+
+        mPlayBellButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mDebate.playBell();
             }
         });
 

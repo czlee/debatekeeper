@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
 
+import com.ftechz.DebatingTimer.AlarmChain.Event.BellInfo;
+
 /**
 * AlertManager class
 * Manages all alerts for the application
@@ -99,15 +101,29 @@ public class AlertManager
 
             mNotificationManager.notify(NOTIFICATION_ID, mNotification);
 
-            if (mBellRepeater != null) {
-                mBellRepeater.stop();
-            }
-
-            if (!mSilentMode) {
-                mBellRepeater = new BellRepeater(mDebatingTimerService.getApplicationContext(), alert.getBellInfo());
-                mBellRepeater.play();
-            }
+            playBell(alert.getBellInfo());
 
         }
+    }
+
+    // Plays a bell according to a given bellInfo.
+    // Does not play if in silent mode.
+    public void playBell(BellInfo bellInfo) {
+        if (mBellRepeater != null) {
+            mBellRepeater.stop();
+        }
+
+        if (!mSilentMode) {
+            mBellRepeater = new BellRepeater(mDebatingTimerService.getApplicationContext(), bellInfo);
+            mBellRepeater.play();
+        }
+    }
+
+    // Plays a single bell.
+    // Intended for use directly with a user button.
+    public void playBell() {
+        // TODO un-hardcode this R.raw.desk_bell
+        BellInfo bellInfo = new BellInfo(R.raw.desk_bell, 1);
+        playBell(bellInfo);
     }
 }

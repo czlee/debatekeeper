@@ -150,6 +150,11 @@ public class Debate {
         mAlertManager.setSilentMode(silentMode);
     }
 
+    // TODO find a more appropriate home for this rippling, may involve restructuring
+    public void playBell() {
+        mAlertManager.playBell();
+    }
+
     public DebateStatus getDebateStatus() {
         if (mCurrentStage != null) {
             switch (mCurrentStage.getRunningState()) {

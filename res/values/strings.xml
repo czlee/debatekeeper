@@ -22,5 +22,6 @@
     <string name="silentMode">Silent mode</string>
     <string name="silentModeOnSummary">Bell will not ring (this doesn\'t affect other sounds)</string>
     <string name="silentModeOffSummary">Bell will ring</string>
+    <string name="playBell">Bell</string>
     
 </resources>

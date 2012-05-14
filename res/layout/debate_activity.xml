@@ -72,6 +72,13 @@
             android:layout_gravity="center"
             android:text="@string/nextSpeaker" />
 
+        <Button
+            android:id="@+id/playBellButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:text="@string/playBell" />
+
     </LinearLayout>
 
 </LinearLayout>
