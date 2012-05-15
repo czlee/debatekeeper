@@ -236,8 +236,24 @@ public class DebatingActivity extends Activity {
 		super.onDestroy();
 
 		unbindService(mConnection);
-		Intent intent = new Intent(this, DebatingTimerService.class);
-		stopService(intent);
+
+		// TODO: This doesn't work, because IntentService automatically stops itself once there
+		// are no remaining bound service or requests.  So we find that the service will stop
+		// itself after this activities is destroyed, whether or not stopService() is called.
+		// Don't stop the service if the timer is running
+		boolean keepRunning = false;
+		if (mDebate != null) {
+		    if (mDebate.isRunning()) {
+		        keepRunning = true;
+		    }
+		}
+		if (!keepRunning) {
+    		Intent intent = new Intent(this, DebatingTimerService.class);
+    		stopService(intent);
+            Log.i(this.getClass().getSimpleName(), "Timer is not running, stopped service");
+		} else {
+		    Log.i(this.getClass().getSimpleName(), "Timer is running, keeping service alive");
+		}
 	}
 
 	private String secsToMinuteSecText(long time) {

@@ -142,6 +142,10 @@ public class Debate {
         return false;
     }
 
+    public boolean isRunning() {
+        return (getDebateStatus() == DebateStatus.TimerRunning);
+    }
+
     public boolean isSilentMode() {
         return mAlertManager.isSilentMode();
     }

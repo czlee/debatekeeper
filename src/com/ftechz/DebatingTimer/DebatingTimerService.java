@@ -1,12 +1,13 @@
 package com.ftechz.DebatingTimer;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-
-import java.util.Timer;
-import java.util.TimerTask;
+import android.util.Log;
 
 /**
  * DebatingTimerService class
@@ -66,6 +67,8 @@ public class DebatingTimerService extends IntentService
             mDebate.release();
             mDebate = null;
         }
+
+        Log.v(this.getClass().getSimpleName(), "The service is shutting down now!");
     }
 
     public class DebatingTimerServiceBinder extends Binder
@@ -86,6 +89,7 @@ public class DebatingTimerService extends IntentService
         }
     }
 
+    @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
     }
