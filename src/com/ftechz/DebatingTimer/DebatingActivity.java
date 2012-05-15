@@ -207,6 +207,9 @@ public class DebatingActivity extends Activity {
 		default:
 			break;
 		}
+
+	    // Show or hide the [Bell] button
+	    mPlayBellButton.setVisibility((mDebate.isSilentMode()) ? View.GONE : View.VISIBLE);
 	}
 
 	// Sets the text, visibility and "weight" of all buttons
