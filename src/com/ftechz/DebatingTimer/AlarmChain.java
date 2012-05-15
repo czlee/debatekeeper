@@ -424,7 +424,8 @@ public abstract class AlarmChain extends TimerTask {
     }
 
     protected void onStart(){
-        mCurrentPeriodInfo.update(mInitialPeriodInfo);
+        if (mSecondCounter == 0)
+            mCurrentPeriodInfo.update(mInitialPeriodInfo);
     }
 
     protected long getFinishTime() {
@@ -482,11 +483,13 @@ public abstract class AlarmChain extends TimerTask {
     public void saveState(String key, Bundle bundle) {
         bundle.putLong(key + ".currentTime", mSecondCounter);
         bundle.putInt(key + ".timerState", getRunningStateAsInt());
+        bundle.putInt(key + ".alertNumber", mAlertNumber);
         mCurrentPeriodInfo.saveState(key + ".currentPeriodInfo", bundle);
     }
 
     public void restoreState(String key, Bundle bundle) {
         mSecondCounter = bundle.getLong(key + ".currentTime", 0);
+        mAlertNumber = bundle.getInt(key + ".alertNumber", 0);
         restoreRunningState(bundle.getInt(key + ".timerState", 0));
         mCurrentPeriodInfo.restoreState(key + ".currentPeriodInfo", bundle);
     }
