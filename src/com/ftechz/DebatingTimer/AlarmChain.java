@@ -248,7 +248,7 @@ public abstract class AlarmChain extends TimerTask {
     private final AlarmChainAlertCompare mAlertComparator = new AlarmChainAlertCompare();
     protected boolean mCountdown = false;
     protected long mFinishTime = 0;
-    protected PeriodInfo mInitialPeriodInfo = new PeriodInfo(null, null);
+    protected PeriodInfo mInitialPeriodInfo = new PeriodInfo("Initial", null);
 
     // mCurrentPeriodInfo is a working copy of the current period information (PeriodInfo).
     // It should NOT be initialised to have any null members, as this risks invoking a
@@ -467,25 +467,28 @@ public abstract class AlarmChain extends TimerTask {
         switch (state) {
         case 2:
             mRunningState = RunningState.StoppedByAlarm;
+            break;
         case 1: // Don't restore as "running"; restore as "stopped by user".
         case 3:
             mRunningState = RunningState.StoppedByUser;
+            break;
         default:
         case 0:
             mRunningState = RunningState.BeforeStart;
+            break;
         }
     }
 
     public void saveState(String key, Bundle bundle) {
-        bundle.putLong("currentTime", mSecondCounter);
-        bundle.putInt("timerState", getRunningStateAsInt());
-        mCurrentPeriodInfo.saveState("currentPeriodInfo", bundle);
+        bundle.putLong(key + ".currentTime", mSecondCounter);
+        bundle.putInt(key + ".timerState", getRunningStateAsInt());
+        mCurrentPeriodInfo.saveState(key + ".currentPeriodInfo", bundle);
     }
 
     public void restoreState(String key, Bundle bundle) {
-        mSecondCounter = bundle.getLong("currentTime", 0);
-        restoreRunningState(bundle.getInt("timerState", 0));
-        mCurrentPeriodInfo.restoreState("currentPeriodInfo", bundle);
+        mSecondCounter = bundle.getLong(key + ".currentTime", 0);
+        restoreRunningState(bundle.getInt(key + ".timerState", 0));
+        mCurrentPeriodInfo.restoreState(key + ".currentPeriodInfo", bundle);
     }
 
     public String getName() {

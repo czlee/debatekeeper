@@ -290,6 +290,7 @@ public class Debate {
 
     public void resume() {
         if (mCurrentStage != null) {
+            mCurrentStage.setTimer(mTickTimer); // if not already set (no effect if it is)
             mCurrentStage.resume();
             mAlertManager.makeInactive();   // Hide if already showing
             mAlertManager.makeActive(mCurrentStage);
