@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.os.Bundle;
 import android.util.Log;
 
 /**
@@ -40,6 +41,18 @@ public abstract class AlarmChain extends TimerTask {
 
         public String  getDescription()     { return mDescription;     }
         public Integer getBackgroundColor() { return mBackgroundColor; }
+
+        public void saveState(String key, Bundle bundle) {
+            bundle.putString(key + ".description", mDescription);
+            bundle.putInt(key + ".backgroundColor", mBackgroundColor);
+        }
+
+        public void restoreState(String key, Bundle bundle) {
+            String description = bundle.getString(key + ".description");
+            if (description != null) mDescription = description;
+
+            mBackgroundColor = bundle.getInt(key + ".backgroundColor");
+        }
 
         /*
          * Updates the object using the information in another PeriodInfo.
@@ -235,7 +248,7 @@ public abstract class AlarmChain extends TimerTask {
     private final AlarmChainAlertCompare mAlertComparator = new AlarmChainAlertCompare();
     protected boolean mCountdown = false;
     protected long mFinishTime = 0;
-    protected PeriodInfo mInitialPeriodInfo = new PeriodInfo("Initial", null);
+    protected PeriodInfo mInitialPeriodInfo = new PeriodInfo(null, null);
 
     // mCurrentPeriodInfo is a working copy of the current period information (PeriodInfo).
     // It should NOT be initialised to have any null members, as this risks invoking a
@@ -432,6 +445,47 @@ public abstract class AlarmChain extends TimerTask {
 
     public RunningState getRunningState() {
         return mRunningState;
+    }
+
+    private int getRunningStateAsInt() {
+        switch (mRunningState) {
+        case BeforeStart:
+            return 0;
+        case Running:
+            return 1;
+        case StoppedByAlarm:
+            return 2;
+        case StoppedByUser:
+            return 3;
+        default:
+            return 0;
+        }
+    }
+
+    // Must be kept consistent with getRunningStateAsInt().
+    private void restoreRunningState(int state) {
+        switch (state) {
+        case 2:
+            mRunningState = RunningState.StoppedByAlarm;
+        case 1: // Don't restore as "running"; restore as "stopped by user".
+        case 3:
+            mRunningState = RunningState.StoppedByUser;
+        default:
+        case 0:
+            mRunningState = RunningState.BeforeStart;
+        }
+    }
+
+    public void saveState(String key, Bundle bundle) {
+        bundle.putLong("currentTime", mSecondCounter);
+        bundle.putInt("timerState", getRunningStateAsInt());
+        mCurrentPeriodInfo.saveState("currentPeriodInfo", bundle);
+    }
+
+    public void restoreState(String key, Bundle bundle) {
+        mSecondCounter = bundle.getLong("currentTime", 0);
+        restoreRunningState(bundle.getInt("timerState", 0));
+        mCurrentPeriodInfo.restoreState("currentPeriodInfo", bundle);
     }
 
     public String getName() {

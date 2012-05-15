@@ -46,6 +46,7 @@ public class DebatingActivity extends Activity {
 	private Button mPlayBellButton;
 
 	private Debate mDebate;
+	private Bundle mLastStateBundle;
 
 	static final int DIALOG_SETTINGS_NOT_IMPLEMENTED = 0;
 
@@ -130,6 +131,12 @@ public class DebatingActivity extends Activity {
             }
         });
 
+        mLastStateBundle = savedInstanceState; // This could be null
+
+        if (savedInstanceState != null) {
+            mTestMode = savedInstanceState.getInt("testMode", 0);
+        }
+
         Intent intent = new Intent(this, DebatingTimerService.class);
         startService(intent);
 
@@ -151,6 +158,12 @@ public class DebatingActivity extends Activity {
     public void onPause() {
         super.onPause();
         unregisterReceiver(broadcastReceiver);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle bundle) {
+        mDebate.saveState(bundle);
+        bundle.putInt("testMode", mTestMode);
     }
 
 	@Override
@@ -317,6 +330,11 @@ public class DebatingActivity extends Activity {
 				mDebate = mBinder.createDebate();
 				setupDefaultDebate(mDebate, mTestMode);
 				mDebate.resetSpeaker();
+				// We only restore the state if there wasn't an existing debate, i.e.
+				// if the service wasn't already running.
+				if (mLastStateBundle != null) {
+	                mBinder.restoreDebate(mLastStateBundle);
+	            }
 			}
 			applyPreferences();
 		}

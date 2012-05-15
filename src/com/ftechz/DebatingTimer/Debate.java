@@ -6,6 +6,9 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Timer;
 
+import android.os.Bundle;
+import android.util.Log;
+
 /**
  * Debate class
  * This class manages a debate, i.e. a series of AlarmChains.
@@ -23,6 +26,8 @@ public class Debate {
     // Members
     private LinkedList<AlarmChain> mStages;
     private AlarmChain mCurrentStage;
+    // TODO: Tidy this up so it doesn't have a parallel integer/iterator.
+    private int mCurrentStageInt;  // Used for saving the instance state
     private Iterator<AlarmChain> mStageIterator;
     private final TeamsManager mTeamsManager;
     private Timer mTickTimer;
@@ -110,9 +115,11 @@ public class Debate {
             }
             mCurrentStage = mStageIterator.next();
             mCurrentStage.resetState();
+            mCurrentStageInt += 1;
             return true;
         } else {
             mCurrentStage = null;
+            mCurrentStageInt = 0;
         }
 
         return false;
@@ -247,6 +254,7 @@ public class Debate {
         }
 
         mCurrentStage = null;
+        mCurrentStageInt = 0;
         mTickTimer.purge();
         mTickTimer.cancel();
         mTickTimer = new Timer();
@@ -291,6 +299,50 @@ public class Debate {
     public void pause() {
         if (mCurrentStage != null) {
             mCurrentStage.pause();
+        }
+    }
+
+    /**
+     * Saves the state of the debate.  To be called by DebatingActivity.onSaveInstanceState().
+     */
+    public void saveState(Bundle bundle) {
+        // Things to save:
+        //   1. The current speaker.
+        //   2. The current time.
+        //   3. The current state.
+
+        bundle.putInt("currentStageNumber", mCurrentStageInt);
+        if (mCurrentStage != null) {
+            mCurrentStage.saveState("currentStage", bundle);
+        }
+    }
+
+    public void restoreState(Bundle bundle) {
+        // Loop through to put the iterator in the right state
+        // Default to first speaker
+        mCurrentStageInt = bundle.getInt("currentStageNumber", 1);
+
+        Log.i(this.getClass().getSimpleName(), String.format("The size of mStages is %s", mStages.size()));
+
+        mStageIterator = mStages.iterator();
+
+        if (mCurrentStageInt <= 0) mCurrentStageInt = 1; // Must be on at least the first speaker (no zeroth speaker)
+        for (int i = 0; i < mCurrentStageInt; i++) {
+            if (mStageIterator.hasNext()) {
+                mCurrentStage = mStageIterator.next();
+            } else {
+                // If we hit the end, start from the beginning and break
+                mStageIterator = mStages.iterator();
+                if (mStageIterator.hasNext()) {
+                    mCurrentStage = mStageIterator.next();
+                } else {
+                    mCurrentStage = null;
+                }
+                break;
+            }
+        }
+        if (mCurrentStage != null) {
+            mCurrentStage.restoreState("currentStage", bundle);
         }
     }
 
