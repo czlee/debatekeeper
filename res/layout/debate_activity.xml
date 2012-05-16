@@ -23,7 +23,7 @@
     <TextView
             style="@style/MainTimerText"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dip"
             android:layout_weight="1"
             android:text="00:00"
             android:id="@+id/currentTime"

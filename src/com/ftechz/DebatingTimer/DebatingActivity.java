@@ -390,7 +390,7 @@ public class DebatingActivity extends Activity {
             replySpeechAlerts = new AlarmChain.Event[] {
                     new SpeakerTimer.Event(2*60, 1, "Warning bell rung", 0x72ff9900),
                     new SpeakerTimer.Event(3*60, 2, "Overtime", 0x72ff0000),
-                    new SpeakerTimer.RepeatedEvent(2*60+20, 20, 3) };
+                    new SpeakerTimer.RepeatedEvent(3*60+20, 20, 3) };
             // Add in the alarm sets
             debate.addAlarmSet("prep", prepAlerts, 7*60);
             debate.addAlarmSet("substantiveSpeech", substantiveSpeechAlerts, 6*60);

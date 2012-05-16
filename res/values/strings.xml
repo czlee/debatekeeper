@@ -18,7 +18,7 @@
     <!-- Menu -->
     <string name="restartDebate">Restart Debate</string>
     <string name="settings">Settings</string>
-    <string name="switchMode">Switch Mode</string>
+    <string name="switchMode">Test Mode</string>
     <string name="silentMode">Silent mode</string>
     <string name="silentModeOnSummary">Bell will not ring (this doesn\'t affect other sounds from your phone)</string>
     <string name="silentModeOffSummary">Bell will ring</string>
