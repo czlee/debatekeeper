@@ -292,6 +292,7 @@ public class DebatingActivity extends Activity {
         if (mDebate != null) {
             try {
                 mDebate.setSilentMode(prefs.getBoolean("silentMode", false));
+                mDebate.setVibrateMode(prefs.getBoolean("vibrateMode", false));
             } catch (ClassCastException e) {
                 Log.e(this.getClass().getSimpleName(), "applyPreferences: caught ClassCastException!");
                 return false;

@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
+import android.os.Vibrator;
 
 import com.ftechz.DebatingTimer.AlarmChain.Event.BellInfo;
 
@@ -26,8 +27,10 @@ public class AlertManager
     private AlarmChain mStage;
     private final PowerManager.WakeLock mWakeLock;
     private BellRepeater mBellRepeater = null;
+    private final Vibrator mVibrator;
 
     private boolean mSilentMode = false;
+    private boolean mVibrateMode = true;
 
     public AlertManager(DebatingTimerService debatingTimerService)
     {
@@ -41,14 +44,24 @@ public class AlertManager
         mWakeLock = pm.newWakeLock(
                 PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE,
                 "DebatingWakeLock");
+
+        mVibrator = (Vibrator) debatingTimerService.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     public boolean isSilentMode() {
         return mSilentMode;
     }
 
-    public void setSilentMode(boolean mSilentMode) {
-        this.mSilentMode = mSilentMode;
+    public void setSilentMode(boolean silentMode) {
+        this.mSilentMode = silentMode;
+    }
+
+    public boolean isVibrateMode() {
+        return mVibrateMode;
+    }
+
+    public void setVibrateMode(boolean vibrateMode) {
+        this.mVibrateMode = vibrateMode;
     }
 
     public void makeActive(AlarmChain stage)
@@ -89,6 +102,7 @@ public class AlertManager
             if (mBellRepeater != null){
                 mBellRepeater.stop();
             }
+            mVibrator.cancel();
             mShowingNotification = false;
         }
     }
@@ -116,6 +130,9 @@ public class AlertManager
         if (!mSilentMode) {
             mBellRepeater = new BellRepeater(mDebatingTimerService.getApplicationContext(), bellInfo);
             mBellRepeater.play();
+        }
+        if (mVibrateMode) {
+            mVibrator.vibrate(300 * bellInfo.getTimesToPlay());
         }
     }
 
