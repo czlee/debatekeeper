@@ -48,8 +48,6 @@ public class DebatingActivity extends Activity {
 	private Debate mDebate;
 	private Bundle mLastStateBundle;
 
-	static final int DIALOG_SETTINGS_NOT_IMPLEMENTED = 0;
-
 	// TODO This is a temporary mechanism to switch between real-world and test modes
 	// (It just changes the speech times.)
 	private int mTestMode = 0;
@@ -250,10 +248,6 @@ public class DebatingActivity extends Activity {
 
 		unbindService(mConnection);
 
-		// TODO: This doesn't work, because IntentService automatically stops itself once there
-		// are no remaining bound service or requests.  So we find that the service will stop
-		// itself after this activities is destroyed, whether or not stopService() is called.
-		// Don't stop the service if the timer is running
 		boolean keepRunning = false;
 		if (mDebate != null) {
 		    if (mDebate.isRunning()) {
@@ -385,12 +379,12 @@ public class DebatingActivity extends Activity {
                     new SpeakerTimer.Event(1*60, 1, "Points of information allowed", 0x7200ff00),
                     new SpeakerTimer.Event(5*60, 1, "Warning bell rung", 0x72ff9900),
                     new SpeakerTimer.Event(6*60, 2, "Overtime", 0x72ff0000),
-                    new SpeakerTimer.RepeatedEvent(6*60+20, 20, 3) };
+                    new SpeakerTimer.RepeatedEvent(6*60+30, 20, 3) };
 
             replySpeechAlerts = new AlarmChain.Event[] {
                     new SpeakerTimer.Event(2*60, 1, "Warning bell rung", 0x72ff9900),
                     new SpeakerTimer.Event(3*60, 2, "Overtime", 0x72ff0000),
-                    new SpeakerTimer.RepeatedEvent(3*60+20, 20, 3) };
+                    new SpeakerTimer.RepeatedEvent(3*60+30, 20, 3) };
             // Add in the alarm sets
             debate.addAlarmSet("prep", prepAlerts, 7*60);
             debate.addAlarmSet("substantiveSpeech", substantiveSpeechAlerts, 6*60);
