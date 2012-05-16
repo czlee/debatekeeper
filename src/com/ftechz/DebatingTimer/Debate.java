@@ -7,7 +7,6 @@ import java.util.ListIterator;
 import java.util.Timer;
 
 import android.os.Bundle;
-import android.util.Log;
 
 /**
  * Debate class
@@ -322,8 +321,6 @@ public class Debate {
         // Loop through to put the iterator in the right state
         // Default to first speaker
         mCurrentStageInt = bundle.getInt("currentStageNumber", 1);
-
-        Log.i(this.getClass().getSimpleName(), String.format("The size of mStages is %s", mStages.size()));
 
         mStageIterator = mStages.iterator();
 
