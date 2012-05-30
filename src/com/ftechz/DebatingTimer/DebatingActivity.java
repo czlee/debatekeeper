@@ -182,7 +182,8 @@ public class DebatingActivity extends Activity {
 	        mDebate.release();
 	        mDebate = null;
 	        mDebate = mBinder.createDebate();
-	        mTestMode = (mTestMode == 0) ? 1 : 0;
+	        mTestMode = mTestMode + 1;
+	        if (mTestMode == 5) mTestMode = 0;
 	        setupDefaultDebate(mDebate, mTestMode);
 	        mDebate.resetSpeaker();
 	        updateGui();
@@ -346,13 +347,75 @@ public class DebatingActivity extends Activity {
 	    Event[] substantiveSpeechAlerts;
 	    Event[] replySpeechAlerts;
 
+        // TODO: Implement this properly
 	    switch (testMode) {
-        case 1:
+	    case 4:
+	        // Short Australs
+            substantiveSpeechAlerts = new AlarmChain.Event[] {
+                    new SpeakerTimer.Event(4*60, 1, "Warning bell rung", 0x72ff9900),
+                    new SpeakerTimer.Event(6*60, 2, "Overtime", 0x72ff0000),
+                    new SpeakerTimer.RepeatedEvent(6*60+30, 20, 3) };
+
+            replySpeechAlerts = new AlarmChain.Event[] {
+                    new SpeakerTimer.Event(2*60, 1, "Warning bell rung", 0x72ff9900),
+                    new SpeakerTimer.Event(3*60, 2, "Overtime", 0x72ff0000),
+                    new SpeakerTimer.RepeatedEvent(3*60+30, 20, 3) };
+            // Add in the alarm sets
+            debate.addAlarmSet("substantiveSpeech", substantiveSpeechAlerts, 6*60);
+            debate.addAlarmSet("replySpeech", replySpeechAlerts, 3*60);
+            break;
+	    case 3:
+	        // Australs
+            substantiveSpeechAlerts = new AlarmChain.Event[] {
+                    new SpeakerTimer.Event(6*60, 1, "Warning bell rung", 0x72ff9900),
+                    new SpeakerTimer.Event(8*60, 2, "Overtime", 0x72ff0000),
+                    new SpeakerTimer.RepeatedEvent(8*60+30, 20, 3) };
+
+            replySpeechAlerts = new AlarmChain.Event[] {
+                    new SpeakerTimer.Event(3*60, 1, "Warning bell rung", 0x72ff9900),
+                    new SpeakerTimer.Event(4*60, 2, "Overtime", 0x72ff0000),
+                    new SpeakerTimer.RepeatedEvent(4*60+30, 20, 3) };
+            // Add in the alarm sets
+            debate.addAlarmSet("substantiveSpeech", substantiveSpeechAlerts, 8*60);
+            debate.addAlarmSet("replySpeech", replySpeechAlerts, 4*60);
+            break;
+	    case 2:
+          // Thropy
+          substantiveSpeechAlerts = new AlarmChain.Event[] {
+                  new SpeakerTimer.Event(1*60, 1, "Points of information allowed", 0x7200ff00),
+                  new SpeakerTimer.Event(5*60, 1, "Warning bell rung", 0x72ff9900),
+                  new SpeakerTimer.Event(6*60, 2, "Overtime", 0x72ff0000),
+                  new SpeakerTimer.RepeatedEvent(6*60+30, 20, 3) };
+          replySpeechAlerts = new AlarmChain.Event[] {
+                  new SpeakerTimer.Event(2*60, 1, "Warning bell rung", 0x72ff9900),
+                  new SpeakerTimer.Event(3*60, 2, "Overtime", 0x72ff0000),
+                  new SpeakerTimer.RepeatedEvent(3*60+30, 20, 3) };
+          // Add in the alarm sets
+          debate.addAlarmSet("substantiveSpeech", substantiveSpeechAlerts, 6*60);
+          debate.addAlarmSet("replySpeech", replySpeechAlerts, 3*60);
+          break;
+	    case 1:
+            // Premier B
+//          prepAlerts = new AlarmChain.Event[] {
+//                  new SpeakerTimer.Event(1*60, 1, "Choose moot"),
+//                  new SpeakerTimer.Event(2*60, 1, "Choose side"),
+//                  new SpeakerTimer.Event(7*60, 2, "Prepare debate") };
+          substantiveSpeechAlerts = new AlarmChain.Event[] {
+                  new SpeakerTimer.Event(1*60, 1, "Points of information allowed", 0x7200ff00),
+                  new SpeakerTimer.Event(7*60, 1, "Warning bell rung", 0x72ff9900),
+                  new SpeakerTimer.Event(8*60, 2, "Overtime", 0x72ff0000),
+                  new SpeakerTimer.RepeatedEvent(8*60+30, 20, 3) };
+          replySpeechAlerts = new AlarmChain.Event[] {
+                  new SpeakerTimer.Event(3*60, 1, "Warning bell rung", 0x72ff9900),
+                  new SpeakerTimer.Event(4*60, 2, "Overtime", 0x72ff0000),
+                  new SpeakerTimer.RepeatedEvent(4*60+30, 20, 3) };
+          // Add in the alarm sets
+          debate.addAlarmSet("substantiveSpeech", substantiveSpeechAlerts, 8*60);
+          debate.addAlarmSet("replySpeech", replySpeechAlerts, 4*60);
+          break;
+        case 0:
+        default:
             // This is a special test mode
-            prepAlerts = new AlarmChain.Event[] {
-                    new SpeakerTimer.Event(5, 1, "Choose moot"),
-                    new SpeakerTimer.Event(10, 1, "Choose side"),
-                    new SpeakerTimer.Event(15, 2, "Prepare debate") };
             substantiveSpeechAlerts = new AlarmChain.Event[] {
                     new SpeakerTimer.Event(5, 1, "Points of information allowed", 0x7200ff00),
                     new SpeakerTimer.Event(10, 1, "Warning bell rung", 0x72ff9900),
@@ -364,32 +427,8 @@ public class DebatingActivity extends Activity {
                     new SpeakerTimer.Event(6, 2, "Overtime", 0x72ff0000),
                     new SpeakerTimer.RepeatedEvent(9, 3, 3) };
             // Add in the alarm sets
-            debate.addAlarmSet("prep", prepAlerts, 15);
             debate.addAlarmSet("substantiveSpeech", substantiveSpeechAlerts, 15);
             debate.addAlarmSet("replySpeech", replySpeechAlerts, 6);
-            break;
-        case 0:
-        default:
-            // prepAlerts isn't actually used (it's only used in NZ Easters;
-            // the format described below is Thropy).
-            prepAlerts = new AlarmChain.Event[] {
-                    new SpeakerTimer.Event(1*60, 1, "Choose moot"),
-                    new SpeakerTimer.Event(2*60, 1, "Choose side"),
-                    new SpeakerTimer.Event(7*60, 2, "Prepare debate") };
-            substantiveSpeechAlerts = new AlarmChain.Event[] {
-                    new SpeakerTimer.Event(1*60, 1, "Points of information allowed", 0x7200ff00),
-                    new SpeakerTimer.Event(5*60, 1, "Warning bell rung", 0x72ff9900),
-                    new SpeakerTimer.Event(6*60, 2, "Overtime", 0x72ff0000),
-                    new SpeakerTimer.RepeatedEvent(6*60+30, 20, 3) };
-
-            replySpeechAlerts = new AlarmChain.Event[] {
-                    new SpeakerTimer.Event(2*60, 1, "Warning bell rung", 0x72ff9900),
-                    new SpeakerTimer.Event(3*60, 2, "Overtime", 0x72ff0000),
-                    new SpeakerTimer.RepeatedEvent(3*60+30, 20, 3) };
-            // Add in the alarm sets
-            debate.addAlarmSet("prep", prepAlerts, 7*60);
-            debate.addAlarmSet("substantiveSpeech", substantiveSpeechAlerts, 6*60);
-            debate.addAlarmSet("replySpeech", replySpeechAlerts, 3*60);
             break;
 	    }
 
