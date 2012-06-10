@@ -6,9 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
 /**
+ * <b> OBSOLETE, DO NOT USE </b>
  * Fragment for adding/configuring speakers
  */
 public class ConfigSpeakersFragment extends Fragment {

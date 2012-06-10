@@ -23,5 +23,7 @@
     <string name="silentModeOnSummary">Bell will not ring (this doesn\'t affect other sounds from your phone)</string>
     <string name="silentModeOffSummary">Bell will ring</string>
     <string name="playBell">Bell</string>
+    <string name="prevSpeaker">Previous Speaker</string>
+    <string name="noMoreBells">There are no more bells in this speech</string>
     
 </resources>

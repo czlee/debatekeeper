@@ -1,6 +1,7 @@
 package com.ftechz.DebatingTimer;
 
 /**
+ * <b> OBSOLETE, DO NOT USE </b>
  * SpeakerTimer class
  * Exist as a stage in a debate, keeping the timer of the stage
  * and its own internal state according on the AlarmChainAlerts provided
@@ -15,15 +16,15 @@ public class PrepTimer extends AlarmChain
         mName = name;
     }
 
-    public PrepTimer(String name, long finishTime, Event alarmChainAlert[])
+    public PrepTimer(String name, long finishTime, BellInfo alarmChainAlert[])
     {
         super(finishTime, alarmChainAlert, true);
         mName = name;
     }
 
     @Override
-    protected void handleAlert(Event alert) {
-        if (alert.getAlertTime() == this.getFinishTime()){
+    protected void handleAlert(BellInfo alert) {
+        if (alert.getBellTime() == this.getFinishTime()){
             this.cancel();
         }
         super.handleAlert(alert);
@@ -32,6 +33,6 @@ public class PrepTimer extends AlarmChain
     @Override
     public PrepTimer newCopy()
     {
-        return new PrepTimer(mName, mFinishTime, mAlerts.toArray(new Event[mAlerts.size()]));
+        return new PrepTimer(mName, mFinishTime, mAlerts.toArray(new BellInfo[mAlerts.size()]));
     }
 }

@@ -6,7 +6,6 @@ import java.util.TimerTask;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -27,18 +26,17 @@ public class DebatingTimerService extends Service
     public static final String BROADCAST_ACTION = "com.ftechz.DebatingTimer.update";
     private Intent intent;
 
-    private Timer tickTimer;
+    private Timer updateGuiTimer;
     private final IBinder mBinder = new DebatingTimerServiceBinder();
 
-    private Debate mDebate;
-
+    private DebateManager mDebateManager;
     private AlertManager mAlertManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        tickTimer = new Timer();
+        updateGuiTimer = new Timer();
 
         // TODO: Find a better way to do this than a broadcast
         // Start a new timer task to broadcast a UI update
@@ -49,14 +47,14 @@ public class DebatingTimerService extends Service
                 sendBroadcast(DebatingTimerService.this.intent);
             }
         };
-        tickTimer.schedule(mRunnable, 0, 200);
+        updateGuiTimer.schedule(mRunnable, 0, 200);
 
         mAlertManager = new AlertManager(this);
 
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId){
+    public int onStartCommand(Intent intent, int flags, int startId) {
         // We don't care if the service is started multiple times.  It only ever
         // makes sense to have one of these at a given time; all activities should bind
         // do this single instance.  In fact, there should never be more than one
@@ -74,17 +72,15 @@ public class DebatingTimerService extends Service
     public void onDestroy() {
         super.onDestroy();
 
-        if(tickTimer != null)
-        {
+        if(updateGuiTimer != null) {
             // Clean up stuff
-            tickTimer.cancel();
-            tickTimer = null;
+            updateGuiTimer.cancel();
+            updateGuiTimer = null;
         }
 
-        if(mDebate != null)
-        {
-            mDebate.release();
-            mDebate = null;
+        if(mDebateManager != null) {
+            mDebateManager.release();
+            mDebateManager = null;
         }
 
         Log.v(this.getClass().getSimpleName(), "The service is shutting down now!");
@@ -92,25 +88,19 @@ public class DebatingTimerService extends Service
 
     public class DebatingTimerServiceBinder extends Binder
     {
-        public Debate getDebate()
-        {
-            return mDebate;
+        public DebateManager getDebateManager() {
+            return mDebateManager;
         }
 
-        public Debate createDebate()
-        {
-            if(mDebate != null)
-            {
-                mDebate.release();
-            }
-            mDebate = new Debate(mAlertManager);
-            return mDebate;
+        public AlertManager getAlertManager() {
+            return mAlertManager;
         }
 
-        public Debate restoreDebate(Bundle bundle)
-        {
-            mDebate.restoreState(bundle);
-            return mDebate;
+        public DebateManager createDebateManager(DebateFormat df) {
+            if(mDebateManager != null)
+                mDebateManager.release();
+            mDebateManager = new DebateManager(df, mAlertManager);
+            return mDebateManager;
         }
     }
 

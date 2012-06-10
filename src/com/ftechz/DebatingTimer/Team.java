@@ -3,12 +3,13 @@ package com.ftechz.DebatingTimer;
 import java.util.ArrayList;
 
 /**
+ * <b> OBSOLETE, DO NOT USE </b>
  *
  */
 public class Team {
     private String mName;
     private Speaker mLeader;
-    private ArrayList<Speaker> mMembers = new ArrayList<Speaker>();
+    private final ArrayList<Speaker> mMembers = new ArrayList<Speaker>();
 
     public String getName() {
         return mName;

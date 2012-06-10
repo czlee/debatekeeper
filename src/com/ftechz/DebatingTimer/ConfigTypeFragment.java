@@ -5,9 +5,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 /**
+ * <b> OBSOLETE, DO NOT USE </b>
  * Fragment for selecting debate type
  */
 public class ConfigTypeFragment extends Fragment {

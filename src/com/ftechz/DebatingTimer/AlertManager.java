@@ -8,37 +8,46 @@ import android.content.Intent;
 import android.os.PowerManager;
 import android.os.Vibrator;
 
-import com.ftechz.DebatingTimer.AlarmChain.Event.BellInfo;
 
 /**
-* AlertManager class
-* Manages all alerts for the application
-* Only a single instance of this should exist
+* AlertManager manages all alerts for the Debating Timer application.
+*
+* Only a single instance of AlertManager should exist at any given time.  It receives requests from
+* other parts of the application.
+*
+* @author Phillip Cao
+* @author Chuan-Zheng Lee
 */
 public class AlertManager
 {
     public static final int NOTIFICATION_ID = 1;
 
-    private final DebatingTimerService mDebatingTimerService;
-    private final NotificationManager mNotificationManager;
-    private Notification mNotification;
-    private final PendingIntent mPendingIntent;
-    private boolean mShowingNotification = false;
-    private AlarmChain mStage;
+    private final DebatingTimerService  mDebatingTimerService;
+    private final NotificationManager   mNotificationManager;
+    private final PendingIntent         mIntentStartingHostActivity;
     private final PowerManager.WakeLock mWakeLock;
-    private BellRepeater mBellRepeater = null;
-    private final Vibrator mVibrator;
+    private final Vibrator              mVibrator;
+    private       Notification          mNotification;
+    private       AlarmChain            mStage;
+    private       BellRepeater          mBellRepeater        = null;
+    private       boolean               mShowingNotification = false;
+    private       boolean               mSilentMode          = false;
+    private       boolean               mVibrateMode         = true;
 
-    private boolean mSilentMode = false;
-    private boolean mVibrateMode = true;
+    /**
+     * Constructor.
+     * @param debatingTimerService The instance of {@link DebatingTimerService} to which this
+     * AlertManager relates
+     */
+    public AlertManager(DebatingTimerService debatingTimerService) {
 
-    public AlertManager(DebatingTimerService debatingTimerService)
-    {
         mDebatingTimerService = debatingTimerService;
+
+        // Retrieve the notification manager
         mNotificationManager = (NotificationManager) debatingTimerService.getSystemService(
                 Context.NOTIFICATION_SERVICE);
         Intent notificationIntent = new Intent(debatingTimerService, DebatingActivity.class);
-        mPendingIntent = PendingIntent.getActivity(debatingTimerService, 0, notificationIntent, 0);
+        mIntentStartingHostActivity = PendingIntent.getActivity(debatingTimerService, 0, notificationIntent, 0);
 
         PowerManager pm = (PowerManager) debatingTimerService.getSystemService(Context.POWER_SERVICE);
         mWakeLock = pm.newWakeLock(
@@ -64,17 +73,14 @@ public class AlertManager
         this.mVibrateMode = vibrateMode;
     }
 
-    public void makeActive(AlarmChain stage)
-    {
-        mStage = stage;
+    public void makeActive(PeriodInfo currentPeriodInfo) {
 
-        if(!mShowingNotification)
-        {
+        if(!mShowingNotification) {
             mNotification = new Notification(R.drawable.ic_stat_name,
                     mDebatingTimerService.getText(R.string.notificationTicker),
                     System.currentTimeMillis());
 
-            updateNotification();
+            updateNotification(currentPeriodInfo.getDescription());
             mDebatingTimerService.startForeground(NOTIFICATION_ID, mNotification);
 
             mShowingNotification = true;
@@ -83,46 +89,36 @@ public class AlertManager
         mWakeLock.acquire();
     }
 
-    public void updateNotification()
-    {
-        if(mStage != null)
-        {
+    public void updateNotification(String notificationText) {
             mNotification.setLatestEventInfo(mDebatingTimerService,
                     mDebatingTimerService.getText(R.string.notification_title),
-                    mStage.getNotificationText(), mPendingIntent);
-        }
+                    notificationText, mIntentStartingHostActivity);
     }
 
-    public void makeInactive()
-    {
-        if(mShowingNotification)
-        {
+    public void makeInactive() {
+        if(mShowingNotification) {
             mWakeLock.release();
             mDebatingTimerService.stopForeground(true);
-            if (mBellRepeater != null){
-                mBellRepeater.stop();
-            }
+            if (mBellRepeater != null) mBellRepeater.stop();
             mVibrator.cancel();
             mShowingNotification = false;
         }
     }
 
-    public void triggerAlert(AlarmChain.Event alert)
-    {
-        updateNotification();
-        if(mShowingNotification)
-        {
+    public void triggerAlert(BellInfo alert, PeriodInfo currentPeriodInfo) {
+        updateNotification(currentPeriodInfo.getDescription());
+        if(mShowingNotification) {
 
             mNotificationManager.notify(NOTIFICATION_ID, mNotification);
 
-            playBell(alert.getBellInfo());
+            playBell(alert.getBellSoundInfo());
 
         }
     }
 
     // Plays a bell according to a given bellInfo.
     // Does not play if in silent mode.
-    public void playBell(BellInfo bellInfo) {
+    public void playBell(BellSoundInfo bellInfo) {
         if (mBellRepeater != null) {
             mBellRepeater.stop();
         }
@@ -140,7 +136,7 @@ public class AlertManager
     // Intended for use directly with a user button.
     public void playBell() {
         // TODO un-hardcode this R.raw.desk_bell
-        BellInfo bellInfo = new BellInfo(R.raw.desk_bell, 1);
+        BellSoundInfo bellInfo = new BellSoundInfo(R.raw.desk_bell, 1);
         playBell(bellInfo);
     }
 }

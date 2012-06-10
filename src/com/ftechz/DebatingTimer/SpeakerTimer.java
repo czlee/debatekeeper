@@ -1,6 +1,7 @@
 package com.ftechz.DebatingTimer;
 
 /**
+ * <b> OBSOLETE, DO NOT USE </b>
  * SpeakerTimer class
  * Exist as a stage in a debate, keeping the timer of the stage
  * and its own internal state according on the AlarmChainAlerts provided
@@ -24,7 +25,7 @@ public class SpeakerTimer extends AlarmChain
 
     SpeakerTimer(String name, TeamsManager teamsManager,
                     TeamsManager.SpeakerSide speakerSide,
-                    int speakerNumber, long finishTime, Event[] alarms)
+                    int speakerNumber, long finishTime, BellInfo[] alarms)
     {
         super(finishTime, alarms);
         mName = name;
@@ -54,7 +55,7 @@ public class SpeakerTimer extends AlarmChain
     public SpeakerTimer newCopy()
     {
         return new SpeakerTimer(mName, mTeamsManager, mSpeakerSide,
-                mSpeakerNumber, mFinishTime, mAlerts.toArray(new Event[mAlerts.size()]));
+                mSpeakerNumber, mFinishTime, mAlerts.toArray(new BellInfo[mAlerts.size()]));
     }
 
 }

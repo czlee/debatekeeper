@@ -1,5 +1,7 @@
 package com.ftechz.DebatingTimer;
 
+import java.util.HashMap;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -13,11 +15,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TabHost;
 import android.widget.TabHost.TabContentFactory;
-import java.util.HashMap;
 
 /**
+ * <b> OBSOLETE, DO NOT USE </b>
  * This activity allows the user to configure a debate.
- * 
+ *
  * TODO: In the future, this Activity should be subordinate to DebatingActivity.
  * It should allow the user to:
  *   - Change the current configuration (which should be part of the saved state for DebatingActivity)
@@ -25,18 +27,18 @@ import java.util.HashMap;
  */
 public class ConfigActivity extends FragmentActivity implements TabHost.OnTabChangeListener {
     private TabHost mTabHost;
-    private HashMap<String, TabInfo> mMapTabInfo = new HashMap<String, TabInfo>();
+    private final HashMap<String, TabInfo> mMapTabInfo = new HashMap<String, TabInfo>();
     private TabInfo mLastTab = null;
     private Button createDebateButton;
 
-    private AlarmChain.Event prepAlerts[];
-    private AlarmChain.Event substativeSpeechAlerts[];
-    private AlarmChain.Event replySpeechAlerts[];
+    private BellInfo prepAlerts[];
+    private BellInfo substativeSpeechAlerts[];
+    private BellInfo replySpeechAlerts[];
 
     private class TabInfo {
-        private String tag;
-        private Class nTabClass;
-        private Bundle args;
+        private final String tag;
+        private final Class nTabClass;
+        private final Bundle args;
         public Fragment mFragment;
         TabInfo(String tag, Class tabClass, Bundle args) {
             this.tag = tag;
@@ -63,6 +65,7 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
         }
     }
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.configure);
@@ -71,13 +74,13 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
         createDebateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View pV) {
-                if(mBinder != null)
+                /*if(mBinder != null)
                 {
                     Debate debate =  mBinder.createDebate();
                     setupDebate(debate);
                     Intent intent = new Intent(ConfigActivity.this, DebatingActivity.class);
                     startActivity(intent);
-                }
+                }*/
             }
         });
 
@@ -94,6 +97,7 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString("tab", mTabHost.getCurrentTabTag()); //save the tab selected
         super.onSaveInstanceState(outState);
@@ -149,8 +153,9 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
         tabHost.addTab(tabSpec);
     }
 
+    @Override
     public void onTabChanged(String tag) {
-        TabInfo newTab = (TabInfo) this.mMapTabInfo.get(tag);
+        TabInfo newTab = this.mMapTabInfo.get(tag);
         if (mLastTab != newTab) {
             FragmentTransaction ft = this.getSupportFragmentManager().beginTransaction();
             if (mLastTab != null) {
@@ -177,7 +182,7 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
     private DebatingTimerService.DebatingTimerServiceBinder mBinder;
 
     /** Defines callbacks for service binding, passed to bindService() */
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className,
@@ -213,22 +218,20 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
 //                new SpeakerTimer.OvertimeAlert(195, 15)
 //        };
 
-        prepAlerts = new AlarmChain.Event[] {
-                new SpeakerTimer.Event(5, 1),  //
-                new SpeakerTimer.Event(10, 1), //
-                new SpeakerTimer.Event(15, 2)   //
+        prepAlerts = new BellInfo[] {
+                new BellInfo(5, 1),  //
+                new BellInfo(10, 1), //
+                new BellInfo(15, 2)   //
         };
 
-        substativeSpeechAlerts = new AlarmChain.Event[] {
-                new SpeakerTimer.Event(5, 1),
-                new SpeakerTimer.Event(10, 2),
-                new SpeakerTimer.RepeatedEvent(15, 3, 3)
+        substativeSpeechAlerts = new BellInfo[] {
+                new BellInfo(5, 1),
+                new BellInfo(10, 2),
         };
 
-        replySpeechAlerts = new AlarmChain.Event[] {
-                new SpeakerTimer.Event(3, 1),
-                new SpeakerTimer.Event(6, 2),
-                new SpeakerTimer.RepeatedEvent(9, 3, 3)
+        replySpeechAlerts = new BellInfo[] {
+                new BellInfo(3, 1),
+                new BellInfo(6, 2),
         };
 
         // Set up speakers
@@ -236,7 +239,7 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
         Team team1 = new Team();
         team1.addMember(new Speaker(speakersFragment.speaker1Field.getText().toString()), true);
         team1.addMember(new Speaker(speakersFragment.speaker2Field.getText().toString()), false);
-        
+
         Team team2 = new Team();
         team2.addMember(new Speaker(speakersFragment.speaker3Field.getText().toString()), true);
         team2.addMember(new Speaker(speakersFragment.speaker4Field.getText().toString()), false);

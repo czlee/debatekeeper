@@ -2,7 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/restartDebate" android:orderInCategory="0" android:title="@string/restartDebate"></item>
     <item android:id="@+id/switchMode" android:orderInCategory="1" android:title="@string/switchMode"></item>
-    <item android:id="@+id/settings" android:title="@string/settings" android:orderInCategory="2"></item>
+    <item android:id="@+id/settings" android:title="@string/settings" android:orderInCategory="3"></item>
+    <item android:id="@+id/prevSpeaker" android:title="@string/prevSpeaker" android:orderInCategory="2"></item>
     
     
 

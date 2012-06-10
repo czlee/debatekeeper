@@ -9,6 +9,7 @@ import java.util.Timer;
 import android.os.Bundle;
 
 /**
+ * <b> OBSOLETE, DO NOT USE </b>
  * Debate class
  * This class manages a debate, i.e. a series of AlarmChains.
  */
@@ -32,7 +33,7 @@ public class Debate {
     private Timer mTickTimer;
 
     private final AlertManager mAlertManager;
-    private final HashMap<String, AlarmChain.Event[]> mAlertSets;
+    private final HashMap<String, BellInfo[]> mAlertSets;
     private final HashMap<String, Long> mFinishTimes; // We can't use primitive longs in HashMap, so we use Longs instead
 
     //
@@ -40,7 +41,7 @@ public class Debate {
     public Debate(AlertManager alertManager) {
         mAlertManager = alertManager;
         mStages = new LinkedList<AlarmChain>();
-        mAlertSets = new HashMap<String, AlarmChain.Event[]>();
+        mAlertSets = new HashMap<String, BellInfo[]>();
         mFinishTimes = new HashMap<String, Long>();
         mStageIterator = mStages.iterator();
         mTeamsManager = new TeamsManager();
@@ -68,6 +69,8 @@ public class Debate {
                 speakerTimer.setSpeakersManager(mTeamsManager);
             }
 
+            alarmChain.setAlertManager(mAlertManager);
+
             mStages.add(alarmChain);
 
             mStageIterator = mStages.iterator();
@@ -82,11 +85,7 @@ public class Debate {
      * @param name
      * @param alarmSet
      */
-    public void addAlarmSet(String name, AlarmChain.Event[] alarmSet, long finishTime) {
-        for (AlarmChain.Event alarm : alarmSet) {
-            alarm.setAlertManager(mAlertManager);
-        }
-
+    public void addAlarmSet(String name, BellInfo[] alarmSet, long finishTime) {
         mAlertSets.put(name, alarmSet);
         mFinishTimes.put(name, new Long(finishTime));
     }
@@ -141,7 +140,7 @@ public class Debate {
                     mCurrentStage.setTimer(mTickTimer);
                     mCurrentStage.start();
                     mAlertManager.makeInactive();   // Hide if already showing
-                    mAlertManager.makeActive(mCurrentStage);
+                    mAlertManager.makeActive(mCurrentStage.mCurrentPeriodInfo);
                 }
             return true;
         }
@@ -300,7 +299,7 @@ public class Debate {
             mCurrentStage.setTimer(mTickTimer); // if not already set (no effect if it is)
             mCurrentStage.resume();
             mAlertManager.makeInactive();   // Hide if already showing
-            mAlertManager.makeActive(mCurrentStage);
+            mAlertManager.makeActive(mCurrentStage.mCurrentPeriodInfo);
        }
     }
 

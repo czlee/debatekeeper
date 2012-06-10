@@ -20,14 +20,19 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.ftechz.DebatingTimer.AlarmChain.Event;
+import com.ftechz.DebatingTimer.DebateFormatBuilder.DebateFormatBuilderException;
+
 
 /**
- * DebatingActivity The first Activity shown when application is started... for
- * now
+ * This is the main activity for the Debating Timer application.  It is the launcher activity,
+ * and the activity in which the user spends the most time.
+ *
+ * @author Phillip Cao
+ * @author Chuan-Zheng Lee
  *
  */
 public class DebatingActivity extends Activity {
+
 	private TextView mStateText;
 	private TextView mStageText;
 	private TextView mCurrentTimeText;
@@ -45,43 +50,88 @@ public class DebatingActivity extends Activity {
 	private Button mRightControlButton;
 	private Button mPlayBellButton;
 
-	private Debate mDebate;
+	private DebateManager mDebateManager;
 	private Bundle mLastStateBundle;
 
 	// TODO This is a temporary mechanism to switch between real-world and test modes
 	// (It just changes the speech times.)
 	private int mTestMode = 0;
 
+    private final String BUNDLE_SUFFIX_DEBATE_MANAGER = "dm";
+
+    // Second tick broadcast
+    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateGui();
+        }
+    };
+
+    private DebatingTimerService.DebatingTimerServiceBinder mBinder;
+
+    /** Defines callbacks for service binding, passed to bindService() */
+    private final ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+
+            mBinder = (DebatingTimerService.DebatingTimerServiceBinder) service;
+            mDebateManager = mBinder.getDebateManager();
+            if (mDebateManager == null) {
+                DebateFormat df = buildDefaultDebate(mTestMode);
+                if (df == null) {
+                    DebatingActivity.this.finish();
+                }
+                mDebateManager = mBinder.createDebateManager(df);
+                // We only restore the state if there wasn't an existing debate, i.e.
+                // if the service wasn't already running.
+                if (mLastStateBundle != null)
+                    mDebateManager.restoreState(BUNDLE_SUFFIX_DEBATE_MANAGER, mLastStateBundle);
+            }
+            applyPreferences();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mDebateManager = null;
+        }
+    };
+
+    //******************************************************************************************
+    // Public methods
+    //******************************************************************************************
+
+    /* (non-Javadoc)
+     * @see android.app.Activity#onCreate(android.os.Bundle)
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.debate_activity);
 
-        mStateText = (TextView) findViewById(R.id.stateText);
-        mStageText = (TextView) findViewById(R.id.titleText);
-        mCurrentTimeText = (TextView) findViewById(R.id.currentTime);
-        mNextTimeText = (TextView) findViewById(R.id.nextTime);
-        mFinalTimeText = (TextView) findViewById(R.id.finalTime);
-        mLeftControlButton = (Button) findViewById(R.id.leftControlButton);
-        mCentreControlButton = (Button) findViewById(R.id.centreControlButton);
-        mRightControlButton = (Button) findViewById(R.id.rightControlButton);
-        mPlayBellButton = (Button) findViewById(R.id.playBellButton);
+        mStateText           = (TextView) findViewById(R.id.stateText);
+        mStageText           = (TextView) findViewById(R.id.titleText);
+        mCurrentTimeText     = (TextView) findViewById(R.id.currentTime);
+        mNextTimeText        = (TextView) findViewById(R.id.nextTime);
+        mFinalTimeText       = (TextView) findViewById(R.id.finalTime);
+        mLeftControlButton   = (Button)   findViewById(R.id.leftControlButton);
+        mCentreControlButton = (Button)   findViewById(R.id.centreControlButton);
+        mRightControlButton  = (Button)   findViewById(R.id.rightControlButton);
+        mPlayBellButton      = (Button)   findViewById(R.id.playBellButton);
 
         //
         // OnClickListeners
         mLeftControlButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View pV) {
-                switch (mDebate.getDebateStatus()) {
-                case StartOfSpeaker:
-                    mDebate.start();
+                switch (mDebateManager.getStatus()) {
+                case RUNNING:
+                    mDebateManager.stopTimer();
                     break;
-                case TimerRunning:
-                    mDebate.stop();
-                    break;
-                case TimerStoppedByAlarm:
-                case TimerStoppedByUser:
-                    mDebate.resume();
+                case NOT_STARTED:
+                case STOPPED_BY_BELL:
+                case STOPPED_BY_USER:
+                    mDebateManager.startTimer();
                     break;
                 default:
                     break;
@@ -94,9 +144,9 @@ public class DebatingActivity extends Activity {
 
             @Override
             public void onClick(View pV) {
-                switch (mDebate.getDebateStatus()) {
-                case TimerStoppedByUser:
-                    mDebate.resetSpeaker();
+                switch (mDebateManager.getStatus()) {
+                case STOPPED_BY_USER:
+                    mDebateManager.resetSpeaker();
                     break;
                 default:
                     break;
@@ -108,11 +158,11 @@ public class DebatingActivity extends Activity {
         mRightControlButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View pV) {
-                switch (mDebate.getDebateStatus()) {
-                case StartOfSpeaker:
-                case TimerStoppedByUser:
-                    if (mDebate.isLastSpeaker()) mDebate.resetDebate();
-                    else mDebate.prepareNextSpeaker();
+                switch (mDebateManager.getStatus()) {
+                case NOT_STARTED:
+                case STOPPED_BY_USER:
+                    if (!mDebateManager.isLastSpeaker())
+                        mDebateManager.nextSpeaker();
                     break;
                 default:
                     break;
@@ -125,7 +175,7 @@ public class DebatingActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                mDebate.playBell();
+                mBinder.getAlertManager().playBell();
             }
         });
 
@@ -149,7 +199,7 @@ public class DebatingActivity extends Activity {
                 DebatingTimerService.BROADCAST_ACTION));
 
         if (!applyPreferences())
-            Log.w(this.getClass().getSimpleName(), "onResume: Couldn't restore preferences; mDebate doesn't yet exist");
+            Log.w(this.getClass().getSimpleName(), "onResume: Couldn't restore preferences; mDebateManager doesn't yet exist");
     }
 
     @Override
@@ -160,7 +210,8 @@ public class DebatingActivity extends Activity {
 
     @Override
     public void onSaveInstanceState(Bundle bundle) {
-        mDebate.saveState(bundle);
+        if (mDebateManager != null)
+            mDebateManager.saveState(BUNDLE_SUFFIX_DEBATE_MANAGER, bundle);
         bundle.putInt("testMode", mTestMode);
     }
 
@@ -174,18 +225,17 @@ public class DebatingActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
-	    case R.id.restartDebate:
-	        mDebate.resetDebate();
-	        updateGui();
+	    case R.id.prevSpeaker:
+	        mDebateManager.previousSpeaker();
 	        return true;
 	    case R.id.switchMode:
-	        mDebate.release();
-	        mDebate = null;
-	        mDebate = mBinder.createDebate();
-	        mTestMode = mTestMode + 1;
-	        if (mTestMode == 5) mTestMode = 0;
-	        setupDefaultDebate(mDebate, mTestMode);
-	        mDebate.resetSpeaker();
+            mTestMode = mTestMode + 1;
+            if (mTestMode == 5) mTestMode = 0;
+            // keep going
+	    case R.id.restartDebate:
+	        mDebateManager.release();
+	        mDebateManager = null;
+	        mDebateManager = mBinder.createDebateManager(buildDefaultDebate(mTestMode));
 	        updateGui();
 	        return true;
 	    case R.id.settings:
@@ -196,32 +246,42 @@ public class DebatingActivity extends Activity {
 	    }
 	}
 
-	// Updates the buttons according to the current status of the debate
+	@Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+	    MenuItem prevSpeakerItem = menu.findItem(R.id.prevSpeaker);
+	    prevSpeakerItem.setEnabled(!mDebateManager.isFirstSpeaker());
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    // Updates the buttons according to the current status of the debate
 	private void updateButtons() {
 	    // If it's the last speaker, don't show a "next speaker" button.
 	    // Show a "restart debate" button instead.
-	    int nextSpeakerString = (mDebate.isLastSpeaker()) ? R.string.restartDebate : R.string.nextSpeaker;
-	    switch (mDebate.getDebateStatus()) {
-		case StartOfSpeaker:
-		    setButtons(R.string.startTimer, R.string.nullButtonText, nextSpeakerString);
+	    switch (mDebateManager.getStatus()) {
+		case NOT_STARTED:
+		    setButtons(R.string.startTimer, R.string.nullButtonText, R.string.nextSpeaker);
 			break;
-		case TimerRunning:
+		case RUNNING:
 		    setButtons(R.string.stopTimer, R.string.nullButtonText, R.string.nullButtonText);
 			break;
-		case TimerStoppedByAlarm:
+		case STOPPED_BY_BELL:
 		    setButtons(R.string.resumeTimerAfterAlarm, R.string.nullButtonText, R.string.nullButtonText);
 			break;
-		case TimerStoppedByUser:
-		    setButtons(R.string.resumeTimerAfterUserStop, R.string.resetTimer, nextSpeakerString);
-			break;
-		case EndOfDebate:
+		case STOPPED_BY_USER:
+		    setButtons(R.string.resumeTimerAfterUserStop, R.string.resetTimer, R.string.nextSpeaker);
 			break;
 		default:
 			break;
 		}
 
+        // Hide the [Next Speaker] button if there are no more speakers
+        mRightControlButton.setEnabled(!mDebateManager.isLastSpeaker());
+
+
 	    // Show or hide the [Bell] button
-	    mPlayBellButton.setVisibility((mDebate.isSilentMode()) ? View.GONE : View.VISIBLE);
+	    mPlayBellButton.setVisibility((mBinder.getAlertManager().isSilentMode()) ? View.GONE : View.VISIBLE);
 	}
 
 	// Sets the text, visibility and "weight" of all buttons
@@ -250,8 +310,8 @@ public class DebatingActivity extends Activity {
 		unbindService(mConnection);
 
 		boolean keepRunning = false;
-		if (mDebate != null) {
-		    if (mDebate.isRunning()) {
+		if (mDebateManager != null) {
+		    if (mDebateManager.isRunning()) {
 		        keepRunning = true;
 		    }
 		}
@@ -264,24 +324,38 @@ public class DebatingActivity extends Activity {
 		}
 	}
 
-	private String secsToMinuteSecText(long time) {
+
+	private static String secsToText(long time) {
 		return String.format("%02d:%02d", time / 60, time % 60);
 	}
 
 	public void updateGui() {
-		if (mDebate != null) {
-			mStateText.setText(mDebate.getStageStateText());
-			mStageText.setText(mDebate.getStageName());
-			mStateText.setBackgroundColor(mDebate.getStageBackgroundColor());
-			mStageText.setBackgroundColor(mDebate.getStageBackgroundColor());
-			mCurrentTimeText.setText(secsToMinuteSecText(mDebate.getStageCurrentTime()));
-			mNextTimeText.setText(String.format(
-		        this.getString(R.string.nextBell),
-		        secsToMinuteSecText(mDebate.getStageNextTime())
-	        ));
+		if (mDebateManager != null) {
+		    SpeechFormat currentSpeechFormat = mDebateManager.getCurrentSpeechFormat();
+		    PeriodInfo currentPeriodInfo = mDebateManager.getCurrentPeriodInfo();
+
+			mStateText.setText(currentPeriodInfo.getDescription());
+			mStageText.setText(mDebateManager.getCurrentSpeechName());
+			mStateText.setBackgroundColor(currentPeriodInfo.getBackgroundColor());
+			mStageText.setBackgroundColor(currentPeriodInfo.getBackgroundColor());
+
+			long currentSpeechTime = mDebateManager.getCurrentSpeechTime();
+
+			mCurrentTimeText.setText(secsToText(currentSpeechTime));
+
+			BellInfo nextBell = currentSpeechFormat.getFirstBellFromTime(currentSpeechTime);
+
+			if (nextBell != null) {
+    			mNextTimeText.setText(String.format(
+    		        this.getString(R.string.nextBell),
+    		        secsToText(nextBell.getBellTime())
+    	        ));
+			} else {
+			    mNextTimeText.setText(this.getString(R.string.noMoreBells));
+			}
 			mFinalTimeText.setText(String.format(
                 this.getString(R.string.speechLength),
-                secsToMinuteSecText(mDebate.getStageFinalTime())
+                secsToText(currentSpeechFormat.getSpeechLength())
             ));
 
 			updateButtons();
@@ -290,106 +364,143 @@ public class DebatingActivity extends Activity {
 
     public boolean applyPreferences() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (mDebate != null) {
+        if (mDebateManager != null) {
             try {
-                mDebate.setSilentMode(prefs.getBoolean("silentMode", false));
-                mDebate.setVibrateMode(prefs.getBoolean("vibrateMode", false));
+                mBinder.getAlertManager().setSilentMode(prefs.getBoolean("silentMode", false));
+                mBinder.getAlertManager().setVibrateMode(prefs.getBoolean("vibrateMode", false));
             } catch (ClassCastException e) {
                 Log.e(this.getClass().getSimpleName(), "applyPreferences: caught ClassCastException!");
                 return false;
             }
-            Log.i(this.getClass().getSimpleName(), "applyPreferences: successfully applied");
+            Log.v(this.getClass().getSimpleName(), "applyPreferences: successfully applied");
             return true;
         }
         else return false;
     }
 
-	// Second tick broadcast
-	private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			updateGui();
-		}
-	};
+	public DebateFormat buildDefaultDebate(int testMode) {
+	    DebateFormatBuilder dfb = new DebateFormatBuilder();
 
-	private DebatingTimerService.DebatingTimerServiceBinder mBinder;
+	    try {
 
-	/** Defines callbacks for service binding, passed to bindService() */
-	private final ServiceConnection mConnection = new ServiceConnection() {
+            dfb.addNewResource("#all");
+            dfb.addPeriodInfoToResource("#all", "initial", new PeriodInfo("Initial", null));
+            dfb.addPeriodInfoToResource("#all", "pois-allowed", new PeriodInfo("POIs allowed", 0x7700ff00));
+            dfb.addPeriodInfoToResource("#all", "warning", new PeriodInfo("Warning bell rung", 0x77ffcc00));
+            dfb.addPeriodInfoToResource("#all", "overtime", new PeriodInfo("Overtime", 0x77ff0000));
 
-		@Override
-		public void onServiceConnected(ComponentName className, IBinder service) {
+            switch (testMode) {
+            case 4: // Short Australs
+                dfb.addNewSpeechFormat("substantive", 6*60);
+                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(4*60, 1), "warning");
+                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(6*60, 2), "overtime");
 
-			mBinder = (DebatingTimerService.DebatingTimerServiceBinder) service;
-			mDebate = mBinder.getDebate();
-			if (mDebate == null) {
-				mDebate = mBinder.createDebate();
-				setupDefaultDebate(mDebate, mTestMode);
-				mDebate.resetSpeaker();
-				// We only restore the state if there wasn't an existing debate, i.e.
-				// if the service wasn't already running.
-				if (mLastStateBundle != null) {
-	                mBinder.restoreDebate(mLastStateBundle);
-	            }
-			}
-			applyPreferences();
-		}
+                dfb.addNewSpeechFormat("reply", 3*60);
+                dfb.addBellInfoToSpeechFormat("reply", new BellInfo(2*60, 1), "warning");
+                dfb.addBellInfoToSpeechFormat("reply", new BellInfo(3*60, 2), "overtime");
+                break;
+            case 3: // Thropy
+                dfb.addNewSpeechFormat("substantive", 8*60);
+                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(6*60, 1), "warning");
+                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(8*60, 2), "overtime");
 
-		@Override
-		public void onServiceDisconnected(ComponentName arg0) {
-			mDebate = null;
-		}
-	};
+                dfb.addNewSpeechFormat("reply", 4*60);
+                dfb.addBellInfoToSpeechFormat("reply", new BellInfo(3*60, 1), "warning");
+                dfb.addBellInfoToSpeechFormat("reply", new BellInfo(4*60, 2), "overtime");
+                break;
+            case 2: // Premier B
+                dfb.addNewSpeechFormat("substantive", 6*60);
+                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(1*60, 1), "pois-allowed");
+                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(5*60, 1), "warning");
+                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(6*60, 2), "overtime");
 
-	// TODO: Remove this from ConfigActivity (it is called setupDebate() there)
+                dfb.addNewSpeechFormat("reply", 3*60);
+                dfb.addBellInfoToSpeechFormat("reply", new BellInfo(2*60, 1), "warning");
+                dfb.addBellInfoToSpeechFormat("reply", new BellInfo(3*60, 2), "overtime");
+                break;
+            case 1: // Australs
+                dfb.addNewSpeechFormat("substantive", 8*60);
+                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(1*60, 1), "pois-allowed");
+                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(7*60, 1), "warning");
+                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(8*60, 2), "overtime");
+
+                dfb.addNewSpeechFormat("reply", 4*60);
+                dfb.addBellInfoToSpeechFormat("reply", new BellInfo(3*60, 1), "warning");
+                dfb.addBellInfoToSpeechFormat("reply", new BellInfo(4*60, 2), "overtime");
+                break;
+            case 0: // Test mode
+            default:
+                dfb.addNewSpeechFormat("substantive", 20);
+                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(5, 1), "pois-allowed");
+                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(15, 1), "warning");
+                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(20, 2), "overtime");
+
+                dfb.addNewSpeechFormat("reply", 10);
+                dfb.addBellInfoToSpeechFormat("reply", new BellInfo(5, 1), "warning");
+                dfb.addBellInfoToSpeechFormat("reply", new BellInfo(10, 2), "overtime");
+                break;
+            }
+
+            dfb.addSpeech("1st Affirmative", "substantive");
+            dfb.addSpeech("1st Negative",    "substantive");
+            dfb.addSpeech("2nd Affirmative", "substantive");
+            dfb.addSpeech("2nd Negative",    "substantive");
+            dfb.addSpeech("3rd Affirmative", "substantive");
+            dfb.addSpeech("3rd Negative",    "substantive");
+            dfb.addSpeech("Negative Leader's Reply",    "reply");
+            dfb.addSpeech("Affirmative Leader's Reply", "reply");
+
+	    } catch (DebateFormatBuilderException e) {
+            Log.e(this.getClass().getSimpleName(), "Problem building debate", e);
+            return null;
+        }
+
+	    return dfb.getDebateFormat();
+	}
+
+	/*// TODO: Remove this from ConfigActivity (it is called setupDebate() there)
 	public void setupDefaultDebate(Debate debate, int testMode) {
-	    Event[] prepAlerts;
-	    Event[] substantiveSpeechAlerts;
-	    Event[] replySpeechAlerts;
+	    BellInfo[] prepAlerts;
+	    BellInfo[] substantiveSpeechAlerts;
+	    BellInfo[] replySpeechAlerts;
 
         // TODO: Implement this properly
 	    switch (testMode) {
 	    case 4:
 	        // Short Australs
-            substantiveSpeechAlerts = new AlarmChain.Event[] {
-                    new SpeakerTimer.Event(4*60, 1, "Warning bell rung", 0x72ff9900),
-                    new SpeakerTimer.Event(6*60, 2, "Overtime", 0x72ff0000),
-                    new SpeakerTimer.RepeatedEvent(6*60+30, 20, 3) };
+            substantiveSpeechAlerts = new BellInfo[] {
+                    new BellInfo(4*60, 1, "Warning bell rung", 0x72ff9900),
+                    new BellInfo(6*60, 2, "Overtime", 0x72ff0000) };
 
-            replySpeechAlerts = new AlarmChain.Event[] {
-                    new SpeakerTimer.Event(2*60, 1, "Warning bell rung", 0x72ff9900),
-                    new SpeakerTimer.Event(3*60, 2, "Overtime", 0x72ff0000),
-                    new SpeakerTimer.RepeatedEvent(3*60+30, 20, 3) };
+            replySpeechAlerts = new BellInfo[] {
+                    new BellInfo(2*60, 1, "Warning bell rung", 0x72ff9900),
+                    new BellInfo(3*60, 2, "Overtime", 0x72ff0000) };
             // Add in the alarm sets
             debate.addAlarmSet("substantiveSpeech", substantiveSpeechAlerts, 6*60);
             debate.addAlarmSet("replySpeech", replySpeechAlerts, 3*60);
             break;
 	    case 3:
 	        // Australs
-            substantiveSpeechAlerts = new AlarmChain.Event[] {
-                    new SpeakerTimer.Event(6*60, 1, "Warning bell rung", 0x72ff9900),
-                    new SpeakerTimer.Event(8*60, 2, "Overtime", 0x72ff0000),
-                    new SpeakerTimer.RepeatedEvent(8*60+30, 20, 3) };
+            substantiveSpeechAlerts = new BellInfo[] {
+                    new BellInfo(6*60, 1, "Warning bell rung", 0x72ff9900),
+                    new BellInfo(8*60, 2, "Overtime", 0x72ff0000) };
 
-            replySpeechAlerts = new AlarmChain.Event[] {
-                    new SpeakerTimer.Event(3*60, 1, "Warning bell rung", 0x72ff9900),
-                    new SpeakerTimer.Event(4*60, 2, "Overtime", 0x72ff0000),
-                    new SpeakerTimer.RepeatedEvent(4*60+30, 20, 3) };
+            replySpeechAlerts = new BellInfo[] {
+                    new BellInfo(3*60, 1, "Warning bell rung", 0x72ff9900),
+                    new BellInfo(4*60, 2, "Overtime", 0x72ff0000) };
             // Add in the alarm sets
             debate.addAlarmSet("substantiveSpeech", substantiveSpeechAlerts, 8*60);
             debate.addAlarmSet("replySpeech", replySpeechAlerts, 4*60);
             break;
 	    case 2:
           // Thropy
-          substantiveSpeechAlerts = new AlarmChain.Event[] {
-                  new SpeakerTimer.Event(1*60, 1, "Points of information allowed", 0x7200ff00),
-                  new SpeakerTimer.Event(5*60, 1, "Warning bell rung", 0x72ff9900),
-                  new SpeakerTimer.Event(6*60, 2, "Overtime", 0x72ff0000),
-                  new SpeakerTimer.RepeatedEvent(6*60+30, 20, 3) };
-          replySpeechAlerts = new AlarmChain.Event[] {
-                  new SpeakerTimer.Event(2*60, 1, "Warning bell rung", 0x72ff9900),
-                  new SpeakerTimer.Event(3*60, 2, "Overtime", 0x72ff0000),
-                  new SpeakerTimer.RepeatedEvent(3*60+30, 20, 3) };
+          substantiveSpeechAlerts = new BellInfo[] {
+                  new BellInfo(1*60, 1, "Points of information allowed", 0x7200ff00),
+                  new BellInfo(5*60, 1, "Warning bell rung", 0x72ff9900),
+                  new BellInfo(6*60, 2, "Overtime", 0x72ff0000) };
+          replySpeechAlerts = new BellInfo[] {
+                  new BellInfo(2*60, 1, "Warning bell rung", 0x72ff9900),
+                  new BellInfo(3*60, 2, "Overtime", 0x72ff0000) };
           // Add in the alarm sets
           debate.addAlarmSet("substantiveSpeech", substantiveSpeechAlerts, 6*60);
           debate.addAlarmSet("replySpeech", replySpeechAlerts, 3*60);
@@ -400,15 +511,13 @@ public class DebatingActivity extends Activity {
 //                  new SpeakerTimer.Event(1*60, 1, "Choose moot"),
 //                  new SpeakerTimer.Event(2*60, 1, "Choose side"),
 //                  new SpeakerTimer.Event(7*60, 2, "Prepare debate") };
-          substantiveSpeechAlerts = new AlarmChain.Event[] {
-                  new SpeakerTimer.Event(1*60, 1, "Points of information allowed", 0x7200ff00),
-                  new SpeakerTimer.Event(7*60, 1, "Warning bell rung", 0x72ff9900),
-                  new SpeakerTimer.Event(8*60, 2, "Overtime", 0x72ff0000),
-                  new SpeakerTimer.RepeatedEvent(8*60+30, 20, 3) };
-          replySpeechAlerts = new AlarmChain.Event[] {
-                  new SpeakerTimer.Event(3*60, 1, "Warning bell rung", 0x72ff9900),
-                  new SpeakerTimer.Event(4*60, 2, "Overtime", 0x72ff0000),
-                  new SpeakerTimer.RepeatedEvent(4*60+30, 20, 3) };
+          substantiveSpeechAlerts = new BellInfo[] {
+                  new BellInfo(1*60, 1, "Points of information allowed", 0x7200ff00),
+                  new BellInfo(7*60, 1, "Warning bell rung", 0x72ff9900),
+                  new BellInfo(8*60, 2, "Overtime", 0x72ff0000) };
+          replySpeechAlerts = new BellInfo[] {
+                  new BellInfo(3*60, 1, "Warning bell rung", 0x72ff9900),
+                  new BellInfo(4*60, 2, "Overtime", 0x72ff0000) };
           // Add in the alarm sets
           debate.addAlarmSet("substantiveSpeech", substantiveSpeechAlerts, 8*60);
           debate.addAlarmSet("replySpeech", replySpeechAlerts, 4*60);
@@ -416,16 +525,14 @@ public class DebatingActivity extends Activity {
         case 0:
         default:
             // This is a special test mode
-            substantiveSpeechAlerts = new AlarmChain.Event[] {
-                    new SpeakerTimer.Event(5, 1, "Points of information allowed", 0x7200ff00),
-                    new SpeakerTimer.Event(10, 1, "Warning bell rung", 0x72ff9900),
-                    new SpeakerTimer.Event(15, 2, "Overtime", 0x72ff0000),
-                    new SpeakerTimer.RepeatedEvent(20, 3, 3) };
+            substantiveSpeechAlerts = new BellInfo[] {
+                    new BellInfo(5, 1, "Points of information allowed", 0x7200ff00),
+                    new BellInfo(10, 1, "Warning bell rung", 0x72ff9900),
+                    new BellInfo(15, 2, "Overtime", 0x72ff0000) };
 
-            replySpeechAlerts = new AlarmChain.Event[] {
-                    new SpeakerTimer.Event(3, 1, "Warning bell rung", 0x72ff9900),
-                    new SpeakerTimer.Event(6, 2, "Overtime", 0x72ff0000),
-                    new SpeakerTimer.RepeatedEvent(9, 3, 3) };
+            replySpeechAlerts = new BellInfo[] {
+                    new BellInfo(3, 1, "Warning bell rung", 0x72ff9900),
+                    new BellInfo(6, 2, "Overtime", 0x72ff0000) };
             // Add in the alarm sets
             debate.addAlarmSet("substantiveSpeech", substantiveSpeechAlerts, 15);
             debate.addAlarmSet("replySpeech", replySpeechAlerts, 6);
@@ -469,5 +576,5 @@ public class DebatingActivity extends Activity {
 		debate.addStage(new SpeakerTimer("Affirmative Leader's Reply",
 				TeamsManager.SpeakerSide.Affirmative, 0), "replySpeech");
 	}
-
+*/
 }

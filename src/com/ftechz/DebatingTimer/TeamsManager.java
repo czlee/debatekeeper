@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 
 /**
+ * <b> OBSOLETE, DO NOT USE </b>
  *
  */
 public class TeamsManager {
@@ -12,8 +13,8 @@ public class TeamsManager {
         Negative
     }
 
-    private EnumMap<SpeakerSide, Team> mSpeakingTeams;
-    private ArrayList<Team> mTeams;
+    private final EnumMap<SpeakerSide, Team> mSpeakingTeams;
+    private final ArrayList<Team> mTeams;
 
     public TeamsManager() {
         mSpeakingTeams = new EnumMap<SpeakerSide, Team>(SpeakerSide.class);
