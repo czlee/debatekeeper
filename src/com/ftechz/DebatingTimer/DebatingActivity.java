@@ -69,8 +69,16 @@ public class DebatingActivity extends Activity {
 
     private DebatingTimerService.DebatingTimerServiceBinder mBinder;
 
-    /** Defines callbacks for service binding, passed to bindService() */
-    private final ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new DebatingTimerServiceConnection();
+
+    //******************************************************************************************
+    // Public methods
+    //******************************************************************************************
+
+    /**
+     * Defines call-backs for service binding, passed to bindService()
+     */
+    private class DebatingTimerServiceConnection implements ServiceConnection {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -83,10 +91,14 @@ public class DebatingActivity extends Activity {
                     DebatingActivity.this.finish();
                 }
                 mDebateManager = mBinder.createDebateManager(df);
+
                 // We only restore the state if there wasn't an existing debate, i.e.
-                // if the service wasn't already running.
-                if (mLastStateBundle != null)
+                // if the service wasn't already running.  Also, only do this once (so set it
+                // to null once restored).
+                if (mLastStateBundle != null) {
                     mDebateManager.restoreState(BUNDLE_SUFFIX_DEBATE_MANAGER, mLastStateBundle);
+                    mLastStateBundle = null;
+                }
             }
             applyPreferences();
         }
@@ -96,6 +108,62 @@ public class DebatingActivity extends Activity {
             mDebateManager = null;
         }
     };
+
+    private class LeftControlButtonOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View pV) {
+            switch (mDebateManager.getStatus()) {
+            case RUNNING:
+                mDebateManager.stopTimer();
+                break;
+            case NOT_STARTED:
+            case STOPPED_BY_BELL:
+            case STOPPED_BY_USER:
+                mDebateManager.startTimer();
+                break;
+            default:
+                break;
+            }
+            updateGui();
+        }
+    }
+
+    private class CentreControlButtonOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View pV) {
+            switch (mDebateManager.getStatus()) {
+            case STOPPED_BY_USER:
+                mDebateManager.resetSpeaker();
+                break;
+            default:
+                break;
+            }
+            updateGui();
+        }
+    }
+
+    private class RightControlButtonOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View pV) {
+            switch (mDebateManager.getStatus()) {
+            case NOT_STARTED:
+            case STOPPED_BY_USER:
+                if (!mDebateManager.isLastSpeaker())
+                    mDebateManager.nextSpeaker();
+                break;
+            default:
+                break;
+            }
+            updateGui();
+        }
+    }
+
+    private class PlayBellButtonOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            mBinder.getAlertManager().playBell();
+        }
+    }
 
     //******************************************************************************************
     // Public methods
@@ -121,73 +189,18 @@ public class DebatingActivity extends Activity {
 
         //
         // OnClickListeners
-        mLeftControlButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View pV) {
-                switch (mDebateManager.getStatus()) {
-                case RUNNING:
-                    mDebateManager.stopTimer();
-                    break;
-                case NOT_STARTED:
-                case STOPPED_BY_BELL:
-                case STOPPED_BY_USER:
-                    mDebateManager.startTimer();
-                    break;
-                default:
-                    break;
-                }
-                updateGui();
-            }
-        });
-
-        mCentreControlButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View pV) {
-                switch (mDebateManager.getStatus()) {
-                case STOPPED_BY_USER:
-                    mDebateManager.resetSpeaker();
-                    break;
-                default:
-                    break;
-                }
-                updateGui();
-            }
-        });
-
-        mRightControlButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View pV) {
-                switch (mDebateManager.getStatus()) {
-                case NOT_STARTED:
-                case STOPPED_BY_USER:
-                    if (!mDebateManager.isLastSpeaker())
-                        mDebateManager.nextSpeaker();
-                    break;
-                default:
-                    break;
-                }
-                updateGui();
-            }
-        });
-
-        mPlayBellButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                mBinder.getAlertManager().playBell();
-            }
-        });
+        mLeftControlButton  .setOnClickListener(new LeftControlButtonOnClickListener());
+        mCentreControlButton.setOnClickListener(new CentreControlButtonOnClickListener());
+        mRightControlButton .setOnClickListener(new RightControlButtonOnClickListener());
+        mPlayBellButton     .setOnClickListener(new PlayBellButtonOnClickListener());
 
         mLastStateBundle = savedInstanceState; // This could be null
 
-        if (savedInstanceState != null) {
+        if (savedInstanceState != null)
             mTestMode = savedInstanceState.getInt("testMode", 0);
-        }
 
         Intent intent = new Intent(this, DebatingTimerService.class);
         startService(intent);
-
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -284,83 +297,38 @@ public class DebatingActivity extends Activity {
 	    mPlayBellButton.setVisibility((mBinder.getAlertManager().isSilentMode()) ? View.GONE : View.VISIBLE);
 	}
 
-	// Sets the text, visibility and "weight" of all buttons
-	private void setButtons(int leftResid, int centreResid, int rightResid) {
-	    setButton(mLeftControlButton, leftResid);
-	    setButton(mCentreControlButton, centreResid);
-	    setButton(mRightControlButton, rightResid);
+    public void updateGui() {
+        if (mDebateManager != null) {
+            SpeechFormat currentSpeechFormat = mDebateManager.getCurrentSpeechFormat();
+            PeriodInfo currentPeriodInfo = mDebateManager.getCurrentPeriodInfo();
 
-	    // If there are exactly two buttons, make the weight of the left button double,
-	    // so that it fills two-thirds of the width of the screen.
-	    float leftControlButtonWeight = (float) ((centreResid == R.string.nullButtonText && rightResid != R.string.nullButtonText) ? 2.0 : 1.0);
-	    mLeftControlButton.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, leftControlButtonWeight));
-	}
+            mStateText.setText(currentPeriodInfo.getDescription());
+            mStageText.setText(mDebateManager.getCurrentSpeechName());
+            mStateText.setBackgroundColor(currentPeriodInfo.getBackgroundColor());
+            mStageText.setBackgroundColor(currentPeriodInfo.getBackgroundColor());
 
-	// Sets the text and visibility of a single button
-	private void setButton(Button button, int resid) {
-	    button.setText(resid);
-	    int visibility = (resid == R.string.nullButtonText) ? View.GONE : View.VISIBLE;
-	    button.setVisibility(visibility);
-	}
+            long currentSpeechTime = mDebateManager.getCurrentSpeechTime();
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
+            mCurrentTimeText.setText(secsToText(currentSpeechTime));
 
-		unbindService(mConnection);
+            long nextBellTime = mDebateManager.getNextBellTime();
 
-		boolean keepRunning = false;
-		if (mDebateManager != null) {
-		    if (mDebateManager.isRunning()) {
-		        keepRunning = true;
-		    }
-		}
-		if (!keepRunning) {
-    		Intent intent = new Intent(this, DebatingTimerService.class);
-    		stopService(intent);
-            Log.i(this.getClass().getSimpleName(), "Timer is not running, stopped service");
-		} else {
-		    Log.i(this.getClass().getSimpleName(), "Timer is running, keeping service alive");
-		}
-	}
-
-
-	private static String secsToText(long time) {
-		return String.format("%02d:%02d", time / 60, time % 60);
-	}
-
-	public void updateGui() {
-		if (mDebateManager != null) {
-		    SpeechFormat currentSpeechFormat = mDebateManager.getCurrentSpeechFormat();
-		    PeriodInfo currentPeriodInfo = mDebateManager.getCurrentPeriodInfo();
-
-			mStateText.setText(currentPeriodInfo.getDescription());
-			mStageText.setText(mDebateManager.getCurrentSpeechName());
-			mStateText.setBackgroundColor(currentPeriodInfo.getBackgroundColor());
-			mStageText.setBackgroundColor(currentPeriodInfo.getBackgroundColor());
-
-			long currentSpeechTime = mDebateManager.getCurrentSpeechTime();
-
-			mCurrentTimeText.setText(secsToText(currentSpeechTime));
-
-			long nextBellTime = mDebateManager.getNextBellTime();
-
-			if (nextBellTime > 0) {
-    			mNextTimeText.setText(String.format(
-    		        this.getString(R.string.nextBell),
-    		        secsToText(nextBellTime)
-    	        ));
-			} else {
-			    mNextTimeText.setText(this.getString(R.string.noMoreBells));
-			}
-			mFinalTimeText.setText(String.format(
+            if (nextBellTime > 0) {
+                mNextTimeText.setText(String.format(
+                    this.getString(R.string.nextBell),
+                    secsToText(nextBellTime)
+                ));
+            } else {
+                mNextTimeText.setText(this.getString(R.string.noMoreBells));
+            }
+            mFinalTimeText.setText(String.format(
                 this.getString(R.string.speechLength),
                 secsToText(currentSpeechFormat.getSpeechLength())
             ));
 
-			updateButtons();
-		}
-	}
+            updateButtons();
+        }
+    }
 
     public boolean applyPreferences() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -380,6 +348,58 @@ public class DebatingActivity extends Activity {
         }
         else return false;
     }
+
+    //******************************************************************************************
+    // Protected methods
+    //******************************************************************************************
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        unbindService(mConnection);
+
+        boolean keepRunning = false;
+        if (mDebateManager != null) {
+            if (mDebateManager.isRunning()) {
+                keepRunning = true;
+            }
+        }
+        if (!keepRunning) {
+            Intent intent = new Intent(this, DebatingTimerService.class);
+            stopService(intent);
+            Log.i(this.getClass().getSimpleName(), "Timer is not running, stopped service");
+        } else {
+            Log.i(this.getClass().getSimpleName(), "Timer is running, keeping service alive");
+        }
+    }
+
+
+    //******************************************************************************************
+    // Private methods
+    //******************************************************************************************
+
+	// Sets the text, visibility and "weight" of all buttons
+	private void setButtons(int leftResid, int centreResid, int rightResid) {
+	    setButton(mLeftControlButton, leftResid);
+	    setButton(mCentreControlButton, centreResid);
+	    setButton(mRightControlButton, rightResid);
+
+	    // If there are exactly two buttons, make the weight of the left button double,
+	    // so that it fills two-thirds of the width of the screen.
+	    float leftControlButtonWeight = (float) ((centreResid == R.string.nullButtonText && rightResid != R.string.nullButtonText) ? 2.0 : 1.0);
+	    mLeftControlButton.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, leftControlButtonWeight));
+	}
+
+	// Sets the text and visibility of a single button
+	private void setButton(Button button, int resid) {
+	    button.setText(resid);
+	    int visibility = (resid == R.string.nullButtonText) ? View.GONE : View.VISIBLE;
+	    button.setVisibility(visibility);
+	}
+
+	private static String secsToText(long time) {
+		return String.format("%02d:%02d", time / 60, time % 60);
+	}
 
 	public DebateFormat buildDefaultDebate(int testMode) {
 	    DebateFormatBuilder dfb = new DebateFormatBuilder();
