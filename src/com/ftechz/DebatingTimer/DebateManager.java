@@ -142,7 +142,7 @@ public class DebateManager {
      * @return the next bell time
      */
     public long getNextBellTime() {
-        return getCurrentSpeechFormat().getFirstBellFromTime(getCurrentSpeechTime()).getBellTime();
+        return mSpeechManager.getNextBellTime();
     }
 
     /**
@@ -171,6 +171,15 @@ public class DebateManager {
      */
     public SpeechFormat getCurrentSpeechFormat() {
         return mSpeechManager.getSpeechFormat();
+    }
+
+    /**
+     * Sets the overtime bell specifications
+     * @param firstBell The number of seconds after the finish time to ring the first overtime bell
+     * @param period The time in between subsequence overtime bells
+     */
+    public void setOvertimeBells(long firstBell, long period) {
+        mSpeechManager.setOvertimeBells(firstBell, period);
     }
 
     /**

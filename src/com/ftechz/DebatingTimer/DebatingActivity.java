@@ -343,12 +343,12 @@ public class DebatingActivity extends Activity {
 
 			mCurrentTimeText.setText(secsToText(currentSpeechTime));
 
-			BellInfo nextBell = currentSpeechFormat.getFirstBellFromTime(currentSpeechTime);
+			long nextBellTime = mDebateManager.getNextBellTime();
 
-			if (nextBell != null) {
+			if (nextBellTime > 0) {
     			mNextTimeText.setText(String.format(
     		        this.getString(R.string.nextBell),
-    		        secsToText(nextBell.getBellTime())
+    		        secsToText(nextBellTime)
     	        ));
 			} else {
 			    mNextTimeText.setText(this.getString(R.string.noMoreBells));
@@ -368,6 +368,9 @@ public class DebatingActivity extends Activity {
             try {
                 mBinder.getAlertManager().setSilentMode(prefs.getBoolean("silentMode", false));
                 mBinder.getAlertManager().setVibrateMode(prefs.getBoolean("vibrateMode", false));
+                mDebateManager.setOvertimeBells(
+                        prefs.getInt("firstOvertimeBell", 0),
+                        prefs.getInt("overtimeBellPeriod", 0));
             } catch (ClassCastException e) {
                 Log.e(this.getClass().getSimpleName(), "applyPreferences: caught ClassCastException!");
                 return false;

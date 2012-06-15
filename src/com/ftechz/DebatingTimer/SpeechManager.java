@@ -32,6 +32,8 @@ public class SpeechManager {
     private Timer               mTimer;
     private DebatingTimerState  mState = DebatingTimerState.NOT_STARTED;
     private long                mCurrentTime;
+    private long                mFirstOvertimeBellTime = 30;
+    private long                mOvertimeBellPeriod    = 20;
 
     private final long TIMER_DELAY  = 1000;
     private final long TIMER_PERIOD = 1000;
@@ -64,6 +66,10 @@ public class SpeechManager {
             BellInfo thisBell = mSpeechFormat.getBellAtTime(mCurrentTime);
             if (thisBell != null)
                 handleBell(thisBell);
+
+            // If this is an overtime bell time, raise a bell
+            if (isOvertimeBellTime(mCurrentTime))
+                doOvertimeBell();
         }
     }
 
@@ -73,7 +79,7 @@ public class SpeechManager {
 
     /**
      * Constructor.
-     * @param sf
+     * @param am the AlertManager associated with this instance
      */
     public SpeechManager(AlertManager am) {
         super();
@@ -172,10 +178,50 @@ public class SpeechManager {
     }
 
     /**
+     * @return the next bell time in seconds, or -1 if there are no more bells
+     */
+    public long getNextBellTime() {
+        BellInfo nextBell = mSpeechFormat.getFirstBellFromTime(mCurrentTime);
+
+        if (nextBell != null)
+            return nextBell.getBellTime();
+
+        // If no more bell times left, get the next overtime bell, if there is one
+        if (mFirstOvertimeBellTime == 0)
+            return -1;
+
+        long speechLength   = mSpeechFormat.getSpeechLength();
+        long overtimeAmount = mCurrentTime - speechLength;
+
+        if (overtimeAmount < mFirstOvertimeBellTime)
+            return speechLength + mFirstOvertimeBellTime;
+
+        // If past the first overtime bell, keep adding periods until we find one we haven't hit yet
+        if (mOvertimeBellPeriod == 0)
+            return -1;
+
+        long overtimeBellTime = mFirstOvertimeBellTime + mOvertimeBellPeriod;
+
+        while (overtimeAmount > overtimeBellTime)
+            overtimeBellTime += mOvertimeBellPeriod;
+        return speechLength + overtimeBellTime;
+    }
+
+    /**
      * @return the current {@link SpeechFormat}
      */
     public SpeechFormat getSpeechFormat() {
         return mSpeechFormat;
+    }
+
+    /**
+     * Sets the overtime bell specifications
+     * @param firstBell The number of seconds after the finish time to ring the first overtime bell
+     * @param period The time in between subsequence overtime bells
+     */
+    public void setOvertimeBells(long firstBell, long period) {
+        mFirstOvertimeBellTime = firstBell;
+        mOvertimeBellPeriod    = period;
     }
 
     /**
@@ -227,12 +273,53 @@ public class SpeechManager {
         mState = DebatingTimerState.STOPPED_BY_BELL;
     }
 
+    /**
+     * Triggers appropriate user interface elements arising from a bell.
+     * @param bi the {@link BellInfo} to be handled
+     */
     private void handleBell(BellInfo bi) {
         Log.v(this.getClass().getSimpleName(), String.format("bell at %s", mCurrentTime));
         if (bi.isPauseOnBell())
             pause();
         mCurrentPeriodInfo.update(bi.getNextPeriodInfo());
         mAlertManager.triggerAlert(bi, mCurrentPeriodInfo);
+    }
+
+    /**
+     * @return true if this time is an overtime bell
+     */
+    private boolean isOvertimeBellTime(long time) {
+        long overtimeAmount = time - mSpeechFormat.getSpeechLength();
+
+        // Don't bother checking if we haven't hit the first overtime bell
+        if (overtimeAmount < mFirstOvertimeBellTime)
+            return false;
+
+        // There is no concept of overtime if the first overtime bell is zero
+        if (mFirstOvertimeBellTime <= 0)
+            return false;
+
+        // First check the first bell
+        // Specifications are only valid if greater than zero
+        if (mFirstOvertimeBellTime == overtimeAmount)
+            return true;
+
+        // Then, check for subsequent bell matches
+        long timeSinceFirstOvertimeBell = overtimeAmount - mFirstOvertimeBellTime;
+
+        if (mOvertimeBellPeriod > 0)
+            if (timeSinceFirstOvertimeBell % mOvertimeBellPeriod == 0)
+                return true;
+
+        return false;
+    }
+
+    /**
+     * Does an overtime bell.
+     */
+    private void doOvertimeBell() {
+        Log.v(this.getClass().getSimpleName(), String.format("overtime bell at %s", mCurrentTime));
+        mAlertManager.playBell(new BellSoundInfo(R.raw.desk_bell, 3));
     }
 
 }

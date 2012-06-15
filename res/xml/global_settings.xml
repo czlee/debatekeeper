@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen 
+    xmlns:android="http://schemas.android.com/apk/res/android" >
     <CheckBoxPreference android:title="@string/silentMode" android:key="silentMode" android:summaryOff="@string/silentModeOffSummary" android:summaryOn="@string/silentModeOnSummary" android:defaultValue="false"/>
-    <CheckBoxPreference android:title="Vibrator" android:key="vibrateMode" android:summaryOn="Vibrate at bell times" android:summaryOff="Don't vibrate"/>
+    <CheckBoxPreference android:title="@string/vibrateMode" android:key="vibrateMode" android:summaryOn="@string/vibrateModeOnSummary" android:summaryOff="@string/vibrateModeOffSummary"/>
     
+    <com.michaelnovakjr.numberpicker.NumberPickerPreference
+            android:key="firstOvertimeBell"
+            android:title="@string/firstOvertimeBellTitle"
+            android:summary="@string/firstOvertimeBellSummary" />
 
+    <com.michaelnovakjr.numberpicker.NumberPickerPreference
+        android:key="overtimeBellPeriod"
+        android:title="@string/overtimeBellPeriodTitle"
+        android:summary="@string/overtimeBellPeriodSummary" />
+    
 </PreferenceScreen>

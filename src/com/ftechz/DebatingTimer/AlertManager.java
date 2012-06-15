@@ -118,17 +118,17 @@ public class AlertManager
 
     // Plays a bell according to a given bellInfo.
     // Does not play if in silent mode.
-    public void playBell(BellSoundInfo bellInfo) {
+    public void playBell(BellSoundInfo bsi) {
         if (mBellRepeater != null) {
             mBellRepeater.stop();
         }
 
         if (!mSilentMode) {
-            mBellRepeater = new BellRepeater(mDebatingTimerService.getApplicationContext(), bellInfo);
+            mBellRepeater = new BellRepeater(mDebatingTimerService.getApplicationContext(), bsi);
             mBellRepeater.play();
         }
         if (mVibrateMode) {
-            mVibrator.vibrate(300 * bellInfo.getTimesToPlay());
+            mVibrator.vibrate(300 * bsi.getTimesToPlay());
         }
     }
 
