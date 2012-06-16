@@ -432,12 +432,12 @@ public class DebatingActivity extends Activity {
 
 	    switch (testMode) {
 	    case 1: filename = "test.xml"; break;
-	    case 2: filename = "thropy.xml"; break;
-        case 3: filename = "test2.xml"; break;
-        case 4: filename = "bp.xml"; break;
+        case 2: filename = "test2.xml"; break;
+        case 3: filename = "bp.xml"; break;
+        case 4: filename = "nzeasters.xml"; break;
         case 5: filename = "joyntscroll.xml"; break;
-        case 6: filename = "thropybreak.xml"; break;
-        case 7: filename = "nzeasters.xml"; break;
+        case 6: filename = "thropy.xml"; break;
+        case 7: filename = "thropybreak.xml"; break;
        default: filename = "australs.xml";
 	    }
 
