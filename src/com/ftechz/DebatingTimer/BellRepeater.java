@@ -125,8 +125,12 @@ public class BellRepeater {
 
     /**
      * Starts playing the repeated sound.
+     * Has no effect if the sound resid is 0.
      */
     public void play() {
+        if (mSoundInfo.getSoundResid() == 0)
+            return;
+
         if (mState == BellRepeaterState.INITIAL) {
 
             // Initialise the MediaPlayer

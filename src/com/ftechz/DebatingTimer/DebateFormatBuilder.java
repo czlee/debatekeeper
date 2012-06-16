@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import android.content.Context;
+
 import com.ftechz.DebatingTimer.DebateFormat.NoSuchFormatException;
 
 /**
@@ -28,6 +30,7 @@ public class DebateFormatBuilder {
         ADDING_FORMATS, ADDING_SPEECHES, DONE
     }
 
+    private final Context                          mContext;
     protected State                                mState = State.ADDING_FORMATS;
     protected Resource                             mResourceForAll;
     protected HashMap<String, Resource>            mResources;
@@ -301,12 +304,13 @@ public class DebateFormatBuilder {
     /**
      * Constructor.
      */
-    public DebateFormatBuilder() {
+    public DebateFormatBuilder(Context context) {
         super();
         mResourceForAll = null;
         mResources = new HashMap<String, Resource>();
         mSpeechFormatBuilders = new HashMap<String, SpeechFormatBuilder>();
         mDebateFormatBeingBuilt = new DebateFormat();
+        mContext = context;
     }
 
     /**
@@ -319,10 +323,11 @@ public class DebateFormatBuilder {
      */
     public void addNewResource(String ref) throws DebateFormatBuilderException {
         assertFormatsAreAddable();
-        if (ref == "#all") {
+        if (ref.equalsIgnoreCase(mContext.getString(R.string.XmlAttrNameResourceRefCommon))) {
             if (mResourceForAll != null) {
-                throw new DebateFormatBuilderException(
-                        "The resource '#all' was specified more than once");
+                throw new DebateFormatBuilderException(String.format(
+                        "The resource '%s' was specified more than once",
+                        mContext.getString(R.string.XmlAttrNameResourceRefCommon)));
             }
             mResourceForAll = new Resource();
         } else if (!mResources.containsKey(ref)) {
@@ -430,7 +435,8 @@ public class DebateFormatBuilder {
      * Adds a new {@link BellInfo} to a resource in this builder
      * @param resourceRef the short reference for the resource
      * @param bi the <code>BellInfo</code> object
-     * @param periodInfoRef the short reference for the period
+     * @param periodInfoRef the short reference for the next period associated with the bell, can
+     * be <code>null</code> to leave the existing next period in the 'bi' unchanged
      * @throws DebateFormatBuilderException if there is no resource with reference 'resourceRef' or
      * no such period with reference 'periodInfoRef' or if there is already a bell at the same time
      * @throws IllegalStateException if the "adding speeches" state has already started
@@ -447,7 +453,8 @@ public class DebateFormatBuilder {
      * Adds a new {@link BellInfo} to a speech format in this builder
      * @param speechRef the short reference for the speech
      * @param bi the <code>BellInfo</code> object
-     * @param periodInfoRef the short reference for the period
+     * @param periodInfoRef the short reference for the next period associated with the bell, can
+     * be <code>null</code> to leave the existing next period in the 'bi' unchanged
      * @throws DebateFormatBuilderException if there is no speech with reference 'speechRef' or no
      * period with reference 'periodInfoRef' or if there is already a bell at the same time
      * @throws IllegalStateException if the "adding speeches" state has already started
@@ -539,7 +546,8 @@ public class DebateFormatBuilder {
      */
     private Resource getResource(String ref) throws DebateFormatBuilderException {
         Resource res;
-        if (ref == "#all") res = mResourceForAll;
+        if (ref.equalsIgnoreCase(mContext.getString(R.string.XmlAttrNameResourceRefCommon)))
+            res = mResourceForAll;
         else res = mResources.get(ref);
         if (res == null) {
             throw new DebateFormatBuilderException(

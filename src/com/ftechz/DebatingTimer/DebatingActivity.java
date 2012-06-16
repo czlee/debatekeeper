@@ -1,5 +1,8 @@
 package com.ftechz.DebatingTimer;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -56,6 +59,7 @@ public class DebatingActivity extends Activity {
 	// TODO This is a temporary mechanism to switch between real-world and test modes
 	// (It just changes the speech times.)
 	private int mTestMode = 0;
+	private final int NUM_TEST_MODES = 3;
 
     private final String BUNDLE_SUFFIX_DEBATE_MANAGER = "dm";
 
@@ -84,9 +88,11 @@ public class DebatingActivity extends Activity {
         public void onServiceConnected(ComponentName className, IBinder service) {
 
             mBinder = (DebatingTimerService.DebatingTimerServiceBinder) service;
+
             mDebateManager = mBinder.getDebateManager();
             if (mDebateManager == null) {
-                DebateFormat df = buildDefaultDebate(mTestMode);
+                // DebateFormat df = buildDefaultDebate(mTestMode);
+                DebateFormat df = buildDebateFromXml(mTestMode);
                 if (df == null) {
                     DebatingActivity.this.finish();
                 }
@@ -100,7 +106,9 @@ public class DebatingActivity extends Activity {
                     mLastStateBundle = null;
                 }
             }
+
             applyPreferences();
+
         }
 
         @Override
@@ -243,12 +251,12 @@ public class DebatingActivity extends Activity {
 	        return true;
 	    case R.id.switchMode:
             mTestMode = mTestMode + 1;
-            if (mTestMode == 5) mTestMode = 0;
+            if (mTestMode == NUM_TEST_MODES) mTestMode = 0;
             // keep going
 	    case R.id.restartDebate:
 	        mDebateManager.release();
 	        mDebateManager = null;
-	        mDebateManager = mBinder.createDebateManager(buildDefaultDebate(mTestMode));
+	        mDebateManager = mBinder.createDebateManager(buildDebateFromXml(mTestMode));
 	        updateGui();
 	        return true;
 	    case R.id.settings:
@@ -401,8 +409,38 @@ public class DebatingActivity extends Activity {
 		return String.format("%02d:%02d", time / 60, time % 60);
 	}
 
+	public DebateFormat buildDebateFromXml(int testMode) {
+	    DebateFormatBuilderFromXml dfbfx = new DebateFormatBuilderFromXml(this);
+	    String filename;
+	    InputStream is = null;
+
+	    switch (testMode) {
+	    case 0:
+	        filename = "test.xml";
+	        break;
+	    case 1:
+	        filename = "thropy.xml";
+	        break;
+        default:
+            filename = "australs.xml";
+	    }
+
+	    Log.v(this.getClass().getSimpleName(), String.format("Using file %s", filename));
+
+	    try {
+            is = getAssets().open(filename);
+        } catch (IOException e) {
+            Log.e(this.getClass().getSimpleName(),
+                    String.format("Could not find file %s", filename));
+            e.printStackTrace();
+            return null;
+        }
+
+	    return dfbfx.buildDebateFromXml(is);
+	}
+
 	public DebateFormat buildDefaultDebate(int testMode) {
-	    DebateFormatBuilder dfb = new DebateFormatBuilder();
+	    DebateFormatBuilder dfb = new DebateFormatBuilder(this);
 
 	    try {
 
@@ -480,124 +518,4 @@ public class DebatingActivity extends Activity {
 
 	    return dfb.getDebateFormat();
 	}
-
-	/*// TODO: Remove this from ConfigActivity (it is called setupDebate() there)
-	public void setupDefaultDebate(Debate debate, int testMode) {
-	    BellInfo[] prepAlerts;
-	    BellInfo[] substantiveSpeechAlerts;
-	    BellInfo[] replySpeechAlerts;
-
-        // TODO: Implement this properly
-	    switch (testMode) {
-	    case 4:
-	        // Short Australs
-            substantiveSpeechAlerts = new BellInfo[] {
-                    new BellInfo(4*60, 1, "Warning bell rung", 0x72ff9900),
-                    new BellInfo(6*60, 2, "Overtime", 0x72ff0000) };
-
-            replySpeechAlerts = new BellInfo[] {
-                    new BellInfo(2*60, 1, "Warning bell rung", 0x72ff9900),
-                    new BellInfo(3*60, 2, "Overtime", 0x72ff0000) };
-            // Add in the alarm sets
-            debate.addAlarmSet("substantiveSpeech", substantiveSpeechAlerts, 6*60);
-            debate.addAlarmSet("replySpeech", replySpeechAlerts, 3*60);
-            break;
-	    case 3:
-	        // Australs
-            substantiveSpeechAlerts = new BellInfo[] {
-                    new BellInfo(6*60, 1, "Warning bell rung", 0x72ff9900),
-                    new BellInfo(8*60, 2, "Overtime", 0x72ff0000) };
-
-            replySpeechAlerts = new BellInfo[] {
-                    new BellInfo(3*60, 1, "Warning bell rung", 0x72ff9900),
-                    new BellInfo(4*60, 2, "Overtime", 0x72ff0000) };
-            // Add in the alarm sets
-            debate.addAlarmSet("substantiveSpeech", substantiveSpeechAlerts, 8*60);
-            debate.addAlarmSet("replySpeech", replySpeechAlerts, 4*60);
-            break;
-	    case 2:
-          // Thropy
-          substantiveSpeechAlerts = new BellInfo[] {
-                  new BellInfo(1*60, 1, "Points of information allowed", 0x7200ff00),
-                  new BellInfo(5*60, 1, "Warning bell rung", 0x72ff9900),
-                  new BellInfo(6*60, 2, "Overtime", 0x72ff0000) };
-          replySpeechAlerts = new BellInfo[] {
-                  new BellInfo(2*60, 1, "Warning bell rung", 0x72ff9900),
-                  new BellInfo(3*60, 2, "Overtime", 0x72ff0000) };
-          // Add in the alarm sets
-          debate.addAlarmSet("substantiveSpeech", substantiveSpeechAlerts, 6*60);
-          debate.addAlarmSet("replySpeech", replySpeechAlerts, 3*60);
-          break;
-	    case 1:
-            // Premier B
-//          prepAlerts = new AlarmChain.Event[] {
-//                  new SpeakerTimer.Event(1*60, 1, "Choose moot"),
-//                  new SpeakerTimer.Event(2*60, 1, "Choose side"),
-//                  new SpeakerTimer.Event(7*60, 2, "Prepare debate") };
-          substantiveSpeechAlerts = new BellInfo[] {
-                  new BellInfo(1*60, 1, "Points of information allowed", 0x7200ff00),
-                  new BellInfo(7*60, 1, "Warning bell rung", 0x72ff9900),
-                  new BellInfo(8*60, 2, "Overtime", 0x72ff0000) };
-          replySpeechAlerts = new BellInfo[] {
-                  new BellInfo(3*60, 1, "Warning bell rung", 0x72ff9900),
-                  new BellInfo(4*60, 2, "Overtime", 0x72ff0000) };
-          // Add in the alarm sets
-          debate.addAlarmSet("substantiveSpeech", substantiveSpeechAlerts, 8*60);
-          debate.addAlarmSet("replySpeech", replySpeechAlerts, 4*60);
-          break;
-        case 0:
-        default:
-            // This is a special test mode
-            substantiveSpeechAlerts = new BellInfo[] {
-                    new BellInfo(5, 1, "Points of information allowed", 0x7200ff00),
-                    new BellInfo(10, 1, "Warning bell rung", 0x72ff9900),
-                    new BellInfo(15, 2, "Overtime", 0x72ff0000) };
-
-            replySpeechAlerts = new BellInfo[] {
-                    new BellInfo(3, 1, "Warning bell rung", 0x72ff9900),
-                    new BellInfo(6, 2, "Overtime", 0x72ff0000) };
-            // Add in the alarm sets
-            debate.addAlarmSet("substantiveSpeech", substantiveSpeechAlerts, 15);
-            debate.addAlarmSet("replySpeech", replySpeechAlerts, 6);
-            break;
-	    }
-
-
-		// Set up speakers
-		Team team1 = new Team();
-		team1.addMember(new Speaker("1st Affirmative"), true);
-		team1.addMember(new Speaker("2nd Affirmative"), false);
-		team1.addMember(new Speaker("3rd Affirmative"), false);
-
-		Team team2 = new Team();
-		team2.addMember(new Speaker("1st Negative"), true);
-		team2.addMember(new Speaker("2nd Negative"), false);
-		team2.addMember(new Speaker("3rd Negative"), false);
-
-		int team1Index = debate.addTeam(team1);
-		int team2Index = debate.addTeam(team2);
-
-		debate.setSide(team1Index, TeamsManager.SpeakerSide.Affirmative);
-		debate.setSide(team2Index, TeamsManager.SpeakerSide.Negative);
-
-		// Add in the stages
-		// debate.addStage(new PrepTimer("Preparation"), "prep");
-		debate.addStage(new SpeakerTimer("1st Affirmative",
-				TeamsManager.SpeakerSide.Affirmative, 1), "substantiveSpeech");
-		debate.addStage(new SpeakerTimer("1st Negative",
-				TeamsManager.SpeakerSide.Negative, 1), "substantiveSpeech");
-		debate.addStage(new SpeakerTimer("2nd Affirmative",
-				TeamsManager.SpeakerSide.Affirmative, 2), "substantiveSpeech");
-		debate.addStage(new SpeakerTimer("2nd Negative",
-				TeamsManager.SpeakerSide.Negative, 2), "substantiveSpeech");
-		debate.addStage(new SpeakerTimer("3nd Affirmative",
-				TeamsManager.SpeakerSide.Affirmative, 3), "substantiveSpeech");
-		debate.addStage(new SpeakerTimer("3nd Negative",
-				TeamsManager.SpeakerSide.Negative, 3), "substantiveSpeech");
-		debate.addStage(new SpeakerTimer("Negative Leader's Reply",
-				TeamsManager.SpeakerSide.Negative, 0), "replySpeech");
-		debate.addStage(new SpeakerTimer("Affirmative Leader's Reply",
-				TeamsManager.SpeakerSide.Affirmative, 0), "replySpeech");
-	}
-*/
 }

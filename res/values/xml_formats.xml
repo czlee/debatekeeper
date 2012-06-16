@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="XmlElemNameRoot">debateformat</string>
+    	<string name="XmlAttrNameCommonRef">ref</string>
+    		<string name="XmlAttrValueCommonTrue">true</string>
+   			<string name="XmlAttrValueCommonFalse">false</string>
+	    	<string name="XmlAttrValueCommonStay">#stay</string>
+	    	<string name="XmlAttrValueCommonDefault">#default</string>
+
+    <string name="XmlElemNameInfo">info</string>
+        <string name="XmlElemNameInfoRegion">region</string>
+        <string name="XmlElemNameInfoLevel">level</string>
+        <string name="XmlElemNameInfoUsedAt">usedat</string>
+        <string name="XmlElemNameInfoDesc">desc</string>
+    
+    <string name="XmlElemNameResource">resource</string>
+	    <string name="XmlAttrNameResourceRefCommon">#all</string>
+    
+    <string name="XmlElemNameSpeechFormat">speechformat</string>
+	    <string name="XmlAttrNameSpeechFormatLength">length</string>
+	    <string name="XmlAttrNameSpeechFormatFirstPeriod">firstperiod</string>
+	    <string name="XmlAttrNameSpeechFormatCountDir">countdir</string>
+	    	<string name="XmlAttrValueSpeechFormatCountDirUp">up</string>
+	    	<string name="XmlAttrValueSpeechFormatCountDirDown">down</string>
+		  	<string name="XmlAttrValueSpeechFormatCountDirUser">user</string>
+	    	
+    <string name="XmlElemNameBell">bell</string>
+	    <string name="XmlAttrNameBellTime">time</string>
+	    	<string name="XmlAttrValueBellTimeFinish">finish</string>
+   	    <string name="XmlAttrNameBellNumber">number</string>
+	    <string name="XmlAttrNameBellNextPeriod">nextperiod</string>
+	    <string name="XmlAttrNameBellSound">sound</string>
+		   	<string name="XmlAttrValueBellNextPeriodSilent">#silent</string>
+   	    <string name="XmlAttrNameBellPauseOnBell">pauseonbell</string>
+    
+    <string name="XmlElemNamePeriod">period</string>
+	    <string name="XmlAttrNamePeriodDesc">desc</string>
+	    <string name="XmlAttrNamePeriodBgcolor">bgcolor</string>
+    
+    <string name="XmlElemNameInclude">include</string>
+    	<string name="XmlAttrNameIncludeResource">resource</string>
+    
+    <string name="XmlElemNameSpeechesList">speeches</string>
+    	<string name="XmlElemNameSpeech">speech</string>
+	    	<string name="XmlAttrNameSpeechName">name</string>
+	    	<string name="XmlAttrNameSpeechFormat">format</string>
+    
+    <string name="XmlErrorResourceNoRef">"No 'ref' was specified for a resource"</string>
+    <string name="XmlErrorResourceInsideContext">"The resource '%1$s' was inside a %2$s"</string>
+    <string name="XmlErrorSpeechFormatNoRef">"No 'ref' was specified for a speech format"</string>
+    <string name="XmlErrorSpeechFormatNoLength">"Speech format '%1$s' had no length"</string>
+    <string name="XmlErrorSpeechFormatInvalidLength">"Invalid time for length of speech format '%1$s': '%2$s'"</string>
+    <string name="XmlErrorSpeechFormatUnexpectedlyNotFound">"Unexpectedly, I couldn't find speech format '%1$s'"</string>
+    <string name="XmlErrorSpeechFormatInsideContext">"The speech format '%1$s' was inside a %2$s"</string>
+    <string name="XmlErrorBellNoTime">"A bell in %1$s did not specify a time."</string>
+    <string name="XmlErrorBellInvalidTime">"Invalid time for bell in %1$s: '%2$s'"</string>
+    <string name="XmlErrorBellFinishTimeUnexpectedlyNotFound">"Unexpectedly, I couldn't find the finish time of the speech for a bell inside %1$s"</string>
+    <string name="XmlErrorBellInvalidNumber">"Invalid number of bells in %1$s: '%2$s'"</string>
+    <string name="XmlErrorBellInvalidSound">"Invalid bell sound in %1$s: '%2$s'"</string>
+    <string name="XmlErrorBellInvalidPauseOnBell">"Invalid pauseonbell value in %1$s: %2$s"</string>
+    <string name="XmlErrorBellOutsideContext">"A bell is not inside a valid resource or speech format"</string>
+    <string name="XmlErrorPeriodNoRef">"No 'ref' was specified for a period in %1$s."</string>
+    <string name="XmlErrorPeriodInvalidColor">"Invalid background colour (bgcolor) specified for period %1$s: '%2$s'</string>
+    <string name="XmlErrorPeriodOutsideContext">"The period '%1$s' was not inside a valid resource or speech format"</string>
+    <string name="XmlErrorIncludeNoResource">"An include element in %1$s didn't specify a resource"</string>
+    <string name="XmlErrorIncludeOutsideSpeechFormat">"An include element for invalid resource '%1$s' was outside a speech format"</string>
+    <string name="XmlErrorSpeechesListInsideContext">"The speeches list started inside a %1$s"</string>
+    <string name="XmlErrorSpeechNoName">"A speech did not specify a name"</string>
+    <string name="XmlErrorSpeechNoFormat">"The speech %1$s did not specify a format"</string>
+    <string name="XmlErrorSpeechOutsideSpeechesList">"The speech %1$s was outside the 'speeches' list"</string>
+
+</resources>
