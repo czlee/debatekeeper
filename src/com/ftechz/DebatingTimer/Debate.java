@@ -26,7 +26,6 @@ public class Debate {
     // Members
     private LinkedList<AlarmChain> mStages;
     private AlarmChain mCurrentStage;
-    // TODO: Tidy this up so it doesn't have a parallel integer/iterator.
     private int mCurrentStageInt;  // Used for saving the instance state
     private Iterator<AlarmChain> mStageIterator;
     private final TeamsManager mTeamsManager;
@@ -167,7 +166,6 @@ public class Debate {
         mAlertManager.setVibrateMode(vibrateMode);
     }
 
-    // TODO find a more appropriate home for this rippling, may involve restructuring
     public void playBell() {
         mAlertManager.playBell();
     }

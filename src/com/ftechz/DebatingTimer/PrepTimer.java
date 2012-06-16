@@ -6,7 +6,6 @@ package com.ftechz.DebatingTimer;
  * Exist as a stage in a debate, keeping the timer of the stage
  * and its own internal state according on the AlarmChainAlerts provided
  */
-// TODO: This class should probably be eliminated, in favour of a parameterised AlarmChain.
 public class PrepTimer extends AlarmChain
 {
 

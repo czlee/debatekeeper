@@ -20,7 +20,6 @@ import android.widget.TabHost.TabContentFactory;
  * <b> OBSOLETE, DO NOT USE </b>
  * This activity allows the user to configure a debate.
  *
- * TODO: In the future, this Activity should be subordinate to DebatingActivity.
  * It should allow the user to:
  *   - Change the current configuration (which should be part of the saved state for DebatingActivity)
  *   - Define new configurations and remove configurations
@@ -197,83 +196,4 @@ public class ConfigActivity extends FragmentActivity implements TabHost.OnTabCha
         }
     };
 
-    // TODO: Move this to DebatingActivity and delete it from here
-    public void setupDebate(Debate debate)
-    {
-//        prepAlerts = new AlarmChain.AlarmChainAlert[] {
-//                new SpeakerTimer.WarningAlert(60),  // 1 minute
-//                new SpeakerTimer.WarningAlert(120), // 2 minutes
-//                new SpeakerTimer.FinishAlert(420)   // 7 minutes
-//        };
-//
-//        substativeSpeechAlerts = new AlarmChain.AlarmChainAlert[] {
-//                new SpeakerTimer.WarningAlert(240), // 4 minutes
-//                new SpeakerTimer.FinishAlert(360),  // 6 minutes
-//                new SpeakerTimer.OvertimeAlert(375, 15)  // 6:15, repeating every 5
-//        };
-//
-//        replySpeechAlerts = new AlarmChain.AlarmChainAlert[] {
-//                new SpeakerTimer.WarningAlert(120),
-//                new SpeakerTimer.FinishAlert(180),
-//                new SpeakerTimer.OvertimeAlert(195, 15)
-//        };
-
-        prepAlerts = new BellInfo[] {
-                new BellInfo(5, 1),  //
-                new BellInfo(10, 1), //
-                new BellInfo(15, 2)   //
-        };
-
-        substativeSpeechAlerts = new BellInfo[] {
-                new BellInfo(5, 1),
-                new BellInfo(10, 2),
-        };
-
-        replySpeechAlerts = new BellInfo[] {
-                new BellInfo(3, 1),
-                new BellInfo(6, 2),
-        };
-
-        // Set up speakers
-        ConfigSpeakersFragment speakersFragment = (ConfigSpeakersFragment) mMapTabInfo.get("Speakers").mFragment;
-        Team team1 = new Team();
-        team1.addMember(new Speaker(speakersFragment.speaker1Field.getText().toString()), true);
-        team1.addMember(new Speaker(speakersFragment.speaker2Field.getText().toString()), false);
-
-        Team team2 = new Team();
-        team2.addMember(new Speaker(speakersFragment.speaker3Field.getText().toString()), true);
-        team2.addMember(new Speaker(speakersFragment.speaker4Field.getText().toString()), false);
-
-        int team1Index = debate.addTeam(team1);
-        int team2Index = debate.addTeam(team2);
-
-        debate.setSide(team1Index, TeamsManager.SpeakerSide.Affirmative);
-        debate.setSide(team2Index, TeamsManager.SpeakerSide.Negative);
-
-        //Add in the alarm sets
-        debate.addAlarmSet("prep", prepAlerts, 15);
-        debate.addAlarmSet("substantiveSpeech", substativeSpeechAlerts, 15);
-        debate.addAlarmSet("replySpeech", replySpeechAlerts, 9);
-
-        // Add in the stages
-        debate.addStage(new PrepTimer("Preparation"), "prep");
-        debate.addStage(
-                new SpeakerTimer("1st Affirmative", TeamsManager.SpeakerSide.Affirmative, 1),
-                "substantiveSpeech");
-        debate.addStage(
-                new SpeakerTimer("1st Negative", TeamsManager.SpeakerSide.Negative, 1),
-                "substantiveSpeech");
-        debate.addStage(
-                new SpeakerTimer("2nd Affirmative", TeamsManager.SpeakerSide.Affirmative, 2),
-                "substantiveSpeech");
-        debate.addStage(
-                new SpeakerTimer("2nd Negative", TeamsManager.SpeakerSide.Negative, 2),
-                "substantiveSpeech");
-        debate.addStage(
-                new SpeakerTimer("Negative Leader's Reply", TeamsManager.SpeakerSide.Negative, 0),
-                "replySpeech");
-        debate.addStage(
-                new SpeakerTimer("Affirmative Leader's Reply", TeamsManager.SpeakerSide.Affirmative, 0),
-                "replySpeech");
-    }
 }

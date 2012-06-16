@@ -20,19 +20,10 @@ public class BellInfo {
     private PeriodInfo    mNextPeriodInfo = new PeriodInfo(null, null);
     private final BellSoundInfo mSoundInfo      = new BellSoundInfo();
 
-    // TODO: remove extraneous constructors
     public BellInfo(long seconds, int timesToPlay) {
         super();
         mBellTime = seconds;
         mSoundInfo.setTimesToPlay(timesToPlay);
-    }
-
-    public BellInfo(long seconds, int timesToPlay, String periodDescription,
-            Integer backgroundColor) {
-        super();
-        mBellTime = seconds;
-        mSoundInfo.setTimesToPlay(timesToPlay);
-        setNextPeriodInfo(new PeriodInfo(periodDescription, backgroundColor));
     }
 
     public void setPauseOnBell(boolean pauseOnBell) {

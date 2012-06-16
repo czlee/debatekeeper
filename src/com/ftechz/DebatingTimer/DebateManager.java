@@ -21,7 +21,7 @@ import com.ftechz.DebatingTimer.DebatingTimerService.GuiUpdateBroadcastSender;
  *
  * DebateManager is NOT capable of:
  *  <ul>
- *  <li> handling the GUI, but TODO it will send a message to the DebatingActivity to update the GUI
+ *  <li> handling the GUI, but it sends a message to the DebatingActivity to update the GUI
  *  </ul>
  *
  * The internal mechanics of a single speech are handled by {@link SpeechManager}.
