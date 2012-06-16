@@ -1,7 +1,5 @@
 package com.ftechz.DebatingTimer;
 
-import java.util.Timer;
-
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -28,9 +26,7 @@ import android.util.Log;
 public class DebatingTimerService extends Service
 {
     public static final String UPDATE_GUI_BROADCAST_ACTION = "com.ftechz.DebatingTimer.update";
-    private Timer updateGuiTimer;
     private final IBinder mBinder = new DebatingTimerServiceBinder();
-
     private DebateManager mDebateManager;
     private AlertManager mAlertManager;
 
@@ -60,8 +56,8 @@ public class DebatingTimerService extends Service
     }
 
     /**
-     * This class is passed to the SpeechManager (indirectly) as a means to trigger a GUI update
-     * in the DebatingActivity.
+     * This class is passed to the <code>SpeechManager</code> (indirectly) as a means to trigger a
+     * GUI update in the <code>DebatingActivity</code>.
      */
     public class GuiUpdateBroadcastSender {
         public void sendBroadcast() {
@@ -98,12 +94,6 @@ public class DebatingTimerService extends Service
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        if(updateGuiTimer != null) {
-            // Clean up stuff
-            updateGuiTimer.cancel();
-            updateGuiTimer = null;
-        }
 
         if(mDebateManager != null) {
             mDebateManager.release();
