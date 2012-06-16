@@ -52,6 +52,7 @@ public class DebateFormatBuilderFromXml {
         private Long    mCurrentSpeechFormatLength      = null;
         private String  mCurrentResourceRef             = null;
         private boolean mIsInSpeechesList               = false;
+        private boolean mIsInRootContext                = false;
 
         @Override
         public void characters(char[] arg0, int arg1, int arg2) throws SAXException {}
@@ -65,10 +66,17 @@ public class DebateFormatBuilderFromXml {
             if (!uri.equals(DEBATING_TIMER_URI))
                 return;
 
+            /**
+             * <debateformat name="something">
+             * End the root context.
+             */
+            if (areEqual(localName, R.string.XmlElemNameRoot)) {
+                mIsInRootContext = false;
+
             /** <resource ref="string">
              * End the context.
              */
-            if (areEqual(localName, R.string.XmlElemNameResource)) {
+            } else if (areEqual(localName, R.string.XmlElemNameResource)) {
                 mCurrentResourceRef = null;
 
             /** <speechformat ref="string" length="5:00" firstperiod="string" countdir="up">
@@ -129,6 +137,29 @@ public class DebateFormatBuilderFromXml {
             if (!uri.equals(DEBATING_TIMER_URI))
                 return;
 
+            /**
+             * <debateformat name="something">
+             */
+            if (areEqual(localName, R.string.XmlElemNameRoot)) {
+
+                String name = getValue(atts, R.string.XmlAttrNameRootName);
+                if (name == null) {
+                    logXmlError(R.string.XmlErrorRootNoName);
+                    return;
+                }
+
+                mDfb.setDebateFormatName(name);
+                mIsInRootContext = true;
+                return;
+            }
+
+            // For everything else, we must be inside the root element.
+            // If we're not, refuse to do anything.
+            if (!mIsInRootContext) {
+                logXmlError(R.string.XmlErrorSomethingOutsideRoot);
+                return;
+            }
+
             /** <resource ref="string">
              * Create a reference with the reference as specified in 'ref'.
              * Must not be inside a resource or speech format.
@@ -137,8 +168,7 @@ public class DebateFormatBuilderFromXml {
             if (areEqual(localName, R.string.XmlElemNameResource)) {
 
                 // 1. Get the reference string.
-                String reference = atts.getValue(DEBATING_TIMER_URI,
-                        getString(R.string.XmlAttrNameCommonRef));
+                String reference = getValue(atts, R.string.XmlAttrNameCommonRef);
                 if (reference == null) {
                     logXmlError(R.string.XmlErrorResourceNoRef);
                     return;

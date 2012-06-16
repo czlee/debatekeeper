@@ -160,6 +160,13 @@ public class DebateManager {
     }
 
     /**
+     * @return the debate format name
+     */
+    public String getDebateFormatName() {
+        return mDebateFormat.getName();
+    }
+
+    /**
      * @return the current speech name
      */
     public String getCurrentSpeechName() {

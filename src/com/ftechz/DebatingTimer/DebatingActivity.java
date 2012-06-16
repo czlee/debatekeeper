@@ -335,6 +335,8 @@ public class DebatingActivity extends Activity {
             ));
 
             updateButtons();
+
+            this.setTitle(getString(R.string.titleBarWithFormatName, mDebateManager.getDebateFormatName()));
         }
     }
 

@@ -516,6 +516,22 @@ public class DebateFormatBuilder {
     }
 
     /**
+     * Sets the name of the debate format being built
+     * @param name the name of this debate format
+     */
+    public void setDebateFormatName(String name) {
+        mDebateFormatBeingBuilt.setName(name);
+    }
+
+    /**
+     * Gets the name of the debate format being built
+     * @return the name of this debate format
+     */
+    public String getDebateFormatName() {
+        return mDebateFormatBeingBuilt.getName();
+    }
+
+    /**
      * Returns the assembled {@link DebateFormat}.  Calls to any other method than this one, after
      * this has been called once, are illegal.
      * @return the assembled <code>DebateFormat</code>

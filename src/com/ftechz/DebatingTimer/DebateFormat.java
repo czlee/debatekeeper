@@ -19,6 +19,7 @@ import android.util.Log;
  */
 public class DebateFormat {
 
+    private String                               mName = "";
     private final HashMap<String, SpeechFormat>  mSpeechFormats;
     private final ArrayList<SpeechSpec>          mSpeechSpecs;
 
@@ -146,6 +147,22 @@ public class DebateFormat {
      */
     public int numberOfSpeeches() {
         return mSpeechSpecs.size();
+    }
+
+    /**
+     * Sets the name of this debate format
+     * @param name the name of this debate format
+     */
+    public void setName(String name) {
+        this.mName = name;
+    }
+
+    /**
+     * Gets the name of this debate format
+     * @return the name of this debate format
+     */
+    public String getName() {
+        return this.mName;
     }
 
 }

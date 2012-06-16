@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="XmlElemNameRoot">debateformat</string>
+    	<string name="XmlAttrNameRootName">name</string>
     	<string name="XmlAttrNameCommonRef">ref</string>
     		<string name="XmlAttrValueCommonTrue">true</string>
    			<string name="XmlAttrValueCommonFalse">false</string>
@@ -45,7 +46,9 @@
 	    	<string name="XmlAttrNameSpeechName">name</string>
 	    	<string name="XmlAttrNameSpeechFormat">format</string>
     
-    <string name="XmlErrorResourceNoRef">"No 'ref' was specified for a resource"</string>
+    <string name="XmlErrorRootNoName">This debate format has no name!</string>
+    <string name="XmlErrorSomethingOutsideRoot">There was something outside the root debateformat element</string>
+   	<string name="XmlErrorResourceNoRef">"No 'ref' was specified for a resource"</string>
     <string name="XmlErrorResourceInsideContext">"The resource '%1$s' was inside a %2$s"</string>
     <string name="XmlErrorSpeechFormatNoRef">"No 'ref' was specified for a speech format"</string>
     <string name="XmlErrorSpeechFormatNoLength">"Speech format '%1$s' had no length"</string>
