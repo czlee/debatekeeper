@@ -54,17 +54,10 @@ public class DebateFormatBuilderFromXml {
         private boolean mIsInSpeechesList               = false;
 
         @Override
-        public void characters(char[] arg0, int arg1, int arg2)
-                throws SAXException {
-            // TODO Auto-generated method stub
-
-        }
+        public void characters(char[] arg0, int arg1, int arg2) throws SAXException {}
 
         @Override
-        public void endDocument() throws SAXException {
-            // TODO Auto-generated method stub
-
-        }
+        public void endDocument() throws SAXException {}
 
         @Override
         public void endElement(String uri, String localName, String qName)
@@ -113,42 +106,22 @@ public class DebateFormatBuilderFromXml {
         }
 
         @Override
-        public void endPrefixMapping(String prefix) throws SAXException {
-            // TODO Auto-generated method stub
-
-        }
+        public void endPrefixMapping(String prefix) throws SAXException {}
 
         @Override
-        public void ignorableWhitespace(char[] ch, int start, int length)
-                throws SAXException {
-            // TODO Auto-generated method stub
-
-        }
+        public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {}
 
         @Override
-        public void processingInstruction(String target, String data)
-                throws SAXException {
-            // TODO Auto-generated method stub
-
-        }
+        public void processingInstruction(String target, String data) throws SAXException {}
 
         @Override
-        public void setDocumentLocator(Locator locator) {
-            // TODO Auto-generated method stub
-
-        }
+        public void setDocumentLocator(Locator locator) {}
 
         @Override
-        public void skippedEntity(String name) throws SAXException {
-            // TODO Auto-generated method stub
-
-        }
+        public void skippedEntity(String name) throws SAXException {}
 
         @Override
-        public void startDocument() throws SAXException {
-            // TODO Auto-generated method stub
-
-        }
+        public void startDocument() throws SAXException {}
 
         @Override
         public void startElement(String uri, String localName, String qName,
@@ -489,11 +462,7 @@ public class DebateFormatBuilderFromXml {
         }
 
         @Override
-        public void startPrefixMapping(String prefix, String uri)
-                throws SAXException {
-            // TODO Auto-generated method stub
-
-        }
+        public void startPrefixMapping(String prefix, String uri) throws SAXException {}
 
         // ******** Private methods ********
 
@@ -574,6 +543,11 @@ public class DebateFormatBuilderFromXml {
     //******************************************************************************************
     // Public methods
     //******************************************************************************************
+    /**
+     * Builds a debate from a given input stream, which must be an XML file.
+     * @param is an {@link InputStream} to an XML file
+     * @return the {@link DebateFormat}
+     */
     public DebateFormat buildDebateFromXml(InputStream is) {
         try {
             Xml.parse(is, Encoding.UTF_8, new DebateFormatXmlContentHandler());
@@ -596,6 +570,12 @@ public class DebateFormatBuilderFromXml {
     //******************************************************************************************
     // Private methods
     //******************************************************************************************
+    /**
+     * Converts a String in the format 00:00 to a long, being the number of seconds
+     * @param s the String
+     * @return the total number of seconds (minutes + seconds * 60)
+     * @throws NumberFormatException
+     */
     private static long timeStr2Secs(String s) throws NumberFormatException {
         long seconds = 0;
         String parts[] = s.split(":", 2);
@@ -614,16 +594,30 @@ public class DebateFormatBuilderFromXml {
         return seconds;
     }
 
+    /**
+     * Logs an XML-related error from an exception.
+     * @param e the Exception
+     */
     private void logXmlError(Exception e) {
         mErrorLog.add(e.getMessage());
         Log.e("logXmlError", e.getMessage());
     }
 
+    /**
+     * Logs an XML-related error from a string resource.
+     * @param resId the resource ID of the string resource
+     */
     private void logXmlError(int resId) {
         mErrorLog.add(mContext.getString(resId));
         Log.e("logXmlError", mContext.getString(resId));
     }
 
+    /**
+     * Logs an XML-related error from a string resource and formats according to
+     * <code>String.format</code>
+     * @param resId the resource ID of the string resource
+     * @param formatArgs arguments to pass to <code>String.format</code>
+     */
     private void logXmlError(int resId, Object... formatArgs) {
         mErrorLog.add(mContext.getString(resId, formatArgs));
         Log.e("logXmlError", mContext.getString(resId, formatArgs));

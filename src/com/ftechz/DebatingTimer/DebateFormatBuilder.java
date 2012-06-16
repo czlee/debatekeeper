@@ -87,7 +87,7 @@ public class DebateFormatBuilder {
             // Check for duplicate keys
             if (mPeriodInfos.containsKey(ref)) {
                 throw new DebateFormatBuilderException(
-                        String.format("The period info '%s' was specified more than once", ref));
+                        getString(R.string.DfbErrorPeriodInfoDuplicate, ref));
             }
 
             // If okay, then add
@@ -124,7 +124,7 @@ public class DebateFormatBuilder {
                 pi = mPeriodInfos.get(periodInfoRef);
                 if (pi == null) {
                     throw new DebateFormatBuilderException(
-                            String.format("There is no period with ref '%s'", periodInfoRef));
+                            getString(R.string.DfbErrorPeriodInfoNotFound, periodInfoRef));
                 }
                 bi.setNextPeriodInfo(pi);
             }
@@ -164,7 +164,7 @@ public class DebateFormatBuilder {
                 if (checkBi.getBellTime() == bellTime) {
                     String timeStr = secsToText(bellTime);
                     throw new DebateFormatBuilderException(
-                            String.format("There is more than one bell at time %s", timeStr));
+                            getString(R.string.DfbErrorBellDuplicate, timeStr));
                 }
             }
         }
@@ -220,7 +220,7 @@ public class DebateFormatBuilder {
             pi = mPeriodInfos.get(firstPeriodRef);
             if (pi == null) {
                 throw new DebateFormatBuilderException(
-                        String.format("There is no period with ref '%s'", firstPeriodRef));
+                        getString(R.string.DfbErrorPeriodInfoNotFound, firstPeriodRef));
             }
             mFirstPeriodInfo = pi;
         }
@@ -290,7 +290,7 @@ public class DebateFormatBuilder {
             if (bellTime > mSpeechLength) {
                 String timeStr = secsToText(bellTime);
                 throw new DebateFormatBuilderException(
-                        String.format("The bell at %s is after the finish time", timeStr));
+                        getString(R.string.DfbErrorBellAfterFinishTime, timeStr));
             }
 
         }
@@ -323,11 +323,11 @@ public class DebateFormatBuilder {
      */
     public void addNewResource(String ref) throws DebateFormatBuilderException {
         assertFormatsAreAddable();
-        if (ref.equalsIgnoreCase(mContext.getString(R.string.XmlAttrNameResourceRefCommon))) {
+        if (ref.equalsIgnoreCase(getString(R.string.XmlAttrNameResourceRefCommon))) {
             if (mResourceForAll != null) {
-                throw new DebateFormatBuilderException(String.format(
-                        "The resource '%s' was specified more than once",
-                        mContext.getString(R.string.XmlAttrNameResourceRefCommon)));
+                throw new DebateFormatBuilderException(getString(
+                        R.string.DfbErrorResourceDuplicate,
+                        getString(R.string.XmlAttrNameResourceRefCommon)));
             }
             mResourceForAll = new Resource();
         } else if (!mResources.containsKey(ref)) {
@@ -335,7 +335,7 @@ public class DebateFormatBuilder {
             mResources.put(ref, res);
         } else {
             throw new DebateFormatBuilderException(
-                    String.format("The resource '%s' was specified more than once", ref));
+                    getString(R.string.DfbErrorResourceDuplicate, ref));
         }
     }
 
@@ -364,7 +364,7 @@ public class DebateFormatBuilder {
             mSpeechFormatBuilders.put(ref, sfb);
         } else {
             throw new DebateFormatBuilderException(
-                    String.format("The speech format '%s' was specified more than once", ref));
+                    getString(R.string.DfbErrorSpeechFormatDuplicate, ref));
         }
     }
 
@@ -392,7 +392,7 @@ public class DebateFormatBuilder {
             mDebateFormatBeingBuilt.addSpeech(name, formatRef);
         } catch (NoSuchFormatException e) {
             throw new DebateFormatBuilderException(
-                    String.format("There is no speech format with reference '%s'", formatRef));
+                    getString(R.string.DfbErrorSpeechFormatNotFound, formatRef));
         }
 
     }
@@ -551,7 +551,7 @@ public class DebateFormatBuilder {
         else res = mResources.get(ref);
         if (res == null) {
             throw new DebateFormatBuilderException(
-                    String.format("There is no resource with reference '%s'", ref));
+                    getString(R.string.DfbErrorResourceNotFound, ref));
         }
         return res;
     }
@@ -567,7 +567,7 @@ public class DebateFormatBuilder {
         SpeechFormatBuilder sfb = mSpeechFormatBuilders.get(ref);
         if (sfb == null) {
             throw new DebateFormatBuilderException(
-                    String.format("There is no speech format with reference '%s'", ref));
+                    getString(R.string.DfbErrorSpeechFormatNotFound, ref));
         }
         return sfb;
     }
@@ -631,6 +631,14 @@ public class DebateFormatBuilder {
 
             mDebateFormatBeingBuilt.addSpeechFormat(name, sf);
         }
+    }
+
+    private String getString(int resId) {
+        return mContext.getString(resId);
+    }
+
+    private String getString(int resId, Object... formatArgs) {
+        return mContext.getString(resId, formatArgs);
     }
 
 }

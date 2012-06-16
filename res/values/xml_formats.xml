@@ -66,7 +66,15 @@
     <string name="XmlErrorIncludeOutsideSpeechFormat">"An include element for invalid resource '%1$s' was outside a speech format"</string>
     <string name="XmlErrorSpeechesListInsideContext">"The speeches list started inside a %1$s"</string>
     <string name="XmlErrorSpeechNoName">"A speech did not specify a name"</string>
-    <string name="XmlErrorSpeechNoFormat">"The speech %1$s did not specify a format"</string>
-    <string name="XmlErrorSpeechOutsideSpeechesList">"The speech %1$s was outside the 'speeches' list"</string>
+    <string name="XmlErrorSpeechNoFormat">"The speech '%1$s' did not specify a format"</string>
+    <string name="XmlErrorSpeechOutsideSpeechesList">"The speech '%1$s' was outside the 'speeches' list"</string>
 
+    <string name="DfbErrorPeriodInfoDuplicate">"The period '%1$s' was specified more than once"</string>
+    <string name="DfbErrorPeriodInfoNotFound">"There is no period with ref '%1$s'"</string>
+    <string name="DfbErrorBellDuplicate">"There is more than one bell at time %1$s"</string>
+    <string name="DfbErrorBellAfterFinishTime">"The bell at %s is after the finish time"</string>
+    <string name="DfbErrorResourceDuplicate">"The resource '%1$s' was specified more than once"</string>
+    <string name="DfbErrorSpeechFormatDuplicate">"The resource '%1$s' was specified more than once"</string>
+    <string name="DfbErrorSpeechFormatNotFound">"There is no speech format with reference '%1$s'"</string>
+    <string name="DfbErrorResourceNotFound">"There is no resource with reference '%1$s'"</string>
 </resources>
