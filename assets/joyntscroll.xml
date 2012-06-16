@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<debateformat name="Thropy">
+<debateformat name="Joynt Scroll">
 	<info>
 		<region>New Zealand</region>
 		<level>University</level>
-		<usedat>New Zealand North Island Novice Debating Championships preliminary rounds</usedat>
-		<desc>3 vs 3, 6-minute speeches, 3-minute replies, POIs allowed</desc>
+		<usedat>New Zealand Universities Prepared Debating Championships</usedat>
+		<desc>3 vs 3, 10-minute speeches, 5-minute replies, POIs allowed</desc>
 	</info>
 
 	<resource ref="#all">
@@ -13,15 +13,15 @@
 		<period ref="overtime" desc="Overtime" bgcolor="#77ff0000" />
 	</resource>
 
-	<speechformat ref="substantive" length="6:00" firstperiod="initial">
+	<speechformat ref="substantive" length="10:00" firstperiod="initial">
 		<period ref="pois-allowed" name="POIs allowed" bgcolor="#7700ff00" />
    		<bell time="1:00" number="1" nextperiod="pois-allowed" sound="#default" />
-		<bell time="5:00" number="1" nextperiod="warning" sound="#default" />
+		<bell time="9:00" number="1" nextperiod="warning" sound="#default" />
 		<bell time="finish" number="2" nextperiod="overtime" sound="#default" />
 	</speechformat>
 	
-	<speechformat ref="reply" length="3:00" firstperiod="initial">
-		<bell time="2:00" number="1" nextperiod="warning" sound="#default" />
+	<speechformat ref="reply" length="5:00" firstperiod="initial">
+		<bell time="4:00" number="1" nextperiod="warning" sound="#default" />
 		<bell time="finish" number="2" nextperiod="overtime" sound="#default" />
 	</speechformat>
 	

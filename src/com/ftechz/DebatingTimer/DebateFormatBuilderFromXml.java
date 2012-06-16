@@ -316,8 +316,9 @@ public class DebateFormatBuilderFromXml {
                 // 3. Get the next period reference, or default to null
                 // "#stay" means null (i.e. leave unchanged)
                 String periodInfoRef = getValue(atts, R.string.XmlAttrNameBellNextPeriod);
-                if (areEqualIgnoringCase(periodInfoRef, R.string.XmlAttrValueCommonStay))
-                    periodInfoRef = null;
+                if (periodInfoRef != null)
+                    if (areEqualIgnoringCase(periodInfoRef, R.string.XmlAttrValueCommonStay))
+                        periodInfoRef = null;
 
                 // 4. We now have enough information to create the bell.
                 BellInfo bi = new BellInfo(time, number);
@@ -387,16 +388,18 @@ public class DebateFormatBuilderFromXml {
                 // 3. Get the background colour (implicitly default to null)
                 String bgcolorStr = getValue(atts, R.string.XmlAttrNamePeriodBgcolor);
                 Integer backgroundColor = null;
-                if (areEqualIgnoringCase(bgcolorStr, R.string.XmlAttrValueCommonStay))
-                    backgroundColor = null;
-                else if (bgcolorStr.startsWith("#")) {
-                    try {
-                        backgroundColor = Integer.parseInt(bgcolorStr.substring(1), 16);
-                    } catch (NumberFormatException e) {
+                if (bgcolorStr != null) {
+                    if (areEqualIgnoringCase(bgcolorStr, R.string.XmlAttrValueCommonStay))
+                        backgroundColor = null;
+                    else if (bgcolorStr.startsWith("#")) {
+                        try {
+                            backgroundColor = Integer.parseInt(bgcolorStr.substring(1), 16);
+                        } catch (NumberFormatException e) {
+                            logXmlError(R.string.XmlErrorPeriodInvalidColor, reference, bgcolorStr);
+                        }
+                    } else {
                         logXmlError(R.string.XmlErrorPeriodInvalidColor, reference, bgcolorStr);
                     }
-                } else {
-                    logXmlError(R.string.XmlErrorPeriodInvalidColor, reference, bgcolorStr);
                 }
 
                 // 4. We now have enough information to make the PeriodInfo

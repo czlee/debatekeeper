@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ftechz.DebatingTimer.DebateFormatBuilder.DebateFormatBuilderException;
+import com.ftechz.DebatingTimer.SpeechFormat.CountDirection;
 
 
 /**
@@ -59,7 +60,7 @@ public class DebatingActivity extends Activity {
 	// TODO This is a temporary mechanism to switch between real-world and test modes
 	// (It just changes the speech times.)
 	private int mTestMode = 0;
-	private final int NUM_TEST_MODES = 4;
+	private final int NUM_TEST_MODES = 8;
 
     private final String BUNDLE_SUFFIX_DEBATE_MANAGER = "dm";
 
@@ -316,10 +317,14 @@ public class DebatingActivity extends Activity {
             mStageText.setBackgroundColor(currentPeriodInfo.getBackgroundColor());
 
             long currentSpeechTime = mDebateManager.getCurrentSpeechTime();
+            long nextBellTime = mDebateManager.getNextBellTime();
+
+            if (currentSpeechFormat.getCountDirection() == CountDirection.COUNT_DOWN) {
+                currentSpeechTime = currentSpeechFormat.getSpeechLength() - currentSpeechTime;
+                nextBellTime      = currentSpeechFormat.getSpeechLength() - nextBellTime;
+            }
 
             mCurrentTimeText.setText(secsToText(currentSpeechTime));
-
-            long nextBellTime = mDebateManager.getNextBellTime();
 
             if (nextBellTime > 0) {
                 mNextTimeText.setText(String.format(
@@ -408,7 +413,11 @@ public class DebatingActivity extends Activity {
 	}
 
 	private static String secsToText(long time) {
-		return String.format("%02d:%02d", time / 60, time % 60);
+	    if (time >= 0) {
+	        return String.format("%02d:%02d", time / 60, time % 60);
+	    } else {
+	        return String.format("%02d:%02d over", -time / 60, -time % 60);
+	    }
 	}
 
 	public DebateFormat buildDebateFromXml(int testMode) {
@@ -417,17 +426,14 @@ public class DebatingActivity extends Activity {
 	    InputStream is = null;
 
 	    switch (testMode) {
-	    case 0:
-	        filename = "test.xml";
-	        break;
-	    case 1:
-	        filename = "thropy.xml";
-	        break;
-        case 2:
-            filename = "test2.xml";
-            break;
-        default:
-            filename = "australs.xml";
+	    case 1: filename = "test.xml"; break;
+	    case 2: filename = "thropy.xml"; break;
+        case 3: filename = "test2.xml"; break;
+        case 4: filename = "bp.xml"; break;
+        case 5: filename = "joyntscroll.xml"; break;
+        case 6: filename = "thropybreak.xml"; break;
+        case 7: filename = "nzeasters.xml"; break;
+       default: filename = "australs.xml";
 	    }
 
 	    Log.v(this.getClass().getSimpleName(), String.format("Using file %s", filename));
