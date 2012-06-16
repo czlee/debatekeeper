@@ -253,6 +253,7 @@ public class DebatingActivity extends Activity {
 	    switch (item.getItemId()) {
 	    case R.id.prevSpeaker:
 	        mDebateManager.previousSpeaker();
+            updateGui();
 	        return true;
 	    case R.id.switchMode:
             mTestMode = mTestMode + 1;
