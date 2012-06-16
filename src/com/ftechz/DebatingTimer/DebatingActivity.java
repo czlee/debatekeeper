@@ -326,7 +326,7 @@ public class DebatingActivity extends Activity {
 
             mCurrentTimeText.setText(secsToText(currentSpeechTime));
 
-            if (nextBellTime > 0) {
+            if (nextBellTime >= 0) {
                 mNextTimeText.setText(String.format(
                     this.getString(R.string.nextBell),
                     secsToText(nextBellTime)
