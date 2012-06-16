@@ -8,7 +8,7 @@
 	</info>
 
 	<resource ref="#all">
-		<period ref="initial" desc="Initial" bgcolor="#stay" />
+		<period ref="initial" desc="First minute" bgcolor="#stay" />
 		<period ref="warning" desc="Warning bell rung" bgcolor="#77ffcc00" />
 		<period ref="overtime" desc="Overtime" bgcolor="#77ff0000" />
 	</resource>
