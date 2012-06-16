@@ -24,7 +24,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.ftechz.DebatingTimer.DebateFormatBuilder.DebateFormatBuilderException;
 import com.ftechz.DebatingTimer.SpeechFormat.CountDirection;
 
 
@@ -66,7 +65,6 @@ public class DebatingActivity extends Activity {
 
     private final String BUNDLE_SUFFIX_DEBATE_MANAGER = "dm";
 
-    // Second tick broadcast
     private final BroadcastReceiver mGuiUpdateBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -79,7 +77,7 @@ public class DebatingActivity extends Activity {
     private final ServiceConnection mConnection = new DebatingTimerServiceConnection();
 
     //******************************************************************************************
-    // Public methods
+    // Private classes
     //******************************************************************************************
 
     /**
@@ -282,36 +280,36 @@ public class DebatingActivity extends Activity {
         return super.onPrepareOptionsMenu(menu);
     }
 
-    // Updates the buttons according to the current status of the debate
-	private void updateButtons() {
-	    // If it's the last speaker, don't show a "next speaker" button.
-	    // Show a "restart debate" button instead.
-	    switch (mDebateManager.getStatus()) {
-		case NOT_STARTED:
-		    setButtons(R.string.startTimer, R.string.nullButtonText, R.string.nextSpeaker);
-			break;
-		case RUNNING:
-		    setButtons(R.string.stopTimer, R.string.nullButtonText, R.string.nullButtonText);
-			break;
-		case STOPPED_BY_BELL:
-		    setButtons(R.string.resumeTimerAfterAlarm, R.string.nullButtonText, R.string.nullButtonText);
-			break;
-		case STOPPED_BY_USER:
-		    setButtons(R.string.resumeTimerAfterUserStop, R.string.resetTimer, R.string.nextSpeaker);
-			break;
-		default:
-			break;
-		}
+    //******************************************************************************************
+    // Protected methods
+    //******************************************************************************************
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
-        // Hide the [Next Speaker] button if there are no more speakers
-        mRightControlButton.setEnabled(!mDebateManager.isLastSpeaker());
+        unbindService(mConnection);
+
+        boolean keepRunning = false;
+        if (mDebateManager != null) {
+            if (mDebateManager.isRunning()) {
+                keepRunning = true;
+            }
+        }
+        if (!keepRunning) {
+            Intent intent = new Intent(this, DebatingTimerService.class);
+            stopService(intent);
+            Log.i(this.getClass().getSimpleName(), "Timer is not running, stopped service");
+        } else {
+            Log.i(this.getClass().getSimpleName(), "Timer is running, keeping service alive");
+        }
+    }
 
 
-	    // Show or hide the [Bell] button
-	    mPlayBellButton.setVisibility((mBinder.getAlertManager().isSilentMode()) ? View.GONE : View.VISIBLE);
-	}
+    //******************************************************************************************
+    // Private methods
+    //******************************************************************************************
 
-    public void updateGui() {
+    private void updateGui() {
         if (mDebateManager != null) {
             SpeechFormat currentSpeechFormat = mDebateManager.getCurrentSpeechFormat();
             PeriodInfo currentPeriodInfo = mDebateManager.getCurrentPeriodInfo();
@@ -351,7 +349,7 @@ public class DebatingActivity extends Activity {
         }
     }
 
-    public boolean applyPreferences() {
+    private boolean applyPreferences() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (mDebateManager != null) {
             try {
@@ -370,34 +368,34 @@ public class DebatingActivity extends Activity {
         else return false;
     }
 
-    //******************************************************************************************
-    // Protected methods
-    //******************************************************************************************
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        unbindService(mConnection);
-
-        boolean keepRunning = false;
-        if (mDebateManager != null) {
-            if (mDebateManager.isRunning()) {
-                keepRunning = true;
-            }
+    // Updates the buttons according to the current status of the debate
+    private void updateButtons() {
+        // If it's the last speaker, don't show a "next speaker" button.
+        // Show a "restart debate" button instead.
+        switch (mDebateManager.getStatus()) {
+        case NOT_STARTED:
+            setButtons(R.string.startTimer, R.string.nullButtonText, R.string.nextSpeaker);
+            break;
+        case RUNNING:
+            setButtons(R.string.stopTimer, R.string.nullButtonText, R.string.nullButtonText);
+            break;
+        case STOPPED_BY_BELL:
+            setButtons(R.string.resumeTimerAfterAlarm, R.string.nullButtonText, R.string.nullButtonText);
+            break;
+        case STOPPED_BY_USER:
+            setButtons(R.string.resumeTimerAfterUserStop, R.string.resetTimer, R.string.nextSpeaker);
+            break;
+        default:
+            break;
         }
-        if (!keepRunning) {
-            Intent intent = new Intent(this, DebatingTimerService.class);
-            stopService(intent);
-            Log.i(this.getClass().getSimpleName(), "Timer is not running, stopped service");
-        } else {
-            Log.i(this.getClass().getSimpleName(), "Timer is running, keeping service alive");
-        }
+
+        // Hide the [Next Speaker] button if there are no more speakers
+        mRightControlButton.setEnabled(!mDebateManager.isLastSpeaker());
+
+
+        // Show or hide the [Bell] button
+        mPlayBellButton.setVisibility((mBinder.getAlertManager().isSilentMode()) ? View.GONE : View.VISIBLE);
     }
-
-
-    //******************************************************************************************
-    // Private methods
-    //******************************************************************************************
 
 	// Sets the text, visibility and "weight" of all buttons
 	private void setButtons(int leftResid, int centreResid, int rightResid) {
@@ -426,7 +424,7 @@ public class DebatingActivity extends Activity {
 	    }
 	}
 
-	public DebateFormat buildDebateFromXml(int testMode) {
+	private DebateFormat buildDebateFromXml(int testMode) {
 	    DebateFormatBuilderFromXml dfbfx = new DebateFormatBuilderFromXml(this);
 	    String filename;
 	    InputStream is = null;
@@ -456,83 +454,4 @@ public class DebatingActivity extends Activity {
 	    return dfbfx.buildDebateFromXml(is);
 	}
 
-	public DebateFormat buildDefaultDebate(int testMode) {
-	    DebateFormatBuilder dfb = new DebateFormatBuilder(this);
-
-	    try {
-
-            dfb.addNewResource("#all");
-            dfb.addPeriodInfoToResource("#all", "initial", new PeriodInfo("Initial", null));
-            dfb.addPeriodInfoToResource("#all", "pois-allowed", new PeriodInfo("POIs allowed", 0x7700ff00));
-            dfb.addPeriodInfoToResource("#all", "warning", new PeriodInfo("Warning bell rung", 0x77ffcc00));
-            dfb.addPeriodInfoToResource("#all", "overtime", new PeriodInfo("Overtime", 0x77ff0000));
-
-            switch (testMode) {
-            case 4: // Short Australs
-                dfb.addNewSpeechFormat("substantive", 6*60);
-                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(4*60, 1), "warning");
-                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(6*60, 2), "overtime");
-
-                dfb.addNewSpeechFormat("reply", 3*60);
-                dfb.addBellInfoToSpeechFormat("reply", new BellInfo(2*60, 1), "warning");
-                dfb.addBellInfoToSpeechFormat("reply", new BellInfo(3*60, 2), "overtime");
-                break;
-            case 3: // Thropy
-                dfb.addNewSpeechFormat("substantive", 8*60);
-                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(6*60, 1), "warning");
-                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(8*60, 2), "overtime");
-
-                dfb.addNewSpeechFormat("reply", 4*60);
-                dfb.addBellInfoToSpeechFormat("reply", new BellInfo(3*60, 1), "warning");
-                dfb.addBellInfoToSpeechFormat("reply", new BellInfo(4*60, 2), "overtime");
-                break;
-            case 2: // Premier B
-                dfb.addNewSpeechFormat("substantive", 6*60);
-                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(1*60, 1), "pois-allowed");
-                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(5*60, 1), "warning");
-                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(6*60, 2), "overtime");
-
-                dfb.addNewSpeechFormat("reply", 3*60);
-                dfb.addBellInfoToSpeechFormat("reply", new BellInfo(2*60, 1), "warning");
-                dfb.addBellInfoToSpeechFormat("reply", new BellInfo(3*60, 2), "overtime");
-                break;
-            case 1: // Australs
-                dfb.addNewSpeechFormat("substantive", 8*60);
-                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(1*60, 1), "pois-allowed");
-                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(7*60, 1), "warning");
-                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(8*60, 2), "overtime");
-
-                dfb.addNewSpeechFormat("reply", 4*60);
-                dfb.addBellInfoToSpeechFormat("reply", new BellInfo(3*60, 1), "warning");
-                dfb.addBellInfoToSpeechFormat("reply", new BellInfo(4*60, 2), "overtime");
-                break;
-            case 0: // Test mode
-            default:
-                dfb.addNewSpeechFormat("substantive", 20);
-                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(5, 1), "pois-allowed");
-                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(15, 1), "warning");
-                dfb.addBellInfoToSpeechFormat("substantive", new BellInfo(20, 2), "overtime");
-
-                dfb.addNewSpeechFormat("reply", 10);
-                dfb.addBellInfoToSpeechFormat("reply", new BellInfo(5, 1), "warning");
-                dfb.addBellInfoToSpeechFormat("reply", new BellInfo(10, 2), "overtime");
-                break;
-            }
-
-            dfb.addSpeech("1st Affirmative", "substantive");
-            dfb.addSpeech("1st Negative",    "substantive");
-            dfb.addSpeech("2nd Affirmative", "substantive");
-            dfb.addSpeech("2nd Negative",    "substantive");
-            dfb.addSpeech("3rd Affirmative", "substantive");
-            dfb.addSpeech("3rd Negative",    "substantive");
-            dfb.addSpeech("Negative Leader's Reply",    "reply");
-            dfb.addSpeech("Affirmative Leader's Reply", "reply");
-
-	    } catch (DebateFormatBuilderException e) {
-            Log.e(this.getClass().getSimpleName(), "Problem building debate", e);
-            return null;
-        }
-
-	    return dfb.getDebateFormat();
-	}
 }
