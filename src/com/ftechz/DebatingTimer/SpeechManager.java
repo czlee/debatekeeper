@@ -178,9 +178,11 @@ public class SpeechManager {
     }
 
     /**
-     * @return the next bell time in seconds, or -1 if there are no more bells
+     * Returns the next bell time in seconds as a Long object.
+     * @return the next bell time in seconds, or <code>null</code> if there are no more bells.
+     * Note that this can be <code>null</code>.
      */
-    public long getNextBellTime() {
+    public Long getNextBellTime() {
         BellInfo nextBell = mSpeechFormat.getFirstBellFromTime(mCurrentTime);
 
         if (nextBell != null)
@@ -188,7 +190,7 @@ public class SpeechManager {
 
         // If no more bell times left, get the next overtime bell, if there is one
         if (mFirstOvertimeBellTime == 0)
-            return -1;
+            return null;
 
         long speechLength   = mSpeechFormat.getSpeechLength();
         long overtimeAmount = mCurrentTime - speechLength;
@@ -198,7 +200,7 @@ public class SpeechManager {
 
         // If past the first overtime bell, keep adding periods until we find one we haven't hit yet
         if (mOvertimeBellPeriod == 0)
-            return -1;
+            return null;
 
         long overtimeBellTime = mFirstOvertimeBellTime + mOvertimeBellPeriod;
 

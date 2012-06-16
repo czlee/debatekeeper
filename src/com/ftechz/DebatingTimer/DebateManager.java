@@ -139,9 +139,9 @@ public class DebateManager {
     }
 
     /**
-     * @return the next bell time
+     * @return the next bell time, or <code>null</code> if there are no more bells
      */
-    public long getNextBellTime() {
+    public Long getNextBellTime() {
         return mSpeechManager.getNextBellTime();
     }
 

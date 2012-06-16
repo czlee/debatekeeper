@@ -317,16 +317,17 @@ public class DebatingActivity extends Activity {
             mStageText.setBackgroundColor(currentPeriodInfo.getBackgroundColor());
 
             long currentSpeechTime = mDebateManager.getCurrentSpeechTime();
-            long nextBellTime = mDebateManager.getNextBellTime();
+            Long nextBellTime = mDebateManager.getNextBellTime();
 
             if (currentSpeechFormat.getCountDirection() == CountDirection.COUNT_DOWN) {
                 currentSpeechTime = currentSpeechFormat.getSpeechLength() - currentSpeechTime;
-                nextBellTime      = currentSpeechFormat.getSpeechLength() - nextBellTime;
+                if (nextBellTime != null)
+                    nextBellTime = currentSpeechFormat.getSpeechLength() - nextBellTime;
             }
 
             mCurrentTimeText.setText(secsToText(currentSpeechTime));
 
-            if (nextBellTime >= 0) {
+            if (nextBellTime != null) {
                 mNextTimeText.setText(String.format(
                     this.getString(R.string.nextBell),
                     secsToText(nextBellTime)
