@@ -59,7 +59,7 @@ public class DebatingActivity extends Activity {
 	// TODO This is a temporary mechanism to switch between real-world and test modes
 	// (It just changes the speech times.)
 	private int mTestMode = 0;
-	private final int NUM_TEST_MODES = 3;
+	private final int NUM_TEST_MODES = 4;
 
     private final String BUNDLE_SUFFIX_DEBATE_MANAGER = "dm";
 
@@ -421,6 +421,9 @@ public class DebatingActivity extends Activity {
 	    case 1:
 	        filename = "thropy.xml";
 	        break;
+        case 2:
+            filename = "test2.xml";
+            break;
         default:
             filename = "australs.xml";
 	    }

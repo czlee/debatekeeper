@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<debateformat name="Test debate 2">
+	<info>
+		<region>None</region>
+		<level>None</level>
+		<usedat>Nowhere</usedat>
+		<desc>Test format so you can test the app without waiting minutes for bells</desc>
+	</info>
+
+	<resource ref="#all">
+		<period ref="initial" desc="Initial" bgcolor="#stay" />
+		<period ref="warning" desc="Warning bell rung" bgcolor="#77ffcc00" />
+		<period ref="overtime" desc="Overtime" bgcolor="#77ff0000" />
+	</resource>
+
+	<speechformat ref="substantive" length="20" firstperiod="initial">
+		<period ref="pois-allowed" desc="Points of information allowed" bgcolor="#7700ff00" />
+   		<bell time="5" number="1" nextperiod="pois-allowed" sound="#default" />
+		<bell time="15" number="1" nextperiod="warning" sound="#default" />
+		<bell time="finish" number="2" nextperiod="overtime" sound="#default" />
+	</speechformat>
+	
+	<speechformat ref="reply" length="10" firstperiod="initial">
+		<bell time="5" number="1" nextperiod="warning" sound="#default" />
+		<bell time="finish" number="2" nextperiod="overtime" sound="#default" />
+	</speechformat>
+	
+	<speeches>
+		<speech name="1st Affirmative" format="substantive" />
+		<speech name="1st Negative" format="substantive" />
+		<speech name="2nd Affirmative" format="substantive" />
+		<speech name="2nd Negative" format="substantive" />
+		<speech name="3rd Affirmative" format="substantive" />
+		<speech name="3rd Negative" format="substantive" />
+		<speech name="Negative Leader's Reply" format="reply" />
+		<speech name="Affirmative Leader's Reply" format="reply" />
+	</speeches>
+</debateformat>
