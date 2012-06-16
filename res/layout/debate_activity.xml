@@ -9,7 +9,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:text="Speaker"
-            android:textSize="15pt"
+            android:textSize="20dip"
             android:id="@+id/titleText"
             />
     <TextView
@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:text="State"
-            android:textSize="10pt"
+            android:textSize="14dip"
             android:id="@+id/stateText"
             />
     <TextView
@@ -27,7 +27,7 @@
             android:layout_weight="1"
             android:text="00:00"
             android:id="@+id/currentTime"
-            android:textSize="32pt"
+            android:textSize="60dip"
             />
     <TextView
             android:layout_width="fill_parent"
