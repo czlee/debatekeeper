@@ -1,12 +1,12 @@
 package com.ftechz.DebatingTimer;
 
 import java.util.Timer;
-import java.util.TimerTask;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 /**
@@ -20,37 +20,64 @@ import android.util.Log;
  * in the same process as the Activity that calls it (DebatingActivity), because we
  * haven't specified otherwise.  This means that this service must NOT do intensive work,
  * because if it does, IT WILL BLOCK THE USER INTERFACE!
+ *
+ * @author Phillip Cao
+ * @author Chuan-Zheng Lee
+ * @since 2012-03
  */
 public class DebatingTimerService extends Service
 {
-    public static final String BROADCAST_ACTION = "com.ftechz.DebatingTimer.update";
-    private Intent intent;
-
+    public static final String UPDATE_GUI_BROADCAST_ACTION = "com.ftechz.DebatingTimer.update";
     private Timer updateGuiTimer;
     private final IBinder mBinder = new DebatingTimerServiceBinder();
 
     private DebateManager mDebateManager;
     private AlertManager mAlertManager;
 
+    //******************************************************************************************
+    // Public classes
+    //******************************************************************************************
+
+    /**
+     * This class is the binder between this service and the DebatingActivity.
+     */
+    public class DebatingTimerServiceBinder extends Binder {
+        public DebateManager getDebateManager() {
+            return mDebateManager;
+        }
+
+        public AlertManager getAlertManager() {
+            return mAlertManager;
+        }
+
+        public DebateManager createDebateManager(DebateFormat df) {
+            if(mDebateManager != null)
+                mDebateManager.release();
+            mDebateManager = new DebateManager(df, mAlertManager);
+            mDebateManager.setBroadcastSender(new GuiUpdateBroadcastSender());
+            return mDebateManager;
+        }
+    }
+
+    /**
+     * This class is passed to the SpeechManager (indirectly) as a means to trigger a GUI update
+     * in the DebatingActivity.
+     */
+    public class GuiUpdateBroadcastSender {
+        public void sendBroadcast() {
+            Intent broadcastIntent = new Intent(UPDATE_GUI_BROADCAST_ACTION);
+            LocalBroadcastManager.getInstance(DebatingTimerService.this)
+                    .sendBroadcast(broadcastIntent);
+        }
+    }
+
+    //******************************************************************************************
+    // Public methods
+    //******************************************************************************************
     @Override
     public void onCreate() {
         super.onCreate();
-
-        updateGuiTimer = new Timer();
-
-        // TODO: Find a better way to do this than a broadcast
-        // Start a new timer task to broadcast a UI update
-        intent = new Intent(BROADCAST_ACTION);
-        TimerTask mRunnable = new TimerTask() {
-            @Override
-            public void run() {
-                sendBroadcast(DebatingTimerService.this.intent);
-            }
-        };
-        updateGuiTimer.schedule(mRunnable, 0, 200);
-
         mAlertManager = new AlertManager(this);
-
     }
 
     @Override
@@ -84,24 +111,6 @@ public class DebatingTimerService extends Service
         }
 
         Log.v(this.getClass().getSimpleName(), "The service is shutting down now!");
-    }
-
-    public class DebatingTimerServiceBinder extends Binder
-    {
-        public DebateManager getDebateManager() {
-            return mDebateManager;
-        }
-
-        public AlertManager getAlertManager() {
-            return mAlertManager;
-        }
-
-        public DebateManager createDebateManager(DebateFormat df) {
-            if(mDebateManager != null)
-                mDebateManager.release();
-            mDebateManager = new DebateManager(df, mAlertManager);
-            return mDebateManager;
-        }
     }
 
     @Override

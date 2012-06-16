@@ -6,6 +6,8 @@ import java.util.TimerTask;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.ftechz.DebatingTimer.DebatingTimerService.GuiUpdateBroadcastSender;
+
 /**
  * SpeechManager manages the mechanics of a single speech.  Exactly one instance should exist
  * during a debate.  <code>SpeechManager</code> can switch between speeches dynamically&mdash;there
@@ -26,14 +28,15 @@ import android.util.Log;
  */
 public class SpeechManager {
 
-    private final AlertManager  mAlertManager;
-    private SpeechFormat        mSpeechFormat;
-    private PeriodInfo          mCurrentPeriodInfo;
-    private Timer               mTimer;
-    private DebatingTimerState  mState = DebatingTimerState.NOT_STARTED;
-    private long                mCurrentTime;
-    private long                mFirstOvertimeBellTime = 30;
-    private long                mOvertimeBellPeriod    = 20;
+    private final AlertManager       mAlertManager;
+    private GuiUpdateBroadcastSender mBroadcastSender;
+    private SpeechFormat             mSpeechFormat;
+    private PeriodInfo               mCurrentPeriodInfo;
+    private Timer                    mTimer;
+    private DebatingTimerState       mState = DebatingTimerState.NOT_STARTED;
+    private long                     mCurrentTime;
+    private long                     mFirstOvertimeBellTime = 30;
+    private long                     mOvertimeBellPeriod    = 20;
 
     private final long TIMER_DELAY  = 1000;
     private final long TIMER_PERIOD = 1000;
@@ -62,6 +65,10 @@ public class SpeechManager {
             // Increment the counter
             mCurrentTime++;
 
+            // Send an update GUI broadcast, if applicable
+            if (mBroadcastSender != null) {
+                mBroadcastSender.sendBroadcast();
+            }
             // If this is a bell time, raise the bell
             BellInfo thisBell = mSpeechFormat.getBellAtTime(mCurrentTime);
             if (thisBell != null)
@@ -84,6 +91,16 @@ public class SpeechManager {
     public SpeechManager(AlertManager am) {
         super();
         this.mAlertManager = am;
+    }
+
+    /**
+     * Sets a broadcast sender for this speech manager.
+     * <code>SpeechManager</code> will call <code>sendBroadcast()</code> on the broadcast sender
+     * when the timer counts up/down.
+     * @param sender the {@link GuiUpdateBroadcastSender}
+     */
+    public void setBroadcastSender(GuiUpdateBroadcastSender sender) {
+        this.mBroadcastSender = sender;
     }
 
     /**

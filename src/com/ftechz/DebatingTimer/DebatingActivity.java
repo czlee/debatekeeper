@@ -14,6 +14,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,6 +34,7 @@ import com.ftechz.DebatingTimer.SpeechFormat.CountDirection;
  *
  * @author Phillip Cao
  * @author Chuan-Zheng Lee
+ * @since  2012-03
  *
  */
 public class DebatingActivity extends Activity {
@@ -65,7 +67,7 @@ public class DebatingActivity extends Activity {
     private final String BUNDLE_SUFFIX_DEBATE_MANAGER = "dm";
 
     // Second tick broadcast
-    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mGuiUpdateBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             updateGui();
@@ -109,6 +111,8 @@ public class DebatingActivity extends Activity {
             }
 
             applyPreferences();
+
+            updateGui();
 
         }
 
@@ -217,8 +221,8 @@ public class DebatingActivity extends Activity {
     public void onResume() {
         super.onResume();
 
-        registerReceiver(broadcastReceiver, new IntentFilter(
-                DebatingTimerService.BROADCAST_ACTION));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mGuiUpdateBroadcastReceiver,
+                new IntentFilter(DebatingTimerService.UPDATE_GUI_BROADCAST_ACTION));
 
         if (!applyPreferences())
             Log.w(this.getClass().getSimpleName(), "onResume: Couldn't restore preferences; mDebateManager doesn't yet exist");
@@ -227,7 +231,7 @@ public class DebatingActivity extends Activity {
     @Override
     public void onPause() {
         super.onPause();
-        unregisterReceiver(broadcastReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mGuiUpdateBroadcastReceiver);
     }
 
     @Override

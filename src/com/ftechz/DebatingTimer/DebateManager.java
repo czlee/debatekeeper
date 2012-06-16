@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import android.os.Bundle;
 
+import com.ftechz.DebatingTimer.DebatingTimerService.GuiUpdateBroadcastSender;
+
 /**
  * DebateManager manages a debate by keeping track of speeches and running the speech timers.
  *
@@ -67,6 +69,16 @@ public class DebateManager {
         this.mCurrentSpeechIndex = 0;
         this.mSpeechManager.loadSpeech(mDebateFormat.getSpeechFormat(mCurrentSpeechIndex));
 
+    }
+
+    /**
+     * Sets a broadcast sender for this speech manager.
+     * <code>DebateManager</code> will call <code>sendBroadcast()</code> on the broadcast sender
+     * when the timer counts up/down.
+     * @param sender the {@link GuiUpdateBroadcastSender}
+     */
+    public void setBroadcastSender(GuiUpdateBroadcastSender sender) {
+        this.mSpeechManager.setBroadcastSender(sender);
     }
 
     /**
