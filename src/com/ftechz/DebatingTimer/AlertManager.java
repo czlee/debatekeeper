@@ -28,7 +28,6 @@ public class AlertManager
     private final PowerManager.WakeLock mWakeLock;
     private final Vibrator              mVibrator;
     private       Notification          mNotification;
-    private       AlarmChain            mStage;
     private       BellRepeater          mBellRepeater        = null;
     private       boolean               mShowingNotification = false;
     private       boolean               mSilentMode          = false;
