@@ -350,6 +350,7 @@ public class DebatingActivity extends Activity {
     }
 
     private void resetDebate() {
+        if (mBinder == null) return;
         mBinder.releaseDebateManager();
         initialiseDebate();
     }
