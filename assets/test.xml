@@ -7,23 +7,35 @@
 		<desc>Test format so you can test the app without waiting minutes for bells</desc>
 	</info>
 	
-	<resource ref="#all">
+	<resource ref="speeches">
 		<period ref="initial" desc="Initial" bgcolor="#stay" />
 		<period ref="warning" desc="Warning bell rung" bgcolor="#77ffcc00" />
 		<period ref="overtime" desc="Overtime" bgcolor="#77ff0000" />
 	</resource>
 	
+	<speechformat ref="prep" length="20" firstperiod="moot" countdir="down">
+		<period ref="moot" desc="Choose moot" />
+		<period ref="side" desc="Choose side" />
+		<period ref="prepare" desc="Prepare debate" />
+	    <bell time="5" number="1" nextperiod="side" pauseonbell="true" />
+		<bell time="10" number="1" nextperiod="prepare" pauseonbell="true" />
+		<bell time="finish" number="2" />
+	</speechformat>
+	
 	<speechformat ref="substantive" length="15" firstperiod="initial">
+	    <include resource="speeches" />
 		<bell time="10" number="1" nextperiod="warning" />
 		<bell time="finish" number="2" nextperiod="overtime" />
 	</speechformat>
 	
 	<speechformat ref="reply" length="10" firstperiod="initial">
-		<bell time="5" number="1" nextperiod="warning" />
+	    <include resource="speeches" />
+   		<bell time="5" number="1" nextperiod="warning" />
 		<bell time="finish" number="2" nextperiod="overtime" />
 	</speechformat>
 	
 	<speeches>
+	    <speech name="Preparation" format="prep"></speech>
 		<speech name="1st Affirmative" format="substantive" />
 		<speech name="1st Negative" format="substantive" />
 		<speech name="2nd Affirmative" format="substantive" />
