@@ -192,7 +192,7 @@ public class DebatingActivity extends Activity {
         // the Activity to select the style immediately, and don't bother with the
         // rest.
         if (filename == null) {
-            Intent getStyleIntent = new Intent(DebatingActivity.this, StylesChooserActivity.class);
+            Intent getStyleIntent = new Intent(DebatingActivity.this, FormatChooserActivity.class);
             startActivityForResult(getStyleIntent, CHOOSE_STYLE_REQUEST);
         }
 
@@ -245,7 +245,7 @@ public class DebatingActivity extends Activity {
             updateGui();
 	        return true;
 	    case R.id.chooseFormat:
-	        Intent getStyleIntent = new Intent(this, StylesChooserActivity.class);
+	        Intent getStyleIntent = new Intent(this, FormatChooserActivity.class);
 	        startActivityForResult(getStyleIntent, CHOOSE_STYLE_REQUEST);
 	        return true;
 	    case R.id.resetDebate:
@@ -283,7 +283,7 @@ public class DebatingActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == CHOOSE_STYLE_REQUEST && resultCode == RESULT_OK) {
-            String filename = data.getStringExtra(StylesChooserActivity.EXTRA_XML_FILE_NAME);
+            String filename = data.getStringExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME);
             if (filename != null) {
                 Log.v(this.getClass().getSimpleName(), String.format("Got file name %s", filename));
                 setXmlFileName(filename);

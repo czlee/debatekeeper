@@ -30,7 +30,7 @@ import android.widget.ListView;
  * This Activity displays a list of styles.  The user
  * @author Chuan-Zheng Lee
  */
-public class StylesChooserActivity extends Activity {
+public class FormatChooserActivity extends Activity {
 
     private ListView mStylesListView;
     private String   mCurrentStyleName = null;
@@ -44,7 +44,7 @@ public class StylesChooserActivity extends Activity {
 
     public static final String EXTRA_XML_FILE_NAME = "xmlfn";
 
-    public StylesChooserActivity() {
+    public FormatChooserActivity() {
         super();
     }
 
@@ -104,7 +104,7 @@ public class StylesChooserActivity extends Activity {
                 intent.putExtra(EXTRA_XML_FILE_NAME, filename);
                 setResult(RESULT_OK, intent);
             }
-        StylesChooserActivity.this.finish();
+        FormatChooserActivity.this.finish();
         }
     }
 
@@ -238,7 +238,7 @@ public class StylesChooserActivity extends Activity {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    StylesChooserActivity.this.finish();
+                    FormatChooserActivity.this.finish();
                 }
             });
         return builder.create();
