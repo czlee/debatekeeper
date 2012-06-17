@@ -244,7 +244,7 @@ public class DebatingActivity extends Activity {
 	        mDebateManager.previousSpeaker();
             updateGui();
 	        return true;
-	    case R.id.chooseStyle:
+	    case R.id.chooseFormat:
 	        Intent getStyleIntent = new Intent(this, StylesChooserActivity.class);
 	        startActivityForResult(getStyleIntent, CHOOSE_STYLE_REQUEST);
 	        return true;

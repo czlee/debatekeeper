@@ -19,6 +19,6 @@
     <!-- Menu -->
     <string name="resetDebate">Reset Debate</string>
     <string name="settings">Settings</string>
-    <string name="chooseStyle">Debate Styles</string>
+    <string name="chooseFormat">Debate Styles</string>
 
 </resources>
