@@ -8,7 +8,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="Speaker"
             android:textSize="20dip"
             android:id="@+id/titleText"
             />
@@ -16,7 +15,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="State"
             android:textSize="14dip"
             android:id="@+id/stateText"
             />
@@ -25,7 +23,6 @@
             android:layout_width="fill_parent"
             android:layout_height="0dip"
             android:layout_weight="1"
-            android:text="00:00"
             android:id="@+id/currentTime"
             android:textSize="60dip"
             />
@@ -33,14 +30,12 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="00:00"
             android:id="@+id/nextTime"
             />
     <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="00:00"
             android:id="@+id/finalTime"
             />
     <LinearLayout
@@ -52,7 +47,7 @@
         <Button
             android:layout_width="0dip"
             android:layout_height="fill_parent"
-            android:text="@string/startTimer"
+            android:text="@string/startTimerButton"
             android:id="@+id/leftControlButton"
             android:layout_gravity="center"
             android:layout_weight="1"
@@ -63,14 +58,14 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:layout_gravity="center"
-            android:text="@string/resetTimer" />
+            android:text="@string/resetTimerButton" />
         <Button
             android:id="@+id/rightControlButton"
             android:layout_width="0dip"
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:layout_gravity="center"
-            android:text="@string/nextSpeaker" />
+            android:text="@string/nextSpeakerButton" />
 
         <Button
             android:id="@+id/playBellButton"

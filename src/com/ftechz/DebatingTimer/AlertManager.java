@@ -3,6 +3,7 @@ package com.ftechz.DebatingTimer;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
@@ -22,7 +23,7 @@ public class AlertManager
 {
     public static final int NOTIFICATION_ID = 1;
 
-    private final DebatingTimerService  mDebatingTimerService;
+    private final Service               mService;
     private final NotificationManager   mNotificationManager;
     private final PendingIntent         mIntentStartingHostActivity;
     private final PowerManager.WakeLock mWakeLock;
@@ -38,9 +39,9 @@ public class AlertManager
      * @param debatingTimerService The instance of {@link DebatingTimerService} to which this
      * AlertManager relates
      */
-    public AlertManager(DebatingTimerService debatingTimerService) {
+    public AlertManager(Service debatingTimerService) {
 
-        mDebatingTimerService = debatingTimerService;
+        mService = debatingTimerService;
 
         // Retrieve the notification manager
         mNotificationManager = (NotificationManager) debatingTimerService.getSystemService(
@@ -76,11 +77,11 @@ public class AlertManager
 
         if(!mShowingNotification) {
             mNotification = new Notification(R.drawable.ic_stat_name,
-                    mDebatingTimerService.getText(R.string.notificationTicker),
+                    mService.getText(R.string.notificationTickerText),
                     System.currentTimeMillis());
 
             updateNotification(currentPeriodInfo.getDescription());
-            mDebatingTimerService.startForeground(NOTIFICATION_ID, mNotification);
+            mService.startForeground(NOTIFICATION_ID, mNotification);
 
             mShowingNotification = true;
         }
@@ -89,15 +90,15 @@ public class AlertManager
     }
 
     public void updateNotification(String notificationText) {
-            mNotification.setLatestEventInfo(mDebatingTimerService,
-                    mDebatingTimerService.getText(R.string.notification_title),
+            mNotification.setLatestEventInfo(mService,
+                    mService.getText(R.string.notificationTitle),
                     notificationText, mIntentStartingHostActivity);
     }
 
     public void makeInactive() {
         if(mShowingNotification) {
             mWakeLock.release();
-            mDebatingTimerService.stopForeground(true);
+            mService.stopForeground(true);
             if (mBellRepeater != null) mBellRepeater.stop();
             mVibrator.cancel();
             mShowingNotification = false;
@@ -123,7 +124,7 @@ public class AlertManager
         }
 
         if (!mSilentMode) {
-            mBellRepeater = new BellRepeater(mDebatingTimerService.getApplicationContext(), bsi);
+            mBellRepeater = new BellRepeater(mService.getApplicationContext(), bsi);
             mBellRepeater.play();
         }
         if (mVibrateMode) {

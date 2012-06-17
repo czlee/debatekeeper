@@ -45,7 +45,7 @@
         <Button
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
-                android:text="@string/createDebate"
+                android:text="Create"
                 android:id="@+id/createDebateButton"
                 android:layout_weight="1"
                 />

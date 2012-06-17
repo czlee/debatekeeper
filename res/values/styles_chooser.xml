@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="IOErrorDialogTitle">Oh no!</string>
+	<string name="IOErrorDialogMessage">I couldn\'t find the debate style files.</string>    
+	<string name="IOErrorDialogButton">Go back</string>    
+</resources>

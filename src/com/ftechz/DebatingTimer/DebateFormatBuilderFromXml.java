@@ -29,11 +29,13 @@ public class DebateFormatBuilderFromXml {
     private final DebateFormatBuilder mDfb;
     private final ArrayList<String>   mErrorLog = new ArrayList<String>();
 
-    private final String DEBATING_TIMER_URI = "";
+    private final String DEBATING_TIMER_URI;
 
     public DebateFormatBuilderFromXml(Context context) {
         mContext = context;
         mDfb     = new DebateFormatBuilder(context);
+
+        DEBATING_TIMER_URI = context.getString(R.string.XmlUri);
     }
 
     //******************************************************************************************
@@ -54,11 +56,15 @@ public class DebateFormatBuilderFromXml {
         private boolean mIsInSpeechesList               = false;
         private boolean mIsInRootContext                = false;
 
-        @Override
-        public void characters(char[] arg0, int arg1, int arg2) throws SAXException {}
-
-        @Override
-        public void endDocument() throws SAXException {}
+        @Override public void characters(char[] arg0, int arg1, int arg2) throws SAXException {}
+        @Override public void endDocument() throws SAXException {}
+        @Override public void endPrefixMapping(String prefix) throws SAXException {}
+        @Override public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {}
+        @Override public void processingInstruction(String target, String data) throws SAXException {}
+        @Override public void setDocumentLocator(Locator locator) {}
+        @Override public void skippedEntity(String name) throws SAXException {}
+        @Override public void startDocument() throws SAXException {}
+        @Override public void startPrefixMapping(String prefix, String uri) throws SAXException {}
 
         @Override
         public void endElement(String uri, String localName, String qName)
@@ -112,24 +118,6 @@ public class DebateFormatBuilderFromXml {
              * Do nothing
              */
         }
-
-        @Override
-        public void endPrefixMapping(String prefix) throws SAXException {}
-
-        @Override
-        public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {}
-
-        @Override
-        public void processingInstruction(String target, String data) throws SAXException {}
-
-        @Override
-        public void setDocumentLocator(Locator locator) {}
-
-        @Override
-        public void skippedEntity(String name) throws SAXException {}
-
-        @Override
-        public void startDocument() throws SAXException {}
 
         @Override
         public void startElement(String uri, String localName, String qName,
@@ -493,9 +481,6 @@ public class DebateFormatBuilderFromXml {
                 }
             }
         }
-
-        @Override
-        public void startPrefixMapping(String prefix, String uri) throws SAXException {}
 
         // ******** Private methods ********
 

@@ -2,36 +2,23 @@
 <resources>
     <string name="app_name">Debating Timer</string>
     <string name="titleBarWithFormatName">Debating Timer - %1$s</string>
-    <string name="startTimer">Start</string>
-    <string name="stopTimer">Stop</string>
-    <string name="resumeTimerAfterAlarm">Resume</string>
-    <string name="resumeTimerAfterUserStop">Resume</string>
-    <string name="resetTimer">Reset</string>
-    <string name="nextSpeaker">Next Speaker</string>
+    
+    <string name="startTimerButton">Start</string>
+    <string name="stopTimerButton">Stop</string>
+    <string name="resumeTimerAfterAlarmButton">Resume</string>
+    <string name="resumeTimerAfterUserStopButton">Resume</string>
+    <string name="resetTimerButton">Reset</string>
+    <string name="nextSpeakerButton">Next Speaker</string>
     <string name="nullButtonText">&lt;None&gt;</string>
-    <string name="ticker_text">Speaker started</string>
-    <string name="notification_title">Debating Timer</string>
-    <string name="createDebate">Create debate</string>
-    <string name="notificationTicker">Debating Timer is running</string>
-    <string name="nextBell">The next bell is at %s</string>
-    <string name="speechLength">The length of this speech is %s</string>
+
+    <string name="notificationTitle">Debating Timer</string>
+    <string name="notificationTickerText">Debating Timer is running</string>
+    <string name="nextBellText">The next bell is at %1$s</string>
+    <string name="speechLengthText">The length of this speech is %1$s</string>
     
     <!-- Menu -->
-    <string name="restartDebate">Restart Debate</string>
+    <string name="resetDebate">Reset Debate</string>
     <string name="settings">Settings</string>
-    <string name="switchMode">Switch mode</string>
-    <string name="silentMode">Silent mode</string>
-    <string name="silentModeOnSummary">Bell will not ring (this doesn\'t affect other sounds from your phone)</string>
-    <string name="silentModeOffSummary">Bell will ring</string>
-    <string name="playBell">Bell</string>
-    <string name="prevSpeaker">Previous Speaker</string>
-    <string name="noMoreBells">There are no more bells in this speech</string>
-    <string name="firstOvertimeBellTitle">First overtime bell</string>
-    <string name="vibrateModeOnSummary">Vibrate at bell times</string>
-    <string name="vibrateModeOffSummary">Don\'t vibrate</string>
-    <string name="vibrateMode">Vibrator</string>
-    <string name="firstOvertimeBellSummary">Ring the first overtime bell after %s seconds</string>
-    <string name="overtimeBellPeriodTitle">Overtime bell period</string>
-    <string name="overtimeBellPeriodSummary">Period of overtime bell</string>
+    <string name="chooseStyle">Debate Styles</string>
 
 </resources>

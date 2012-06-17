@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -58,12 +59,11 @@ public class DebatingActivity extends Activity {
 	private DebateManager mDebateManager;
 	private Bundle mLastStateBundle;
 
-	// TODO This is a temporary mechanism to switch between real-world and test modes
-	// (It just changes the speech times.)
-	private int mTestMode = 0;
-	private final int NUM_TEST_MODES = 8;
+	private String mFormatXmlFileName = null;
 
-    private final String BUNDLE_SUFFIX_DEBATE_MANAGER = "dm";
+    private static final String BUNDLE_SUFFIX_DEBATE_MANAGER = "dm";
+    private static final String PREFERENCE_XML_FILE_NAME = "xmlfn";
+    private static final int    CHOOSE_STYLE_REQUEST = 0;
 
     private final BroadcastReceiver mGuiUpdateBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -87,31 +87,8 @@ public class DebatingActivity extends Activity {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
-
             mBinder = (DebatingTimerService.DebatingTimerServiceBinder) service;
-
-            mDebateManager = mBinder.getDebateManager();
-            if (mDebateManager == null) {
-                // DebateFormat df = buildDefaultDebate(mTestMode);
-                DebateFormat df = buildDebateFromXml(mTestMode);
-                if (df == null) {
-                    DebatingActivity.this.finish();
-                }
-                mDebateManager = mBinder.createDebateManager(df);
-
-                // We only restore the state if there wasn't an existing debate, i.e.
-                // if the service wasn't already running.  Also, only do this once (so set it
-                // to null once restored).
-                if (mLastStateBundle != null) {
-                    mDebateManager.restoreState(BUNDLE_SUFFIX_DEBATE_MANAGER, mLastStateBundle);
-                    mLastStateBundle = null;
-                }
-            }
-
-            applyPreferences();
-
-            updateGui();
-
+            initialiseDebate();
         }
 
         @Override
@@ -123,6 +100,7 @@ public class DebatingActivity extends Activity {
     private class LeftControlButtonOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View pV) {
+            if (mDebateManager == null) return;
             switch (mDebateManager.getStatus()) {
             case RUNNING:
                 mDebateManager.stopTimer();
@@ -142,6 +120,7 @@ public class DebatingActivity extends Activity {
     private class CentreControlButtonOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View pV) {
+            if (mDebateManager == null) return;
             switch (mDebateManager.getStatus()) {
             case STOPPED_BY_USER:
                 mDebateManager.resetSpeaker();
@@ -156,6 +135,7 @@ public class DebatingActivity extends Activity {
     private class RightControlButtonOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View pV) {
+            if (mDebateManager == null) return;
             switch (mDebateManager.getStatus()) {
             case NOT_STARTED:
             case STOPPED_BY_USER:
@@ -177,14 +157,11 @@ public class DebatingActivity extends Activity {
     }
 
     //******************************************************************************************
-    // Public methods
+    // Public and protected methods
     //******************************************************************************************
 
-    /* (non-Javadoc)
-     * @see android.app.Activity#onCreate(android.os.Bundle)
-     */
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.debate_activity);
 
@@ -207,16 +184,28 @@ public class DebatingActivity extends Activity {
 
         mLastStateBundle = savedInstanceState; // This could be null
 
-        if (savedInstanceState != null)
-            mTestMode = savedInstanceState.getInt("testMode", 0);
+        //
+        // Find the style file name
+        String filename = loadXmlFileName();
 
+        // If there doesn't appear to be an existing style selected, then start
+        // the Activity to select the style immediately, and don't bother with the
+        // rest.
+        if (filename == null) {
+            Intent getStyleIntent = new Intent(DebatingActivity.this, StylesChooserActivity.class);
+            startActivityForResult(getStyleIntent, CHOOSE_STYLE_REQUEST);
+        }
+
+        //
+        // Start the timer service
         Intent intent = new Intent(this, DebatingTimerService.class);
         startService(intent);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
     }
 
     @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mGuiUpdateBroadcastReceiver,
@@ -224,19 +213,20 @@ public class DebatingActivity extends Activity {
 
         if (!applyPreferences())
             Log.w(this.getClass().getSimpleName(), "onResume: Couldn't restore preferences; mDebateManager doesn't yet exist");
+
+        updateGui();
     }
 
     @Override
-    public void onPause() {
+    protected void onPause() {
         super.onPause();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mGuiUpdateBroadcastReceiver);
     }
 
     @Override
-    public void onSaveInstanceState(Bundle bundle) {
+    protected void onSaveInstanceState(Bundle bundle) {
         if (mDebateManager != null)
             mDebateManager.saveState(BUNDLE_SUFFIX_DEBATE_MANAGER, bundle);
-        bundle.putInt("testMode", mTestMode);
     }
 
 	@Override
@@ -250,17 +240,17 @@ public class DebatingActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	    case R.id.prevSpeaker:
+            if (mDebateManager == null) return true;
 	        mDebateManager.previousSpeaker();
             updateGui();
 	        return true;
-	    case R.id.switchMode:
-            mTestMode = mTestMode + 1;
-            if (mTestMode == NUM_TEST_MODES) mTestMode = 0;
-            // keep going
-	    case R.id.restartDebate:
-	        mDebateManager.release();
-	        mDebateManager = null;
-	        mDebateManager = mBinder.createDebateManager(buildDebateFromXml(mTestMode));
+	    case R.id.chooseStyle:
+	        Intent getStyleIntent = new Intent(this, StylesChooserActivity.class);
+	        startActivityForResult(getStyleIntent, CHOOSE_STYLE_REQUEST);
+	        return true;
+	    case R.id.resetDebate:
+            if (mDebateManager == null) return true;
+	        resetDebate();
 	        updateGui();
 	        return true;
 	    case R.id.settings:
@@ -275,14 +265,35 @@ public class DebatingActivity extends Activity {
     public boolean onPrepareOptionsMenu(Menu menu) {
 
 	    MenuItem prevSpeakerItem = menu.findItem(R.id.prevSpeaker);
-	    prevSpeakerItem.setEnabled(!mDebateManager.isFirstSpeaker());
+	    MenuItem resetDebateItem = menu.findItem(R.id.resetDebate);
+
+	    if (mDebateManager != null) {
+	        prevSpeakerItem.setEnabled(!mDebateManager.isFirstSpeaker());
+            resetDebateItem.setEnabled(true);
+	    } else {
+	        prevSpeakerItem.setEnabled(false);
+	        resetDebateItem.setEnabled(false);
+	    }
 
         return super.onPrepareOptionsMenu(menu);
     }
 
-    //******************************************************************************************
-    // Protected methods
-    //******************************************************************************************
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == CHOOSE_STYLE_REQUEST && resultCode == RESULT_OK) {
+            String filename = data.getStringExtra(StylesChooserActivity.EXTRA_XML_FILE_NAME);
+            if (filename != null) {
+                Log.v(this.getClass().getSimpleName(), String.format("Got file name %s", filename));
+                setXmlFileName(filename);
+                resetDebate();
+            }
+            // Do nothing if cancelled or error.
+        }
+
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -309,6 +320,55 @@ public class DebatingActivity extends Activity {
     // Private methods
     //******************************************************************************************
 
+    private void initialiseDebate() {
+        if (mFormatXmlFileName == null) {
+            Log.w(this.getClass().getSimpleName(), "Tried to initialise debate with null file");
+            return;
+        }
+
+        mDebateManager = mBinder.getDebateManager();
+        if (mDebateManager == null) {
+            DebateFormat df = buildDebateFromXml(mFormatXmlFileName);
+            if (df == null) {
+                // TODO Handle this error properly with a dialog
+                Log.e(this.getClass().getSimpleName(), "DebateFormat was null");
+                DebatingActivity.this.finish();
+            }
+            mDebateManager = mBinder.createDebateManager(df);
+
+            // We only restore the state if there wasn't an existing debate, i.e.
+            // if the service wasn't already running.  Also, only do this once (so set it
+            // to null once restored).
+            if (mLastStateBundle != null) {
+                mDebateManager.restoreState(BUNDLE_SUFFIX_DEBATE_MANAGER, mLastStateBundle);
+                mLastStateBundle = null;
+            }
+        }
+
+        applyPreferences();
+        updateGui();
+    }
+
+    private void resetDebate() {
+        mBinder.releaseDebateManager();
+        initialiseDebate();
+    }
+
+    private String loadXmlFileName() {
+        SharedPreferences sp = getPreferences(MODE_PRIVATE);
+        String filename = sp.getString(PREFERENCE_XML_FILE_NAME, null);
+        mFormatXmlFileName = filename;
+        return filename;
+    }
+
+    private void setXmlFileName(String filename) {
+        mFormatXmlFileName = filename;
+        SharedPreferences sp = getPreferences(MODE_PRIVATE);
+        Editor editor = sp.edit();
+        editor.putString(PREFERENCE_XML_FILE_NAME, filename);
+        editor.commit();
+    }
+
     private void updateGui() {
         if (mDebateManager != null) {
             SpeechFormat currentSpeechFormat = mDebateManager.getCurrentSpeechFormat();
@@ -332,20 +392,26 @@ public class DebatingActivity extends Activity {
 
             if (nextBellTime != null) {
                 mNextTimeText.setText(String.format(
-                    this.getString(R.string.nextBell),
+                    this.getString(R.string.nextBellText),
                     secsToText(nextBellTime)
                 ));
             } else {
                 mNextTimeText.setText(this.getString(R.string.noMoreBells));
             }
             mFinalTimeText.setText(String.format(
-                this.getString(R.string.speechLength),
+                this.getString(R.string.speechLengthText),
                 secsToText(currentSpeechFormat.getSpeechLength())
             ));
 
             updateButtons();
 
             this.setTitle(getString(R.string.titleBarWithFormatName, mDebateManager.getDebateFormatName()));
+        } else {
+            // If no debate is loaded, disable the control buttons
+            // (Keep the play bell button enabled.)
+            mLeftControlButton.setEnabled(false);
+            mCentreControlButton.setEnabled(false);
+            mRightControlButton.setEnabled(false);
         }
     }
 
@@ -374,22 +440,24 @@ public class DebatingActivity extends Activity {
         // Show a "restart debate" button instead.
         switch (mDebateManager.getStatus()) {
         case NOT_STARTED:
-            setButtons(R.string.startTimer, R.string.nullButtonText, R.string.nextSpeaker);
+            setButtons(R.string.startTimerButton, R.string.nullButtonText, R.string.nextSpeakerButton);
             break;
         case RUNNING:
-            setButtons(R.string.stopTimer, R.string.nullButtonText, R.string.nullButtonText);
+            setButtons(R.string.stopTimerButton, R.string.nullButtonText, R.string.nullButtonText);
             break;
         case STOPPED_BY_BELL:
-            setButtons(R.string.resumeTimerAfterAlarm, R.string.nullButtonText, R.string.nullButtonText);
+            setButtons(R.string.resumeTimerAfterAlarmButton, R.string.nullButtonText, R.string.nullButtonText);
             break;
         case STOPPED_BY_USER:
-            setButtons(R.string.resumeTimerAfterUserStop, R.string.resetTimer, R.string.nextSpeaker);
+            setButtons(R.string.resumeTimerAfterUserStopButton, R.string.resetTimerButton, R.string.nextSpeakerButton);
             break;
         default:
             break;
         }
 
-        // Hide the [Next Speaker] button if there are no more speakers
+        // Disable the [Next Speaker] button if there are no more speakers
+        mLeftControlButton.setEnabled(true);
+        mCentreControlButton.setEnabled(true);
         mRightControlButton.setEnabled(!mDebateManager.isLastSpeaker());
 
 
@@ -411,7 +479,7 @@ public class DebatingActivity extends Activity {
 
 	// Sets the text and visibility of a single button
 	private void setButton(Button button, int resid) {
-	    button.setText(resid);
+        button.setText(resid);
 	    int visibility = (resid == R.string.nullButtonText) ? View.GONE : View.VISIBLE;
 	    button.setVisibility(visibility);
 	}
@@ -424,23 +492,9 @@ public class DebatingActivity extends Activity {
 	    }
 	}
 
-	private DebateFormat buildDebateFromXml(int testMode) {
-	    DebateFormatBuilderFromXml dfbfx = new DebateFormatBuilderFromXml(this);
-	    String filename;
-	    InputStream is = null;
-
-	    switch (testMode) {
-	    case 1: filename = "test.xml"; break;
-        case 2: filename = "test2.xml"; break;
-        case 3: filename = "bp.xml"; break;
-        case 4: filename = "nzeasters.xml"; break;
-        case 5: filename = "joyntscroll.xml"; break;
-        case 6: filename = "thropy.xml"; break;
-        case 7: filename = "thropybreak.xml"; break;
-       default: filename = "australs.xml";
-	    }
-
-	    Log.v(this.getClass().getSimpleName(), String.format("Using file %s", filename));
+	private DebateFormat buildDebateFromXml(String filename) {
+        DebateFormatBuilderFromXml dfbfx = new DebateFormatBuilderFromXml(this);
+        InputStream is = null;
 
 	    try {
             is = getAssets().open(filename);
@@ -448,6 +502,7 @@ public class DebatingActivity extends Activity {
             Log.e(this.getClass().getSimpleName(),
                     String.format("Could not find file %s", filename));
             e.printStackTrace();
+            // TODO show a dialog
             return null;
         }
 

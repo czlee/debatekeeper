@@ -47,11 +47,16 @@ public class DebatingTimerService extends Service
         }
 
         public DebateManager createDebateManager(DebateFormat df) {
-            if(mDebateManager != null)
-                mDebateManager.release();
+            releaseDebateManager();
             mDebateManager = new DebateManager(df, mAlertManager);
             mDebateManager.setBroadcastSender(new GuiUpdateBroadcastSender());
             return mDebateManager;
+        }
+
+        public void releaseDebateManager() {
+            if(mDebateManager != null)
+                mDebateManager.release();
+            mDebateManager = null;
         }
     }
 
