@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -25,6 +28,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.ftechz.DebatingTimer.DebateFormatBuilderFromXml.DebateFormatNotValidException;
 import com.ftechz.DebatingTimer.SpeechFormat.CountDirection;
 
 
@@ -63,7 +67,9 @@ public class DebatingActivity extends Activity {
 
     private static final String BUNDLE_SUFFIX_DEBATE_MANAGER = "dm";
     private static final String PREFERENCE_XML_FILE_NAME = "xmlfn";
+    private static final String DIALOG_BUNDLE_XML_FORMAT_NAME = "fn";
     private static final int    CHOOSE_STYLE_REQUEST = 0;
+    private static final int    DIALOG_XML_FILE_PROBLEM = 0;
 
     private final BroadcastReceiver mGuiUpdateBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -295,6 +301,15 @@ public class DebatingActivity extends Activity {
     }
 
     @Override
+    protected Dialog onCreateDialog(int id, Bundle bundle) {
+        switch (id) {
+        case DIALOG_XML_FILE_PROBLEM:
+            return getProblemWithXmlFileDialog(bundle);
+        }
+        return super.onCreateDialog(id);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 
@@ -328,12 +343,18 @@ public class DebatingActivity extends Activity {
 
         mDebateManager = mBinder.getDebateManager();
         if (mDebateManager == null) {
-            DebateFormat df = buildDebateFromXml(mFormatXmlFileName);
-            if (df == null) {
-                // TODO Handle this error properly with a dialog
-                Log.e(this.getClass().getSimpleName(), "DebateFormat was null");
-                DebatingActivity.this.finish();
+
+            DebateFormat df;
+            try {
+                df = buildDebateFromXml(mFormatXmlFileName);
+            } catch (DebateFormatNotValidException e) {
+                removeDialog(DIALOG_XML_FILE_PROBLEM);
+                Bundle bundle = new Bundle();
+                bundle.putString(DIALOG_BUNDLE_XML_FORMAT_NAME, e.getFormatName());
+                showDialog(DIALOG_XML_FILE_PROBLEM, bundle);
+                return;
             }
+
             mDebateManager = mBinder.createDebateManager(df);
 
             // We only restore the state if there wasn't an existing debate, i.e.
@@ -493,7 +514,7 @@ public class DebatingActivity extends Activity {
 	    }
 	}
 
-	private DebateFormat buildDebateFromXml(String filename) {
+	private DebateFormat buildDebateFromXml(String filename) throws DebateFormatNotValidException {
         DebateFormatBuilderFromXml dfbfx = new DebateFormatBuilderFromXml(this);
         InputStream is = null;
 
@@ -509,5 +530,35 @@ public class DebatingActivity extends Activity {
 
 	    return dfbfx.buildDebateFromXml(is);
 	}
+
+    private Dialog getProblemWithXmlFileDialog(Bundle bundle) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        String message;
+        String formatName = bundle.getString(DIALOG_BUNDLE_XML_FORMAT_NAME);
+        if (formatName == null) {
+            message = getString(R.string.ProblemWithXmlFileDialogMessageNoFormatName, mFormatXmlFileName);
+        } else {
+            message = getString(R.string.ProblemWithXmlFileDialogMessage, formatName, mFormatXmlFileName);
+        }
+
+        builder.setTitle(R.string.ProblemWithXmlFileDialogTitle)
+               .setMessage(message)
+               .setCancelable(true)
+               .setPositiveButton(R.string.ProblemWithXmlFileDialogButton, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(DebatingActivity.this, FormatChooserActivity.class);
+                        startActivityForResult(intent, CHOOSE_STYLE_REQUEST);
+                    }
+                })
+                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        DebatingActivity.this.finish();
+                    }
+                });
+        return builder.create();
+    }
 
 }

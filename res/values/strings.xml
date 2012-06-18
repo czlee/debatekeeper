@@ -19,7 +19,18 @@
     <string name="speechLengthText">The length of this speech is %1$s</string>
 
     <!-- Menu -->
-    <string name="resetDebate">Reset debate</string>
-    <string name="settings">Settings</string>
-    <string name="chooseFormat">Debate styles</string>
+    <string name="resetDebateMenuItem">Reset debate</string>
+    <string name="resetDebateMenuItemCondensed">Reset debate</string>
+    <string name="settingsMenuItem">Settings</string>
+    <string name="settingsMenuItemCondensed">Settings</string>
+    <string name="prevSpeakerMenuItem">Previous speaker</string>
+    <string name="prevSpeakerMenuItemCondensed">Previous speaker</string>
+    <string name="chooseFormatMenuItem">Debate styles</string>
+    <string name="chooseFormatMenuItemCondensed">Debate styles</string>
+    
+    <!-- Dialogs -->
+    <string name="ProblemWithXmlFileDialogTitle">Oh no!</string>
+    <string name="ProblemWithXmlFileDialogMessage">"I can't make any sense of the XML file describing the debate style '%1$s' (in %2$s). Please choose another style."</string>
+    <string name="ProblemWithXmlFileDialogMessageNoFormatName">"I can't make any sense of the XML file describing the debate style (name unknown, in %2$s). Please choose another style."</string>
+    <string name="ProblemWithXmlFileDialogButton">Choose style</string>
 </resources>
