@@ -27,8 +27,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 /**
- * This Activity displays a list of styles.  The user
+ * This Activity displays a list of formats for the user to choose from.
+ * It returns a file name to the calling activity.
+ *
  * @author Chuan-Zheng Lee
+ * @since 2012-06-17
  */
 public class FormatChooserActivity extends Activity {
 
