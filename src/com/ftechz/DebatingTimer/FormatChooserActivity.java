@@ -55,6 +55,8 @@ public class FormatChooserActivity extends Activity {
     // Private classes
     //******************************************************************************************
 
+    private class AllInformationFoundException extends SAXException {}
+
     /**
      * This class just looks for the string inside &lt;debateformat name="..."> and
      * saves it to <code>mCurrentStyleName</code>.
@@ -86,6 +88,7 @@ public class FormatChooserActivity extends Activity {
 
             if (localName.equals(getString(R.string.XmlElemNameRoot))) {
                 mCurrentStyleName = atts.getValue(DEBATING_TIMER_URI, getString(R.string.XmlAttrNameRootName));
+                throw new AllInformationFoundException(); // We don't need to parse any more once we find the style name
             }
         }
 
@@ -216,14 +219,17 @@ public class FormatChooserActivity extends Activity {
 
             try {
                 Xml.parse(is, Encoding.UTF_8, new GetDebateFormatNameXmlContentHandler());
+
+            } catch (AllInformationFoundException e) {
+                // This exception means the XML parsing was successful - we just use it to stop the parser.
+                if (mCurrentStyleName != null)
+                    addStyleToList(filename, mCurrentStyleName);
+
             } catch (SAXException e) {
                 mCurrentStyleName = null;
                 continue;
             }
 
-            if (mCurrentStyleName != null) {
-                addStyleToList(filename, mCurrentStyleName);
-            }
         }
 
     }
