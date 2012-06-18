@@ -10,7 +10,7 @@
 
     <application android:label="@string/app_name" >
         <activity android:name=".DebatingActivity"
-            	  android:icon="@drawable/ic_launcher"
+                  android:icon="@drawable/ic_launcher"
                   android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,11 +18,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".GlobalSettingsActivity"
-            	  android:label="@string/app_name">
+                  android:label="@string/GlobalSettingsActivityName">
         </activity>
         <activity android:name=".FormatChooserActivity"
-            	  android:label="@string/app_name">
+                  android:label="@string/FormatChooserActivityName">
         </activity>
         <service android:name=".DebatingTimerService"/>
     </application>
-</manifest> 
+</manifest>
