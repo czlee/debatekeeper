@@ -8,4 +8,5 @@
     <style name="MainTimerText">
         <item name="android:gravity">center</item>
     </style>
+
 </resources>

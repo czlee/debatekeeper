@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="FormatChooserOKButtonText">OK</string>
+    <string name="FormatChooserCancelButtonText">Cancel</string>
+    
 	<string name="IOErrorDialogTitle">Oh no!</string>
 	<string name="IOErrorDialogMessage">I couldn\'t find the debate style files.</string>    
-	<string name="IOErrorDialogButton">Go back</string>    
+	<string name="IOErrorDialogButton">Go back</string>
+	
+	<string name="ViewFormatRegionLabel">Region</string>
+	<string name="ViewFormatLevelLabel">Level</string>
+	<string name="ViewFormatUsedAtLabel">Used at</string>
+	<string name="ViewFormatDescLabel">Description</string>
+	<string name="ViewFormatSpeechesLabel">Speeches</string>
+	
+	<string name="ToastNoSelection">No style selected</string>
+	<string name="ToastSelection">Style changed to %1$s</string>
+	<string name="ToastFormatUnchanged">Style not changed</string>
+		
+	<style name="ViewFormatTableLabelStyle">
+	    <item name="android:paddingLeft">7dip</item>
+	    <item name="android:layout_width">100dip</item>
+	    <item name="android:layout_height">wrap_content</item>
+	    <item name="android:textStyle">bold</item>
+   	</style>
+   	
+	<style name="ViewFormatTableValueStyle">
+	    <item name="android:layout_width">match_parent</item>
+	    <item name="android:layout_height">wrap_content</item>
+	    <item name="android:text">-</item>
+   	</style>
+		
 </resources>

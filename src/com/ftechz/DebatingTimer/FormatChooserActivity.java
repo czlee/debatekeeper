@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -21,10 +22,13 @@ import android.util.Log;
 import android.util.Xml;
 import android.util.Xml.Encoding;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 /**
  * This Activity displays a list of formats for the user to choose from.
@@ -36,6 +40,8 @@ import android.widget.ListView;
 public class FormatChooserActivity extends Activity {
 
     private ListView mStylesListView;
+    private Button   mOKButton;
+    private Button   mCancelButton;
     private String   mCurrentStyleName = null;
 
     private final ArrayList<StyleEntry> mStylesList = new ArrayList<StyleEntry>();
@@ -55,7 +61,9 @@ public class FormatChooserActivity extends Activity {
     // Private classes
     //******************************************************************************************
 
-    private class AllInformationFoundException extends SAXException {}
+    private class AllInformationFoundException extends SAXException {
+        private static final long serialVersionUID = 3195935815375118010L;
+    }
 
     /**
      * This class just looks for the string inside &lt;debateformat name="..."> and
@@ -97,20 +105,36 @@ public class FormatChooserActivity extends Activity {
     public class StylesListOnItemClickListener implements OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Log.v(this.getClass().getSimpleName(), String.format("Picked item %d", position));
+            //mStylesListView.setSelection(position);
+            //returnSelectionByPosition(position);
+        }
+    }
 
-            Intent intent = new Intent();
-
-            if (position >= mStylesList.size()) {
-                setResult(RESULT_ERROR);
-                Log.e(this.getClass().getSimpleName(), String.format("No item associated with that"));
+    public class OKButtonOnClickListener implements OnClickListener {
+        @Override
+        public void onClick(View v) {
+            int selectedPosition = mStylesListView.getCheckedItemPosition();
+            if (selectedPosition == getIncomingSelection()) {
+                Toast.makeText(FormatChooserActivity.this, R.string.ToastFormatUnchanged,
+                        Toast.LENGTH_SHORT).show();
+                FormatChooserActivity.this.finish();
+            } else if (selectedPosition != ListView.INVALID_POSITION) {
+                Toast.makeText(FormatChooserActivity.this, getString(R.string.ToastSelection,
+                        mStylesList.get(selectedPosition).getStyleName()), Toast.LENGTH_SHORT)
+                        .show();
+                returnSelectionByPosition(selectedPosition);
             } else {
-                String filename = mStylesList.get(position).getFilename();
-                Log.v(this.getClass().getSimpleName(), String.format("File name is %s", filename));
-                intent.putExtra(EXTRA_XML_FILE_NAME, filename);
-                setResult(RESULT_OK, intent);
+                Toast.makeText(FormatChooserActivity.this, R.string.ToastNoSelection,
+                        Toast.LENGTH_SHORT).show();
+                FormatChooserActivity.this.finish();
             }
-        FormatChooserActivity.this.finish();
+        }
+    }
+
+    public class CancelButtonOnClickListener implements OnClickListener {
+        @Override
+        public void onClick(View v) {
+            FormatChooserActivity.this.finish();
         }
     }
 
@@ -164,8 +188,13 @@ public class FormatChooserActivity extends Activity {
         DEBATING_TIMER_URI = getString(R.string.XmlUri);
 
         mStylesListView = (ListView) findViewById(R.id.stylesList);
+        mOKButton       = (Button)   findViewById(R.id.FormatChooserOKButton);
+        mCancelButton   = (Button)   findViewById(R.id.FormatChooserCancelButton);
 
-        mStylesListView.setOnItemClickListener(new StylesListOnItemClickListener());
+        mOKButton    .setOnClickListener(new OKButtonOnClickListener());
+        mCancelButton.setOnClickListener(new CancelButtonOnClickListener());
+
+        //mStylesListView.setOnItemClickListener(new StylesListOnItemClickListener());
 
         try {
             populateStylesLists();
@@ -174,12 +203,16 @@ public class FormatChooserActivity extends Activity {
             this.showDialog(DIALOG_IO_ERROR);
         }
 
-        ArrayAdapter<StyleEntry> adapter = new ArrayAdapter<StyleEntry>(this, R.layout.styles_list_item, mStylesList);
+        ArrayAdapter<StyleEntry> adapter = new ArrayAdapter<StyleEntry>(this, android.R.layout.simple_list_item_single_choice, mStylesList);
 
         // Sort alphabetically by style name
         adapter.sort(new StyleEntryComparatorByStyleName());
 
+        adapter.setDropDownViewResource(R.layout.view_format);
+
         mStylesListView.setAdapter(adapter);
+
+        mStylesListView.setItemChecked(getIncomingSelection(), true);
 
     }
 
@@ -192,7 +225,7 @@ public class FormatChooserActivity extends Activity {
         case DIALOG_IO_ERROR:
             return getIOErrorAlert();
         default:
-            return null;
+            return super.onCreateDialog(id);
         }
     }
 
@@ -238,6 +271,38 @@ public class FormatChooserActivity extends Activity {
         mStylesList.add(new StyleEntry(filename, styleName));
     }
 
+    private int getIncomingSelection() {
+        Intent data = getIntent();
+        String incomingFilename = data.getStringExtra(EXTRA_XML_FILE_NAME);
+        if (incomingFilename != null) {
+            Iterator<StyleEntry> entryIterator = mStylesList.iterator();
+            while (entryIterator.hasNext()) {
+                StyleEntry se = entryIterator.next();
+                if (incomingFilename.equals(se.getFilename())) {
+                    return mStylesList.indexOf(se);
+                }
+            }
+        }
+        return ListView.INVALID_POSITION;
+    }
+
+    private void returnSelectionByPosition(int position) {
+        Log.v(this.getClass().getSimpleName(), String.format("Picked item %d", position));
+
+        Intent intent = new Intent();
+
+        if (position >= mStylesList.size()) {
+            setResult(RESULT_ERROR);
+            Log.e(this.getClass().getSimpleName(), String.format("No item associated with that"));
+        } else {
+            String filename = mStylesList.get(position).getFilename();
+            Log.v(this.getClass().getSimpleName(), String.format("File name is %s", filename));
+            intent.putExtra(EXTRA_XML_FILE_NAME, filename);
+            setResult(RESULT_OK, intent);
+        }
+      FormatChooserActivity.this.finish();
+    }
+
     private AlertDialog getIOErrorAlert() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.IOErrorDialogTitle)
@@ -251,5 +316,5 @@ public class FormatChooserActivity extends Activity {
                 }
             });
         return builder.create();
-        }
+    }
 }

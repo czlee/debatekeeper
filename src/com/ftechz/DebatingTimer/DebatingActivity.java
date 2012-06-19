@@ -27,6 +27,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ftechz.DebatingTimer.DebateFormatBuilderFromXml.DebateFormatNotValidException;
 import com.ftechz.DebatingTimer.SpeechFormat.CountDirection;
@@ -252,6 +253,7 @@ public class DebatingActivity extends Activity {
 	        return true;
 	    case R.id.chooseFormat:
 	        Intent getStyleIntent = new Intent(this, FormatChooserActivity.class);
+	        getStyleIntent.putExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME, mFormatXmlFileName);
 	        startActivityForResult(getStyleIntent, CHOOSE_STYLE_REQUEST);
 	        return true;
 	    case R.id.resetDebate:
@@ -293,7 +295,7 @@ public class DebatingActivity extends Activity {
             if (filename != null) {
                 Log.v(this.getClass().getSimpleName(), String.format("Got file name %s", filename));
                 setXmlFileName(filename);
-                resetDebate();
+                resetDebateWithoutToast();
             }
             // Do nothing if cancelled or error.
         }
@@ -370,10 +372,15 @@ public class DebatingActivity extends Activity {
         updateGui();
     }
 
-    private void resetDebate() {
+    private void resetDebateWithoutToast() {
         if (mBinder == null) return;
         mBinder.releaseDebateManager();
         initialiseDebate();
+    }
+
+    private void resetDebate() {
+        resetDebateWithoutToast();
+        Toast.makeText(this, R.string.resetDebateToastText, Toast.LENGTH_SHORT).show();
     }
 
     private String loadXmlFileName() {
@@ -541,6 +548,10 @@ public class DebatingActivity extends Activity {
         } else {
             message = getString(R.string.ProblemWithXmlFileDialogMessage, formatName, mFormatXmlFileName);
         }
+
+        Log.i(this.getClass().getSimpleName(), getString(R.string.ProblemWithXmlFileDialogTitle));
+        Log.i(this.getClass().getSimpleName(), message);
+
 
         builder.setTitle(R.string.ProblemWithXmlFileDialogTitle)
                .setMessage(message)

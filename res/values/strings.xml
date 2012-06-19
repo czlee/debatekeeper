@@ -17,16 +17,13 @@
     <string name="notificationTickerText">Debating Timer is running</string>
     <string name="nextBellText">The next bell is at %1$s</string>
     <string name="speechLengthText">The length of this speech is %1$s</string>
+    <string name="resetDebateToastText">All speeches in debate reset</string>
 
     <!-- Menu -->
     <string name="resetDebateMenuItem">Reset debate</string>
-    <string name="resetDebateMenuItemCondensed">Reset debate</string>
     <string name="settingsMenuItem">Settings</string>
-    <string name="settingsMenuItemCondensed">Settings</string>
     <string name="prevSpeakerMenuItem">Previous speaker</string>
-    <string name="prevSpeakerMenuItemCondensed">Previous speaker</string>
     <string name="chooseFormatMenuItem">Debate styles</string>
-    <string name="chooseFormatMenuItemCondensed">Debate styles</string>
     
     <!-- Dialogs -->
     <string name="ProblemWithXmlFileDialogTitle">Oh no!</string>
