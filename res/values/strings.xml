@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">Debating Timer</string>
     <string name="GlobalSettingsActivityName">Settings</string>
     <string name="FormatChooserActivityName">Choose style</string>
     <string name="DebatingActivityTitleBarWithFormatName">Debating Timer - %1$s</string>
 
+    <!-- Buttons -->
     <string name="StartTimerButtonText">Start</string>
     <string name="StopTimerButtonText">Stop</string>
     <string name="ResumeTimerAfterAlarmButtonText">Resume</string>
     <string name="ResumeTimerAfterUserStopButtonText">Resume</string>
     <string name="ResetTimerButtonText">Reset</string>
     <string name="NextSpeakerButtonText">Next speaker</string>
-    <string name="NullButtonText">&lt;None&gt;</string>
+    <string name="NullButtonText">&lt;None></string>
 
+    <!-- Notices -->
     <string name="NotificationTitle">Debating Timer</string>
     <string name="NotificationTickerText">Debating Timer is running</string>
     <string name="NextBellText">The next bell is at %1$s</string>
@@ -24,10 +27,11 @@
     <string name="SettingsMenuItem">Settings</string>
     <string name="PrevSpeakerMenuItem">Previous speaker</string>
     <string name="ChooseFormatMenuItem">Debate styles</string>
-    
+
     <!-- Dialogs -->
     <string name="ProblemWithXmlFileDialogTitle">Oh no!</string>
     <string name="ProblemWithXmlFileDialogMessage">"I can't make any sense of the XML file describing the debate style '%1$s' (in %2$s). Please choose another style."</string>
     <string name="ProblemWithXmlFileDialogMessageNoFormatName">"I can't make any sense of the XML file describing the debate style (name unknown, in %2$s). Please choose another style."</string>
     <string name="ProblemWithXmlFileDialogButton">Choose style</string>
+
 </resources>

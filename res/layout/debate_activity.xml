@@ -1,70 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-        >
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
     <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textSize="20dip"
-            android:id="@+id/titleText"
-            />
+        android:id="@+id/titleText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textSize="20dip" />
+
     <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textSize="14dip"
-            android:id="@+id/stateText"
-            />
+        android:id="@+id/stateText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textSize="14dip" />
+
     <TextView
-            style="@style/MainTimerText"
-            android:layout_width="fill_parent"
-            android:layout_height="0dip"
-            android:layout_weight="1"
-            android:id="@+id/currentTime"
-            android:textSize="60dip"
-            />
+        android:id="@+id/currentTime"
+        style="@style/MainTimerText"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:textSize="60dip" />
+
     <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:id="@+id/nextTime"
-            />
+        android:id="@+id/nextTime"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal" />
+
     <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:id="@+id/finalTime"
-            />
+        android:id="@+id/finalTime"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal" />
+
     <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="60dip"
-            >
+        android:layout_width="fill_parent"
+        android:layout_height="60dip"
+        android:orientation="horizontal" >
 
         <Button
+            android:id="@+id/leftControlButton"
             android:layout_width="0dip"
             android:layout_height="fill_parent"
-            android:text="@string/StartTimerButtonText"
-            android:id="@+id/leftControlButton"
             android:layout_gravity="center"
             android:layout_weight="1"
-                />
+            android:text="@string/StartTimerButtonText" />
+
         <Button
             android:id="@+id/centreControlButton"
             android:layout_width="0dip"
             android:layout_height="fill_parent"
-            android:layout_weight="1"
             android:layout_gravity="center"
+            android:layout_weight="1"
             android:text="@string/ResetTimerButtonText" />
+
         <Button
             android:id="@+id/rightControlButton"
             android:layout_width="0dip"
             android:layout_height="fill_parent"
-            android:layout_weight="1"
             android:layout_gravity="center"
+            android:layout_weight="1"
             android:text="@string/NextSpeakerButtonText" />
 
         <Button
@@ -73,8 +73,6 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:text="@string/playBell" />
-
     </LinearLayout>
 
 </LinearLayout>
-

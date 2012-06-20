@@ -60,10 +60,6 @@ public class DebateFormatBuilderFromXml {
     //******************************************************************************************
     // Private classes
     //******************************************************************************************
-    private enum SecondLevelContextType {
-        NONE, INFO, RESOURCE, SPEECH_FORMAT, SPEECHES_LIST
-    }
-
     private class DebateFormatXmlContentHandler implements ContentHandler {
 
         // endElement should erase these (i.e. set them to null)
@@ -75,7 +71,7 @@ public class DebateFormatBuilderFromXml {
         private boolean mIsInSpeechesList               = false;
         private boolean mIsInRootContext                = false;
 
-        @Override public void characters(char[] arg0, int arg1, int arg2) throws SAXException {}
+        @Override public void characters(char[] ch, int start, int length) throws SAXException {}
         @Override public void endDocument() throws SAXException {}
         @Override public void endPrefixMapping(String prefix) throws SAXException {}
         @Override public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {}
@@ -443,7 +439,7 @@ public class DebateFormatBuilderFromXml {
                 }
 
                 // 2. Check we're inside a speech format
-                if (getCurrentSecondLevelContextType() != SecondLevelContextType.SPEECH_FORMAT) {
+                if (getCurrentSecondLevelContextType() != DebateFormatXmlSecondLevelContextType.SPEECH_FORMAT) {
                     logXmlError(R.string.XmlErrorIncludeOutsideSpeechFormat, resourceRef);
                 }
 
@@ -487,7 +483,7 @@ public class DebateFormatBuilderFromXml {
                 }
 
                 // 3. We must be inside the speeches list.
-                if (getCurrentSecondLevelContextType() != SecondLevelContextType.SPEECHES_LIST) {
+                if (getCurrentSecondLevelContextType() != DebateFormatXmlSecondLevelContextType.SPEECHES_LIST) {
                     logXmlError(R.string.XmlErrorSpeechOutsideSpeechesList, name);
                     return;
                 }
@@ -535,7 +531,7 @@ public class DebateFormatBuilderFromXml {
          * @return true if the assertion passes, false if it fails
          */
         private boolean assertNotInsideAnySecondLevelContextAndResetOtherwise() {
-            if (getCurrentSecondLevelContextType() != SecondLevelContextType.NONE) {
+            if (getCurrentSecondLevelContextType() != DebateFormatXmlSecondLevelContextType.NONE) {
                 mCurrentResourceRef = null;
                 mCurrentSpeechFormatRef = null;
                 mCurrentSpeechFormatFirstPeriod = null;
@@ -545,33 +541,19 @@ public class DebateFormatBuilderFromXml {
             return true;
         }
 
-        private SecondLevelContextType getCurrentSecondLevelContextType() {
+        private DebateFormatXmlSecondLevelContextType getCurrentSecondLevelContextType() {
             if (mCurrentResourceRef != null)
-                return SecondLevelContextType.RESOURCE;
+                return DebateFormatXmlSecondLevelContextType.RESOURCE;
             else if (mCurrentSpeechFormatRef != null)
-                return SecondLevelContextType.SPEECH_FORMAT;
+                return DebateFormatXmlSecondLevelContextType.SPEECH_FORMAT;
             else if (mIsInSpeechesList == true)
-                return SecondLevelContextType.SPEECHES_LIST;
+                return DebateFormatXmlSecondLevelContextType.SPEECHES_LIST;
             else
-                return SecondLevelContextType.NONE;
+                return DebateFormatXmlSecondLevelContextType.NONE;
         }
 
         private String getCurrentSecondLevelContextTypeStr() {
-            switch (getCurrentSecondLevelContextType()) {
-            case NONE:
-                return "no context";
-            case RESOURCE:
-                return "resource";
-            case SPEECH_FORMAT:
-                return "speech format";
-            case SPEECHES_LIST:
-                return "speeches list";
-            case INFO:
-                return "info";
-            default:
-                return "context unknown";
-            }
-
+            return getCurrentSecondLevelContextType().toString();
         }
 
     }

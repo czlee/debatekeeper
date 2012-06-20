@@ -2,7 +2,7 @@
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" 
-    android:stretchColumns="1">
+    android:shrinkColumns="1">
 
     <TableRow
         android:id="@+id/ViewFormatTableRowRegion"
@@ -76,6 +76,17 @@
             android:text="@string/ViewFormatSpeechesLabel" />
 
     </TableRow>  
+    
+    <TableRow
+        android:id="@+id/ViewFormatTableRowSpeechTypesValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+    <TextView
+            android:id="@+id/ViewFormatTableCellSpeechTypesValue"
+            style="@style/ViewFormatTableValueStyle"
+            android:paddingLeft="25dip"/>
+      </TableRow>  
     
     <TableRow
         android:id="@+id/ViewFormatTableRowSpeechesValue"
