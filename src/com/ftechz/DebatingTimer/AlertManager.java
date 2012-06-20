@@ -77,7 +77,7 @@ public class AlertManager
 
         if(!mShowingNotification) {
             mNotification = new Notification(R.drawable.ic_stat_name,
-                    mService.getText(R.string.notificationTickerText),
+                    mService.getText(R.string.NotificationTickerText),
                     System.currentTimeMillis());
 
             updateNotification(currentPeriodInfo.getDescription());
@@ -91,7 +91,7 @@ public class AlertManager
 
     public void updateNotification(String notificationText) {
             mNotification.setLatestEventInfo(mService,
-                    mService.getText(R.string.notificationTitle),
+                    mService.getText(R.string.NotificationTitle),
                     notificationText, mIntentStartingHostActivity);
     }
 

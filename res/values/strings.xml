@@ -3,27 +3,27 @@
     <string name="app_name">Debating Timer</string>
     <string name="GlobalSettingsActivityName">Settings</string>
     <string name="FormatChooserActivityName">Choose style</string>
-    <string name="titleBarWithFormatName">Debating Timer - %1$s</string>
+    <string name="DebatingActivityTitleBarWithFormatName">Debating Timer - %1$s</string>
 
-    <string name="startTimerButton">Start</string>
-    <string name="stopTimerButton">Stop</string>
-    <string name="resumeTimerAfterAlarmButton">Resume</string>
-    <string name="resumeTimerAfterUserStopButton">Resume</string>
-    <string name="resetTimerButton">Reset</string>
-    <string name="nextSpeakerButton">Next speaker</string>
-    <string name="nullButtonText">&lt;None&gt;</string>
+    <string name="StartTimerButtonText">Start</string>
+    <string name="StopTimerButtonText">Stop</string>
+    <string name="ResumeTimerAfterAlarmButtonText">Resume</string>
+    <string name="ResumeTimerAfterUserStopButtonText">Resume</string>
+    <string name="ResetTimerButtonText">Reset</string>
+    <string name="NextSpeakerButtonText">Next speaker</string>
+    <string name="NullButtonText">&lt;None&gt;</string>
 
-    <string name="notificationTitle">Debating Timer</string>
-    <string name="notificationTickerText">Debating Timer is running</string>
-    <string name="nextBellText">The next bell is at %1$s</string>
-    <string name="speechLengthText">The length of this speech is %1$s</string>
-    <string name="resetDebateToastText">All speeches in debate reset</string>
+    <string name="NotificationTitle">Debating Timer</string>
+    <string name="NotificationTickerText">Debating Timer is running</string>
+    <string name="NextBellText">The next bell is at %1$s</string>
+    <string name="SpeechLengthText">The length of this speech is %1$s</string>
+    <string name="ResetDebateToastText">All speeches in debate reset</string>
 
     <!-- Menu -->
-    <string name="resetDebateMenuItem">Reset debate</string>
-    <string name="settingsMenuItem">Settings</string>
-    <string name="prevSpeakerMenuItem">Previous speaker</string>
-    <string name="chooseFormatMenuItem">Debate styles</string>
+    <string name="ResetDebateMenuItem">Reset debate</string>
+    <string name="SettingsMenuItem">Settings</string>
+    <string name="PrevSpeakerMenuItem">Previous speaker</string>
+    <string name="ChooseFormatMenuItem">Debate styles</string>
     
     <!-- Dialogs -->
     <string name="ProblemWithXmlFileDialogTitle">Oh no!</string>

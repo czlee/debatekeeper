@@ -380,7 +380,7 @@ public class DebatingActivity extends Activity {
 
     private void resetDebate() {
         resetDebateWithoutToast();
-        Toast.makeText(this, R.string.resetDebateToastText, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.ResetDebateToastText, Toast.LENGTH_SHORT).show();
     }
 
     private String loadXmlFileName() {
@@ -421,20 +421,20 @@ public class DebatingActivity extends Activity {
 
             if (nextBellTime != null) {
                 mNextTimeText.setText(String.format(
-                    this.getString(R.string.nextBellText),
+                    this.getString(R.string.NextBellText),
                     secsToText(nextBellTime)
                 ));
             } else {
                 mNextTimeText.setText(this.getString(R.string.noMoreBells));
             }
             mFinalTimeText.setText(String.format(
-                this.getString(R.string.speechLengthText),
+                this.getString(R.string.SpeechLengthText),
                 secsToText(currentSpeechFormat.getSpeechLength())
             ));
 
             updateButtons();
 
-            this.setTitle(getString(R.string.titleBarWithFormatName, mDebateManager.getDebateFormatName()));
+            this.setTitle(getString(R.string.DebatingActivityTitleBarWithFormatName, mDebateManager.getDebateFormatName()));
         } else {
             // If no debate is loaded, disable the control buttons
             // (Keep the play bell button enabled.)
@@ -469,16 +469,16 @@ public class DebatingActivity extends Activity {
         // Show a "restart debate" button instead.
         switch (mDebateManager.getStatus()) {
         case NOT_STARTED:
-            setButtons(R.string.startTimerButton, R.string.nullButtonText, R.string.nextSpeakerButton);
+            setButtons(R.string.StartTimerButtonText, R.string.NullButtonText, R.string.NextSpeakerButtonText);
             break;
         case RUNNING:
-            setButtons(R.string.stopTimerButton, R.string.nullButtonText, R.string.nullButtonText);
+            setButtons(R.string.StopTimerButtonText, R.string.NullButtonText, R.string.NullButtonText);
             break;
         case STOPPED_BY_BELL:
-            setButtons(R.string.resumeTimerAfterAlarmButton, R.string.nullButtonText, R.string.nullButtonText);
+            setButtons(R.string.ResumeTimerAfterAlarmButtonText, R.string.NullButtonText, R.string.NullButtonText);
             break;
         case STOPPED_BY_USER:
-            setButtons(R.string.resumeTimerAfterUserStopButton, R.string.resetTimerButton, R.string.nextSpeakerButton);
+            setButtons(R.string.ResumeTimerAfterUserStopButtonText, R.string.ResetTimerButtonText, R.string.NextSpeakerButtonText);
             break;
         default:
             break;
@@ -502,14 +502,14 @@ public class DebatingActivity extends Activity {
 
 	    // If there are exactly two buttons, make the weight of the left button double,
 	    // so that it fills two-thirds of the width of the screen.
-	    float leftControlButtonWeight = (float) ((centreResid == R.string.nullButtonText && rightResid != R.string.nullButtonText) ? 2.0 : 1.0);
+	    float leftControlButtonWeight = (float) ((centreResid == R.string.NullButtonText && rightResid != R.string.NullButtonText) ? 2.0 : 1.0);
 	    mLeftControlButton.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, leftControlButtonWeight));
 	}
 
 	// Sets the text and visibility of a single button
 	private void setButton(Button button, int resid) {
         button.setText(resid);
-	    int visibility = (resid == R.string.nullButtonText) ? View.GONE : View.VISIBLE;
+	    int visibility = (resid == R.string.NullButtonText) ? View.GONE : View.VISIBLE;
 	    button.setVisibility(visibility);
 	}
 

@@ -47,7 +47,7 @@
         <Button
             android:layout_width="0dip"
             android:layout_height="fill_parent"
-            android:text="@string/startTimerButton"
+            android:text="@string/StartTimerButtonText"
             android:id="@+id/leftControlButton"
             android:layout_gravity="center"
             android:layout_weight="1"
@@ -58,14 +58,14 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:layout_gravity="center"
-            android:text="@string/resetTimerButton" />
+            android:text="@string/ResetTimerButtonText" />
         <Button
             android:id="@+id/rightControlButton"
             android:layout_width="0dip"
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:layout_gravity="center"
-            android:text="@string/nextSpeakerButton" />
+            android:text="@string/NextSpeakerButtonText" />
 
         <Button
             android:id="@+id/playBellButton"

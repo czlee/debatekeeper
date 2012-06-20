@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/resetDebate" android:orderInCategory="0" android:title="@string/resetDebateMenuItem"></item>
-    <item android:id="@+id/chooseFormat" android:orderInCategory="1" android:title="@string/chooseFormatMenuItem"></item>
-    <item android:id="@+id/settings" android:title="@string/settingsMenuItem" android:orderInCategory="3"></item>
-    <item android:id="@+id/prevSpeaker" android:title="@string/prevSpeakerMenuItem" android:orderInCategory="2"></item>
-    
-    
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:id="@+id/resetDebate" android:orderInCategory="0"
+		android:title="@string/ResetDebateMenuItem" />
+	<item android:id="@+id/chooseFormat" android:orderInCategory="1"
+		android:title="@string/ChooseFormatMenuItem" />
+	<item android:id="@+id/settings" android:title="@string/SettingsMenuItem"
+		android:orderInCategory="3" />
+	<item android:id="@+id/prevSpeaker" android:title="@string/PrevSpeakerMenuItem"
+		android:orderInCategory="2" />
+
 
 </menu>

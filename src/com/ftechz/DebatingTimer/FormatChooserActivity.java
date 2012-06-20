@@ -187,7 +187,7 @@ public class FormatChooserActivity extends Activity {
         setContentView(R.layout.styles_list);
         DEBATING_TIMER_URI = getString(R.string.XmlUri);
 
-        mStylesListView = (ListView) findViewById(R.id.stylesList);
+        mStylesListView = (ListView) findViewById(R.id.StylesListView);
         mOKButton       = (Button)   findViewById(R.id.FormatChooserOKButton);
         mCancelButton   = (Button)   findViewById(R.id.FormatChooserCancelButton);
 
