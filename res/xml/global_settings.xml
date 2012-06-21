@@ -17,8 +17,7 @@
     <com.michaelnovakjr.numberpicker.NumberPickerPreference
         android:key="firstOvertimeBell"
         android:summary="@string/PreferenceFirstOvertimeBellSummary"
-        android:title="@string/PreferenceFirstOvertimeBellTitle"
-        picker: />
+        android:title="@string/PreferenceFirstOvertimeBellTitle" />
     <com.michaelnovakjr.numberpicker.NumberPickerPreference
         android:key="overtimeBellPeriod"
         android:summary="@string/PreferenceOvertimeBellPeriodSummary"
