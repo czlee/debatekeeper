@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckedTextView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.ftechz.DebatingTimer.FormatChooserActivity.DebateFormatListEntry;
@@ -96,11 +98,11 @@ public class DebateFormatEntryArrayAdapter extends
                     concatenate(dfi.getUsedAts()));
             ((TextView) view.findViewById(R.id.ViewFormatTableCellDescValue)).setText(
                     dfi.getDescription());
-            ((TextView) view.findViewById(R.id.ViewFormatTableCellSpeechTypesValue)).setText(
-                    concatenate(dfi.getSpeechFormatDescriptions(), R.string.ViewFormatSpeechTypeDescription));
-            ((TextView) view.findViewById(R.id.ViewFormatTableCellSpeechesValue)).setText(
-                    concatenate(dfi.getSpeeches(), R.string.ViewFormatSpeechDescription));
 
+            populateTwoColumnTable(view, R.id.ViewFormatTableSpeechTypes, R.layout.speech_type_row,
+                    dfi.getSpeechFormatDescriptions());
+            populateTwoColumnTable(view, R.id.ViewFormatTableSpeeches, R.layout.speech_row,
+                    dfi.getSpeeches());
 
         } else {
             view = View.inflate(getContext(),
@@ -137,34 +139,27 @@ public class DebateFormatEntryArrayAdapter extends
     }
 
     /**
-     * Formats a list of <code>String</code> arrays using the format string indicated by
-     * <code>formatStringResid</code> and concentenates the result with line breaks delimiting.
-     * <b>Note:</b> It is the caller's responsibility to ensure that there are enough arguments
-     * in each <code>String[]</code> for the string at <code>formatStringResid</code>
-     * @param list An <code>ArrayList</code> of <code>String</code> arrays.
-     * @param formatStringResid the resource ID of a string to be used for formatting the
-     * string arrays
-     * @return the result, a single <code>String</code>
+     * Populates a table from an ArrayList of String arrays.
+     * @param view
+     * @param tableResid A resource ID pointing to a <code>TableLayout</code>
+     * @param rowResid A resource ID pointing to a <code>TableRow</code> <b>layout file</b>.
+     * (Not the <code>TableRow</code> itself.)
+     * TableRow must have at least two TextView elements, which must have IDs "text1" and "text2".
+     * @param list the list of String arrays.  Each array must have two elements.
      */
-    private String concatenate(ArrayList<String[]> list, int formatStringResid) {
-        String formatString = getContext().getString(formatStringResid);
-        String str = new String();
+    private void populateTwoColumnTable(View view, int tableResid, int rowResid, ArrayList<String[]> list) {
+        TableLayout table = (TableLayout) view.findViewById(tableResid);
+
         Iterator<String[]> iterator = list.iterator();
-        String[] entry;
 
-        // Start with the first item (if it exists)
-        if (iterator.hasNext()) {
-            entry = iterator.next();
-            str = String.format(formatString, (Object[]) entry);
-        }
-
-        // Add the second and further items, putting a line break in between.
         while (iterator.hasNext()) {
-            entry = iterator.next();
-            str = str.concat("\n");
-            str = str.concat(String.format(formatString, (Object[]) entry));
+            String[] rowText = iterator.next();
+            TableRow row = (TableRow) View.inflate(getContext(), rowResid, null);
+            ((TextView) row.findViewById(R.id.text1)).setText(rowText[0].concat(" "));
+            ((TextView) row.findViewById(R.id.text2)).setText(rowText[1].concat(" "));
+            table.addView(row);
         }
-        return str;
+
     }
 
 
