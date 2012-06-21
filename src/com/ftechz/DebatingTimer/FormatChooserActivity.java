@@ -223,11 +223,11 @@ public class FormatChooserActivity extends Activity {
     }
 
     //******************************************************************************************
-    // Public methods
+    // Protected methods
     //******************************************************************************************
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.format_chooser);
         DEBATING_TIMER_URI = getString(R.string.XmlUri);
@@ -260,9 +260,6 @@ public class FormatChooserActivity extends Activity {
         mStylesListView.smoothScrollToPosition(getIncomingSelection());
     }
 
-    //******************************************************************************************
-    // Protected methods
-    //******************************************************************************************
     @Override
     protected Dialog onCreateDialog(int id, Bundle bundle) {
         switch (id) {
