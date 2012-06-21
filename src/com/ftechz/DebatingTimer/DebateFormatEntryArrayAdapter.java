@@ -13,6 +13,7 @@ import com.ftechz.DebatingTimer.FormatChooserActivity.DebateFormatListEntry;
 import com.ftechz.DebatingTimer.FormatChooserActivity.GuiInformationInformer;
 
 /**
+ * TODO Comment this class, before it's too late!
  * An ArrayAdapter for displaying a list of debate formats. This adapter changes
  * the layout depending on whether or not the item is selected. If it's
  * selected, it expands to show information about the format. If not, it just

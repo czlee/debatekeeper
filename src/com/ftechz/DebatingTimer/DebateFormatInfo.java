@@ -8,6 +8,7 @@ import java.util.Iterator;
 import android.content.Context;
 
 /**
+ * TODO Comment this class, before it's too late!
  * Passive data class for holding quick information about a debate format. This
  * is NOT the same as the {@link DebateFormat} class itself.
  * <code>DebateFormatInfo</code> holds only information that is human-readable
