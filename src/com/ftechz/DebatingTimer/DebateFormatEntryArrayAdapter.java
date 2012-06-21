@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.CheckedTextView;
 
 import com.ftechz.DebatingTimer.FormatChooserActivity.DebateFormatListEntry;
-import com.ftechz.DebatingTimer.FormatChooserActivity.GuiInformationInformer;
+import com.ftechz.DebatingTimer.FormatChooserActivity.FormatChooserActivityBinder;
 
 /**
  * TODO Comment this class, before it's too late!
@@ -24,7 +24,7 @@ import com.ftechz.DebatingTimer.FormatChooserActivity.GuiInformationInformer;
  * this class needs to be generalised, the following could likely be generalised
  * without adverse effect:
  * <ul>
- * <li>{@link GuiInformationInformer} can be generalised to an interface
+ * <li>{@link FormatChooserActivityBinder} can be generalised to an interface
  * with a single abstract method <code>getSelectedPosition()</code>.</li>
  * <li>The layout resources are hard-coded. This isn't strictly necessary; the
  * constructor could take in resource IDs as arguments. But the layout resources
@@ -39,17 +39,17 @@ import com.ftechz.DebatingTimer.FormatChooserActivity.GuiInformationInformer;
 public class DebateFormatEntryArrayAdapter extends
         ArrayAdapter<FormatChooserActivity.DebateFormatListEntry> {
 
-    private final GuiInformationInformer mInformer;
+    private final FormatChooserActivityBinder mBinder;
 
     public DebateFormatEntryArrayAdapter(Context context,
-            List<DebateFormatListEntry> objects, GuiInformationInformer informer) {
+            List<DebateFormatListEntry> objects, FormatChooserActivityBinder binder) {
         super(context, android.R.layout.simple_list_item_single_choice, objects);
-        mInformer = informer;
+        mBinder = binder;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == mInformer.getSelectedPosition())
+        if (position == mBinder.getSelectedPosition())
             return 0;
         else
             return 1;
@@ -63,16 +63,16 @@ public class DebateFormatEntryArrayAdapter extends
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view;
-        boolean selected = (position == mInformer.getSelectedPosition());
+        boolean selected = (position == mBinder.getSelectedPosition());
         if (selected) {
             view = View.inflate(getContext(), R.layout.format_item_selected, null);
 
             String filename = this.getItem(position).getFilename();
-            mInformer.populateBasicInfo(view, filename);
+            mBinder.populateBasicInfo(view, filename);
 
             Button showDetailsButton = (Button) view.findViewById(R.id.ViewFormatShowDetailsButton);
             showDetailsButton.setVisibility(View.VISIBLE);
-            showDetailsButton.setOnClickListener(mInformer.getDetailsButtonOnClickListener(filename));
+            showDetailsButton.setOnClickListener(mBinder.getDetailsButtonOnClickListener(filename));
 
         } else {
             view = View.inflate(getContext(),

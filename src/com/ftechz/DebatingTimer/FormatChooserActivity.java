@@ -100,7 +100,7 @@ public class FormatChooserActivity extends Activity {
      * @author Chuan-Zheng Lee
      *
      */
-    public class GuiInformationInformer {
+    public class FormatChooserActivityBinder {
         /**
          * @return the position of the currently checked item.
          */
@@ -250,7 +250,7 @@ public class FormatChooserActivity extends Activity {
         }
 
         DebateFormatEntryArrayAdapter adapter = new DebateFormatEntryArrayAdapter(
-                this, mStylesList, new GuiInformationInformer());
+                this, mStylesList, new FormatChooserActivityBinder());
 
         // Sort alphabetically by style name
         adapter.sort(new StyleEntryComparatorByStyleName());
