@@ -7,17 +7,18 @@ import java.util.Iterator;
 import java.util.List;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.ftechz.DebatingTimer.FormatChooserActivity.DebateFormatListEntry;
-import com.ftechz.DebatingTimer.FormatChooserActivity.SelectedPositionInformer;
+import com.ftechz.DebatingTimer.FormatChooserActivity.GuiInformationInformer;
 
 /**
  * An ArrayAdapter for displaying a list of debate formats. This adapter changes
@@ -30,7 +31,7 @@ import com.ftechz.DebatingTimer.FormatChooserActivity.SelectedPositionInformer;
  * this class needs to be generalised, the following could likely be generalised
  * without adverse effect:
  * <ul>
- * <li>{@link SelectedPositionInformer} can be generalised to an interface
+ * <li>{@link GuiInformationInformer} can be generalised to an interface
  * with a single abstract method <code>getSelectedPosition()</code>.</li>
  * <li>The layout resources are hard-coded. This isn't strictly necessary; the
  * constructor could take in resource IDs as arguments. But the layout resources
@@ -45,17 +46,33 @@ import com.ftechz.DebatingTimer.FormatChooserActivity.SelectedPositionInformer;
 public class DebateFormatEntryArrayAdapter extends
         ArrayAdapter<FormatChooserActivity.DebateFormatListEntry> {
 
-    private final SelectedPositionInformer mSelectedPositionInformer;
+    private final GuiInformationInformer mInformer;
+
+    private class DetailsButtonOnClickListener implements OnClickListener {
+
+        private final View formatItemSelectedView;
+
+        public DetailsButtonOnClickListener(View formatItemSelectedView) {
+            this.formatItemSelectedView = formatItemSelectedView;
+        }
+
+        @Override
+        public void onClick(View v) {
+            mInformer.toggleMoreDetailsEnabled();
+            updateMoreDetailsVisibility(formatItemSelectedView);
+        }
+
+    }
 
     public DebateFormatEntryArrayAdapter(Context context,
-            List<DebateFormatListEntry> objects, SelectedPositionInformer spi) {
+            List<DebateFormatListEntry> objects, GuiInformationInformer informer) {
         super(context, android.R.layout.simple_list_item_single_choice, objects);
-        mSelectedPositionInformer = spi;
+        mInformer = informer;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == mSelectedPositionInformer.getSelectedPosition())
+        if (position == mInformer.getSelectedPosition())
             return 0;
         else
             return 1;
@@ -68,11 +85,8 @@ public class DebateFormatEntryArrayAdapter extends
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.i(this.getClass().getSimpleName(),
-                String.format("in getView() for position %d", position));
         View view;
-        boolean selected = (position == mSelectedPositionInformer
-                .getSelectedPosition());
+        boolean selected = (position == mInformer.getSelectedPosition());
         if (selected) {
             view = View.inflate(getContext(), R.layout.format_item_selected, null);
 
@@ -103,6 +117,10 @@ public class DebateFormatEntryArrayAdapter extends
                     dfi.getSpeechFormatDescriptions());
             populateTwoColumnTable(view, R.id.ViewFormatTableSpeeches, R.layout.speech_row,
                     dfi.getSpeeches());
+
+            updateMoreDetailsVisibility(view);
+            ((Button) view.findViewById(R.id.ViewFormatShowDetailsButton)).setOnClickListener(
+                    new DetailsButtonOnClickListener(view));
 
         } else {
             view = View.inflate(getContext(),
@@ -160,6 +178,16 @@ public class DebateFormatEntryArrayAdapter extends
             table.addView(row);
         }
 
+    }
+
+    private void updateMoreDetailsVisibility(View formatItemSelectedView) {
+        boolean moreDetailsEnabled = mInformer.isMoreDetailsEnabled();
+        int visibility = (moreDetailsEnabled) ? View.VISIBLE : View.GONE;
+        int buttonText = (moreDetailsEnabled) ? R.string.ViewFormatHideDetailsButtonText : R.string.ViewFormatShowDetailsButtonText;
+        ((Button) formatItemSelectedView.findViewById(R.id.ViewFormatShowDetailsButton)).setText(buttonText);
+        formatItemSelectedView.findViewById(R.id.ViewFormatSpeechesLabelText).setVisibility(visibility);
+        formatItemSelectedView.findViewById(R.id.ViewFormatTableSpeechTypes).setVisibility(visibility);
+        formatItemSelectedView.findViewById(R.id.ViewFormatTableSpeeches).setVisibility(visibility);
     }
 
 

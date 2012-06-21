@@ -254,9 +254,9 @@ public class DebateFormatInfo {
 
         // Add the second and further items, putting a line break in between.
         while (iterator.hasNext()) {
-            str = str.concat(",");
+            str = str.concat(", ");
             bi = iterator.next();
-            str = secsToText(bi.getTime());
+            str = str.concat(secsToText(bi.getTime()));
             if (bi.isPause())
                 str = str.concat(mContext.getString(R.string.SpeechTypePauseIndicator));
         }

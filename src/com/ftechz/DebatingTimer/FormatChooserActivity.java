@@ -16,6 +16,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -42,8 +44,10 @@ public class FormatChooserActivity extends Activity {
     private String   mCurrentStyleName = null;
 
     private final ArrayList<DebateFormatListEntry> mStylesList = new ArrayList<DebateFormatListEntry>();
+    private boolean mMoreDetailsEnabled;
 
     private String DEBATING_TIMER_URI;
+    private static final String PREFERENCE_MORE_DETAILS_ENABLED = "mde";
 
     private static final int DIALOG_IO_ERROR = 0;
     public  static final int RESULT_ERROR = RESULT_FIRST_USER;
@@ -89,17 +93,25 @@ public class FormatChooserActivity extends Activity {
     /**
      * Interface to {@link DebateFormatEntryArrayAdapter}. Provides a method for
      * the <code>DebateFormatEntryArrayAdapter</code> to request the selected
-     * position.
+     * position and whether "more details" mode is on.
      *
      * @author Chuan-Zheng Lee
      *
      */
-    public class SelectedPositionInformer {
+    public class GuiInformationInformer {
         /**
          * @return the position of the currently checked item.
          */
         public int getSelectedPosition() {
             return mStylesListView.getCheckedItemPosition();
+        }
+
+        public boolean isMoreDetailsEnabled() {
+            return mMoreDetailsEnabled;
+        }
+
+        public void toggleMoreDetailsEnabled() {
+            mMoreDetailsEnabled = !mMoreDetailsEnabled;
         }
     }
 
@@ -217,7 +229,7 @@ public class FormatChooserActivity extends Activity {
         }
 
         DebateFormatEntryArrayAdapter adapter = new DebateFormatEntryArrayAdapter(
-                this, mStylesList, new SelectedPositionInformer());
+                this, mStylesList, new GuiInformationInformer());
 
         // Sort alphabetically by style name
         adapter.sort(new StyleEntryComparatorByStyleName());
@@ -240,6 +252,22 @@ public class FormatChooserActivity extends Activity {
         default:
             return super.onCreateDialog(id);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        mMoreDetailsEnabled = prefs.getBoolean(PREFERENCE_MORE_DETAILS_ENABLED, false);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        Editor editor = prefs.edit();
+        editor.putBoolean(PREFERENCE_MORE_DETAILS_ENABLED, mMoreDetailsEnabled);
+        editor.commit();
     }
 
     //******************************************************************************************

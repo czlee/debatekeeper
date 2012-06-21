@@ -15,6 +15,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
+            android:layout_marginRight="10dip"
             android:text="@string/ViewFormatShowDetailsButtonText" />
 
         <TableLayout
@@ -88,16 +89,19 @@
 
     <TextView
         style="@style/ViewFormatTableLabelStyle"
+        android:id="@+id/ViewFormatSpeechesLabelText"
         android:text="@string/ViewFormatSpeechesLabel" />
 
     <TableLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/ViewFormatTableSpeechTypes"
-        style="@style/ViewFormatTableSpeechesStyle" />
+        style="@style/ViewFormatTableSpeechesStyle"
+        android:shrinkColumns="1" />
 
     <TableLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/ViewFormatTableSpeeches"
-        style="@style/ViewFormatTableSpeechesStyle" />
+        style="@style/ViewFormatTableSpeechesStyle"
+        android:shrinkColumns="0" />
 
 </LinearLayout>

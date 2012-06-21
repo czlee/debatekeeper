@@ -215,9 +215,9 @@ public class DebateFormatInfoExtractor {
                 boolean isFinish = false;
                 if (timeStr == null)
                     return;
-                else if (areEqualIgnoringCase(timeStr, R.string.XmlAttrValueBellTimeFinish)) {
+                else if (areEqualIgnoringCase(timeStr, R.string.XmlAttrValueBellTimeFinish))
                     isFinish = true;
-                } else {
+                else {
                     try {
                         time = timeStr2Secs(timeStr);
                     } catch (NumberFormatException e) {
