@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<debateformat name="Test format 1">
+<debateformat name="Test format 1" schemaversion="1.0">
 	<info>
 		<region>None</region>
 		<level>None</level>

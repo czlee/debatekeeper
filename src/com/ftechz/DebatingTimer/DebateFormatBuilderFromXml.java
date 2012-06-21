@@ -88,7 +88,7 @@ public class DebateFormatBuilderFromXml {
                 return;
 
             /**
-             * <debateformat name="something">
+             * <debateformat name="something" schemaversion="1.0">
              * End the root context.
              */
             if (areEqual(localName, R.string.XmlElemNameRoot)) {
@@ -141,7 +141,7 @@ public class DebateFormatBuilderFromXml {
                 return;
 
             /**
-             * <debateformat name="something">
+             * <debateformat name="something" schemaversion="1.0">
              */
             if (areEqual(localName, R.string.XmlElemNameRoot)) {
 

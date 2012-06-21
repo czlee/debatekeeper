@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<debateformat name="Easters (NZ)">
+<debateformat name="Easters (NZ)" schemaversion="1.0">
 	<info>
 		<region>New Zealand</region>
 		<level>University</level>
