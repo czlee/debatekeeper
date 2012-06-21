@@ -13,36 +13,36 @@
 		<period ref="overtime" desc="Overtime" bgcolor="#77ff0000" />
 	</resource>
 	
-	<speechformat ref="prep" length="20" firstperiod="moot" countdir="down">
+	<speechtype ref="prep" length="20" firstperiod="moot" countdir="down">
 		<period ref="moot" desc="Choose moot" />
 		<period ref="side" desc="Choose side" />
 		<period ref="prepare" desc="Prepare debate" />
 	    <bell time="5" number="1" nextperiod="side" pauseonbell="true" />
 		<bell time="10" number="1" nextperiod="prepare" pauseonbell="true" />
 		<bell time="finish" number="2" />
-	</speechformat>
+	</speechtype>
 	
-	<speechformat ref="substantive" length="15" firstperiod="initial">
+	<speechtype ref="substantive" length="15" firstperiod="initial">
 	    <include resource="speeches" />
 		<bell time="10" number="1" nextperiod="warning" />
 		<bell time="finish" number="2" nextperiod="overtime" />
-	</speechformat>
+	</speechtype>
 	
-	<speechformat ref="reply" length="10" firstperiod="initial">
+	<speechtype ref="reply" length="10" firstperiod="initial">
 	    <include resource="speeches" />
    		<bell time="5" number="1" nextperiod="warning" />
 		<bell time="finish" number="2" nextperiod="overtime" />
-	</speechformat>
+	</speechtype>
 	
 	<speeches>
-	    <speech name="Preparation" format="prep"></speech>
-		<speech name="1st Affirmative" format="substantive" />
-		<speech name="1st Negative" format="substantive" />
-		<speech name="2nd Affirmative" format="substantive" />
-		<speech name="2nd Negative" format="substantive" />
-		<speech name="3rd Affirmative" format="substantive" />
-		<speech name="3rd Negative" format="substantive" />
-		<speech name="Negative Leader's Reply" format="reply" />
-		<speech name="Affirmative Leader's Reply" format="reply" />
+	    <speech name="Preparation" type="prep"></speech>
+		<speech name="1st Affirmative" type="substantive" />
+		<speech name="1st Negative" type="substantive" />
+		<speech name="2nd Affirmative" type="substantive" />
+		<speech name="2nd Negative" type="substantive" />
+		<speech name="3rd Affirmative" type="substantive" />
+		<speech name="3rd Negative" type="substantive" />
+		<speech name="Negative Leader's Reply" type="reply" />
+		<speech name="Affirmative Leader's Reply" type="reply" />
 	</speeches>
 </debateformat>

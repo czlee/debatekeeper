@@ -19,7 +19,7 @@
     <string name="XmlElemNameResource">resource</string>
         <string name="XmlAttrNameResourceRefCommon">#all</string>
 
-    <string name="XmlElemNameSpeechFormat">speechformat</string>
+    <string name="XmlElemNameSpeechFormat">speechtype</string>
         <string name="XmlAttrNameSpeechFormatLength">length</string>
         <string name="XmlAttrNameSpeechFormatFirstPeriod">firstperiod</string>
         <string name="XmlAttrNameSpeechFormatCountDir">countdir</string>
@@ -46,7 +46,7 @@
     <string name="XmlElemNameSpeechesList">speeches</string>
         <string name="XmlElemNameSpeech">speech</string>
             <string name="XmlAttrNameSpeechName">name</string>
-            <string name="XmlAttrNameSpeechFormat">format</string>
+            <string name="XmlAttrNameSpeechFormat">type</string>
 
     <string name="XmlErrorRootNoName">This debate format has no name!</string>
     <string name="XmlErrorSomethingOutsideRoot">There was something outside the root debateformat element</string>

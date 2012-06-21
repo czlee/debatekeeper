@@ -13,26 +13,26 @@
 		<period ref="overtime" desc="Overtime" bgcolor="#77ff0000" />
 	</resource>
 
-	<speechformat ref="substantive" length="10:00" firstperiod="initial">
+	<speechtype ref="substantive" length="10:00" firstperiod="initial">
 		<period ref="pois-allowed" name="POIs allowed" bgcolor="#7700ff00" />
    		<bell time="1:00" number="1" nextperiod="pois-allowed" sound="#default" />
 		<bell time="9:00" number="1" nextperiod="warning" sound="#default" />
 		<bell time="finish" number="2" nextperiod="overtime" sound="#default" />
-	</speechformat>
+	</speechtype>
 	
-	<speechformat ref="reply" length="5:00" firstperiod="initial">
+	<speechtype ref="reply" length="5:00" firstperiod="initial">
 		<bell time="4:00" number="1" nextperiod="warning" sound="#default" />
 		<bell time="finish" number="2" nextperiod="overtime" sound="#default" />
-	</speechformat>
+	</speechtype>
 	
 	<speeches>
-		<speech name="1st Affirmative" format="substantive" />
-		<speech name="1st Negative" format="substantive" />
-		<speech name="2nd Affirmative" format="substantive" />
-		<speech name="2nd Negative" format="substantive" />
-		<speech name="3rd Affirmative" format="substantive" />
-		<speech name="3rd Negative" format="substantive" />
-		<speech name="Negative Leader's Reply" format="reply" />
-		<speech name="Affirmative Leader's Reply" format="reply" />
+		<speech name="1st Affirmative" type="substantive" />
+		<speech name="1st Negative" type="substantive" />
+		<speech name="2nd Affirmative" type="substantive" />
+		<speech name="2nd Negative" type="substantive" />
+		<speech name="3rd Affirmative" type="substantive" />
+		<speech name="3rd Negative" type="substantive" />
+		<speech name="Negative Leader's Reply" type="reply" />
+		<speech name="Affirmative Leader's Reply" type="reply" />
 	</speeches>
 </debateformat>

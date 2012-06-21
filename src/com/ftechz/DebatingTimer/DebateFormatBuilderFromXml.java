@@ -100,7 +100,7 @@ public class DebateFormatBuilderFromXml {
             } else if (areEqual(localName, R.string.XmlElemNameResource)) {
                 mCurrentResourceRef = null;
 
-            /** <speechformat ref="string" length="5:00" firstperiod="string" countdir="up">
+            /** <speechtype ref="string" length="5:00" firstperiod="string" countdir="up">
              * Set the first period, then end the context.
              */
             } else if (areEqual(localName, R.string.XmlElemNameSpeechFormat)) {
@@ -198,7 +198,7 @@ public class DebateFormatBuilderFromXml {
                 // sub-elements can be ignored.)
                 mCurrentResourceRef = reference;
 
-            /** <speechformat ref="string" length="5:00" firstperiod="string" countdir="up">
+            /** <speechtype ref="string" length="5:00" firstperiod="string" countdir="up">
              * Create a speech format.
              * 'ref' and 'length' are mandatory.
              * 'firstperiod' and 'countdir' are optional.
@@ -462,7 +462,7 @@ public class DebateFormatBuilderFromXml {
                 mIsInSpeechesList = true;
 
             /**
-             * <speech name="1st Affirmative" format="formatname">
+             * <speech name="1st Affirmative" type="formatname">
              * Add a speech.
              * This must be inside the speeches context.
              */

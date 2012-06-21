@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<debateformat name="Australs">
+<debateformat name="Australs" schemaversion="1.0">
 	<info>
 		<region>Australasia</region>
 		<level>University</level>
@@ -13,24 +13,24 @@
 		<period ref="overtime" desc="Overtime" bgcolor="#77ff0000" />
 	</resource>
 	
-	<speechformat ref="substantive" length="8:00" firstperiod="initial">
+	<speechtype ref="substantive" length="8:00" firstperiod="initial">
 		<bell time="6:00" number="1" nextperiod="warning" />
 		<bell time="finish" number="2" nextperiod="overtime" />
-	</speechformat>
+	</speechtype>
 	
-	<speechformat ref="reply" length="4:00" firstperiod="initial">
+	<speechtype ref="reply" length="4:00" firstperiod="initial">
 		<bell time="3:00" number="1" nextperiod="warning" />
 		<bell time="finish" number="2" nextperiod="overtime" />
-	</speechformat>
+	</speechtype>
 	
 	<speeches>
-		<speech name="1st Affirmative" format="substantive" />
-		<speech name="1st Negative" format="substantive" />
-		<speech name="2nd Affirmative" format="substantive" />
-		<speech name="2nd Negative" format="substantive" />
-		<speech name="3rd Affirmative" format="substantive" />
-		<speech name="3rd Negative" format="substantive" />
-		<speech name="Negative Leader's Reply" format="reply" />
-		<speech name="Affirmative Leader's Reply" format="reply" />
+		<speech name="1st Affirmative" type="substantive" />
+		<speech name="1st Negative" type="substantive" />
+		<speech name="2nd Affirmative" type="substantive" />
+		<speech name="2nd Negative" type="substantive" />
+		<speech name="3rd Affirmative" type="substantive" />
+		<speech name="3rd Negative" type="substantive" />
+		<speech name="Negative Leader's Reply" type="reply" />
+		<speech name="Affirmative Leader's Reply" type="reply" />
 	</speeches>
 </debateformat>
