@@ -31,12 +31,13 @@ public class DebateFormatInfo {
 
     private final Context mContext;
 
-    private final ArrayList<String> regions = new ArrayList<String>();
-    private final ArrayList<String> levels = new ArrayList<String>();
-    private final ArrayList<String> usedAts = new ArrayList<String>();
+    private final ArrayList<String>               regions     = new ArrayList<String>();
+    private final ArrayList<String>               levels      = new ArrayList<String>();
+    private final ArrayList<String>               usedAts     = new ArrayList<String>();
+    private final HashMap<String, Resource>       resources   = new HashMap<String, Resource>();
     private final HashMap<String, SpeechTypeInfo> speechTypes = new HashMap<String, SpeechTypeInfo>();
-    private final HashMap<String, String> speeches = new HashMap<String, String>();
-    private String description = new String("-");
+    private final HashMap<String, String>         speeches    = new HashMap<String, String>();
+    private       String                          description = new String("-");
 
     public DebateFormatInfo(Context context) {
         super();
@@ -62,21 +63,25 @@ public class DebateFormatInfo {
         }
     }
 
-    private class SpeechTypeInfo {
-        private long length;
+    private class Resource {
         private ArrayList<BellInfo> bells;
+
+        public ArrayList<BellInfo> getBells() {
+            return bells;
+        }
+        public void addBell(long time, boolean pause) {
+            this.bells.add(new BellInfo(time, pause));
+        }
+    }
+
+    private class SpeechTypeInfo extends Resource {
+        private long length;
 
         public long getLength() {
             return length;
         }
         public void setLength(long length) {
             this.length = length;
-        }
-        public ArrayList<BellInfo> getBells() {
-            return bells;
-        }
-        public void addBell(long time, boolean pause) {
-            this.bells.add(new BellInfo(time, pause));
         }
     }
 
@@ -116,13 +121,17 @@ public class DebateFormatInfo {
         usedAts.add(usedAt);
     }
 
+    public void addResource(String ref) {
+        resources.put(ref, new Resource());
+    }
+
     public void addSpeechType(String ref, long length) {
         speechTypes.put(ref, new SpeechTypeInfo());
         speechTypes.get(ref).setLength(length);
     }
 
-    public void addBellToSpeechType(long time, String speechTypeRef) {
-        addBellToSpeechType(time, false, speechTypeRef);
+    public void addBellToResource(long time, boolean pause, String resourceRef) {
+        speechTypes.get(resourceRef).addBell(time, pause);
     }
 
     public void addBellToSpeechType(long time, boolean pause, String speechTypeRef) {
@@ -165,7 +174,8 @@ public class DebateFormatInfo {
         if (iterator.hasNext()) {
             bi = iterator.next();
             str = secsToText(bi.getTime());
-            str = str.concat(mContext.getString(R.string.SpeechTypePauseIndicator));
+            if (bi.isPause())
+                str = str.concat(mContext.getString(R.string.SpeechTypePauseIndicator));
         }
 
         // Add the second and further items, putting a line break in between.
@@ -173,7 +183,8 @@ public class DebateFormatInfo {
             str = str.concat(",");
             bi = iterator.next();
             str = secsToText(bi.getTime());
-            str = str.concat(mContext.getString(R.string.SpeechTypePauseIndicator));
+            if (bi.isPause())
+                str = str.concat(mContext.getString(R.string.SpeechTypePauseIndicator));
         }
         return str;
     }

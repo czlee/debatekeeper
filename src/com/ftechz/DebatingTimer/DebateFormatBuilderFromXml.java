@@ -62,13 +62,22 @@ public class DebateFormatBuilderFromXml {
     //******************************************************************************************
     private class DebateFormatXmlContentHandler implements ContentHandler {
 
-        // endElement should erase these (i.e. set them to null)
-        // so that they're only not null when we're inside one of these elements
+        // endElement should erase these (i.e. set them to null) so that they're only not null
+        // when we're inside one of these elements.  NOTE however that they may be null even when
+        // we are inside one of these elements, if the element in question had an error.  (We will
+        // still be between the relevant tags; there just won't be an active resource/
+        // speech format).  That is:
+        //      m*m*Ref is NOT null         implies       we are in * context
+        // but  m*Ref is null            does NOT imply   we are NOT in * context
+        // and we are NOT in * context   does NOT imply   m*Ref is null
         private String  mCurrentSpeechFormatFirstPeriod = null;
         private String  mCurrentSpeechFormatRef         = null;
         private Long    mCurrentSpeechFormatLength      = null;
         private String  mCurrentResourceRef             = null;
-        private boolean mIsInSpeechesList               = false;
+
+        private DebateFormatXmlSecondLevelContextType mCurrentSecondLevelContext
+                = DebateFormatXmlSecondLevelContextType.NONE;
+
         private boolean mIsInRootContext                = false;
 
         @Override public void characters(char[] ch, int start, int length) throws SAXException {}
@@ -98,6 +107,7 @@ public class DebateFormatBuilderFromXml {
              * End the context.
              */
             } else if (areEqual(localName, R.string.XmlElemNameResource)) {
+                mCurrentSecondLevelContext = DebateFormatXmlSecondLevelContextType.NONE;
                 mCurrentResourceRef = null;
 
             /** <speechtype ref="string" length="5:00" firstperiod="string" countdir="up">
@@ -110,6 +120,7 @@ public class DebateFormatBuilderFromXml {
                     logXmlError(e);
                 }
 
+                mCurrentSecondLevelContext = DebateFormatXmlSecondLevelContextType.NONE;
                 mCurrentSpeechFormatFirstPeriod = null;
                 mCurrentSpeechFormatRef = null;
                 mCurrentSpeechFormatLength = null;
@@ -118,7 +129,7 @@ public class DebateFormatBuilderFromXml {
              * End the speeches context.
              */
             } else if (areEqual(localName, R.string.XmlElemNameSpeechesList)) {
-                mIsInSpeechesList = false;
+                mCurrentSecondLevelContext = DebateFormatXmlSecondLevelContextType.NONE;
             }
 
             /** <bell time="1:00" number="1" nextperiod="#stay" sound="#default" pauseonbell="true">
@@ -181,9 +192,12 @@ public class DebateFormatBuilderFromXml {
                 // If we are, ignore and reset all contexts.
                 if (!assertNotInsideAnySecondLevelContextAndResetOtherwise()) {
                     logXmlError(R.string.XmlErrorResourceInsideContext, reference,
-                            getCurrentSecondLevelContextTypeStr());
+                            getCurrentSecondLevelContextType().toString());
                     return;
                 }
+
+                // If we weren't in a second-level context, we are now
+                mCurrentSecondLevelContext = DebateFormatXmlSecondLevelContextType.RESOURCE;
 
                 // 3. Start a new resource
                 try {
@@ -216,9 +230,12 @@ public class DebateFormatBuilderFromXml {
                 // If we are, ignore and reset all contexts.
                 if (!assertNotInsideAnySecondLevelContextAndResetOtherwise()) {
                     logXmlError(R.string.XmlErrorSpeechFormatInsideContext, reference,
-                            getCurrentSecondLevelContextTypeStr());
+                            getCurrentSecondLevelContextType().toString());
                     return;
                 }
+
+                // If we weren't in a second-level context, we are now
+                mCurrentSecondLevelContext = DebateFormatXmlSecondLevelContextType.SPEECH_FORMAT;
 
                 // 3. Get the length string, then convert it to seconds. Mandatory; exit on error.
                 // Take note of it, in case bells use "finish" as their bell time.
@@ -288,11 +305,11 @@ public class DebateFormatBuilderFromXml {
                 String timeStr = getValue(atts, R.string.XmlAttrNameBellTime);;
                 long time = 0;
                 if (timeStr == null) {
-                    logXmlError(R.string.XmlErrorBellNoTime, getContextStr());
+                    logXmlError(R.string.XmlErrorBellNoTime, getCurrentContextAndReferenceStr());
                     return;
                 } else if (areEqualIgnoringCase(timeStr, R.string.XmlAttrValueBellTimeFinish)) {
                     if (mCurrentSpeechFormatLength == null) {
-                        logXmlError(R.string.XmlErrorBellFinishTimeUnexpectedlyNotFound, getContextStr());
+                        logXmlError(R.string.XmlErrorBellFinishTimeUnexpectedlyNotFound, getCurrentContextAndReferenceStr());
                         return;
                     }
                     time = mCurrentSpeechFormatLength.longValue();
@@ -300,7 +317,7 @@ public class DebateFormatBuilderFromXml {
                     try {
                         time = timeStr2Secs(timeStr);
                     } catch (NumberFormatException e) {
-                        logXmlError(R.string.XmlErrorBellInvalidTime, getContextStr(), timeStr);
+                        logXmlError(R.string.XmlErrorBellInvalidTime, getCurrentContextAndReferenceStr(), timeStr);
                         return;
                     }
                 }
@@ -312,7 +329,7 @@ public class DebateFormatBuilderFromXml {
                     try {
                         number = Integer.parseInt(numberStr);
                     } catch (NumberFormatException e) {
-                        logXmlError(R.string.XmlErrorBellInvalidNumber, getContextStr(), timeStr);
+                        logXmlError(R.string.XmlErrorBellInvalidNumber, getCurrentContextAndReferenceStr(), timeStr);
                     }
                 }
 
@@ -336,7 +353,7 @@ public class DebateFormatBuilderFromXml {
                     else if (areEqualIgnoringCase(bellSound, R.string.XmlAttrValueCommonDefault));
                         // Do nothing
                     else
-                        logXmlError(R.string.XmlErrorBellInvalidSound, getContextStr(), bellSound);
+                        logXmlError(R.string.XmlErrorBellInvalidSound, getCurrentContextAndReferenceStr(), bellSound);
                 }
 
                 // 6. Determine whether to pause on this bell
@@ -347,17 +364,19 @@ public class DebateFormatBuilderFromXml {
                     else if (areEqualIgnoringCase(pauseOnBell, R.string.XmlAttrValueCommonFalse))
                         bi.setPauseOnBell(false);
                     else
-                        logXmlError(R.string.XmlErrorBellInvalidPauseOnBell, getContextStr(), pauseOnBell);
+                        logXmlError(R.string.XmlErrorBellInvalidPauseOnBell, getCurrentContextAndReferenceStr(), pauseOnBell);
                 }
 
                 // Finally, add the bell
                 try {
                     switch (getCurrentSecondLevelContextType()) {
                     case RESOURCE:
-                        mDfb.addBellInfoToResource(mCurrentResourceRef, bi, periodInfoRef);
+                        if (mCurrentResourceRef != null)
+                            mDfb.addBellInfoToResource(mCurrentResourceRef, bi, periodInfoRef);
                         break;
                     case SPEECH_FORMAT:
-                        mDfb.addBellInfoToSpeechFormat(mCurrentSpeechFormatRef, bi, periodInfoRef);
+                        if (mCurrentSpeechFormatRef != null)
+                            mDfb.addBellInfoToSpeechFormat(mCurrentSpeechFormatRef, bi, periodInfoRef);
                         break;
                     default:
                         logXmlError(R.string.XmlErrorBellOutsideContext);
@@ -377,7 +396,7 @@ public class DebateFormatBuilderFromXml {
                 // 1. Get the reference. Mandatory; exit on error.
                 String reference = getValue(atts, R.string.XmlAttrNameCommonRef);
                 if (reference == null) {
-                    logXmlError(R.string.XmlErrorPeriodNoRef, getContextStr());
+                    logXmlError(R.string.XmlErrorPeriodNoRef, getCurrentContextAndReferenceStr());
                     return;
                 }
 
@@ -412,10 +431,12 @@ public class DebateFormatBuilderFromXml {
                 try {
                     switch (getCurrentSecondLevelContextType()) {
                     case RESOURCE:
-                        mDfb.addPeriodInfoToResource(mCurrentResourceRef, reference, pi);
+                        if (mCurrentResourceRef != null)
+                            mDfb.addPeriodInfoToResource(mCurrentResourceRef, reference, pi);
                         break;
                     case SPEECH_FORMAT:
-                        mDfb.addPeriodInfoToSpeechFormat(mCurrentSpeechFormatRef, reference, pi);
+                        if (mCurrentSpeechFormatRef != null)
+                            mDfb.addPeriodInfoToSpeechFormat(mCurrentSpeechFormatRef, reference, pi);
                         break;
                     default:
                         logXmlError(R.string.XmlErrorPeriodOutsideContext, reference);
@@ -435,7 +456,7 @@ public class DebateFormatBuilderFromXml {
                 // 1. Get the resource reference. Mandatory; exit on error.
                 String resourceRef = getValue(atts, R.string.XmlAttrNameIncludeResource);
                 if (resourceRef == null) {
-                    logXmlError(R.string.XmlErrorIncludeNoResource, getContextStr());
+                    logXmlError(R.string.XmlErrorIncludeNoResource, getCurrentContextAndReferenceStr());
                 }
 
                 // 2. Check we're inside a speech format
@@ -445,7 +466,8 @@ public class DebateFormatBuilderFromXml {
 
                 // 3. Include the resource
                 try {
-                    mDfb.includeResource(mCurrentSpeechFormatRef, resourceRef);
+                    if (mCurrentSpeechFormatRef != null)
+                        mDfb.includeResource(mCurrentSpeechFormatRef, resourceRef);
                 } catch (DebateFormatBuilderException e){
                     logXmlError(e);
                 }
@@ -455,11 +477,12 @@ public class DebateFormatBuilderFromXml {
              */
             } else if (areEqual(localName, R.string.XmlElemNameSpeechesList)) {
                 if (!assertNotInsideAnySecondLevelContextAndResetOtherwise()) {
-                    logXmlError(R.string.XmlErrorSpeechesListInsideContext, getCurrentSecondLevelContextTypeStr());
+                    logXmlError(R.string.XmlErrorSpeechesListInsideContext,
+                            getCurrentSecondLevelContextType().toString());
                     return;
                 }
 
-                mIsInSpeechesList = true;
+                mCurrentSecondLevelContext = DebateFormatXmlSecondLevelContextType.SPEECHES_LIST;
 
             /**
              * <speech name="1st Affirmative" type="formatname">
@@ -499,7 +522,7 @@ public class DebateFormatBuilderFromXml {
 
         // ******** Private methods ********
 
-        private String getContextStr() {
+        private String getCurrentContextAndReferenceStr() {
             if (mCurrentResourceRef != null) {
                 return String.format("%s '%s'", getString(R.string.XmlElemNameResource), mCurrentResourceRef);
             } else if (mCurrentSpeechFormatRef != null) {
@@ -542,18 +565,7 @@ public class DebateFormatBuilderFromXml {
         }
 
         private DebateFormatXmlSecondLevelContextType getCurrentSecondLevelContextType() {
-            if (mCurrentResourceRef != null)
-                return DebateFormatXmlSecondLevelContextType.RESOURCE;
-            else if (mCurrentSpeechFormatRef != null)
-                return DebateFormatXmlSecondLevelContextType.SPEECH_FORMAT;
-            else if (mIsInSpeechesList == true)
-                return DebateFormatXmlSecondLevelContextType.SPEECHES_LIST;
-            else
-                return DebateFormatXmlSecondLevelContextType.NONE;
-        }
-
-        private String getCurrentSecondLevelContextTypeStr() {
-            return getCurrentSecondLevelContextType().toString();
+            return mCurrentSecondLevelContext;
         }
 
     }

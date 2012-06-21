@@ -103,6 +103,8 @@ public class DebateFormatInfoExtractor {
                 }
             }
 
+
+
         }
 
         @Override

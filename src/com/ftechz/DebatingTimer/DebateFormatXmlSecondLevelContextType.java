@@ -10,8 +10,8 @@ public enum DebateFormatXmlSecondLevelContextType {
     NONE ("no context"),
     INFO ("info"),
     RESOURCE ("resource"),
-    SPEECH_FORMAT("speech format"),
-    SPEECHES_LIST("speeches list");
+    SPEECH_FORMAT ("speech format"),
+    SPEECHES_LIST ("speeches list");
 
     private final String name;
 
