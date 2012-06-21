@@ -1,17 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen 
-    xmlns:android="http://schemas.android.com/apk/res/android" >
-    <CheckBoxPreference android:title="@string/silentMode" android:key="silentMode" android:summaryOff="@string/silentModeOffSummary" android:summaryOn="@string/silentModeOnSummary" android:defaultValue="false"/>
-    <CheckBoxPreference android:title="@string/vibrateMode" android:key="vibrateMode" android:summaryOn="@string/vibrateModeOnSummary" android:summaryOff="@string/vibrateModeOffSummary"/>
-    
-    <com.michaelnovakjr.numberpicker.NumberPickerPreference
-            android:key="firstOvertimeBell"
-            android:title="@string/firstOvertimeBellTitle"
-            android:summary="@string/firstOvertimeBellSummary" />
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:picker="http://schemas.android.com/apk/res/com.michaelnovakjr.sample.numberpicker" >
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="silentMode"
+        android:summaryOff="@string/PreferenceSilentModeOffSummary"
+        android:summaryOn="@string/PreferenceSilentModeOnSummary"
+        android:title="@string/PreferenceSilentModeTitle" />
+    <CheckBoxPreference
+        android:key="vibrateMode"
+        android:summaryOff="@string/PreferenceVibrateModeOffSummary"
+        android:summaryOn="@string/PreferenceVibrateModeOnSummary"
+        android:title="@string/PreferenceVibrateMode" />
 
     <com.michaelnovakjr.numberpicker.NumberPickerPreference
+        android:key="firstOvertimeBell"
+        android:summary="@string/PreferenceFirstOvertimeBellSummary"
+        android:title="@string/PreferenceFirstOvertimeBellTitle"
+        picker: />
+    <com.michaelnovakjr.numberpicker.NumberPickerPreference
         android:key="overtimeBellPeriod"
-        android:title="@string/overtimeBellPeriodTitle"
-        android:summary="@string/overtimeBellPeriodSummary" />
-    
+        android:summary="@string/PreferenceOvertimeBellPeriodSummary"
+        android:title="@string/PreferenceOvertimeBellPeriodTitle" />
+
 </PreferenceScreen>

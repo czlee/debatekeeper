@@ -14,14 +14,16 @@
     <string name="ResetTimerButtonText">Reset</string>
     <string name="NextSpeakerButtonText">Next speaker</string>
     <string name="NullButtonText">&lt;None></string>
-
+    <string name="PlayBellButtonText">Bell</string>
+    
     <!-- Notices -->
     <string name="NotificationTitle">Debating Timer</string>
     <string name="NotificationTickerText">Debating Timer is running</string>
     <string name="NextBellText">The next bell is at %1$s</string>
+    <string name="NoMoreBellsText">There are no more bells in this speech</string>
     <string name="SpeechLengthText">The length of this speech is %1$s</string>
     <string name="ResetDebateToastText">All speeches in debate reset</string>
-
+    
     <!-- Menu -->
     <string name="ResetDebateMenuItem">Reset debate</string>
     <string name="SettingsMenuItem">Settings</string>

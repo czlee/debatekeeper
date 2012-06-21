@@ -51,12 +51,6 @@ public class DebatingActivity extends Activity {
 	private TextView mNextTimeText;
 	private TextView mFinalTimeText;
 
-	// The buttons are allocated as follows:
-	// When at startOfSpeaker: [Start] [Next Speaker]
-	// When running:           [Stop]
-	// When stopped by user:   [Resume] [Restart] [Next Speaker]
-	// When stopped by alarm:  [Resume]
-	// The [Bell] button always is on the right of any of the above three buttons.
 	private Button mLeftControlButton;
 	private Button mCentreControlButton;
 	private Button mRightControlButton;
@@ -73,20 +67,20 @@ public class DebatingActivity extends Activity {
     private static final int    CHOOSE_STYLE_REQUEST = 0;
     private static final int    DIALOG_XML_FILE_PROBLEM = 0;
 
-    private final BroadcastReceiver mGuiUpdateBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            updateGui();
-        }
-    };
-
     private DebatingTimerService.DebatingTimerServiceBinder mBinder;
-
+    private final BroadcastReceiver mGuiUpdateBroadcastReceiver = new GuiUpdateBroadcastReceiver();
     private final ServiceConnection mConnection = new DebatingTimerServiceConnection();
 
     //******************************************************************************************
     // Private classes
     //******************************************************************************************
+
+    private final class GuiUpdateBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateGui();
+        }
+    }
 
     /**
      * Defines call-backs for service binding, passed to bindService()
@@ -426,7 +420,7 @@ public class DebatingActivity extends Activity {
                     secsToText(nextBellTime)
                 ));
             } else {
-                mNextTimeText.setText(this.getString(R.string.noMoreBells));
+                mNextTimeText.setText(this.getString(R.string.NoMoreBellsText));
             }
             mFinalTimeText.setText(String.format(
                 this.getString(R.string.SpeechLengthText),
@@ -445,15 +439,19 @@ public class DebatingActivity extends Activity {
         }
     }
 
+    /**
+     * Gets the preferences from the shared preferences file and applies them.
+     * @return true if applying preferences succeeded, false otherwise
+     */
     private boolean applyPreferences() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (mDebateManager != null) {
             boolean silentMode, vibrateMode;
             int firstOvertimeBell, overtimeBellPeriod;
             try {
-                silentMode = prefs.getBoolean("silentMode", false);
-                vibrateMode = prefs.getBoolean("vibrateMode", false);
-                firstOvertimeBell = prefs.getInt("firstOvertimeBell", 0);
+                silentMode         = prefs.getBoolean("silentMode", false);
+                vibrateMode        = prefs.getBoolean("vibrateMode", false);
+                firstOvertimeBell  = prefs.getInt("firstOvertimeBell", 0);
                 overtimeBellPeriod = prefs.getInt("overtimeBellPeriod", 0);
             } catch (ClassCastException e) {
                 Log.e(this.getClass().getSimpleName(), "applyPreferences: caught ClassCastException!");
@@ -469,7 +467,15 @@ public class DebatingActivity extends Activity {
         else return false;
     }
 
-    // Updates the buttons according to the current status of the debate
+    /**
+     *  Updates the buttons according to the current status of the debate
+     *  The buttons are allocated as follows:
+     *  When at startOfSpeaker: [Start] [Next Speaker]
+     *  When running:           [Stop]
+     *  When stopped by user:   [Resume] [Restart] [Next Speaker]
+     *  When stopped by alarm:  [Resume]
+     *  The [Bell] button always is on the right of any of the above three buttons.
+     */
     private void updateButtons() {
         // If it's the last speaker, don't show a "next speaker" button.
         // Show a "restart debate" button instead.

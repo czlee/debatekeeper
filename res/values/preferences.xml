@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="silentMode">Silent mode</string>
-    <string name="silentModeOnSummary">Bell will not ring (this doesn\'t affect other sounds from your phone)</string>
-    <string name="silentModeOffSummary">Bell will ring</string>
-    <string name="playBell">Bell</string>
-    <string name="prevSpeaker">Previous Speaker</string>
-    <string name="noMoreBells">There are no more bells in this speech</string>
-    <string name="firstOvertimeBellTitle">First overtime bell</string>
-    <string name="vibrateModeOnSummary">Vibrate at bell times</string>
-    <string name="vibrateModeOffSummary">Don\'t vibrate</string>
-    <string name="vibrateMode">Vibrator</string>
-    <string name="firstOvertimeBellSummary">Ring the first overtime bell after %s seconds</string>
-    <string name="overtimeBellPeriodTitle">Overtime bell period</string>
-    <string name="overtimeBellPeriodSummary">Period of overtime bell</string>
+    <string name="PreferenceSilentModeTitle">Silent mode</string>
+    <string name="PreferenceSilentModeOnSummary">Bell will not ring (this doesn\'t affect other sounds from your phone)</string>
+    <string name="PreferenceSilentModeOffSummary">Bell will ring</string>
+    <string name="PreferenceVibrateModeOnSummary">Vibrate at bell times</string>
+    <string name="PreferenceVibrateModeOffSummary">Don\'t vibrate</string>
+    <string name="PreferenceVibrateMode">Vibrator</string>
+    <string name="PreferenceFirstOvertimeBellTitle">First overtime bell</string>
+    <string name="PreferenceFirstOvertimeBellSummary">Ring the first overtime bell after %s seconds…</string>
+    <string name="PreferenceOvertimeBellPeriodTitle">Overtime bell period</string>
+    <string name="PreferenceOvertimeBellPeriodSummary">…and then every %s seconds after that</string>
 </resources>
