@@ -15,6 +15,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -447,16 +448,21 @@ public class DebatingActivity extends Activity {
     private boolean applyPreferences() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (mDebateManager != null) {
+            boolean silentMode, vibrateMode;
+            int firstOvertimeBell, overtimeBellPeriod;
             try {
-                mBinder.getAlertManager().setSilentMode(prefs.getBoolean("silentMode", false));
-                mBinder.getAlertManager().setVibrateMode(prefs.getBoolean("vibrateMode", false));
-                mDebateManager.setOvertimeBells(
-                        prefs.getInt("firstOvertimeBell", 0),
-                        prefs.getInt("overtimeBellPeriod", 0));
+                silentMode = prefs.getBoolean("silentMode", false);
+                vibrateMode = prefs.getBoolean("vibrateMode", false);
+                firstOvertimeBell = prefs.getInt("firstOvertimeBell", 0);
+                overtimeBellPeriod = prefs.getInt("overtimeBellPeriod", 0);
             } catch (ClassCastException e) {
                 Log.e(this.getClass().getSimpleName(), "applyPreferences: caught ClassCastException!");
                 return false;
             }
+            mBinder.getAlertManager().setSilentMode(silentMode);
+            mBinder.getAlertManager().setVibrateMode(vibrateMode);
+            mDebateManager.setOvertimeBells(firstOvertimeBell, overtimeBellPeriod);
+            setVolumeControlStream((silentMode) ? AudioManager.STREAM_RING : AudioManager.STREAM_MUSIC);
             Log.v(this.getClass().getSimpleName(), "applyPreferences: successfully applied");
             return true;
         }
