@@ -12,6 +12,6 @@
     <include
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        layout="@layout/view_format" />
+        layout="@layout/view_format_short" />
 
 </LinearLayout>

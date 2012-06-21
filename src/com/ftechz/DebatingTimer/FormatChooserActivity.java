@@ -16,8 +16,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +25,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -44,12 +45,12 @@ public class FormatChooserActivity extends Activity {
     private String   mCurrentStyleName = null;
 
     private final ArrayList<DebateFormatListEntry> mStylesList = new ArrayList<DebateFormatListEntry>();
-    private boolean mMoreDetailsEnabled;
 
     private String DEBATING_TIMER_URI;
-    private static final String PREFERENCE_MORE_DETAILS_ENABLED = "mde";
 
     private static final int DIALOG_IO_ERROR = 0;
+    private static final int DIALOG_MORE_DETAILS = 1;
+    private static final String BUNDLE_FILE_NAME = "fn";
     public  static final int RESULT_ERROR = RESULT_FIRST_USER;
 
     public static final String EXTRA_XML_FILE_NAME = "xmlfn";
@@ -106,13 +107,32 @@ public class FormatChooserActivity extends Activity {
             return mStylesListView.getCheckedItemPosition();
         }
 
-        public boolean isMoreDetailsEnabled() {
-            return mMoreDetailsEnabled;
+        public void populateBasicInfo(View view, String filename) {
+            FormatChooserActivity.this.populateBasicInfo(view, filename);
         }
 
-        public void toggleMoreDetailsEnabled() {
-            mMoreDetailsEnabled = !mMoreDetailsEnabled;
+        public DetailsButtonOnClickListener getDetailsButtonOnClickListener(String filename) {
+            return new DetailsButtonOnClickListener(filename);
         }
+
+    }
+
+
+    public class DetailsButtonOnClickListener implements OnClickListener {
+
+        private final Bundle bundleForDialog;
+
+        public DetailsButtonOnClickListener(String filename) {
+            bundleForDialog = new Bundle();
+            bundleForDialog.putString(BUNDLE_FILE_NAME, filename);
+        }
+
+        @Override
+        public void onClick(View v) {
+            removeDialog(DIALOG_MORE_DETAILS);
+            showDialog(DIALOG_MORE_DETAILS, bundleForDialog);
+        }
+
     }
 
     // ******************************************************************************************
@@ -234,8 +254,6 @@ public class FormatChooserActivity extends Activity {
         // Sort alphabetically by style name
         adapter.sort(new StyleEntryComparatorByStyleName());
 
-        adapter.setDropDownViewResource(R.layout.view_format);
-
         mStylesListView.setAdapter(adapter);
         mStylesListView.setItemChecked(getIncomingSelection(), true);
         mStylesListView.smoothScrollToPosition(getIncomingSelection());
@@ -245,29 +263,16 @@ public class FormatChooserActivity extends Activity {
     // Protected methods
     //******************************************************************************************
     @Override
-    protected Dialog onCreateDialog(int id) {
+    protected Dialog onCreateDialog(int id, Bundle bundle) {
         switch (id) {
         case DIALOG_IO_ERROR:
             return getIOErrorAlert();
+        case DIALOG_MORE_DETAILS:
+            String filename = bundle.getString(BUNDLE_FILE_NAME);
+            return getMoreDetailsDialog(filename);
         default:
             return super.onCreateDialog(id);
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
-        mMoreDetailsEnabled = prefs.getBoolean(PREFERENCE_MORE_DETAILS_ENABLED, false);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
-        Editor editor = prefs.edit();
-        editor.putBoolean(PREFERENCE_MORE_DETAILS_ENABLED, mMoreDetailsEnabled);
-        editor.commit();
     }
 
     //******************************************************************************************
@@ -364,4 +369,108 @@ public class FormatChooserActivity extends Activity {
                         });
         return builder.create();
     }
-}
+
+    private AlertDialog getMoreDetailsDialog(String filename) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = View.inflate(this, R.layout.view_format_full, null);
+
+        DebateFormatInfo dfi = getDebateFormatInfo(filename);
+
+        if (dfi != null) {
+            populateBasicInfo(view, dfi);
+            populateTwoColumnTable(view, R.id.ViewFormatTableSpeechTypes, R.layout.speech_type_row,
+                    dfi.getSpeechFormatDescriptions());
+            populateTwoColumnTable(view, R.id.ViewFormatTableSpeeches, R.layout.speech_row,
+                    dfi.getSpeeches());
+        }
+
+        builder.setTitle(dfi.getName())
+               .setCancelable(true);
+
+        AlertDialog dialog = builder.create();
+        dialog.setView(view, 0, 10, 0, 15);
+        return dialog;
+
+    }
+
+    private DebateFormatInfo getDebateFormatInfo(String filename) {
+        InputStream is;
+        try {
+            is = this.getAssets().open(filename);
+        } catch (IOException e) {
+            Log.e(this.getClass().getSimpleName(), String.format("Could not open file %s", filename));
+            e.printStackTrace();
+            return null;
+        }
+        DebateFormatInfoExtractor dfie = new DebateFormatInfoExtractor(this);
+        return dfie.getDebateFormatInfo(is);
+    }
+
+    /**
+     * @param view the <code>View</code> to be populated
+     * @param filename the filename of the XML file from which data is to be taken
+     */
+    private void populateBasicInfo(View view, String filename) {
+        DebateFormatInfo dfi = getDebateFormatInfo(filename);
+        if (dfi != null)
+            populateBasicInfo(view, dfi);
+    }
+
+    /**
+     * @param view the <code>View</code> to be populated
+     * @param is an <code>InputStream> for the XML file from which data is to be taken
+     */
+    private void populateBasicInfo(View view, DebateFormatInfo dfi) {
+        ((TextView) view.findViewById(R.id.ViewFormatTableCellRegionValue)).setText(
+                concatenate(dfi.getRegions()));
+        ((TextView) view.findViewById(R.id.ViewFormatTableCellLevelValue)).setText(
+                concatenate(dfi.getLevels()));
+        ((TextView) view.findViewById(R.id.ViewFormatTableCellUsedAtValue)).setText(
+                concatenate(dfi.getUsedAts()));
+        ((TextView) view.findViewById(R.id.ViewFormatTableCellDescValue)).setText(
+                dfi.getDescription());
+    }
+
+    /**
+     * Populates a table from an ArrayList of String arrays.
+     * @param view
+     * @param tableResid A resource ID pointing to a <code>TableLayout</code>
+     * @param rowResid A resource ID pointing to a <code>TableRow</code> <b>layout file</b>.
+     * (Not the <code>TableRow</code> itself.)
+     * TableRow must have at least two TextView elements, which must have IDs "text1" and "text2".
+     * @param list the list of String arrays.  Each array must have two elements.
+     */
+    private void populateTwoColumnTable(View view, int tableResid, int rowResid, ArrayList<String[]> list) {
+        TableLayout table = (TableLayout) view.findViewById(tableResid);
+
+        Iterator<String[]> iterator = list.iterator();
+
+        while (iterator.hasNext()) {
+            String[] rowText = iterator.next();
+            TableRow row = (TableRow) View.inflate(this, rowResid, null);
+            ((TextView) row.findViewById(R.id.text1)).setText(rowText[0].concat(" "));
+            ((TextView) row.findViewById(R.id.text2)).setText(rowText[1].concat(" "));
+            table.addView(row);
+        }
+
+    }
+
+    /**
+     * Concatenates a list of <code>String</code>s with line breaks delimiting.
+     * @param list An <code>ArrayList</code> of <code>String</code>s.
+     * @return the result, a single <code>String</code>
+     */
+    private static String concatenate(ArrayList<String> list) {
+        String str = new String();
+        Iterator<String> iterator = list.iterator();
+
+        // Start with the first item (if it exists)
+        if (iterator.hasNext()) str = iterator.next();
+
+        // Add the second and further items, putting a line break in between.
+        while (iterator.hasNext()) {
+            str = str.concat("\n");
+            str = str.concat(iterator.next());
+        }
+        return str;
+    }}

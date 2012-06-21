@@ -1,21 +1,13 @@
 package com.ftechz.DebatingTimer;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import android.content.Context;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckedTextView;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
 
 import com.ftechz.DebatingTimer.FormatChooserActivity.DebateFormatListEntry;
 import com.ftechz.DebatingTimer.FormatChooserActivity.GuiInformationInformer;
@@ -48,22 +40,6 @@ public class DebateFormatEntryArrayAdapter extends
 
     private final GuiInformationInformer mInformer;
 
-    private class DetailsButtonOnClickListener implements OnClickListener {
-
-        private final View formatItemSelectedView;
-
-        public DetailsButtonOnClickListener(View formatItemSelectedView) {
-            this.formatItemSelectedView = formatItemSelectedView;
-        }
-
-        @Override
-        public void onClick(View v) {
-            mInformer.toggleMoreDetailsEnabled();
-            updateMoreDetailsVisibility(formatItemSelectedView);
-        }
-
-    }
-
     public DebateFormatEntryArrayAdapter(Context context,
             List<DebateFormatListEntry> objects, GuiInformationInformer informer) {
         super(context, android.R.layout.simple_list_item_single_choice, objects);
@@ -90,37 +66,12 @@ public class DebateFormatEntryArrayAdapter extends
         if (selected) {
             view = View.inflate(getContext(), R.layout.format_item_selected, null);
 
-            // TODO add a loading splash screen
-            InputStream is;
+            String filename = this.getItem(position).getFilename();
+            mInformer.populateBasicInfo(view, filename);
 
-            try {
-                is = getContext().getAssets().open(this.getItem(position).getFilename());
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                return view;
-            }
-
-            DebateFormatInfoExtractor dfie = new DebateFormatInfoExtractor(getContext());
-            DebateFormatInfo dfi = dfie.getDebateFormatInfo(is);
-
-            ((TextView) view.findViewById(R.id.ViewFormatTableCellRegionValue)).setText(
-                    concatenate(dfi.getRegions()));
-            ((TextView) view.findViewById(R.id.ViewFormatTableCellLevelValue)).setText(
-                    concatenate(dfi.getLevels()));
-            ((TextView) view.findViewById(R.id.ViewFormatTableCellUsedAtValue)).setText(
-                    concatenate(dfi.getUsedAts()));
-            ((TextView) view.findViewById(R.id.ViewFormatTableCellDescValue)).setText(
-                    dfi.getDescription());
-
-            populateTwoColumnTable(view, R.id.ViewFormatTableSpeechTypes, R.layout.speech_type_row,
-                    dfi.getSpeechFormatDescriptions());
-            populateTwoColumnTable(view, R.id.ViewFormatTableSpeeches, R.layout.speech_row,
-                    dfi.getSpeeches());
-
-            updateMoreDetailsVisibility(view);
-            ((Button) view.findViewById(R.id.ViewFormatShowDetailsButton)).setOnClickListener(
-                    new DetailsButtonOnClickListener(view));
+            Button showDetailsButton = (Button) view.findViewById(R.id.ViewFormatShowDetailsButton);
+            showDetailsButton.setVisibility(View.VISIBLE);
+            showDetailsButton.setOnClickListener(mInformer.getDetailsButtonOnClickListener(filename));
 
         } else {
             view = View.inflate(getContext(),
@@ -134,61 +85,5 @@ public class DebateFormatEntryArrayAdapter extends
 
         return view;
     }
-
-
-    /**
-     * Concatenates a list of <code>String</code>s with line breaks delimiting.
-     * @param list An <code>ArrayList</code> of <code>String</code>s.
-     * @return the result, a single <code>String</code>
-     */
-    private static String concatenate(ArrayList<String> list) {
-        String str = new String();
-        Iterator<String> iterator = list.iterator();
-
-        // Start with the first item (if it exists)
-        if (iterator.hasNext()) str = iterator.next();
-
-        // Add the second and further items, putting a line break in between.
-        while (iterator.hasNext()) {
-            str = str.concat("\n");
-            str = str.concat(iterator.next());
-        }
-        return str;
-    }
-
-    /**
-     * Populates a table from an ArrayList of String arrays.
-     * @param view
-     * @param tableResid A resource ID pointing to a <code>TableLayout</code>
-     * @param rowResid A resource ID pointing to a <code>TableRow</code> <b>layout file</b>.
-     * (Not the <code>TableRow</code> itself.)
-     * TableRow must have at least two TextView elements, which must have IDs "text1" and "text2".
-     * @param list the list of String arrays.  Each array must have two elements.
-     */
-    private void populateTwoColumnTable(View view, int tableResid, int rowResid, ArrayList<String[]> list) {
-        TableLayout table = (TableLayout) view.findViewById(tableResid);
-
-        Iterator<String[]> iterator = list.iterator();
-
-        while (iterator.hasNext()) {
-            String[] rowText = iterator.next();
-            TableRow row = (TableRow) View.inflate(getContext(), rowResid, null);
-            ((TextView) row.findViewById(R.id.text1)).setText(rowText[0].concat(" "));
-            ((TextView) row.findViewById(R.id.text2)).setText(rowText[1].concat(" "));
-            table.addView(row);
-        }
-
-    }
-
-    private void updateMoreDetailsVisibility(View formatItemSelectedView) {
-        boolean moreDetailsEnabled = mInformer.isMoreDetailsEnabled();
-        int visibility = (moreDetailsEnabled) ? View.VISIBLE : View.GONE;
-        int buttonText = (moreDetailsEnabled) ? R.string.ViewFormatHideDetailsButtonText : R.string.ViewFormatShowDetailsButtonText;
-        ((Button) formatItemSelectedView.findViewById(R.id.ViewFormatShowDetailsButton)).setText(buttonText);
-        formatItemSelectedView.findViewById(R.id.ViewFormatSpeechesLabelText).setVisibility(visibility);
-        formatItemSelectedView.findViewById(R.id.ViewFormatTableSpeechTypes).setVisibility(visibility);
-        formatItemSelectedView.findViewById(R.id.ViewFormatTableSpeeches).setVisibility(visibility);
-    }
-
 
 }

@@ -31,6 +31,7 @@ public class DebateFormatInfo {
 
     private final Context mContext;
 
+    private       String                            name          = new String();
     private final ArrayList<String>                 regions       = new ArrayList<String>();
     private final ArrayList<String>                 levels        = new ArrayList<String>();
     private final ArrayList<String>                 usedAts       = new ArrayList<String>();
@@ -114,6 +115,14 @@ public class DebateFormatInfo {
     // ******************************************************************************************
     // Public methods
     // ******************************************************************************************
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getDescription() {
         return description;

@@ -126,6 +126,9 @@ public class DebateFormatInfoExtractor {
              * <debateformat name="something" schemaversion="1.0">
              */
             if (areEqual(localName, R.string.XmlElemNameRoot)) {
+                String name = getValue(atts, R.string.XmlAttrNameRootName);
+                if (name != null)
+                    mDfi.setName(name);
                 mIsInRootContext = true;
                 return;
             }
