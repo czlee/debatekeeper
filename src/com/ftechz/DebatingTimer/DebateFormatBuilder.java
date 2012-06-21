@@ -200,6 +200,13 @@ public class DebateFormatBuilder {
         }
 
         /**
+         * @return the length of this speech
+         */
+        public long getSpeechLength() {
+            return mSpeechLength;
+        }
+
+        /**
          * Sets the count direction of this speech.
          * @param countDirection the new count direction
          */
@@ -465,6 +472,25 @@ public class DebateFormatBuilder {
         assertFormatsAreAddable();
         SpeechFormatBuilder sfb = getSpeechFormatBuilder(speechRef);
         addBellInfo(sfb, bi, periodInfoRef);
+    }
+
+    /**
+     * Adds a new {@link BellInfo} to a speech format in this builder, but replaces the bell
+     * time with the finish time of that speech format.
+     * @param speechRef the short reference for the speech
+     * @param bi the <code>BellInfo</code> object. The bell time of this bell doesn't matter
+     * because it will be overwritten with the finish time of this speech.
+     * @param periodInfoRef the short reference for the next period associated with the bell, can
+     * be <code>null</code> to leave the existing next period in the 'bi' unchanged
+     * @throws DebateFormatBuilderException if there is no speech with reference 'speechRef' or no
+     * period with reference 'periodInfoRef' or if there is already a bell at the same time
+     * @throws IllegalStateException if the "adding speeches" state has already started
+     */
+    public void addBellInfoToSpeechFormatAtFinish(String speechRef, BellInfo bi, String periodInfoRef)
+            throws DebateFormatBuilderException {
+        SpeechFormatBuilder sfb = getSpeechFormatBuilder(speechRef);
+        bi.setBellTime(sfb.getSpeechLength());
+        addBellInfoToSpeechFormat(speechRef, bi, periodInfoRef);
     }
 
     /**

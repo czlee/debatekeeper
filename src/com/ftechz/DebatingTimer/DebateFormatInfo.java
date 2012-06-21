@@ -2,8 +2,8 @@ package com.ftechz.DebatingTimer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map.Entry;
 
 import android.content.Context;
 
@@ -31,13 +31,13 @@ public class DebateFormatInfo {
 
     private final Context mContext;
 
-    private final ArrayList<String>               regions     = new ArrayList<String>();
-    private final ArrayList<String>               levels      = new ArrayList<String>();
-    private final ArrayList<String>               usedAts     = new ArrayList<String>();
-    private final HashMap<String, Resource>       resources   = new HashMap<String, Resource>();
-    private final HashMap<String, SpeechTypeInfo> speechTypes = new HashMap<String, SpeechTypeInfo>();
-    private final HashMap<String, String>         speeches    = new HashMap<String, String>();
-    private       String                          description = new String("-");
+    private final ArrayList<String>                 regions       = new ArrayList<String>();
+    private final ArrayList<String>                 levels        = new ArrayList<String>();
+    private final ArrayList<String>                 usedAts       = new ArrayList<String>();
+    private final HashMap<String, Resource>         resources     = new HashMap<String, Resource>();
+    private final HashMap<String, SpeechFormatInfo> speechFormats = new HashMap<String, SpeechFormatInfo>();
+    private final ArrayList<SpeechInfo>             speeches      = new ArrayList<SpeechInfo>();
+    private       String                            description   = new String("-");
 
     public DebateFormatInfo(Context context) {
         super();
@@ -47,10 +47,10 @@ public class DebateFormatInfo {
     // ******************************************************************************************
     // Private classes
     // ******************************************************************************************
-    private class BellInfo {
+    private class MiniBellInfo {
         private final long time;
         private final boolean pause;
-        public BellInfo(long time, boolean pause) {
+        public MiniBellInfo(long time, boolean pause) {
             super();
             this.time = time;
             this.pause = pause;
@@ -64,17 +64,17 @@ public class DebateFormatInfo {
     }
 
     private class Resource {
-        private ArrayList<BellInfo> bells;
+        private final ArrayList<MiniBellInfo> bells = new ArrayList<MiniBellInfo>();
 
-        public ArrayList<BellInfo> getBells() {
+        public ArrayList<MiniBellInfo> getBells() {
             return bells;
         }
         public void addBell(long time, boolean pause) {
-            this.bells.add(new BellInfo(time, pause));
+            this.bells.add(new MiniBellInfo(time, pause));
         }
     }
 
-    private class SpeechTypeInfo extends Resource {
+    private class SpeechFormatInfo extends Resource {
         private long length;
 
         public long getLength() {
@@ -83,6 +83,32 @@ public class DebateFormatInfo {
         public void setLength(long length) {
             this.length = length;
         }
+
+        public void addResource(Resource res) {
+            Iterator<MiniBellInfo> biIterator = res.getBells().iterator();
+            MiniBellInfo bi;
+            while (biIterator.hasNext()) {
+                bi = biIterator.next();
+                this.addBell(bi.getTime(), bi.isPause());
+            }
+        }
+    }
+
+    public class SpeechInfo {
+        private final String name;
+        private final String format;
+        public SpeechInfo(String name, String format) {
+            super();
+            this.name = name;
+            this.format = format;
+        }
+        public String getName() {
+            return name;
+        }
+        public String getFormat() {
+            return format;
+        }
+
     }
 
     // ******************************************************************************************
@@ -125,36 +151,84 @@ public class DebateFormatInfo {
         resources.put(ref, new Resource());
     }
 
-    public void addSpeechType(String ref, long length) {
-        speechTypes.put(ref, new SpeechTypeInfo());
-        speechTypes.get(ref).setLength(length);
+    public void addSpeechFormat(String ref, long length) {
+        speechFormats.put(ref, new SpeechFormatInfo());
+        speechFormats.get(ref).setLength(length);
     }
 
     public void addBellToResource(long time, boolean pause, String resourceRef) {
-        speechTypes.get(resourceRef).addBell(time, pause);
+        resources.get(resourceRef).addBell(time, pause);
     }
 
-    public void addBellToSpeechType(long time, boolean pause, String speechTypeRef) {
-        speechTypes.get(speechTypeRef).addBell(time, pause);
+    public void addBellToSpeechFormat(long time, boolean pause, String speechRef) {
+        speechFormats.get(speechRef).addBell(time, pause);
     }
 
-    public HashMap<String, String> getSpeechTypeDescriptions() {
-        HashMap<String, String> descs = new HashMap<String, String>();
-        Iterator<Entry<String, SpeechTypeInfo>> iterator = speechTypes.entrySet().iterator();
+    public void addFinishBellToSpeechFormat(boolean pause, String speechRef) {
+        SpeechFormatInfo sfi = speechFormats.get(speechRef);
+        long finishTime = sfi.getLength();
+        addBellToSpeechFormat(finishTime, pause, speechRef);
+    }
+
+    public void addSpeech(String name, String formatRef) {
+        speeches.add(new SpeechInfo(name, formatRef));
+    }
+
+    public void includeResource(String speechRef, String resourceRef) {
+        Resource res = resources.get(resourceRef);
+        speechFormats.get(speechRef).addResource(res);
+    }
+
+    public boolean hasResource(String ref) {
+        return resources.containsKey(ref);
+    }
+
+    public boolean hasSpeechFormat(String ref) {
+        return speechFormats.containsKey(ref);
+    }
+
+    /**
+     * @return An <code>ArrayList</code> of <code>String</code> arrays. Each
+     *         <code>String</code> array has two elements. The first element is
+     *         the speech type reference. The second element is a short
+     *         description of the speech type. The <code>ArrayList</code> is
+     *         sorted in the order the speech types appear in the debate. If a
+     *         speech type isn't used, it isn't part of the returned
+     *         <code>ArrayList</code>.
+     */
+    public ArrayList<String[]> getSpeechFormatDescriptions() {
+        ArrayList<String[]> result = new ArrayList<String[]>();
+        Iterator<SpeechInfo> iterator = speeches.iterator();
+        HashSet<String> seenFormatRefs = new HashSet<String>();
 
         while (iterator.hasNext()) {
-            Entry<String, SpeechTypeInfo> entry = iterator.next();
-            SpeechTypeInfo sti = entry.getValue();
-            String bellsList = concatenate(sti.getBells());
-            String typeDesc = mContext.getString(R.string.SpeechTypeDescription,
-                    secsToText(sti.getLength()), bellsList);
-            descs.put(entry.getKey(), typeDesc);
+            String formatRef = iterator.next().getFormat();
+            if (!seenFormatRefs.contains(formatRef)) {
+                seenFormatRefs.add(formatRef);
+                SpeechFormatInfo sti = speechFormats.get(formatRef);
+                String bellsList = concatenate(sti.getBells());
+                String typeDesc = mContext.getString(R.string.SpeechTypeDescription,
+                        secsToText(sti.getLength()), bellsList);
+                String[] pair = {formatRef, typeDesc};
+                result.add(pair);
+            }
         }
-        return descs;
+
+        return result;
     }
 
-    public HashMap<String, String> getSpeeches() {
-        return speeches;
+    /**
+     * @return
+     */
+    public ArrayList<String[]> getSpeeches() {
+        ArrayList<String[]> result = new ArrayList<String[]>();
+        Iterator<SpeechInfo> iterator = speeches.iterator();
+        while (iterator.hasNext()) {
+            SpeechInfo speech = iterator.next();
+            String[] pair = {speech.getName(), speech.getFormat()};
+            result.add(pair);
+        }
+        return result;
     }
 
     private static String secsToText(long time) {
@@ -165,10 +239,10 @@ public class DebateFormatInfo {
         }
     }
 
-    private String concatenate(ArrayList<BellInfo> list) {
+    private String concatenate(ArrayList<MiniBellInfo> list) {
         String str = new String();
-        Iterator<BellInfo> iterator = list.iterator();
-        BellInfo bi;
+        Iterator<MiniBellInfo> iterator = list.iterator();
+        MiniBellInfo bi;
 
         // Start with the first item (if it exists)
         if (iterator.hasNext()) {

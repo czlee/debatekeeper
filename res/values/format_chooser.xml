@@ -13,14 +13,17 @@
 	<string name="ViewFormatDescLabel">Description</string>
 	<string name="ViewFormatSpeechesLabel">Speeches</string>
 	
+	<string name="ViewFormatShowDetailsButtonText">More</string>
+	<string name="ViewFormatHideDetailsButtonText">More</string>
+		
 	<string name="ToastNoSelection">No style selected</string>
 	<string name="ToastSelection">Style changed to %1$s</string>
 	<string name="ToastFormatUnchanged">Style not changed</string>
 	
 	<string name="SpeechTypeDescription">"%1$s long, bells at %2$s"</string>
 	<string name="SpeechTypePauseIndicator">*</string>
-	<string name="ViewFormatSpeechTypeDescription">"%1$s: %2$s"</string>
-	<string name="ViewFormatSpeechDescription">"%1$s (%2$s)"</string>
+	<string name="ViewFormatSpeechTypeDescription">"<i>%1$s</i>: %2$s"</string>
+	<string name="ViewFormatSpeechDescription">"%1$s (<i>%2$s</i>)"</string>
 		
 	<style name="ViewFormatTableLabelStyle">
 	    <item name="android:paddingLeft">7dip</item>

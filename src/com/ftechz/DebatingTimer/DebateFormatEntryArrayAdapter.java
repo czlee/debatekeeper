@@ -3,10 +3,8 @@ package com.ftechz.DebatingTimer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 
 import android.content.Context;
 import android.util.Log;
@@ -99,7 +97,7 @@ public class DebateFormatEntryArrayAdapter extends
             ((TextView) view.findViewById(R.id.ViewFormatTableCellDescValue)).setText(
                     dfi.getDescription());
             ((TextView) view.findViewById(R.id.ViewFormatTableCellSpeechTypesValue)).setText(
-                    concatenate(dfi.getSpeechTypeDescriptions(), R.string.ViewFormatSpeechTypeDescription));
+                    concatenate(dfi.getSpeechFormatDescriptions(), R.string.ViewFormatSpeechTypeDescription));
             ((TextView) view.findViewById(R.id.ViewFormatTableCellSpeechesValue)).setText(
                     concatenate(dfi.getSpeeches(), R.string.ViewFormatSpeechDescription));
 
@@ -118,6 +116,11 @@ public class DebateFormatEntryArrayAdapter extends
     }
 
 
+    /**
+     * Concatenates a list of <code>String</code>s with line breaks delimiting.
+     * @param list An <code>ArrayList</code> of <code>String</code>s.
+     * @return the result, a single <code>String</code>
+     */
     private static String concatenate(ArrayList<String> list) {
         String str = new String();
         Iterator<String> iterator = list.iterator();
@@ -133,23 +136,33 @@ public class DebateFormatEntryArrayAdapter extends
         return str;
     }
 
-    private String concatenate(HashMap<String, String> list, int formatStringResid) {
+    /**
+     * Formats a list of <code>String</code> arrays using the format string indicated by
+     * <code>formatStringResid</code> and concentenates the result with line breaks delimiting.
+     * <b>Note:</b> It is the caller's responsibility to ensure that there are enough arguments
+     * in each <code>String[]</code> for the string at <code>formatStringResid</code>
+     * @param list An <code>ArrayList</code> of <code>String</code> arrays.
+     * @param formatStringResid the resource ID of a string to be used for formatting the
+     * string arrays
+     * @return the result, a single <code>String</code>
+     */
+    private String concatenate(ArrayList<String[]> list, int formatStringResid) {
         String formatString = getContext().getString(formatStringResid);
         String str = new String();
-        Iterator<Entry<String, String>> iterator = list.entrySet().iterator();
-        Entry<String, String> entry;
+        Iterator<String[]> iterator = list.iterator();
+        String[] entry;
 
         // Start with the first item (if it exists)
         if (iterator.hasNext()) {
             entry = iterator.next();
-            str = String.format(formatString, entry.getKey(), entry.getValue());
+            str = String.format(formatString, (Object[]) entry);
         }
 
         // Add the second and further items, putting a line break in between.
         while (iterator.hasNext()) {
             entry = iterator.next();
             str = str.concat("\n");
-            str = str.concat(String.format(formatString, entry.getKey(), entry.getValue()));
+            str = str.concat(String.format(formatString, (Object[]) entry));
         }
         return str;
     }

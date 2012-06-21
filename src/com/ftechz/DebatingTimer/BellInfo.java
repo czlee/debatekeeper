@@ -47,6 +47,10 @@ public class BellInfo {
         return mBellTime;
     }
 
+    public void setBellTime(long seconds) {
+        mBellTime = seconds;
+    }
+
     public PeriodInfo getNextPeriodInfo() {
         return mNextPeriodInfo;
     }

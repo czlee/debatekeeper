@@ -1,102 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    android:shrinkColumns="1">
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
 
-    <TableRow
-        android:id="@+id/ViewFormatTableRowRegion"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
 
-        <TextView
-            android:id="@+id/ViewFormatTableCellRegionLabel"
-            style="@style/ViewFormatTableLabelStyle"
-            android:text="@string/ViewFormatRegionLabel" />
-        <TextView
-            android:id="@+id/ViewFormatTableCellRegionValue"
-            style="@style/ViewFormatTableValueStyle"/>
+        <Button
+            android:id="@+id/ViewFormatShowDetailsButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/ViewFormatShowDetailsButtonText" />
 
-    </TableRow>
+        <TableLayout
+            android:id="@+id/ViewFormatTableRegionAndLevel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@id/ViewFormatShowDetailsButton"
+            android:shrinkColumns="1" >
 
-    <TableRow
-        android:id="@+id/ViewFormatTableRowLevel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+            <TableRow
+                android:id="@+id/ViewFormatTableRowRegion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
 
-        <TextView
-            android:id="@+id/ViewFormatTableCellLevelLabel"
-            style="@style/ViewFormatTableLabelStyle"
-            android:text="@string/ViewFormatLevelLabel" />
-        <TextView
-            android:id="@+id/ViewFormatTableCellLevelValue"
-            style="@style/ViewFormatTableValueStyle"/>
+                <TextView
+                    android:id="@+id/ViewFormatTableCellRegionLabel"
+                    style="@style/ViewFormatTableLabelStyle"
+                    android:text="@string/ViewFormatRegionLabel" />
 
-    </TableRow>
+                <TextView
+                    android:id="@+id/ViewFormatTableCellRegionValue"
+                    style="@style/ViewFormatTableValueStyle" />
+            </TableRow>
 
-    <TableRow
-        android:id="@+id/ViewFormatTableRowUsedAt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+            <TableRow
+                android:id="@+id/ViewFormatTableRowLevel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
 
-        <TextView
-            android:id="@+id/ViewFormatTableCellUsedAtLabel"
-            style="@style/ViewFormatTableLabelStyle"
-            android:text="@string/ViewFormatUsedAtLabel" />
-        <TextView
-            android:id="@+id/ViewFormatTableCellUsedAtValue"
-            style="@style/ViewFormatTableValueStyle"/>
+                <TextView
+                    android:id="@+id/ViewFormatTableCellLevelLabel"
+                    style="@style/ViewFormatTableLabelStyle"
+                    android:text="@string/ViewFormatLevelLabel" />
 
-    </TableRow>
+                <TextView
+                    android:id="@+id/ViewFormatTableCellLevelValue"
+                    style="@style/ViewFormatTableValueStyle" />
+            </TableRow>
+        </TableLayout>
+    </RelativeLayout>
 
-    <TableRow
-        android:id="@+id/ViewFormatTableRowDesc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+    <TableLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:shrinkColumns="1" >
 
-        <TextView
-            android:id="@+id/ViewFormatTableCellDescLabel"
-            style="@style/ViewFormatTableLabelStyle"
-            android:text="@string/ViewFormatDescLabel" />
-        <TextView
-            android:id="@+id/ViewFormatTableCellDescValue"
-            style="@style/ViewFormatTableValueStyle"/>
+        <TableRow
+            android:id="@+id/ViewFormatTableRowUsedAt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
 
-    </TableRow>    
-    
-    <TableRow
-        android:id="@+id/ViewFormatTableRowSpeechesLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
-        android:layout_marginTop="7dip">
+            <TextView
+                android:id="@+id/ViewFormatTableCellUsedAtLabel"
+                style="@style/ViewFormatTableLabelStyle"
+                android:text="@string/ViewFormatUsedAtLabel" />
 
-        <TextView
-            android:id="@+id/ViewFormatTableCellSpeechesLabel"
-            style="@style/ViewFormatTableLabelStyle"
-            android:text="@string/ViewFormatSpeechesLabel" />
+            <TextView
+                android:id="@+id/ViewFormatTableCellUsedAtValue"
+                style="@style/ViewFormatTableValueStyle" />
+        </TableRow>
 
-    </TableRow>  
-    
-    <TableRow
-        android:id="@+id/ViewFormatTableRowSpeechTypesValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        <TableRow
+            android:id="@+id/ViewFormatTableRowDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/ViewFormatTableCellDescLabel"
+                style="@style/ViewFormatTableLabelStyle"
+                android:text="@string/ViewFormatDescLabel" />
+
+            <TextView
+                android:id="@+id/ViewFormatTableCellDescValue"
+                style="@style/ViewFormatTableValueStyle" />
+        </TableRow>
+    </TableLayout>
 
     <TextView
-            android:id="@+id/ViewFormatTableCellSpeechTypesValue"
-            style="@style/ViewFormatTableValueStyle"
-            android:paddingLeft="25dip"/>
-      </TableRow>  
-    
-    <TableRow
-        android:id="@+id/ViewFormatTableRowSpeechesValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:id="@+id/ViewFormatTableCellSpeechesLabel"
+        style="@style/ViewFormatTableLabelStyle"
+        android:text="@string/ViewFormatSpeechesLabel" />
 
     <TextView
-            android:id="@+id/ViewFormatTableCellSpeechesValue"
-            style="@style/ViewFormatTableValueStyle"
-            android:paddingLeft="25dip"/>
-      </TableRow>  
-    
-</TableLayout>
+        android:id="@+id/ViewFormatTableCellSpeechTypesValue"
+        style="@style/ViewFormatTableValueStyle"
+        android:paddingLeft="25dip" />
+
+    <TextView
+        android:id="@+id/ViewFormatTableCellSpeechesValue"
+        style="@style/ViewFormatTableValueStyle"
+        android:paddingLeft="25dip" />
+
+</LinearLayout>

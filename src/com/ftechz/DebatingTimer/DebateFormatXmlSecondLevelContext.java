@@ -6,7 +6,7 @@ package com.ftechz.DebatingTimer;
  * @author Chuan-Zheng Lee
  * @since  2012-06-12
  */
-public enum DebateFormatXmlSecondLevelContextType {
+public enum DebateFormatXmlSecondLevelContext {
     NONE ("no context"),
     INFO ("info"),
     RESOURCE ("resource"),
@@ -15,7 +15,7 @@ public enum DebateFormatXmlSecondLevelContextType {
 
     private final String name;
 
-    private DebateFormatXmlSecondLevelContextType(String name){
+    private DebateFormatXmlSecondLevelContext(String name){
         this.name = name;
     }
 

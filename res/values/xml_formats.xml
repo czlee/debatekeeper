@@ -59,7 +59,6 @@
     <string name="XmlErrorSpeechFormatInsideContext">"The speech format '%1$s' was inside a %2$s"</string>
     <string name="XmlErrorBellNoTime">"A bell in %1$s did not specify a time."</string>
     <string name="XmlErrorBellInvalidTime">"Invalid time for bell in %1$s: '%2$s'"</string>
-    <string name="XmlErrorBellFinishTimeUnexpectedlyNotFound">"Unexpectedly, I couldn't find the finish time of the speech for a bell inside %1$s"</string>
     <string name="XmlErrorBellInvalidNumber">"Invalid number of bells in %1$s: '%2$s'"</string>
     <string name="XmlErrorBellInvalidSound">"Invalid bell sound in %1$s: '%2$s'"</string>
     <string name="XmlErrorBellInvalidPauseOnBell">"Invalid pauseonbell value in %1$s: %2$s"</string>
