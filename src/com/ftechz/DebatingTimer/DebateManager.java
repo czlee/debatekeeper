@@ -45,8 +45,9 @@ public class DebateManager {
 
     private int mCurrentSpeechIndex;
 
-    private final String BUNDLE_SUFFIX_INDEX  = ".csi";
-    private final String BUNDLE_SUFFIX_SPEECH = ".sm";
+    private static final String BUNDLE_SUFFIX_INDEX        = ".csi";
+    private static final String BUNDLE_SUFFIX_SPEECH       = ".sm";
+    private static final String BUNDLE_SUFFIX_SPEECH_TIMES = ".st";
 
     //******************************************************************************************
     // Public methods
@@ -209,6 +210,10 @@ public class DebateManager {
      */
     public void saveState(String key, Bundle bundle) {
         bundle.putInt(key + BUNDLE_SUFFIX_INDEX, mCurrentSpeechIndex);
+        long[] speechTimes = new long[mSpeechTimes.size()];
+        for (int i = 0; i < mSpeechTimes.size(); i++)
+            speechTimes[i] = mSpeechTimes.get(i);
+        bundle.putLongArray(key + BUNDLE_SUFFIX_SPEECH_TIMES, speechTimes);
         mSpeechManager.saveState(key + BUNDLE_SUFFIX_SPEECH, bundle);
     }
 
@@ -221,6 +226,9 @@ public class DebateManager {
     public void restoreState(String key, Bundle bundle) {
         mCurrentSpeechIndex = bundle.getInt(key + BUNDLE_SUFFIX_INDEX, 0);
         loadSpeech();
+        long[] speechTimes = bundle.getLongArray(key + BUNDLE_SUFFIX_SPEECH_TIMES);
+        for (int i = 0; i < speechTimes.length; i++)
+            mSpeechTimes.set(i, speechTimes[i]);
         mSpeechManager.restoreState(key + BUNDLE_SUFFIX_SPEECH, bundle);
     }
 
