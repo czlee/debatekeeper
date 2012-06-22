@@ -325,15 +325,18 @@ public class DebatingActivity extends Activity {
             return;
         }
 
-        // If this is the first speaker, exit.
-        if (mDebateManager.isFirstSpeaker()) {
-            super.onBackPressed();
-            return;
-
-        // Otherwise, go back one speaker.
-        } else {
+        // If the timer is stopped AND it's not the first speaker, go back one
+        // speaker
+        if (!mDebateManager.isFirstSpeaker() && !mDebateManager.isRunning()) {
             mDebateManager.previousSpeaker();
             updateGui();
+            return;
+
+        // Otherwise, behave normally (i.e. exit).
+        // Note that if the timer is running, the service will remain present in the
+        // background, so this doesn't stop a running timer.
+        } else {
+            super.onBackPressed();
             return;
         }
     }
