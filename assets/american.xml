@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<debateformat name="American Parliamentary" schemaversion="1.0">
+	<info>
+		<region>United States</region>
+		<level>University</level>
+		<desc>2 vs 2, POIs allowed, PM 7 minutes, LO, MG, MO 8 minutes, LO 4 minutes, PM 5 minutes</desc>
+	</info>
+
+	<resource ref="#all">
+		<period ref="initial" desc="First minute" bgcolor="#stay" />
+	    <period ref="pois-allowed" desc="POIs allowed" bgcolor="#7700ff00" />
+		<period ref="warning" desc="Warning bell rung" bgcolor="#77ffcc00" />
+		<period ref="overtime" desc="Overtime" bgcolor="#77ff0000" />
+	</resource>
+
+	<speechtype ref="pm-const" length="7:00" firstperiod="initial">
+   		<bell time="1:00" number="1" nextperiod="pois-allowed" sound="#default" />
+		<bell time="6:00" number="1" nextperiod="warning" sound="#default" />
+		<bell time="finish" number="2" nextperiod="overtime" sound="#default" />
+	</speechtype>
+	
+	<speechtype ref="constructive" length="8:00" firstperiod="initial">
+   		<bell time="1:00" number="1" nextperiod="pois-allowed" sound="#default" />
+		<bell time="7:00" number="1" nextperiod="warning" sound="#default" />
+		<bell time="finish" number="2" nextperiod="overtime" sound="#default" />
+	</speechtype>
+
+	<speechtype ref="lo-rebuttal" length="4:00" firstperiod="initial">
+		<bell time="3:00" number="1" nextperiod="warning" />
+		<bell time="finish" number="2" nextperiod="overtime" />
+	</speechtype>
+	
+	<speechtype ref="pm-rebuttal" length="5:00" firstperiod="initial">
+		<bell time="4:00" number="1" nextperiod="warning" />
+		<bell time="finish" number="2" nextperiod="overtime" />
+	</speechtype>
+	
+	<speeches>
+		<speech name="Prime Minister's Constructive" type="pm-const" />
+		<speech name="Leader of the Opposition's Constructive" type="constructive" />
+		<speech name="Member of the Government" type="constructive" />
+		<speech name="Member of the Opposition" type="constructive" />
+		<speech name="Leader of the Opposition's Rebuttal" type="lo-rebuttal" />
+		<speech name="Prime Minister's Rebuttal" type="pm-rebuttal" />
+	</speeches>
+</debateformat>
