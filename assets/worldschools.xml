@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<debateformat name="Wellington Premier B" schemaversion="1.0">
+<debateformat name="World Schools" schemaversion="1.0">
 	<info>
-		<region>Wellington</region>
+		<region>World</region>
 		<level>School</level>
-		<usedat>Wellington Premier B grade</usedat>
+		<usedat>World Schools Debating Championships</usedat>
 		<desc>3 vs 3, 8-minute speeches, 4-minute replies, POIs allowed</desc>
 	</info>
 
@@ -19,12 +19,12 @@
 		<bell time="7:00" number="1" nextperiod="warning" sound="#default" />
 		<bell time="finish" number="2" nextperiod="overtime" sound="#default" />
 	</speechtype>
-	
+
 	<speechtype ref="reply" length="4:00" firstperiod="initial">
 		<bell time="3:00" number="1" nextperiod="warning" sound="#default" />
 		<bell time="finish" number="2" nextperiod="overtime" sound="#default" />
 	</speechtype>
-	
+
 	<speeches>
 		<speech name="1st Affirmative" type="substantive" />
 		<speech name="1st Negative" type="substantive" />
