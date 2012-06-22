@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:picker="http://schemas.android.com/apk/res/com.michaelnovakjr.sample.numberpicker" >
+    xmlns:picker="http://schemas.android.com/apk/res/com.ftechz.DebatingTimer" >
 
     <CheckBoxPreference
         android:defaultValue="false"
@@ -9,16 +9,32 @@
         android:summaryOn="@string/PreferenceSilentModeOnSummary"
         android:title="@string/PreferenceSilentModeTitle" />
     <CheckBoxPreference
+        android:defaultValue="false"
         android:key="vibrateMode"
         android:summaryOff="@string/PreferenceVibrateModeOffSummary"
         android:summaryOn="@string/PreferenceVibrateModeOnSummary"
         android:title="@string/PreferenceVibrateMode" />
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:disableDependentsState="false"
+        android:key="overtimeBellsEnable"
+        android:summaryOff="@string/PreferenceOvertimeBellsEnableOffSummary"
+        android:summaryOn="@string/PreferenceOvertimeBellsEnableOnSummary"
+        android:title="@string/PreferenceOvertimeBellsEnableTitle" />
 
     <com.michaelnovakjr.numberpicker.NumberPickerPreference
+        picker:defaultValue="30"
+        picker:startRange="3"
+        picker:endRange="120"
+        android:dependency="overtimeBellsEnable"
         android:key="firstOvertimeBell"
         android:summary="@string/PreferenceFirstOvertimeBellSummary"
         android:title="@string/PreferenceFirstOvertimeBellTitle" />
     <com.michaelnovakjr.numberpicker.NumberPickerPreference
+        picker:defaultValue="30"
+        picker:startRange="3"
+        picker:endRange="120"
+        android:dependency="overtimeBellsEnable"
         android:key="overtimeBellPeriod"
         android:summary="@string/PreferenceOvertimeBellPeriodSummary"
         android:title="@string/PreferenceOvertimeBellPeriodTitle" />

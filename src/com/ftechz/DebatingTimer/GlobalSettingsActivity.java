@@ -64,7 +64,7 @@ public class GlobalSettingsActivity extends PreferenceActivity {
     private void updateSummaryWithInt(String key) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (mPreferenceToStringResidMap.containsKey(key)) {
-            int value  = prefs.getInt(key, 0);
+            int value  = prefs.getInt(key, 30);
             Preference pref = findPreference(key);
             int summaryTextResid = mPreferenceToStringResidMap.get(key);
             pref.setSummary(getString(summaryTextResid, value));

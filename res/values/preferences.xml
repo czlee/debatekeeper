@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="PreferenceSilentModeTitle">Silent mode</string>
-    <string name="PreferenceSilentModeOnSummary">Bell will not ring (this doesn\'t affect other sounds from your phone)</string>
-    <string name="PreferenceSilentModeOffSummary">Bell will ring</string>
+    <string name="PreferenceSilentModeOnSummary">Bell will not sound (this doesn\'t affect other sounds from your phone)</string>
+    <string name="PreferenceSilentModeOffSummary">Bell will sound</string>
     <string name="PreferenceVibrateModeOnSummary">Vibrate at bell times</string>
     <string name="PreferenceVibrateModeOffSummary">Don\'t vibrate</string>
     <string name="PreferenceVibrateMode">Vibrator</string>
+    <string name="PreferenceOvertimeBellsEnableTitle">Enable overtime bells</string>
+    <string name="PreferenceOvertimeBellsEnableOnSummary">Ring the overtime bells as detailed below</string>
+    <string name="PreferenceOvertimeBellsEnableOffSummary">Don\'t ring any overtime bells</string>
     <string name="PreferenceFirstOvertimeBellTitle">First overtime bell</string>
     <string name="PreferenceFirstOvertimeBellSummary">Ring the first overtime bell after %s seconds…</string>
     <string name="PreferenceOvertimeBellPeriodTitle">Overtime bell period</string>

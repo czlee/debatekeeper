@@ -476,13 +476,20 @@ public class DebatingActivity extends Activity {
     private boolean applyPreferences() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (mDebateManager != null) {
-            boolean silentMode, vibrateMode;
+            boolean silentMode, vibrateMode, overtimeBellsEnabled;
             int firstOvertimeBell, overtimeBellPeriod;
             try {
-                silentMode         = prefs.getBoolean("silentMode", false);
-                vibrateMode        = prefs.getBoolean("vibrateMode", false);
-                firstOvertimeBell  = prefs.getInt("firstOvertimeBell", 0);
-                overtimeBellPeriod = prefs.getInt("overtimeBellPeriod", 0);
+                silentMode           = prefs.getBoolean("silentMode", false);
+                vibrateMode          = prefs.getBoolean("vibrateMode", false);
+                overtimeBellsEnabled = prefs.getBoolean("overtimeBellsEnable", true);
+                if (overtimeBellsEnabled) {
+                    firstOvertimeBell  = prefs.getInt("firstOvertimeBell", 30);
+                    overtimeBellPeriod = prefs.getInt("overtimeBellPeriod", 30);
+                } else {
+                    firstOvertimeBell = 0;
+                    overtimeBellPeriod = 0;
+                }
+
             } catch (ClassCastException e) {
                 Log.e(this.getClass().getSimpleName(), "applyPreferences: caught ClassCastException!");
                 return false;
