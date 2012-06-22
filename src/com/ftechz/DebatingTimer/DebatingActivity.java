@@ -2,6 +2,8 @@ package com.ftechz.DebatingTimer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.xml.sax.SAXException;
 
@@ -64,9 +66,11 @@ public class DebatingActivity extends Activity {
 
     private static final String BUNDLE_SUFFIX_DEBATE_MANAGER  = "dm";
     private static final String PREFERENCE_XML_FILE_NAME      = "xmlfn";
-    private static final String DIALOG_BUNDLE_ERROR_MESSAGE   = "em";
+    private static final String DIALOG_BUNDLE_FATAL_MESSAGE   = "fm";
+    private static final String DIALOG_BUNDLE_XML_ERROR_LOG   = "xel";
     private static final int    CHOOSE_STYLE_REQUEST          = 0;
-    private static final int    DIALOG_XML_FILE_PROBLEM       = 0;
+    private static final int    DIALOG_XML_FILE_FATAL         = 0;
+    private static final int    DIALOG_XML_FILE_ERRORS        = 1;
 
     private DebatingTimerService.DebatingTimerServiceBinder mBinder;
     private final BroadcastReceiver mGuiUpdateBroadcastReceiver = new GuiUpdateBroadcastReceiver();
@@ -315,8 +319,10 @@ public class DebatingActivity extends Activity {
     @Override
     protected Dialog onCreateDialog(int id, Bundle bundle) {
         switch (id) {
-        case DIALOG_XML_FILE_PROBLEM:
+        case DIALOG_XML_FILE_FATAL:
             return getFatalProblemWithXmlFileDialog(bundle);
+        case DIALOG_XML_FILE_ERRORS:
+            return getErrorsWithXmlFileDialog(bundle);
         }
         return super.onCreateDialog(id);
     }
@@ -360,10 +366,10 @@ public class DebatingActivity extends Activity {
             try {
                 df = buildDebateFromXml(mFormatXmlFileName);
             } catch (FatalXmlError e) {
-                removeDialog(DIALOG_XML_FILE_PROBLEM);
+                removeDialog(DIALOG_XML_FILE_FATAL);
                 Bundle bundle = new Bundle();
-                bundle.putString(DIALOG_BUNDLE_ERROR_MESSAGE, e.getMessage());
-                showDialog(DIALOG_XML_FILE_PROBLEM, bundle);
+                bundle.putString(DIALOG_BUNDLE_FATAL_MESSAGE, e.getMessage());
+                showDialog(DIALOG_XML_FILE_FATAL, bundle);
                 return;
             }
 
@@ -558,7 +564,8 @@ public class DebatingActivity extends Activity {
 	}
 
 	/**
-	 * Builds a <code>DebateFormat</code> from a specified XML file.
+	 * Builds a <code>DebateFormat</code> from a specified XML file. Shows a <code>Dialog</code> if
+	 * the debate format builder logged non-fatal errors.
 	 * @param filename the file name of the XML file
 	 * @return the built <code>DebateFormat</code>
 	 * @throws FatalXmlError if there was any problem, which could include:
@@ -571,6 +578,7 @@ public class DebatingActivity extends Activity {
 	private DebateFormat buildDebateFromXml(String filename) throws FatalXmlError {
         DebateFormatBuilderFromXml dfbfx = new DebateFormatBuilderFromXml(this);
         InputStream is = null;
+        DebateFormat df;
 
 	    try {
             is = getAssets().open(filename);
@@ -579,7 +587,7 @@ public class DebatingActivity extends Activity {
         }
 
 	    try {
-            return dfbfx.buildDebateFromXml(is);
+            df = dfbfx.buildDebateFromXml(is);
         } catch (IOException e) {
             throw new FatalXmlError(getString(R.string.FatalProblemWithXmlFileMessage_CannotRead, filename), e);
         } catch (SAXException e) {
@@ -589,12 +597,21 @@ public class DebatingActivity extends Activity {
             throw new FatalXmlError(getString(
                     R.string.FatalProblemWithXmlFileMessage_NoSpeeches, filename), e);
         }
+
+	    if (dfbfx.hasErrors()) {
+	        Bundle bundle = new Bundle();
+	        bundle.putStringArrayList(DIALOG_BUNDLE_XML_ERROR_LOG, dfbfx.getErrorLog());
+	        removeDialog(DIALOG_XML_FILE_ERRORS);
+	        showDialog(DIALOG_XML_FILE_ERRORS, bundle);
+	    }
+
+	    return df;
 	}
 
     private Dialog getFatalProblemWithXmlFileDialog(Bundle bundle) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        String errorMessage = bundle.getString(DIALOG_BUNDLE_ERROR_MESSAGE);
+        String errorMessage = bundle.getString(DIALOG_BUNDLE_FATAL_MESSAGE);
         errorMessage = errorMessage.concat(getString(R.string.FatalProblemWithXmlFileMessageSuffix));
 
         builder.setTitle(R.string.FatalProblemWithXmlFileDialogTitle)
@@ -611,6 +628,32 @@ public class DebatingActivity extends Activity {
                     @Override
                     public void onCancel(DialogInterface dialog) {
                         DebatingActivity.this.finish();
+                    }
+                });
+
+        return builder.create();
+    }
+
+    private Dialog getErrorsWithXmlFileDialog(Bundle bundle) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        String errorMessage = getString(R.string.ErrorsInXmlFileDialogMessagePrefix);
+
+        ArrayList<String> errorLog = bundle.getStringArrayList(DIALOG_BUNDLE_XML_ERROR_LOG);
+        Iterator<String> errorIterator = errorLog.iterator();
+
+        while (errorIterator.hasNext()) {
+            errorMessage = errorMessage.concat("\n");
+            errorMessage = errorMessage.concat(errorIterator.next());
+        }
+
+        builder.setTitle(R.string.ErrorsInXmlFileDialogTitle)
+               .setMessage(errorMessage)
+               .setCancelable(true)
+               .setPositiveButton(R.string.ErrorsInXmlFileDialogButton, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
                     }
                 });
 

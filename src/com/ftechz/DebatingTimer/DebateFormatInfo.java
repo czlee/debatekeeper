@@ -213,7 +213,7 @@ public class DebateFormatInfo {
 
         while (iterator.hasNext()) {
             String formatRef = iterator.next().getFormat();
-            if (!seenFormatRefs.contains(formatRef)) {
+            if (!seenFormatRefs.contains(formatRef) && speechFormats.containsKey(formatRef)) {
                 seenFormatRefs.add(formatRef);
                 SpeechFormatInfo sti = speechFormats.get(formatRef);
                 String bellsList = concatenate(sti.getBells());

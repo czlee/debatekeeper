@@ -564,6 +564,21 @@ public class DebateFormatBuilderFromXml {
         return mDfb.getDebateFormat();
     }
 
+    /**
+     * @return true if there are errors in the error log
+     */
+    public boolean hasErrors() {
+        return mErrorLog.size() > 0;
+    }
+
+    /**
+     * @return An <i>ArrayList</i> of <code>String</code>s, each item being an error found by
+     * the XML parser
+     */
+    public ArrayList<String> getErrorLog() {
+        return mErrorLog;
+    }
+
     //******************************************************************************************
     // Private methods
     //******************************************************************************************

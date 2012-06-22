@@ -564,7 +564,7 @@ public class DebateFormatBuilder {
      * @throws IllegalStateException if there are no speeches added when this is called
      */
     public DebateFormat getDebateFormat() {
-        if (mState == State.ADDING_FORMATS) {
+        if (mDebateFormatBeingBuilt.numberOfSpeeches() == 0) {
             throw new IllegalStateException("There are no speeches in this format!");
         }
         mState = State.DONE;

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<debateformat name="Test errors" schemaversion="1.0">
+	<info>
+		<region>None</region>
+		<level>None</level>
+		<usedat>Nowhere</usedat>
+		<desc>This format should kind of work, but have errors.</desc>
+	</info>
+
+	<speechtype ref="all" length="7:00" firstperiod="initial">
+		<period ref="initial" desc="First minute" bgcolor="green" />
+	    <period ref="pois-allowed" desc="POIs allowed" bgcolor="#7700ff00" />
+		<period ref="warning" desc="Warning bell rung" bgcolor="#77ffcc00" />
+		<period ref="overtime" desc="Overtime" bgcolor="#77ff0000" />
+   		<bell time="1:00" number="1" nextperiod="whoops" sound="#default" />
+		<bell time="8:00" number="1" nextperiod="warning" sound="#default" />
+		<bell time="finish" number="2" nextperiod="overtime" sound="#default" />
+	</speechtype>
+
+	<speeches>
+		<speech name="Prime Minister" type="all" />
+		<speech name="Leader of the Opposition" type="all" />
+		<speech name="Deputy Prime Minister" type="all" />
+		<speech name="Deputy Leader of the Opposition" type="none" />
+		<speech name="Member for the Government" type="what" />
+		<speech name="Member for the Opposition" type="all" />
+		<speech name="Government Whip" type="all" />
+		<speech name="Opposition Whip" type="all" />
+	</speeches>
+</debateformat>
