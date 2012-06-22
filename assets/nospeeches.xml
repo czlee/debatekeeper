@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<debateformat name="Australian" schemaversion="1.0">
+<debateformat name="Test no speeches" schemaversion="1.0">
 	<info>
-		<region>Australia</region>
-		<level>University</level>
-		<usedat>Australian Intervarsity Debating Championships (Easters)</usedat>
-		<desc>3 vs 3, 8-minute speeches, no replies, no POIs</desc>
+		<region>None</region>
+		<level>None</level>
+		<usedat>Nowhere</usedat>
+		<desc>This format shouldn't load, it doesn't have any speeches.</desc>
 	</info>
 
 	<resource ref="#all">
@@ -23,12 +23,4 @@
 		<bell time="finish" number="2" nextperiod="overtime" />
 	</speechtype>
 
-	<speeches>
-		<speech name="1st Affirmative" type="all" />
-		<speech name="1st Negative" type="all" />
-		<speech name="2nd Affirmative" type="all" />
-		<speech name="2nd Negative" type="all" />
-		<speech name="3rd Affirmative" type="all" />
-		<speech name="3rd Negative" type="all" />
-	</speeches>
 </debateformat>

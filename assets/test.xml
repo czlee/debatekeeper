@@ -4,7 +4,7 @@
 		<region>None</region>
 		<level>None</level>
 		<usedat>Nowhere</usedat>
-		<desc>Test format so you can test the app without waiting minutes for bells</desc>
+		<desc>Use this format to try out this app without waiting ages for bells</desc>
 	</info>
 	
 	<resource ref="speeches">

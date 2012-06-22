@@ -38,7 +38,7 @@
     <string name="FatalProblemWithXmlFileMessage_NoSpeeches">"I can't work with this debate format XML file (%1$s) because there are no speeches in it."</string>
     <string name="FatalProblemWithXmlFileMessage_CannotRead">"I've hit a problem opening this debate format XML file (%1$s)."</string>
     <string name="FatalProblemWithXmlFileMessage_CannotFind">"I've hit a problem opening this debate format XML file (%1$s)."</string>
-    <string name="FatalProblemWithXmlFileMessage_BadXml">"I can't work with this debate format XML file (%1$s) because the XML isn't well formed. The XML error was:\n\n%2$s\n"</string>
+    <string name="FatalProblemWithXmlFileMessage_BadXml">"I can't work with this debate format XML file (%1$s) because the XML isn't well-formed. The XML error was:\n\n%2$s\n"</string>
     <string name="FatalProblemWithXmlFileMessageSuffix">"\nPlease choose another style."</string>
 
 </resources>
