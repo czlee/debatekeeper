@@ -3,6 +3,8 @@ package com.ftechz.DebatingTimer;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.xml.sax.SAXException;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -30,7 +32,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ftechz.DebatingTimer.DebateFormatBuilderFromXml.DebateFormatNotValidException;
 import com.ftechz.DebatingTimer.SpeechFormat.CountDirection;
 
 
@@ -61,11 +62,11 @@ public class DebatingActivity extends Activity {
 
 	private String mFormatXmlFileName = null;
 
-    private static final String BUNDLE_SUFFIX_DEBATE_MANAGER = "dm";
-    private static final String PREFERENCE_XML_FILE_NAME = "xmlfn";
-    private static final String DIALOG_BUNDLE_XML_FORMAT_NAME = "fn";
-    private static final int    CHOOSE_STYLE_REQUEST = 0;
-    private static final int    DIALOG_XML_FILE_PROBLEM = 0;
+    private static final String BUNDLE_SUFFIX_DEBATE_MANAGER  = "dm";
+    private static final String PREFERENCE_XML_FILE_NAME      = "xmlfn";
+    private static final String DIALOG_BUNDLE_ERROR_MESSAGE   = "em";
+    private static final int    CHOOSE_STYLE_REQUEST          = 0;
+    private static final int    DIALOG_XML_FILE_PROBLEM       = 0;
 
     private DebatingTimerService.DebatingTimerServiceBinder mBinder;
     private final BroadcastReceiver mGuiUpdateBroadcastReceiver = new GuiUpdateBroadcastReceiver();
@@ -102,7 +103,11 @@ public class DebatingActivity extends Activity {
     private class LeftControlButtonOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View pV) {
-            if (mDebateManager == null) return;
+            if (mDebateManager == null) {
+                Intent intent = new Intent(DebatingActivity.this, FormatChooserActivity.class);
+                startActivityForResult(intent, CHOOSE_STYLE_REQUEST);
+                return;
+            }
             switch (mDebateManager.getStatus()) {
             case RUNNING:
                 mDebateManager.stopTimer();
@@ -156,6 +161,16 @@ public class DebatingActivity extends Activity {
         public void onClick(View v) {
             mBinder.getAlertManager().playBell();
         }
+    }
+
+    private class FatalXmlError extends Exception {
+
+        private static final long serialVersionUID = -1774973645180296278L;
+
+        public FatalXmlError(String detailMessage, Throwable throwable) {
+            super(detailMessage, throwable);
+        }
+
     }
 
     //******************************************************************************************
@@ -301,7 +316,7 @@ public class DebatingActivity extends Activity {
     protected Dialog onCreateDialog(int id, Bundle bundle) {
         switch (id) {
         case DIALOG_XML_FILE_PROBLEM:
-            return getProblemWithXmlFileDialog(bundle);
+            return getFatalProblemWithXmlFileDialog(bundle);
         }
         return super.onCreateDialog(id);
     }
@@ -344,10 +359,10 @@ public class DebatingActivity extends Activity {
             DebateFormat df;
             try {
                 df = buildDebateFromXml(mFormatXmlFileName);
-            } catch (DebateFormatNotValidException e) {
+            } catch (FatalXmlError e) {
                 removeDialog(DIALOG_XML_FILE_PROBLEM);
                 Bundle bundle = new Bundle();
-                bundle.putString(DIALOG_BUNDLE_XML_FORMAT_NAME, e.getFormatName());
+                bundle.putString(DIALOG_BUNDLE_ERROR_MESSAGE, e.getMessage());
                 showDialog(DIALOG_XML_FILE_PROBLEM, bundle);
                 return;
             }
@@ -396,7 +411,7 @@ public class DebatingActivity extends Activity {
     private void updateGui() {
         if (mDebateManager != null) {
             SpeechFormat currentSpeechFormat = mDebateManager.getCurrentSpeechFormat();
-            PeriodInfo currentPeriodInfo = mDebateManager.getCurrentPeriodInfo();
+            PeriodInfo   currentPeriodInfo   = mDebateManager.getCurrentPeriodInfo();
 
             mStateText.setText(currentPeriodInfo.getDescription());
             mStageText.setText(mDebateManager.getCurrentSpeechName());
@@ -433,9 +448,18 @@ public class DebatingActivity extends Activity {
         } else {
             // If no debate is loaded, disable the control buttons
             // (Keep the play bell button enabled.)
-            mLeftControlButton.setEnabled(false);
+            setButtons(R.string.NoDebateLoadedButtonText, R.string.NullButtonText, R.string.NullButtonText);
+            mLeftControlButton.setEnabled(true);
             mCentreControlButton.setEnabled(false);
             mRightControlButton.setEnabled(false);
+            // Blank out all the fields
+            mStateText.setText(R.string.NoDebateLoadedText);
+            mStageText.setText("");
+            mStateText.setBackgroundColor(0);
+            mStageText.setBackgroundColor(0);
+            mCurrentTimeText.setText("");
+            mNextTimeText.setText("");
+            mFinalTimeText.setText("");
         }
     }
 
@@ -533,42 +557,50 @@ public class DebatingActivity extends Activity {
 	    }
 	}
 
-	private DebateFormat buildDebateFromXml(String filename) throws DebateFormatNotValidException {
+	/**
+	 * Builds a <code>DebateFormat</code> from a specified XML file.
+	 * @param filename the file name of the XML file
+	 * @return the built <code>DebateFormat</code>
+	 * @throws FatalXmlError if there was any problem, which could include:
+	 * <ul><li>A problem opening or reading the file</li>
+	 * <li>A problem parsing the XML file</li>
+	 * <li>That there were no speeches in this debate format</li>
+	 * </ul>
+	 * The message of the exception will be human-readable and can be displayed in a dialogue box.
+	 */
+	private DebateFormat buildDebateFromXml(String filename) throws FatalXmlError {
         DebateFormatBuilderFromXml dfbfx = new DebateFormatBuilderFromXml(this);
         InputStream is = null;
 
 	    try {
             is = getAssets().open(filename);
         } catch (IOException e) {
-            Log.e(this.getClass().getSimpleName(),
-                    String.format("Could not find file %s", filename));
-            e.printStackTrace();
-            // TODO show a dialog
-            return null;
+            throw new FatalXmlError(getString(R.string.FatalProblemWithXmlFileMessage_CannotFind, filename), e);
         }
 
-	    return dfbfx.buildDebateFromXml(is);
+	    try {
+            return dfbfx.buildDebateFromXml(is);
+        } catch (IOException e) {
+            throw new FatalXmlError(getString(R.string.FatalProblemWithXmlFileMessage_CannotRead, filename), e);
+        } catch (SAXException e) {
+            throw new FatalXmlError(getString(
+                    R.string.FatalProblemWithXmlFileMessage_BadXml, filename, e.getMessage()), e);
+        } catch (IllegalStateException e) {
+            throw new FatalXmlError(getString(
+                    R.string.FatalProblemWithXmlFileMessage_NoSpeeches, filename), e);
+        }
 	}
 
-    private Dialog getProblemWithXmlFileDialog(Bundle bundle) {
+    private Dialog getFatalProblemWithXmlFileDialog(Bundle bundle) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        String message;
-        String formatName = bundle.getString(DIALOG_BUNDLE_XML_FORMAT_NAME);
-        if (formatName == null) {
-            message = getString(R.string.ProblemWithXmlFileDialogMessageNoFormatName, mFormatXmlFileName);
-        } else {
-            message = getString(R.string.ProblemWithXmlFileDialogMessage, formatName, mFormatXmlFileName);
-        }
+        String errorMessage = bundle.getString(DIALOG_BUNDLE_ERROR_MESSAGE);
+        errorMessage = errorMessage.concat(getString(R.string.FatalProblemWithXmlFileMessageSuffix));
 
-        Log.i(this.getClass().getSimpleName(), getString(R.string.ProblemWithXmlFileDialogTitle));
-        Log.i(this.getClass().getSimpleName(), message);
-
-
-        builder.setTitle(R.string.ProblemWithXmlFileDialogTitle)
-               .setMessage(message)
+        builder.setTitle(R.string.FatalProblemWithXmlFileDialogTitle)
+               .setMessage(errorMessage)
                .setCancelable(true)
-               .setPositiveButton(R.string.ProblemWithXmlFileDialogButton, new DialogInterface.OnClickListener() {
+               .setPositiveButton(R.string.FatalProblemWithXmlFileDialogButton, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(DebatingActivity.this, FormatChooserActivity.class);
@@ -581,6 +613,7 @@ public class DebatingActivity extends Activity {
                         DebatingActivity.this.finish();
                     }
                 });
+
         return builder.create();
     }
 

@@ -39,25 +39,6 @@ public class DebateFormatBuilderFromXml {
     }
 
     //******************************************************************************************
-    // Public classes
-    //******************************************************************************************
-    public class DebateFormatNotValidException extends Exception {
-
-        private static final long serialVersionUID = -4186757087035888464L;
-        private final String formatName;
-
-        public DebateFormatNotValidException(String message, String formatName) {
-            super(message);
-            this.formatName = formatName;
-        }
-
-        public String getFormatName() {
-            return formatName;
-        }
-
-    }
-
-    //******************************************************************************************
     // Private classes
     //******************************************************************************************
     private class DebateFormatXmlContentHandler implements ContentHandler {
@@ -573,29 +554,14 @@ public class DebateFormatBuilderFromXml {
      * Builds a debate from a given input stream, which must be an XML file.
      * @param is an {@link InputStream} to an XML file
      * @return the {@link DebateFormat}
-     * @throws DebateFormatNotValidException if there are no speeches in the format
+     * @throws IOException if there was an IO error with the <code>InputStream</code>
+     * @throws SAXException if thrown by the XML parser
+     * @throws IllegalStateException if there were no speeches in this format
      */
-    public DebateFormat buildDebateFromXml(InputStream is) throws DebateFormatNotValidException {
-        try {
-            Xml.parse(is, Encoding.UTF_8, new DebateFormatXmlContentHandler());
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            Log.e(this.getClass().getSimpleName(), "IO exception");
-            e.printStackTrace();
-            return null;
-        } catch (SAXException e) {
-            // TODO Auto-generated catch block
-            Log.e(this.getClass().getSimpleName(), "SAX exception");
-            e.printStackTrace();
-            return null;
-        }
-
-        try {
-            return mDfb.getDebateFormat();
-        } catch (IllegalStateException e) {
-            throw new DebateFormatNotValidException("There are no speeches in this format!", mDfb.getDebateFormatName());
-        }
-
+    public DebateFormat buildDebateFromXml(InputStream is)
+            throws IOException, SAXException, IllegalStateException {
+        Xml.parse(is, Encoding.UTF_8, new DebateFormatXmlContentHandler());
+        return mDfb.getDebateFormat();
     }
 
     //******************************************************************************************

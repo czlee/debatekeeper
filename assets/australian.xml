@@ -15,7 +15,7 @@
 
 	<speechtype ref="all" length="8:00" firstperiod="initial">
 		<bell time="6:00" number="1" nextperiod="warning" />
-		<bell time="finish" number="2" nextperiod="overtime"" />
+		<bell time="finish" number="2" nextperiod="overtime" />
 	</speechtype>
 
 	<speechtype ref="reply" length="4:00" firstperiod="initial">
@@ -24,11 +24,11 @@
 	</speechtype>
 
 	<speeches>
-		<speech name="1st Affirmative" type="all" />
+		<!-- <speech name="1st Affirmative" type="all" />
 		<speech name="1st Negative" type="all" />
 		<speech name="2nd Affirmative" type="all" />
 		<speech name="2nd Negative" type="all" />
 		<speech name="3rd Affirmative" type="all" />
-		<speech name="3rd Negative" type="all" />
+		<speech name="3rd Negative" type="all" />-->
 	</speeches>
 </debateformat>

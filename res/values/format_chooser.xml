@@ -6,7 +6,6 @@
 	<string name="IOErrorDialogTitle">Oh no!</string>
 	<string name="IOErrorDialogMessage">I couldn\'t find the debate style files.</string>    
 	<string name="IOErrorDialogButton">Go back</string>
-	<string name="MoreDetailsDialogCloseButton">Close</string>
 		
 	<string name="ViewFormatRegionLabel">Region</string>
 	<string name="ViewFormatLevelLabel">Level</string>
@@ -15,7 +14,6 @@
 	<string name="ViewFormatSpeechesLabel">Speeches</string>
 	
 	<string name="ViewFormatShowDetailsButtonText">More</string>
-	<string name="ViewFormatHideDetailsButtonText">Less</string>
 		
 	<string name="ToastNoSelection">No style selected</string>
 	<string name="ToastSelection">Style changed to %1$s</string>
@@ -25,6 +23,10 @@
 	<string name="SpeechTypePauseIndicator">*</string>
 	<string name="ViewFormatSpeechTypeDescription">"<i>%1$s</i>: %2$s"</string>
 	<string name="ViewFormatSpeechDescription">"%1$s (<i>%2$s</i>)"</string>
+	
+	<string name="BlankDetailsDialogTitle">"Sorry!"</string>
+	<string name="BlankDetailsDialogText">"There's a problem with this debate format's XML file (%1$s).\n\nIn more detail:\n%2$s"</string>
+	<string name="BlankDetailsDialogButtonText">OK</string>
 		
 	<style name="ViewFormatTableLabelStyle">
 	    <item name="android:paddingLeft">7dip</item>

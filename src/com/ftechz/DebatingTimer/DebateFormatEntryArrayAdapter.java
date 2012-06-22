@@ -1,6 +1,9 @@
 package com.ftechz.DebatingTimer;
 
+import java.io.IOException;
 import java.util.List;
+
+import org.xml.sax.SAXException;
 
 import android.content.Context;
 import android.view.View;
@@ -68,7 +71,21 @@ public class DebateFormatEntryArrayAdapter extends
             view = View.inflate(getContext(), R.layout.format_item_selected, null);
 
             String filename = this.getItem(position).getFilename();
-            mBinder.populateBasicInfo(view, filename);
+            try {
+                mBinder.populateBasicInfo(view, filename);
+            } catch (IOException e) {
+                // Do nothing.
+                // This basically just means the view won't be populated with information,
+                // i.e. the fields will just have a hyphen ("-") in them.  This is fine.  When
+                // the user tries to do something else with the file, it will show the real
+                // error message.
+            } catch (SAXException e) {
+                // Do nothing.
+                // This basically just means the view won't be populated with information,
+                // i.e. the fields will just have a hyphen ("-") in them.  This is fine.  When
+                // the user tries to do something else with the file, it will show the real
+                // error message.
+            }
 
             Button showDetailsButton = (Button) view.findViewById(R.id.ViewFormatShowDetailsButton);
             showDetailsButton.setVisibility(View.VISIBLE);

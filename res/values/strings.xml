@@ -23,6 +23,8 @@
     <string name="NoMoreBellsText">There are no more bells in this speech</string>
     <string name="SpeechLengthText">The length of this speech is %1$s</string>
     <string name="ResetDebateToastText">All speeches in debate reset</string>
+    <string name="NoDebateLoadedText">No debate loaded</string>
+    <string name="NoDebateLoadedButtonText">Choose style</string>
     
     <!-- Menu -->
     <string name="ResetDebateMenuItem">Reset debate</string>
@@ -31,9 +33,12 @@
     <string name="ChooseFormatMenuItem">Debate styles</string>
 
     <!-- Dialogs -->
-    <string name="ProblemWithXmlFileDialogTitle">Oh no!</string>
-    <string name="ProblemWithXmlFileDialogMessage">"I can't make any sense of the XML file describing the debate style '%1$s' (in %2$s). Please choose another style."</string>
-    <string name="ProblemWithXmlFileDialogMessageNoFormatName">"I can't make any sense of the XML file describing the debate style (name unknown, in %2$s). Please choose another style."</string>
-    <string name="ProblemWithXmlFileDialogButton">Choose style</string>
+    <string name="FatalProblemWithXmlFileDialogTitle">Oh no!</string>
+    <string name="FatalProblemWithXmlFileDialogButton">Choose style</string>
+    <string name="FatalProblemWithXmlFileMessage_NoSpeeches">"I can't work with this debate format XML file (%1$s) because there are no speeches in it."</string>
+    <string name="FatalProblemWithXmlFileMessage_CannotRead">"I've hit a problem opening this debate format XML file (%1$s)."</string>
+    <string name="FatalProblemWithXmlFileMessage_CannotFind">"I've hit a problem opening this debate format XML file (%1$s)."</string>
+    <string name="FatalProblemWithXmlFileMessage_BadXml">"I can't work with this debate format XML file (%1$s) because the XML isn't well formed. The XML error was:\n\n%2$s\n"</string>
+    <string name="FatalProblemWithXmlFileMessageSuffix">"\nPlease choose another style."</string>
 
 </resources>

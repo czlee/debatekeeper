@@ -108,7 +108,7 @@ public class FormatChooserActivity extends Activity {
             return mStylesListView.getCheckedItemPosition();
         }
 
-        public void populateBasicInfo(View view, String filename) {
+        public void populateBasicInfo(View view, String filename) throws IOException, SAXException {
             FormatChooserActivity.this.populateBasicInfo(view, filename);
         }
 
@@ -372,7 +372,14 @@ public class FormatChooserActivity extends Activity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = View.inflate(this, R.layout.view_format_full, null);
 
-        DebateFormatInfo dfi = getDebateFormatInfo(filename);
+        DebateFormatInfo dfi;
+        try {
+            dfi = getDebateFormatInfo(filename);
+        } catch (IOException e) {
+            return getBlankDetailsDialog(filename, e);
+        } catch (SAXException e) {
+            return getBlankDetailsDialog(filename, e);
+        }
 
         if (dfi != null) {
             populateBasicInfo(view, dfi);
@@ -391,15 +398,30 @@ public class FormatChooserActivity extends Activity {
 
     }
 
-    private DebateFormatInfo getDebateFormatInfo(String filename) {
+    private AlertDialog getBlankDetailsDialog(String filename, Exception e) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.BlankDetailsDialogTitle)
+               .setCancelable(true)
+               .setMessage(getString(R.string.BlankDetailsDialogText, filename, e.getMessage()))
+               .setPositiveButton(R.string.BlankDetailsDialogButtonText, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        return builder.create();
+    }
+
+    /**
+     * Parses an XML file to get the {@link DebateFormatInfo} object
+     * @param filename the filename for the debate format XML file
+     * @return the <code>DebateFormatInfo</code> object, or <code>null</code>
+     * @throws IOException if there was an IO problem with the XML file
+     * @throws SAXException if thrown by the XML parser
+     */
+    private DebateFormatInfo getDebateFormatInfo(String filename) throws IOException, SAXException {
         InputStream is;
-        try {
-            is = this.getAssets().open(filename);
-        } catch (IOException e) {
-            Log.e(this.getClass().getSimpleName(), String.format("Could not open file %s", filename));
-            e.printStackTrace();
-            return null;
-        }
+        is = this.getAssets().open(filename);
         DebateFormatInfoExtractor dfie = new DebateFormatInfoExtractor(this);
         return dfie.getDebateFormatInfo(is);
     }
@@ -407,8 +429,10 @@ public class FormatChooserActivity extends Activity {
     /**
      * @param view the <code>View</code> to be populated
      * @param filename the filename of the XML file from which data is to be taken
+     * @throws IOException if there was an IO problem with the XML file
+     * @throws SAXException if thrown by the XML parser
      */
-    private void populateBasicInfo(View view, String filename) {
+    private void populateBasicInfo(View view, String filename) throws IOException, SAXException {
         DebateFormatInfo dfi = getDebateFormatInfo(filename);
         if (dfi != null)
             populateBasicInfo(view, dfi);

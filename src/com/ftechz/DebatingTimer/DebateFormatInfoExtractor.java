@@ -337,6 +337,24 @@ public class DebateFormatInfoExtractor {
     // ******************************************************************************************
 
     /**
+     * Gets the debate
+     * @param is an <code>InputStream</code> for an XML file to parse
+     * @return the DebateFormatInfo object
+     * @throws IOException if thrown by the attempt to use the <code>InputStream</code>
+     * @throws SAXException if thrown by the XML parser (SAX)
+     */
+    public DebateFormatInfo getDebateFormatInfo(InputStream is) throws IOException, SAXException {
+
+        mDfi = new DebateFormatInfo(mContext);
+        Xml.parse(is, Encoding.UTF_8, new DebateFormatInfoContentHandler());
+        return mDfi;
+    }
+
+    // ******************************************************************************************
+    // Public methods
+    // ******************************************************************************************
+
+    /**
      * Converts a String in the format 00:00 to a long, being the number of seconds
      * @param s the String
      * @return the total number of seconds (minutes + seconds * 60)
@@ -358,25 +376,6 @@ public class DebateFormatInfoExtractor {
             throw new NumberFormatException();
         }
         return seconds;
-    }
-
-    public DebateFormatInfo getDebateFormatInfo(InputStream is) {
-
-        mDfi = new DebateFormatInfo(mContext);
-
-        try {
-            Xml.parse(is, Encoding.UTF_8, new DebateFormatInfoContentHandler());
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return null;
-        } catch (SAXException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return null;
-        }
-
-        return mDfi;
     }
 
 }
