@@ -317,6 +317,28 @@ public class DebatingActivity extends Activity {
     }
 
     @Override
+    public void onBackPressed() {
+
+        // If no debate is loaded, exit.
+        if (mDebateManager == null) {
+            super.onBackPressed();
+            return;
+        }
+
+        // If this is the first speaker, exit.
+        if (mDebateManager.isFirstSpeaker()) {
+            super.onBackPressed();
+            return;
+
+        // Otherwise, go back one speaker.
+        } else {
+            mDebateManager.previousSpeaker();
+            updateGui();
+            return;
+        }
+    }
+
+    @Override
     protected Dialog onCreateDialog(int id, Bundle bundle) {
         switch (id) {
         case DIALOG_XML_FILE_FATAL:
