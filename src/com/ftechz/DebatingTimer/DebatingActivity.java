@@ -68,6 +68,7 @@ public class DebatingActivity extends Activity {
     private static final String PREFERENCE_XML_FILE_NAME      = "xmlfn";
     private static final String DIALOG_BUNDLE_FATAL_MESSAGE   = "fm";
     private static final String DIALOG_BUNDLE_XML_ERROR_LOG   = "xel";
+
     private static final int    CHOOSE_STYLE_REQUEST          = 0;
     private static final int    DIALOG_XML_FILE_FATAL         = 0;
     private static final int    DIALOG_XML_FILE_ERRORS        = 1;
@@ -80,9 +81,17 @@ public class DebatingActivity extends Activity {
     // Private classes
     //******************************************************************************************
 
-    private final class GuiUpdateBroadcastReceiver extends BroadcastReceiver {
+    private class CentreControlButtonOnClickListener implements View.OnClickListener {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onClick(View pV) {
+            if (mDebateManager == null) return;
+            switch (mDebateManager.getStatus()) {
+            case STOPPED_BY_USER:
+                mDebateManager.resetSpeaker();
+                break;
+            default:
+                break;
+            }
             updateGui();
         }
     }
@@ -103,6 +112,23 @@ public class DebatingActivity extends Activity {
             mDebateManager = null;
         }
     };
+
+    private class FatalXmlError extends Exception {
+
+        private static final long serialVersionUID = -1774973645180296278L;
+
+        public FatalXmlError(String detailMessage, Throwable throwable) {
+            super(detailMessage, throwable);
+        }
+
+    }
+
+    private final class GuiUpdateBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateGui();
+        }
+    }
 
     private class LeftControlButtonOnClickListener implements View.OnClickListener {
         @Override
@@ -128,18 +154,10 @@ public class DebatingActivity extends Activity {
         }
     }
 
-    private class CentreControlButtonOnClickListener implements View.OnClickListener {
+    private class PlayBellButtonOnClickListener implements View.OnClickListener {
         @Override
-        public void onClick(View pV) {
-            if (mDebateManager == null) return;
-            switch (mDebateManager.getStatus()) {
-            case STOPPED_BY_USER:
-                mDebateManager.resetSpeaker();
-                break;
-            default:
-                break;
-            }
-            updateGui();
+        public void onClick(View v) {
+            mBinder.getAlertManager().playBell();
         }
     }
 
@@ -160,28 +178,102 @@ public class DebatingActivity extends Activity {
         }
     }
 
-    private class PlayBellButtonOnClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            mBinder.getAlertManager().playBell();
-        }
-    }
-
-    private class FatalXmlError extends Exception {
-
-        private static final long serialVersionUID = -1774973645180296278L;
-
-        public FatalXmlError(String detailMessage, Throwable throwable) {
-            super(detailMessage, throwable);
-        }
-
-    }
-
     //******************************************************************************************
     // Public and protected methods
     //******************************************************************************************
 
     @Override
+    public void onBackPressed() {
+
+        // If no debate is loaded, exit.
+        if (mDebateManager == null) {
+            super.onBackPressed();
+            return;
+        }
+
+        // If the timer is stopped AND it's not the first speaker, go back one
+        // speaker
+        if (!mDebateManager.isFirstSpeaker() && !mDebateManager.isRunning()) {
+            mDebateManager.previousSpeaker();
+            updateGui();
+            return;
+
+        // Otherwise, behave normally (i.e. exit).
+        // Note that if the timer is running, the service will remain present in the
+        // background, so this doesn't stop a running timer.
+        } else {
+            super.onBackPressed();
+            return;
+        }
+    }
+
+    @Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.debating_activity_menu, menu);
+	    return true;
+	}
+
+    @Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	    case R.id.prevSpeaker:
+            if (mDebateManager == null) return true;
+	        mDebateManager.previousSpeaker();
+            updateGui();
+	        return true;
+	    case R.id.chooseFormat:
+	        Intent getStyleIntent = new Intent(this, FormatChooserActivity.class);
+	        getStyleIntent.putExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME, mFormatXmlFileName);
+	        startActivityForResult(getStyleIntent, CHOOSE_STYLE_REQUEST);
+	        return true;
+	    case R.id.resetDebate:
+            if (mDebateManager == null) return true;
+	        resetDebate();
+	        updateGui();
+	        return true;
+	    case R.id.settings:
+	        startActivity(new Intent(this, GlobalSettingsActivity.class));
+	        return true;
+        default:
+            return super.onOptionsItemSelected(item);
+	    }
+	}
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+	    MenuItem prevSpeakerItem = menu.findItem(R.id.prevSpeaker);
+	    MenuItem resetDebateItem = menu.findItem(R.id.resetDebate);
+
+	    if (mDebateManager != null) {
+	        prevSpeakerItem.setEnabled(!mDebateManager.isFirstSpeaker());
+            resetDebateItem.setEnabled(true);
+	    } else {
+	        prevSpeakerItem.setEnabled(false);
+	        resetDebateItem.setEnabled(false);
+	    }
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+	@Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == CHOOSE_STYLE_REQUEST && resultCode == RESULT_OK) {
+            String filename = data.getStringExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME);
+            if (filename != null) {
+                Log.v(this.getClass().getSimpleName(), String.format("Got file name %s", filename));
+                setXmlFileName(filename);
+                resetDebateWithoutToast();
+            }
+            // Do nothing if cancelled or error.
+        }
+
+    }
+
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.debate_activity);
@@ -225,123 +317,7 @@ public class DebatingActivity extends Activity {
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(mGuiUpdateBroadcastReceiver,
-                new IntentFilter(DebatingTimerService.UPDATE_GUI_BROADCAST_ACTION));
-
-        if (!applyPreferences())
-            Log.w(this.getClass().getSimpleName(), "onResume: Couldn't restore preferences; mDebateManager doesn't yet exist");
-
-        updateGui();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mGuiUpdateBroadcastReceiver);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle bundle) {
-        if (mDebateManager != null)
-            mDebateManager.saveState(BUNDLE_SUFFIX_DEBATE_MANAGER, bundle);
-    }
-
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.debating_activity_menu, menu);
-	    return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-	    switch (item.getItemId()) {
-	    case R.id.prevSpeaker:
-            if (mDebateManager == null) return true;
-	        mDebateManager.previousSpeaker();
-            updateGui();
-	        return true;
-	    case R.id.chooseFormat:
-	        Intent getStyleIntent = new Intent(this, FormatChooserActivity.class);
-	        getStyleIntent.putExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME, mFormatXmlFileName);
-	        startActivityForResult(getStyleIntent, CHOOSE_STYLE_REQUEST);
-	        return true;
-	    case R.id.resetDebate:
-            if (mDebateManager == null) return true;
-	        resetDebate();
-	        updateGui();
-	        return true;
-	    case R.id.settings:
-	        startActivity(new Intent(this, GlobalSettingsActivity.class));
-	        return true;
-        default:
-            return super.onOptionsItemSelected(item);
-	    }
-	}
-
-	@Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-
-	    MenuItem prevSpeakerItem = menu.findItem(R.id.prevSpeaker);
-	    MenuItem resetDebateItem = menu.findItem(R.id.resetDebate);
-
-	    if (mDebateManager != null) {
-	        prevSpeakerItem.setEnabled(!mDebateManager.isFirstSpeaker());
-            resetDebateItem.setEnabled(true);
-	    } else {
-	        prevSpeakerItem.setEnabled(false);
-	        resetDebateItem.setEnabled(false);
-	    }
-
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == CHOOSE_STYLE_REQUEST && resultCode == RESULT_OK) {
-            String filename = data.getStringExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME);
-            if (filename != null) {
-                Log.v(this.getClass().getSimpleName(), String.format("Got file name %s", filename));
-                setXmlFileName(filename);
-                resetDebateWithoutToast();
-            }
-            // Do nothing if cancelled or error.
-        }
-
-    }
-
-    @Override
-    public void onBackPressed() {
-
-        // If no debate is loaded, exit.
-        if (mDebateManager == null) {
-            super.onBackPressed();
-            return;
-        }
-
-        // If the timer is stopped AND it's not the first speaker, go back one
-        // speaker
-        if (!mDebateManager.isFirstSpeaker() && !mDebateManager.isRunning()) {
-            mDebateManager.previousSpeaker();
-            updateGui();
-            return;
-
-        // Otherwise, behave normally (i.e. exit).
-        // Note that if the timer is running, the service will remain present in the
-        // background, so this doesn't stop a running timer.
-        } else {
-            super.onBackPressed();
-            return;
-        }
-    }
-
-    @Override
     protected Dialog onCreateDialog(int id, Bundle bundle) {
         switch (id) {
         case DIALOG_XML_FILE_FATAL:
@@ -373,10 +349,167 @@ public class DebatingActivity extends Activity {
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mGuiUpdateBroadcastReceiver);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(mGuiUpdateBroadcastReceiver,
+                new IntentFilter(DebatingTimerService.UPDATE_GUI_BROADCAST_ACTION));
+
+        if (!applyPreferences())
+            Log.w(this.getClass().getSimpleName(), "onResume: Couldn't restore preferences; mDebateManager doesn't yet exist");
+
+        updateGui();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle bundle) {
+        if (mDebateManager != null)
+            mDebateManager.saveState(BUNDLE_SUFFIX_DEBATE_MANAGER, bundle);
+    }
+
 
     //******************************************************************************************
     // Private methods
     //******************************************************************************************
+
+    /**
+     * Gets the preferences from the shared preferences file and applies them.
+     * @return true if applying preferences succeeded, false otherwise
+     */
+    private boolean applyPreferences() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (mDebateManager != null) {
+            boolean silentMode, vibrateMode, overtimeBellsEnabled;
+            int firstOvertimeBell, overtimeBellPeriod;
+            try {
+                silentMode           = prefs.getBoolean("silentMode", false);
+                vibrateMode          = prefs.getBoolean("vibrateMode", false);
+                overtimeBellsEnabled = prefs.getBoolean("overtimeBellsEnable", true);
+                if (overtimeBellsEnabled) {
+                    firstOvertimeBell  = prefs.getInt("firstOvertimeBell", 30);
+                    overtimeBellPeriod = prefs.getInt("overtimeBellPeriod", 30);
+                } else {
+                    firstOvertimeBell = 0;
+                    overtimeBellPeriod = 0;
+                }
+
+            } catch (ClassCastException e) {
+                Log.e(this.getClass().getSimpleName(), "applyPreferences: caught ClassCastException!");
+                return false;
+            }
+            mBinder.getAlertManager().setSilentMode(silentMode);
+            mBinder.getAlertManager().setVibrateMode(vibrateMode);
+            mDebateManager.setOvertimeBells(firstOvertimeBell, overtimeBellPeriod);
+            setVolumeControlStream((silentMode) ? AudioManager.STREAM_RING : AudioManager.STREAM_MUSIC);
+            Log.v(this.getClass().getSimpleName(), "applyPreferences: successfully applied");
+            return true;
+        }
+        else return false;
+    }
+
+    /**
+	 * Builds a <code>DebateFormat</code> from a specified XML file. Shows a <code>Dialog</code> if
+	 * the debate format builder logged non-fatal errors.
+	 * @param filename the file name of the XML file
+	 * @return the built <code>DebateFormat</code>
+	 * @throws FatalXmlError if there was any problem, which could include:
+	 * <ul><li>A problem opening or reading the file</li>
+	 * <li>A problem parsing the XML file</li>
+	 * <li>That there were no speeches in this debate format</li>
+	 * </ul>
+	 * The message of the exception will be human-readable and can be displayed in a dialogue box.
+	 */
+	private DebateFormat buildDebateFromXml(String filename) throws FatalXmlError {
+        DebateFormatBuilderFromXml dfbfx = new DebateFormatBuilderFromXml(this);
+        InputStream is = null;
+        DebateFormat df;
+
+	    try {
+            is = getAssets().open(filename);
+        } catch (IOException e) {
+            throw new FatalXmlError(getString(R.string.FatalProblemWithXmlFileMessage_CannotFind, filename), e);
+        }
+
+	    try {
+            df = dfbfx.buildDebateFromXml(is);
+        } catch (IOException e) {
+            throw new FatalXmlError(getString(R.string.FatalProblemWithXmlFileMessage_CannotRead, filename), e);
+        } catch (SAXException e) {
+            throw new FatalXmlError(getString(
+                    R.string.FatalProblemWithXmlFileMessage_BadXml, filename, e.getMessage()), e);
+        } catch (IllegalStateException e) {
+            throw new FatalXmlError(getString(
+                    R.string.FatalProblemWithXmlFileMessage_NoSpeeches, filename), e);
+        }
+
+	    if (dfbfx.hasErrors()) {
+	        Bundle bundle = new Bundle();
+	        bundle.putStringArrayList(DIALOG_BUNDLE_XML_ERROR_LOG, dfbfx.getErrorLog());
+	        removeDialog(DIALOG_XML_FILE_ERRORS);
+	        showDialog(DIALOG_XML_FILE_ERRORS, bundle);
+	    }
+
+	    return df;
+	}
+
+    private Dialog getErrorsWithXmlFileDialog(Bundle bundle) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        String errorMessage = getString(R.string.ErrorsInXmlFileDialogMessagePrefix);
+
+        ArrayList<String> errorLog = bundle.getStringArrayList(DIALOG_BUNDLE_XML_ERROR_LOG);
+        Iterator<String> errorIterator = errorLog.iterator();
+
+        while (errorIterator.hasNext()) {
+            errorMessage = errorMessage.concat("\n");
+            errorMessage = errorMessage.concat(errorIterator.next());
+        }
+
+        builder.setTitle(R.string.ErrorsInXmlFileDialogTitle)
+               .setMessage(errorMessage)
+               .setCancelable(true)
+               .setPositiveButton(R.string.ErrorsInXmlFileDialogButton, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+        return builder.create();
+    }
+
+    private Dialog getFatalProblemWithXmlFileDialog(Bundle bundle) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        String errorMessage = bundle.getString(DIALOG_BUNDLE_FATAL_MESSAGE);
+        errorMessage = errorMessage.concat(getString(R.string.FatalProblemWithXmlFileMessageSuffix));
+
+        builder.setTitle(R.string.FatalProblemWithXmlFileDialogTitle)
+               .setMessage(errorMessage)
+               .setCancelable(true)
+               .setPositiveButton(R.string.FatalProblemWithXmlFileDialogButton, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(DebatingActivity.this, FormatChooserActivity.class);
+                        startActivityForResult(intent, CHOOSE_STYLE_REQUEST);
+                    }
+                })
+                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        DebatingActivity.this.finish();
+                    }
+                });
+
+        return builder.create();
+    }
 
     private void initialiseDebate() {
         if (mFormatXmlFileName == null) {
@@ -413,17 +546,6 @@ public class DebatingActivity extends Activity {
         updateGui();
     }
 
-    private void resetDebateWithoutToast() {
-        if (mBinder == null) return;
-        mBinder.releaseDebateManager();
-        initialiseDebate();
-    }
-
-    private void resetDebate() {
-        resetDebateWithoutToast();
-        Toast.makeText(this, R.string.ResetDebateToastText, Toast.LENGTH_SHORT).show();
-    }
-
     private String loadXmlFileName() {
         SharedPreferences sp = getPreferences(MODE_PRIVATE);
         String filename = sp.getString(PREFERENCE_XML_FILE_NAME, null);
@@ -431,12 +553,81 @@ public class DebatingActivity extends Activity {
         return filename;
     }
 
-    private void setXmlFileName(String filename) {
+    private void resetDebate() {
+        resetDebateWithoutToast();
+        Toast.makeText(this, R.string.ResetDebateToastText, Toast.LENGTH_SHORT).show();
+    }
+
+    private void resetDebateWithoutToast() {
+        if (mBinder == null) return;
+        mBinder.releaseDebateManager();
+        initialiseDebate();
+    }
+
+	// Sets the text and visibility of a single button
+	private void setButton(Button button, int resid) {
+        button.setText(resid);
+	    int visibility = (resid == R.string.NullButtonText) ? View.GONE : View.VISIBLE;
+	    button.setVisibility(visibility);
+	}
+
+	// Sets the text, visibility and "weight" of all buttons
+	private void setButtons(int leftResid, int centreResid, int rightResid) {
+	    setButton(mLeftControlButton, leftResid);
+	    setButton(mCentreControlButton, centreResid);
+	    setButton(mRightControlButton, rightResid);
+
+	    // If there are exactly two buttons, make the weight of the left button double,
+	    // so that it fills two-thirds of the width of the screen.
+	    float leftControlButtonWeight = (float) ((centreResid == R.string.NullButtonText && rightResid != R.string.NullButtonText) ? 2.0 : 1.0);
+	    mLeftControlButton.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, leftControlButtonWeight));
+	}
+
+	private void setXmlFileName(String filename) {
         mFormatXmlFileName = filename;
         SharedPreferences sp = getPreferences(MODE_PRIVATE);
         Editor editor = sp.edit();
         editor.putString(PREFERENCE_XML_FILE_NAME, filename);
         editor.commit();
+    }
+
+	/**
+     *  Updates the buttons according to the current status of the debate
+     *  The buttons are allocated as follows:
+     *  When at startOfSpeaker: [Start] [Next Speaker]
+     *  When running:           [Stop]
+     *  When stopped by user:   [Resume] [Restart] [Next Speaker]
+     *  When stopped by alarm:  [Resume]
+     *  The [Bell] button always is on the right of any of the above three buttons.
+     */
+    private void updateButtons() {
+        // If it's the last speaker, don't show a "next speaker" button.
+        // Show a "restart debate" button instead.
+        switch (mDebateManager.getStatus()) {
+        case NOT_STARTED:
+            setButtons(R.string.StartTimerButtonText, R.string.NullButtonText, R.string.NextSpeakerButtonText);
+            break;
+        case RUNNING:
+            setButtons(R.string.StopTimerButtonText, R.string.NullButtonText, R.string.NullButtonText);
+            break;
+        case STOPPED_BY_BELL:
+            setButtons(R.string.ResumeTimerAfterAlarmButtonText, R.string.NullButtonText, R.string.NullButtonText);
+            break;
+        case STOPPED_BY_USER:
+            setButtons(R.string.ResumeTimerAfterUserStopButtonText, R.string.ResetTimerButtonText, R.string.NextSpeakerButtonText);
+            break;
+        default:
+            break;
+        }
+
+        // Disable the [Next Speaker] button if there are no more speakers
+        mLeftControlButton.setEnabled(true);
+        mCentreControlButton.setEnabled(true);
+        mRightControlButton.setEnabled(!mDebateManager.isLastSpeaker());
+
+
+        // Show or hide the [Bell] button
+        mPlayBellButton.setVisibility((mBinder.getAlertManager().isSilentMode()) ? View.GONE : View.VISIBLE);
     }
 
     private void updateGui() {
@@ -494,202 +685,12 @@ public class DebatingActivity extends Activity {
         }
     }
 
-    /**
-     * Gets the preferences from the shared preferences file and applies them.
-     * @return true if applying preferences succeeded, false otherwise
-     */
-    private boolean applyPreferences() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (mDebateManager != null) {
-            boolean silentMode, vibrateMode, overtimeBellsEnabled;
-            int firstOvertimeBell, overtimeBellPeriod;
-            try {
-                silentMode           = prefs.getBoolean("silentMode", false);
-                vibrateMode          = prefs.getBoolean("vibrateMode", false);
-                overtimeBellsEnabled = prefs.getBoolean("overtimeBellsEnable", true);
-                if (overtimeBellsEnabled) {
-                    firstOvertimeBell  = prefs.getInt("firstOvertimeBell", 30);
-                    overtimeBellPeriod = prefs.getInt("overtimeBellPeriod", 30);
-                } else {
-                    firstOvertimeBell = 0;
-                    overtimeBellPeriod = 0;
-                }
-
-            } catch (ClassCastException e) {
-                Log.e(this.getClass().getSimpleName(), "applyPreferences: caught ClassCastException!");
-                return false;
-            }
-            mBinder.getAlertManager().setSilentMode(silentMode);
-            mBinder.getAlertManager().setVibrateMode(vibrateMode);
-            mDebateManager.setOvertimeBells(firstOvertimeBell, overtimeBellPeriod);
-            setVolumeControlStream((silentMode) ? AudioManager.STREAM_RING : AudioManager.STREAM_MUSIC);
-            Log.v(this.getClass().getSimpleName(), "applyPreferences: successfully applied");
-            return true;
-        }
-        else return false;
-    }
-
-    /**
-     *  Updates the buttons according to the current status of the debate
-     *  The buttons are allocated as follows:
-     *  When at startOfSpeaker: [Start] [Next Speaker]
-     *  When running:           [Stop]
-     *  When stopped by user:   [Resume] [Restart] [Next Speaker]
-     *  When stopped by alarm:  [Resume]
-     *  The [Bell] button always is on the right of any of the above three buttons.
-     */
-    private void updateButtons() {
-        // If it's the last speaker, don't show a "next speaker" button.
-        // Show a "restart debate" button instead.
-        switch (mDebateManager.getStatus()) {
-        case NOT_STARTED:
-            setButtons(R.string.StartTimerButtonText, R.string.NullButtonText, R.string.NextSpeakerButtonText);
-            break;
-        case RUNNING:
-            setButtons(R.string.StopTimerButtonText, R.string.NullButtonText, R.string.NullButtonText);
-            break;
-        case STOPPED_BY_BELL:
-            setButtons(R.string.ResumeTimerAfterAlarmButtonText, R.string.NullButtonText, R.string.NullButtonText);
-            break;
-        case STOPPED_BY_USER:
-            setButtons(R.string.ResumeTimerAfterUserStopButtonText, R.string.ResetTimerButtonText, R.string.NextSpeakerButtonText);
-            break;
-        default:
-            break;
-        }
-
-        // Disable the [Next Speaker] button if there are no more speakers
-        mLeftControlButton.setEnabled(true);
-        mCentreControlButton.setEnabled(true);
-        mRightControlButton.setEnabled(!mDebateManager.isLastSpeaker());
-
-
-        // Show or hide the [Bell] button
-        mPlayBellButton.setVisibility((mBinder.getAlertManager().isSilentMode()) ? View.GONE : View.VISIBLE);
-    }
-
-	// Sets the text, visibility and "weight" of all buttons
-	private void setButtons(int leftResid, int centreResid, int rightResid) {
-	    setButton(mLeftControlButton, leftResid);
-	    setButton(mCentreControlButton, centreResid);
-	    setButton(mRightControlButton, rightResid);
-
-	    // If there are exactly two buttons, make the weight of the left button double,
-	    // so that it fills two-thirds of the width of the screen.
-	    float leftControlButtonWeight = (float) ((centreResid == R.string.NullButtonText && rightResid != R.string.NullButtonText) ? 2.0 : 1.0);
-	    mLeftControlButton.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, leftControlButtonWeight));
-	}
-
-	// Sets the text and visibility of a single button
-	private void setButton(Button button, int resid) {
-        button.setText(resid);
-	    int visibility = (resid == R.string.NullButtonText) ? View.GONE : View.VISIBLE;
-	    button.setVisibility(visibility);
-	}
-
-	private static String secsToText(long time) {
+    private static String secsToText(long time) {
 	    if (time >= 0) {
 	        return String.format("%02d:%02d", time / 60, time % 60);
 	    } else {
 	        return String.format("%02d:%02d over", -time / 60, -time % 60);
 	    }
 	}
-
-	/**
-	 * Builds a <code>DebateFormat</code> from a specified XML file. Shows a <code>Dialog</code> if
-	 * the debate format builder logged non-fatal errors.
-	 * @param filename the file name of the XML file
-	 * @return the built <code>DebateFormat</code>
-	 * @throws FatalXmlError if there was any problem, which could include:
-	 * <ul><li>A problem opening or reading the file</li>
-	 * <li>A problem parsing the XML file</li>
-	 * <li>That there were no speeches in this debate format</li>
-	 * </ul>
-	 * The message of the exception will be human-readable and can be displayed in a dialogue box.
-	 */
-	private DebateFormat buildDebateFromXml(String filename) throws FatalXmlError {
-        DebateFormatBuilderFromXml dfbfx = new DebateFormatBuilderFromXml(this);
-        InputStream is = null;
-        DebateFormat df;
-
-	    try {
-            is = getAssets().open(filename);
-        } catch (IOException e) {
-            throw new FatalXmlError(getString(R.string.FatalProblemWithXmlFileMessage_CannotFind, filename), e);
-        }
-
-	    try {
-            df = dfbfx.buildDebateFromXml(is);
-        } catch (IOException e) {
-            throw new FatalXmlError(getString(R.string.FatalProblemWithXmlFileMessage_CannotRead, filename), e);
-        } catch (SAXException e) {
-            throw new FatalXmlError(getString(
-                    R.string.FatalProblemWithXmlFileMessage_BadXml, filename, e.getMessage()), e);
-        } catch (IllegalStateException e) {
-            throw new FatalXmlError(getString(
-                    R.string.FatalProblemWithXmlFileMessage_NoSpeeches, filename), e);
-        }
-
-	    if (dfbfx.hasErrors()) {
-	        Bundle bundle = new Bundle();
-	        bundle.putStringArrayList(DIALOG_BUNDLE_XML_ERROR_LOG, dfbfx.getErrorLog());
-	        removeDialog(DIALOG_XML_FILE_ERRORS);
-	        showDialog(DIALOG_XML_FILE_ERRORS, bundle);
-	    }
-
-	    return df;
-	}
-
-    private Dialog getFatalProblemWithXmlFileDialog(Bundle bundle) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        String errorMessage = bundle.getString(DIALOG_BUNDLE_FATAL_MESSAGE);
-        errorMessage = errorMessage.concat(getString(R.string.FatalProblemWithXmlFileMessageSuffix));
-
-        builder.setTitle(R.string.FatalProblemWithXmlFileDialogTitle)
-               .setMessage(errorMessage)
-               .setCancelable(true)
-               .setPositiveButton(R.string.FatalProblemWithXmlFileDialogButton, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(DebatingActivity.this, FormatChooserActivity.class);
-                        startActivityForResult(intent, CHOOSE_STYLE_REQUEST);
-                    }
-                })
-                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        DebatingActivity.this.finish();
-                    }
-                });
-
-        return builder.create();
-    }
-
-    private Dialog getErrorsWithXmlFileDialog(Bundle bundle) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        String errorMessage = getString(R.string.ErrorsInXmlFileDialogMessagePrefix);
-
-        ArrayList<String> errorLog = bundle.getStringArrayList(DIALOG_BUNDLE_XML_ERROR_LOG);
-        Iterator<String> errorIterator = errorLog.iterator();
-
-        while (errorIterator.hasNext()) {
-            errorMessage = errorMessage.concat("\n");
-            errorMessage = errorMessage.concat(errorIterator.next());
-        }
-
-        builder.setTitle(R.string.ErrorsInXmlFileDialogTitle)
-               .setMessage(errorMessage)
-               .setCancelable(true)
-               .setPositiveButton(R.string.ErrorsInXmlFileDialogButton, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-
-        return builder.create();
-    }
 
 }
