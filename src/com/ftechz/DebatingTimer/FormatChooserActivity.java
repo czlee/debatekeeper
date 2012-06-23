@@ -393,7 +393,7 @@ public class FormatChooserActivity extends Activity {
                .setCancelable(true);
 
         AlertDialog dialog = builder.create();
-        dialog.setView(view, 0, 10, 0, 15);
+        dialog.setView(view, 0, 10, 10, 15);
         return dialog;
 
     }
