@@ -63,11 +63,18 @@ public class DebatingActivity extends Activity {
 	private Bundle mLastStateBundle;
 
 	private String mFormatXmlFileName = null;
+	private UserPreferenceCountDirection mUserCountDirection = UserPreferenceCountDirection.GENERALLY_UP;
 
     private static final String BUNDLE_SUFFIX_DEBATE_MANAGER  = "dm";
     private static final String PREFERENCE_XML_FILE_NAME      = "xmlfn";
     private static final String DIALOG_BUNDLE_FATAL_MESSAGE   = "fm";
     private static final String DIALOG_BUNDLE_XML_ERROR_LOG   = "xel";
+
+    // These must match the string array R.array.PrefCountDirectionValues in preferences.xml
+    private static final String USER_COUNT_DIRECTION_VALUE_ALWAYS_UP      = "alwaysUp";
+    private static final String USER_COUNT_DIRECTION_VALUE_GENERALLY_UP   = "generallyUp";
+    private static final String USER_COUNT_DIRECTION_VALUE_GENERALLY_DOWN = "generallyDown";
+    private static final String USER_COUNT_DIRECTION_VALUE_ALWAYS_DOWN    = "alwaysDown";
 
     private static final int    CHOOSE_STYLE_REQUEST          = 0;
     private static final int    DIALOG_XML_FILE_FATAL         = 0;
@@ -176,6 +183,14 @@ public class DebatingActivity extends Activity {
             }
             updateGui();
         }
+    }
+
+    private enum OverallCountDirection {
+        COUNT_UP, COUNT_DOWN
+    }
+
+    private enum UserPreferenceCountDirection {
+        ALWAYS_UP, GENERALLY_UP, GENERALLY_DOWN, ALWAYS_DOWN
     }
 
     //******************************************************************************************
@@ -388,6 +403,7 @@ public class DebatingActivity extends Activity {
         if (mDebateManager != null) {
             boolean silentMode, vibrateMode, overtimeBellsEnabled;
             int firstOvertimeBell, overtimeBellPeriod;
+            String userCountDirectionValue;
             try {
                 silentMode           = prefs.getBoolean("silentMode", false);
                 vibrateMode          = prefs.getBoolean("vibrateMode", false);
@@ -399,6 +415,17 @@ public class DebatingActivity extends Activity {
                     firstOvertimeBell = 0;
                     overtimeBellPeriod = 0;
                 }
+
+                userCountDirectionValue = prefs.getString("countDirection", USER_COUNT_DIRECTION_VALUE_GENERALLY_UP);
+                // This is like a switch statement (not supported for strings in Java 6)
+                if (userCountDirectionValue.equals(USER_COUNT_DIRECTION_VALUE_ALWAYS_DOWN))
+                    mUserCountDirection = UserPreferenceCountDirection.ALWAYS_DOWN;
+                else if (userCountDirectionValue.equals(USER_COUNT_DIRECTION_VALUE_ALWAYS_UP))
+                    mUserCountDirection = UserPreferenceCountDirection.ALWAYS_UP;
+                else if (userCountDirectionValue.equals(USER_COUNT_DIRECTION_VALUE_GENERALLY_DOWN))
+                    mUserCountDirection = UserPreferenceCountDirection.GENERALLY_DOWN;
+                else if (userCountDirectionValue.equals(USER_COUNT_DIRECTION_VALUE_GENERALLY_UP))
+                    mUserCountDirection = UserPreferenceCountDirection.GENERALLY_UP;
 
             } catch (ClassCastException e) {
                 Log.e(this.getClass().getSimpleName(), "applyPreferences: caught ClassCastException!");
@@ -458,6 +485,41 @@ public class DebatingActivity extends Activity {
 
 	    return df;
 	}
+
+    /**
+     * Assembles the speech format and user count directions to find the count direction to use
+     * currently.
+     * @return OverallCountDirection.UP or OverallCountDirection.DOWN
+     */
+    private OverallCountDirection getCountDirection() {
+
+        // If the user has specified always up or always down, that takes priority.
+        if (mUserCountDirection == UserPreferenceCountDirection.ALWAYS_DOWN)
+            return OverallCountDirection.COUNT_DOWN;
+        if (mUserCountDirection == UserPreferenceCountDirection.ALWAYS_UP)
+            return OverallCountDirection.COUNT_UP;
+
+        // If the user hasn't specified, and the speech format has specified a count direction,
+        // use the speech format suggestion.
+        if (mDebateManager != null) {
+            SpeechFormat currentSpeechFormat = mDebateManager.getCurrentSpeechFormat();
+            CountDirection sfCountDirection = currentSpeechFormat.getCountDirection();
+            if (sfCountDirection == CountDirection.COUNT_DOWN)
+                return OverallCountDirection.COUNT_DOWN;
+            if (sfCountDirection == CountDirection.COUNT_UP)
+                return OverallCountDirection.COUNT_UP;
+        }
+
+        // Otherwise, use the user setting.
+        if (mUserCountDirection == UserPreferenceCountDirection.GENERALLY_DOWN)
+            return OverallCountDirection.COUNT_DOWN;
+        if (mUserCountDirection == UserPreferenceCountDirection.GENERALLY_UP)
+            return OverallCountDirection.COUNT_UP;
+
+        // We've now covered all possibilities.  But just in case (and to satisfy the compiler)...
+        return OverallCountDirection.COUNT_UP;
+
+    }
 
     private Dialog getErrorsWithXmlFileDialog(Bundle bundle) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -643,7 +705,7 @@ public class DebatingActivity extends Activity {
             long currentSpeechTime = mDebateManager.getCurrentSpeechTime();
             Long nextBellTime = mDebateManager.getNextBellTime();
 
-            if (currentSpeechFormat.getCountDirection() == CountDirection.COUNT_DOWN) {
+            if (getCountDirection() == OverallCountDirection.COUNT_DOWN) {
                 currentSpeechTime = currentSpeechFormat.getSpeechLength() - currentSpeechTime;
                 if (nextBellTime != null)
                     nextBellTime = currentSpeechFormat.getSpeechLength() - nextBellTime;

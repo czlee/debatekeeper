@@ -5,38 +5,47 @@
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="silentMode"
-        android:summaryOff="@string/PreferenceSilentModeOffSummary"
-        android:summaryOn="@string/PreferenceSilentModeOnSummary"
-        android:title="@string/PreferenceSilentModeTitle" />
+        android:summaryOff="@string/PrefSilentModeOffSummary"
+        android:summaryOn="@string/PrefSilentModeOnSummary"
+        android:title="@string/PrefSilentModeTitle" />
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="vibrateMode"
-        android:summaryOff="@string/PreferenceVibrateModeOffSummary"
-        android:summaryOn="@string/PreferenceVibrateModeOnSummary"
-        android:title="@string/PreferenceVibrateMode" />
+        android:summaryOff="@string/PrefVibrateModeOffSummary"
+        android:summaryOn="@string/PrefVibrateModeOnSummary"
+        android:title="@string/PrefVibrateModeTitle" />
     <CheckBoxPreference
         android:defaultValue="true"
         android:disableDependentsState="false"
         android:key="overtimeBellsEnable"
-        android:summaryOff="@string/PreferenceOvertimeBellsEnableOffSummary"
-        android:summaryOn="@string/PreferenceOvertimeBellsEnableOnSummary"
-        android:title="@string/PreferenceOvertimeBellsEnableTitle" />
+        android:summaryOff="@string/PrefOvertimeBellsEnableOffSummary"
+        android:summaryOn="@string/PrefOvertimeBellsEnableOnSummary"
+        android:title="@string/PrefOvertimeBellsEnableTitle" />
 
     <com.michaelnovakjr.numberpicker.NumberPickerPreference
-        picker:defaultValue="30"
-        picker:startRange="3"
-        picker:endRange="120"
         android:dependency="overtimeBellsEnable"
         android:key="firstOvertimeBell"
-        android:summary="@string/PreferenceFirstOvertimeBellSummary"
-        android:title="@string/PreferenceFirstOvertimeBellTitle" />
-    <com.michaelnovakjr.numberpicker.NumberPickerPreference
+        android:summary="@string/PrefFirstOvertimeBellSummary"
+        android:title="@string/PrefFirstOvertimeBellTitle"
+        android:dialogMessage="@string/PrefFirstOvertimeBellDialogMessage"
         picker:defaultValue="30"
-        picker:startRange="3"
         picker:endRange="120"
+        picker:startRange="3" />
+    <com.michaelnovakjr.numberpicker.NumberPickerPreference
         android:dependency="overtimeBellsEnable"
         android:key="overtimeBellPeriod"
-        android:summary="@string/PreferenceOvertimeBellPeriodSummary"
-        android:title="@string/PreferenceOvertimeBellPeriodTitle" />
+        android:summary="@string/PrefOvertimeBellPeriodSummary"
+        android:title="@string/PrefOvertimeBellPeriodTitle"
+        android:dialogMessage="@string/PrefOvertimeBellPeriodDialogMessage"
+        picker:defaultValue="30"
+        picker:endRange="120"
+        picker:startRange="3" />
+
+    <ListPreference
+        android:entries="@array/PrefCountDirectionEntries"
+        android:entryValues="@array/PrefCountDirectionValues"
+        android:key="countDirection"
+        android:title="@string/PrefCountDirectionTitle"
+        android:defaultValue="generallyUp"/>
 
 </PreferenceScreen>

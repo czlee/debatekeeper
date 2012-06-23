@@ -1,16 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="PreferenceSilentModeTitle">Silent mode</string>
-    <string name="PreferenceSilentModeOnSummary">Bell will not sound (this doesn\'t affect other sounds from your phone)</string>
-    <string name="PreferenceSilentModeOffSummary">Bell will sound</string>
-    <string name="PreferenceVibrateModeOnSummary">Vibrate at bell times</string>
-    <string name="PreferenceVibrateModeOffSummary">Don\'t vibrate</string>
-    <string name="PreferenceVibrateMode">Vibrator</string>
-    <string name="PreferenceOvertimeBellsEnableTitle">Enable overtime bells</string>
-    <string name="PreferenceOvertimeBellsEnableOnSummary">Ring the overtime bells as detailed below</string>
-    <string name="PreferenceOvertimeBellsEnableOffSummary">Don\'t ring any overtime bells</string>
-    <string name="PreferenceFirstOvertimeBellTitle">First overtime bell</string>
-    <string name="PreferenceFirstOvertimeBellSummary">Ring the first overtime bell after %s seconds…</string>
-    <string name="PreferenceOvertimeBellPeriodTitle">Overtime bell period</string>
-    <string name="PreferenceOvertimeBellPeriodSummary">…and then every %s seconds after that</string>
+    
+<!-- These aren't currently used; we just hard-code the key names into the source code.
+(The user will never see them so it's not locale-dependent.)
+    <string name="PrefSilentModeKey">sm</string>
+    <string name="PrefVibrateModeKey">v</string>
+    <string name="PrefOvertimeBellsEnableKey">obe</string>
+    <string name="PrefFirstOvertimeBellKey">fob</string>
+    <string name="PrefOvertimeBellPeriodKey">obp</string>
+    <string name="PrefCountDirectionKey">cd</string>
+-->
+
+    <string name="PrefSilentModeTitle">Silent mode</string>
+    <string name="PrefSilentModeOnSummary">Bell will not sound (this doesn\'t affect other sounds from your phone)</string>
+    <string name="PrefSilentModeOffSummary">Bell will sound</string>
+    
+    <string name="PrefVibrateModeTitle">Vibrator</string>
+    <string name="PrefVibrateModeOnSummary">Vibrate at bell times</string>
+    <string name="PrefVibrateModeOffSummary">Don\'t vibrate</string>
+    
+    <string name="PrefOvertimeBellsEnableTitle">Enable overtime bells</string>
+    <string name="PrefOvertimeBellsEnableOnSummary">Ring overtime bells as specified below</string>
+    <string name="PrefOvertimeBellsEnableOffSummary">Don\'t ring any overtime bells</string>
+    <string name="PrefFirstOvertimeBellTitle">First overtime bell</string>
+    <string name="PrefFirstOvertimeBellSummary">Ring the first overtime bell after %s seconds…</string>
+    <string name="PrefFirstOvertimeBellDialogMessage">"The time after finish in seconds of the first overtime bell:"</string>
+    <string name="PrefOvertimeBellPeriodTitle">Overtime bell period</string>
+    <string name="PrefOvertimeBellPeriodSummary">…and then every %s seconds after that</string>
+    <string name="PrefOvertimeBellPeriodDialogMessage">"The time between overtime bells (after the first) in seconds:"</string>
+    
+    <string name="PrefCountDirectionTitle">Count direction</string>
+    <string-array name="PrefCountDirectionSummaries">
+        <item>Always count up</item>
+    	<item>Count up (unless the style suggests down)</item>
+    	<item>Count down (unless the style suggests up)</item>
+    	<item>Always count down</item>
+    </string-array>
+    <string-array name="PrefCountDirectionEntries">
+        <item>Always up</item>
+    	<item>Generally up</item>
+    	<item>Generally down</item>
+    	<item>Always down</item>
+    </string-array>
+    <string-array name="PrefCountDirectionValues">
+        <item>alwaysUp</item>
+    	<item>generallyUp</item>
+    	<item>generallyDown</item>
+    	<item>alwaysDown</item>
+    </string-array>
 </resources>
