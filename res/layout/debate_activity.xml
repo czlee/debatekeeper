@@ -55,7 +55,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="4dip"
+            android:paddingTop="4dip"
             android:gravity="center_horizontal"
             android:textSize="20dip" />
 
@@ -73,7 +73,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="00:00"
             android:textSize="75dip" />
 
         <TextView
