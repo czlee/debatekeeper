@@ -110,7 +110,7 @@ public class DebateManager {
     public void nextSpeaker() {
         saveSpeech();
         mSpeechManager.stop();
-        if (!isLastSpeaker()) mCurrentSpeechIndex++;
+        if (!isLastSpeech()) mCurrentSpeechIndex++;
         loadSpeech();
     }
 
@@ -121,7 +121,7 @@ public class DebateManager {
     public void previousSpeaker() {
         saveSpeech();
         mSpeechManager.stop();
-        if (!isFirstSpeaker()) mCurrentSpeechIndex--;
+        if (!isFirstSpeech()) mCurrentSpeechIndex--;
         loadSpeech();
     }
 
@@ -132,16 +132,35 @@ public class DebateManager {
         return mSpeechManager.getStatus();
     }
 
+    /**
+     * @return <code>true</code> if the timer is running, <code>false</code> otherwise
+     */
     public boolean isRunning() {
         return mSpeechManager.getStatus() == SpeechManager.DebatingTimerState.RUNNING;
     }
 
-    public boolean isFirstSpeaker() {
+    /**
+     * @return <code>true</code> if the current speech is the first speech, <code>false</code>
+     * otherwise
+     */
+    public boolean isFirstSpeech() {
         return mCurrentSpeechIndex == 0;
     }
 
-    public boolean isLastSpeaker() {
+    /**
+     * @return <code>true</code> if the current speech is the last speech, <code>false</code>
+     * otherwise
+     */
+    public boolean isLastSpeech() {
         return mCurrentSpeechIndex == mDebateFormat.numberOfSpeeches() - 1;
+    }
+
+    /**
+     * Checks if the current speech is in overtime
+     * @return <code>true</code> is the current speech is in overtime, <code>false</code> otherwise.
+     */
+    public boolean isOvertime() {
+        return mSpeechManager.isOvertime();
     }
 
     /**

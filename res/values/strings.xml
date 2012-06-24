@@ -4,6 +4,7 @@
     <string name="app_name">Debating Timer</string>
     <string name="GlobalSettingsActivityName">Settings</string>
     <string name="FormatChooserActivityName">Choose style</string>
+    <string name="DebatingActivityTitleBarWithoutFormatName">Debating Timer</string>
     <string name="DebatingActivityTitleBarWithFormatName">Debating Timer - %1$s</string>
 
     <!-- Buttons -->
@@ -26,6 +27,8 @@
     <string name="NoDebateLoadedText">No debate loaded</string>
     <string name="NoDebateLoadedButtonText">Choose style</string>
     
+    <color name="overtime">#ffff7878</color>
+    
     <!-- Menu -->
     <string name="ResetDebateMenuItem">Reset debate</string>
     <string name="SettingsMenuItem">Settings</string>
@@ -40,9 +43,12 @@
     <string name="FatalProblemWithXmlFileMessage_CannotFind">"I've hit a problem opening this debate format XML file (%1$s)."</string>
     <string name="FatalProblemWithXmlFileMessage_BadXml">"I can't work with this debate format XML file (%1$s) because the XML isn't well-formed. The XML error was:\n\n%2$s\n"</string>
     <string name="FatalProblemWithXmlFileMessageSuffix">"\nPlease choose another style."</string>
-
+    <string name="FatalProblemWithXmlFileNoSchemaVersionSuffix">"\n\nNo schema version was specified; please ask the author of this XML file to specify one.\n"</string>
+    <string name="FatalProblemWithXmlFileSchemaTooNewSuffix">"\n\nThis schema version (%1$s) isn't supported.  You might need to update this app.\n"</string>
+    
     <string name="ErrorsInXmlFileDialogTitle">Warning</string>
     <string name="ErrorsInXmlFileDialogButton">OK</string>
     <string name="ErrorsInXmlFileDialogMessagePrefix">"There are a few problems with this debate format XML file. I'll try to work with it, but it probably won't work properly. The problems are:\n"</string>
+    
         
 </resources>

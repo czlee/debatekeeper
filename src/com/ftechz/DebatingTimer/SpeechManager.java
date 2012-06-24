@@ -234,6 +234,16 @@ public class SpeechManager {
     }
 
     /**
+     * Checks whether the speech is in overtime.
+     * @return <code>true</code> if the current time exceeds the speech length,
+     * <code>false</code> otherwise.
+     * <code>false</code> if the current time and speech length are equal
+     */
+    public boolean isOvertime() {
+        return mCurrentTime > mSpeechFormat.getSpeechLength();
+    }
+
+    /**
      * Sets the overtime bell specifications
      * @param firstBell The number of seconds after the finish time to ring the first overtime bell
      * @param period The time in between subsequence overtime bells

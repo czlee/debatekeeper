@@ -19,6 +19,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.res.Resources;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -65,10 +66,10 @@ public class DebatingActivity extends Activity {
 	private String mFormatXmlFileName = null;
 	private UserPreferenceCountDirection mUserCountDirection = UserPreferenceCountDirection.GENERALLY_UP;
 
-    private static final String BUNDLE_SUFFIX_DEBATE_MANAGER  = "dm";
-    private static final String PREFERENCE_XML_FILE_NAME      = "xmlfn";
-    private static final String DIALOG_BUNDLE_FATAL_MESSAGE   = "fm";
-    private static final String DIALOG_BUNDLE_XML_ERROR_LOG   = "xel";
+    private static final String BUNDLE_SUFFIX_DEBATE_MANAGER           = "dm";
+    private static final String PREFERENCE_XML_FILE_NAME               = "xmlfn";
+    private static final String DIALOG_BUNDLE_FATAL_MESSAGE            = "fm";
+    private static final String DIALOG_BUNDLE_XML_ERROR_LOG            = "xel";
 
     // These must match the string array R.array.PrefCountDirectionValues in preferences.xml
     private static final String USER_COUNT_DIRECTION_VALUE_ALWAYS_UP      = "alwaysUp";
@@ -127,10 +128,9 @@ public class DebatingActivity extends Activity {
         public FatalXmlError(String detailMessage, Throwable throwable) {
             super(detailMessage, throwable);
         }
-
     }
 
-    private final class GuiUpdateBroadcastReceiver extends BroadcastReceiver {
+   private final class GuiUpdateBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             updateGui();
@@ -175,7 +175,7 @@ public class DebatingActivity extends Activity {
             switch (mDebateManager.getStatus()) {
             case NOT_STARTED:
             case STOPPED_BY_USER:
-                if (!mDebateManager.isLastSpeaker())
+                if (!mDebateManager.isLastSpeech())
                     mDebateManager.nextSpeaker();
                 break;
             default:
@@ -208,7 +208,7 @@ public class DebatingActivity extends Activity {
 
         // If the timer is stopped AND it's not the first speaker, go back one
         // speaker
-        if (!mDebateManager.isFirstSpeaker() && !mDebateManager.isRunning()) {
+        if (!mDebateManager.isFirstSpeech() && !mDebateManager.isRunning()) {
             mDebateManager.previousSpeaker();
             updateGui();
             return;
@@ -262,7 +262,7 @@ public class DebatingActivity extends Activity {
 	    MenuItem resetDebateItem = menu.findItem(R.id.resetDebate);
 
 	    if (mDebateManager != null) {
-	        prevSpeakerItem.setEnabled(!mDebateManager.isFirstSpeaker());
+	        prevSpeakerItem.setEnabled(!mDebateManager.isFirstSpeech() && !mDebateManager.isRunning());
             resetDebateItem.setEnabled(true);
 	    } else {
 	        prevSpeakerItem.setEnabled(false);
@@ -545,8 +545,7 @@ public class DebatingActivity extends Activity {
                 });
 
         return builder.create();
-    }
-
+    }
     private Dialog getFatalProblemWithXmlFileDialog(Bundle bundle) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -685,7 +684,7 @@ public class DebatingActivity extends Activity {
         // Disable the [Next Speaker] button if there are no more speakers
         mLeftControlButton.setEnabled(true);
         mCentreControlButton.setEnabled(true);
-        mRightControlButton.setEnabled(!mDebateManager.isLastSpeaker());
+        mRightControlButton.setEnabled(!mDebateManager.isLastSpeech());
 
 
         // Show or hide the [Bell] button
@@ -711,7 +710,14 @@ public class DebatingActivity extends Activity {
                     nextBellTime = currentSpeechFormat.getSpeechLength() - nextBellTime;
             }
 
+            Resources resources = getResources();
+            int currentTimeTextColor;
+            if (mDebateManager.isOvertime())
+                currentTimeTextColor = resources.getColor(R.color.overtime);
+            else
+                currentTimeTextColor = resources.getColor(android.R.color.primary_text_dark);
             mCurrentTimeText.setText(secsToText(currentSpeechTime));
+            mCurrentTimeText.setTextColor(currentTimeTextColor);
 
             if (nextBellTime != null) {
                 mNextTimeText.setText(String.format(
@@ -729,6 +735,8 @@ public class DebatingActivity extends Activity {
             updateButtons();
 
             this.setTitle(getString(R.string.DebatingActivityTitleBarWithFormatName, mDebateManager.getDebateFormatName()));
+
+
         } else {
             // If no debate is loaded, disable the control buttons
             // (Keep the play bell button enabled.)
@@ -744,6 +752,7 @@ public class DebatingActivity extends Activity {
             mCurrentTimeText.setText("");
             mNextTimeText.setText("");
             mFinalTimeText.setText("");
+            setTitle(R.string.DebatingActivityTitleBarWithoutFormatName);
         }
     }
 

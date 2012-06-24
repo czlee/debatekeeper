@@ -4,6 +4,7 @@
 
     <string name="XmlElemNameRoot">debateformat</string>
         <string name="XmlAttrNameRootName">name</string>
+        <string name="XmlAttrNameRootSchemaVersion">schemaversion</string>
         <string name="XmlAttrNameCommonRef">ref</string>
             <string name="XmlAttrValueCommonTrue">true</string>
             <string name="XmlAttrValueCommonFalse">false</string>
@@ -49,6 +50,9 @@
             <string name="XmlAttrNameSpeechFormat">type</string>
 
     <string name="XmlErrorRootNoName">This debate format has no name!</string>
+    <string name="XmlErrorRootNoSchemaVersion">"This debate format has no schema version, so it's impossible to tell whether you need to update to support this file!\n"</string>
+    <string name="XmlErrorRootNewSchemaVersion">"Only schema versions up to %2$s are supported (this file uses version %1$s); this might mean you need to update the app.\n"</string>
+    <string name="XmlErrorRootInvalidSchemaVersion">"Invalid schema version: '%1$s'"</string>
     <string name="XmlErrorSomethingOutsideRoot">There was something outside the root debateformat element</string>
     <string name="XmlErrorResourceNoRef">"No 'ref' was specified for a resource"</string>
     <string name="XmlErrorResourceInsideContext">"The resource '%1$s' was inside a %2$s"</string>

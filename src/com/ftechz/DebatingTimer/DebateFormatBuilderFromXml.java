@@ -28,8 +28,10 @@ public class DebateFormatBuilderFromXml {
     private final Context             mContext;
     private final DebateFormatBuilder mDfb;
     private final ArrayList<String>   mErrorLog = new ArrayList<String>();
+    private       String              mSchemaVersion = null;
 
     private final String DEBATING_TIMER_URI;
+    private static final String MAXIMUM_SCHEMA_VERSION = "1.0";
 
     public DebateFormatBuilderFromXml(Context context) {
         mContext = context;
@@ -140,6 +142,19 @@ public class DebateFormatBuilderFromXml {
                     logXmlError(R.string.XmlErrorRootNoName);
                     return;
                 }
+
+                mSchemaVersion = getValue(atts, R.string.XmlAttrNameRootSchemaVersion);
+                if (mSchemaVersion == null) {
+                    logXmlError(R.string.XmlErrorRootNoSchemaVersion);
+                } else {
+                    try {
+                        if (!isSchemaSupported())
+                            logXmlError(R.string.XmlErrorRootNewSchemaVersion, mSchemaVersion, MAXIMUM_SCHEMA_VERSION);
+                    } catch (IllegalArgumentException e) {
+                        logXmlError(R.string.XmlErrorRootInvalidSchemaVersion, mSchemaVersion);
+                    }
+                }
+
 
                 mDfb.setDebateFormatName(name);
                 mIsInRootContext = true;
@@ -572,6 +587,24 @@ public class DebateFormatBuilderFromXml {
     }
 
     /**
+     * @return <code>true</code> if the schema version is supported.
+     * <code>false</code> if there is no schema version, this includes if this builder hasn't parsed
+     * an XML file yet.
+     */
+    public boolean isSchemaSupported() throws IllegalArgumentException {
+        if (mSchemaVersion == null)
+            return false;
+        return (compareSchemaVersions(mSchemaVersion, MAXIMUM_SCHEMA_VERSION) <= 0);
+    }
+
+    /**
+     * @return The schema version, could be <code>null</code>
+     */
+    public String getSchemaVersion() {
+        return mSchemaVersion;
+    }
+
+    /**
      * @return An <i>ArrayList</i> of <code>String</code>s, each item being an error found by
      * the XML parser
      */
@@ -604,6 +637,41 @@ public class DebateFormatBuilderFromXml {
             throw new NumberFormatException();
         }
         return seconds;
+    }
+
+    /**
+     * @param a
+     * @param b
+     * @return 1 if a > b, 0 if a == b, 1 if a < b
+     */
+    private static int compareSchemaVersions(String a, String b) throws IllegalArgumentException {
+        int[] a_int = versionToIntArray(a);
+        int[] b_int = versionToIntArray(b);
+        int min_length = (a_int.length > b_int.length) ? b_int.length : a_int.length;
+        for (int i = 0; i < min_length; i++) {
+            if (a_int[i] > b_int[i]) return 1;
+            if (a_int[i] < b_int[i]) return -1;
+        }
+        return 0;
+    }
+
+    /**
+     * @param version
+     * @return an integer array
+     */
+    private static int[] versionToIntArray(String version) throws IllegalArgumentException {
+        int[] result = new int[2];
+        String[] parts = version.split("\\.", 2);
+        if (parts.length != 2)
+            throw new IllegalArgumentException("version must be in the form 'a.b' where a and b are numbers");
+        for (int i = 0; i < 2; i++) {
+            try {
+                result[i] = Integer.parseInt(parts[i]);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("version must be in the form 'a.b' where a and b are numbers");
+            }
+        }
+        return result;
     }
 
     /**
