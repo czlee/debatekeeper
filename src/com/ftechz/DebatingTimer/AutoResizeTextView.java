@@ -1,7 +1,6 @@
 package com.ftechz.DebatingTimer;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.text.Layout.Alignment;
 import android.text.StaticLayout;
 import android.text.TextPaint;
