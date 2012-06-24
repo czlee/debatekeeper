@@ -1,46 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/titleText"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:textSize="20dip" />
-
-    <TextView
-        android:id="@+id/stateText"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:textSize="14dip" />
-
-    <TextView
-        android:id="@+id/currentTime"
-        style="@style/MainTimerText"
-        android:layout_width="fill_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
-        android:textSize="60dip" />
-
-    <TextView
-        android:id="@+id/nextTime"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal" />
-
-    <TextView
-        android:id="@+id/finalTime"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal" />
-
     <LinearLayout
+        android:id="@+id/controlButtons"
         android:layout_width="fill_parent"
         android:layout_height="60dip"
+        android:layout_alignParentBottom="true"
         android:orientation="horizontal" >
 
         <Button
@@ -75,4 +43,53 @@
             android:text="@string/PlayBellButtonText" />
     </LinearLayout>
 
-</LinearLayout>
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/controlButtons"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="4dip"
+            android:gravity="center_horizontal"
+            android:textSize="20dip" />
+
+        <TextView
+            android:id="@+id/stateText"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/titleText"
+            android:gravity="center_horizontal"
+            android:textSize="14dip" />
+
+        <TextView
+            android:id="@+id/currentTime"
+            style="@style/MainTimerText"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="00:00"
+            android:textSize="75dip" />
+
+        <TextView
+            android:id="@+id/finalTime"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="4dip"
+            android:gravity="center_horizontal" />
+
+        <TextView
+            android:id="@+id/nextTime"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/finalTime"
+            android:gravity="center_horizontal" />
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -46,5 +46,6 @@
 	    <item name="android:layout_width">match_parent</item>
 	    <item name="android:layout_height">wrap_content</item>
    	</style>
-	
+   	
+	<dimen name="view_format_list_item_padding">3dip</dimen>
 </resources>

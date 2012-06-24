@@ -10,9 +10,4 @@
         android:layout_height="wrap_content"
         layout="@android:layout/simple_list_item_single_choice" />
 
-    <include
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        layout="@layout/view_format_short" />
-
 </LinearLayout>

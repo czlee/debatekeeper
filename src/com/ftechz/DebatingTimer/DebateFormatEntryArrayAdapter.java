@@ -93,7 +93,7 @@ public class DebateFormatEntryArrayAdapter extends
 
         } else {
             view = View.inflate(getContext(),
-                    android.R.layout.simple_list_item_single_choice, null);
+                    R.layout.format_item_not_selected, null);
         }
 
         CheckedTextView titleView = (CheckedTextView) view
