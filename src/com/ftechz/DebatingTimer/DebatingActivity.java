@@ -367,13 +367,18 @@ public class DebatingActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+        if (mBinder != null)
+            if (mBinder.getAlertManager() != null)
+                mBinder.getAlertManager().activityPause();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mGuiUpdateBroadcastReceiver);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
+        if (mBinder != null)
+            if (mBinder.getAlertManager() != null)
+                mBinder.getAlertManager().activityResume();
         LocalBroadcastManager.getInstance(this).registerReceiver(mGuiUpdateBroadcastReceiver,
                 new IntentFilter(DebatingTimerService.UPDATE_GUI_BROADCAST_ACTION));
 
