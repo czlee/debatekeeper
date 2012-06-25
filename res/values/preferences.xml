@@ -11,6 +11,10 @@
     <string name="PrefCountDirectionKey">cd</string>
 -->
 
+	<string name="PrefCategoryOvertimeBellsTitle">Overtime bells</string>
+	<string name="PrefCategoryBellsTitle">Bells</string>
+	<string name="PrefCategoryGeneralTitle">General</string>
+		
     <string name="PrefSilentModeTitle">Silent mode</string>
     <string name="PrefSilentModeOnSummary">Bell will not sound (this doesn\'t affect other sounds from your phone)</string>
     <string name="PrefSilentModeOffSummary">Bell will sound</string>
@@ -48,4 +52,8 @@
     	<item>generallyDown</item>
     	<item>alwaysDown</item>
     </string-array>
+    
+    <string name="PrefWakeLockTitle">Keep screen on</string>
+    <string name="PrefWakeLockOnSummary">Keep screen on (dimmed) while timer is running</string>
+    <string name="PrefWakeLockOffSummary">Apply normal screen timeout</string>
 </resources>

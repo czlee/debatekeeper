@@ -33,6 +33,7 @@ public class AlertManager
     private       boolean               mShowingNotification = false;
     private       boolean               mSilentMode          = false;
     private       boolean               mVibrateMode         = true;
+    private       boolean               mWakeLockEnabled     = true;
 
     /**
      * Constructor.
@@ -54,6 +55,10 @@ public class AlertManager
                 PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE,
                 "DebatingWakeLock");
 
+        // Either we have the lock or we don't, we don't need to count how many times we locked
+        // it.  Turning this off makes it okay to acquire or release multiple times.
+        mWakeLock.setReferenceCounted(false);
+
         mVibrator = (Vibrator) debatingTimerService.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
@@ -73,6 +78,22 @@ public class AlertManager
         this.mVibrateMode = vibrateMode;
     }
 
+    public boolean isWakeLockEnabled() {
+        return mWakeLockEnabled;
+    }
+
+    public void setWakeLockEnabled(boolean wakeLockEnabled) {
+        this.mWakeLockEnabled = wakeLockEnabled;
+
+        // Also, acquire or release the wake lock accordingly
+        if (mShowingNotification) {
+            if (wakeLockEnabled)
+                mWakeLock.acquire();
+            else
+                mWakeLock.release();
+        }
+    }
+
     public void makeActive(PeriodInfo currentPeriodInfo) {
 
         if(!mShowingNotification) {
@@ -86,7 +107,7 @@ public class AlertManager
             mShowingNotification = true;
         }
 
-        mWakeLock.acquire();
+        acquireWakeLock();
     }
 
     public void updateNotification(String notificationText) {
@@ -103,6 +124,17 @@ public class AlertManager
             mVibrator.cancel();
             mShowingNotification = false;
         }
+    }
+
+    /**
+     * Call this when the activity is paused (from onPause())
+     */
+    public void activityPause() {
+        mWakeLock.release();
+    }
+
+    public void activityResume() {
+        acquireWakeLock();
     }
 
     public void triggerAlert(BellInfo alert, PeriodInfo currentPeriodInfo) {
@@ -138,5 +170,11 @@ public class AlertManager
         // TODO un-hardcode this R.raw.desk_bell
         BellSoundInfo bellInfo = new BellSoundInfo(R.raw.desk_bell, 1);
         playBell(bellInfo);
+    }
+
+    private void acquireWakeLock() {
+        if (mWakeLockEnabled) {
+            mWakeLock.acquire();
+        }
     }
 }

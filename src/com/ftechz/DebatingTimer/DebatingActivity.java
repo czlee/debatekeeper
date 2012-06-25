@@ -401,13 +401,14 @@ public class DebatingActivity extends Activity {
     private boolean applyPreferences() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (mDebateManager != null) {
-            boolean silentMode, vibrateMode, overtimeBellsEnabled;
+            boolean silentMode, vibrateMode, overtimeBellsEnabled, wakeLockEnabled;
             int firstOvertimeBell, overtimeBellPeriod;
             String userCountDirectionValue;
             try {
                 silentMode           = prefs.getBoolean("silentMode", false);
                 vibrateMode          = prefs.getBoolean("vibrateMode", false);
                 overtimeBellsEnabled = prefs.getBoolean("overtimeBellsEnable", true);
+                wakeLockEnabled      = prefs.getBoolean("wakeLock", true);
                 if (overtimeBellsEnabled) {
                     firstOvertimeBell  = prefs.getInt("firstOvertimeBell", 30);
                     overtimeBellPeriod = prefs.getInt("overtimeBellPeriod", 30);
@@ -433,6 +434,7 @@ public class DebatingActivity extends Activity {
             }
             mBinder.getAlertManager().setSilentMode(silentMode);
             mBinder.getAlertManager().setVibrateMode(vibrateMode);
+            mBinder.getAlertManager().setWakeLockEnabled(wakeLockEnabled);
             mDebateManager.setOvertimeBells(firstOvertimeBell, overtimeBellPeriod);
             setVolumeControlStream((silentMode) ? AudioManager.STREAM_RING : AudioManager.STREAM_MUSIC);
             Log.v(this.getClass().getSimpleName(), "applyPreferences: successfully applied");

@@ -2,50 +2,62 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:picker="http://schemas.android.com/apk/res/com.ftechz.DebatingTimer" >
 
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="silentMode"
-        android:summaryOff="@string/PrefSilentModeOffSummary"
-        android:summaryOn="@string/PrefSilentModeOnSummary"
-        android:title="@string/PrefSilentModeTitle" />
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="vibrateMode"
-        android:summaryOff="@string/PrefVibrateModeOffSummary"
-        android:summaryOn="@string/PrefVibrateModeOnSummary"
-        android:title="@string/PrefVibrateModeTitle" />
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:disableDependentsState="false"
-        android:key="overtimeBellsEnable"
-        android:summaryOff="@string/PrefOvertimeBellsEnableOffSummary"
-        android:summaryOn="@string/PrefOvertimeBellsEnableOnSummary"
-        android:title="@string/PrefOvertimeBellsEnableTitle" />
+    <PreferenceCategory android:title="@string/PrefCategoryBellsTitle" >
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="silentMode"
+            android:summaryOff="@string/PrefSilentModeOffSummary"
+            android:summaryOn="@string/PrefSilentModeOnSummary"
+            android:title="@string/PrefSilentModeTitle" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="vibrateMode"
+            android:summaryOff="@string/PrefVibrateModeOffSummary"
+            android:summaryOn="@string/PrefVibrateModeOnSummary"
+            android:title="@string/PrefVibrateModeTitle" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/PrefCategoryOvertimeBellsTitle" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:disableDependentsState="false"
+            android:key="overtimeBellsEnable"
+            android:summaryOff="@string/PrefOvertimeBellsEnableOffSummary"
+            android:summaryOn="@string/PrefOvertimeBellsEnableOnSummary"
+            android:title="@string/PrefOvertimeBellsEnableTitle" />
 
-    <com.michaelnovakjr.numberpicker.NumberPickerPreference
-        android:dependency="overtimeBellsEnable"
-        android:key="firstOvertimeBell"
-        android:summary="@string/PrefFirstOvertimeBellSummary"
-        android:title="@string/PrefFirstOvertimeBellTitle"
-        android:dialogMessage="@string/PrefFirstOvertimeBellDialogMessage"
-        picker:defaultValue="30"
-        picker:endRange="120"
-        picker:startRange="3" />
-    <com.michaelnovakjr.numberpicker.NumberPickerPreference
-        android:dependency="overtimeBellsEnable"
-        android:key="overtimeBellPeriod"
-        android:summary="@string/PrefOvertimeBellPeriodSummary"
-        android:title="@string/PrefOvertimeBellPeriodTitle"
-        android:dialogMessage="@string/PrefOvertimeBellPeriodDialogMessage"
-        picker:defaultValue="30"
-        picker:endRange="120"
-        picker:startRange="3" />
+        <com.michaelnovakjr.numberpicker.NumberPickerPreference
+            android:dependency="overtimeBellsEnable"
+            android:dialogMessage="@string/PrefFirstOvertimeBellDialogMessage"
+            android:key="firstOvertimeBell"
+            android:summary="@string/PrefFirstOvertimeBellSummary"
+            android:title="@string/PrefFirstOvertimeBellTitle"
+            picker:defaultValue="30"
+            picker:endRange="120"
+            picker:startRange="3" />
+        <com.michaelnovakjr.numberpicker.NumberPickerPreference
+            android:dependency="overtimeBellsEnable"
+            android:dialogMessage="@string/PrefOvertimeBellPeriodDialogMessage"
+            android:key="overtimeBellPeriod"
+            android:summary="@string/PrefOvertimeBellPeriodSummary"
+            android:title="@string/PrefOvertimeBellPeriodTitle"
+            picker:defaultValue="30"
+            picker:endRange="120"
+            picker:startRange="3" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/PrefCategoryGeneralTitle" >
+        <ListPreference
+            android:defaultValue="generallyUp"
+            android:entries="@array/PrefCountDirectionEntries"
+            android:entryValues="@array/PrefCountDirectionValues"
+            android:key="countDirection"
+            android:title="@string/PrefCountDirectionTitle" />
 
-    <ListPreference
-        android:entries="@array/PrefCountDirectionEntries"
-        android:entryValues="@array/PrefCountDirectionValues"
-        android:key="countDirection"
-        android:title="@string/PrefCountDirectionTitle"
-        android:defaultValue="generallyUp"/>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="wakeLock"
+            android:summaryOff="@string/PrefWakeLockOffSummary"
+            android:summaryOn="@string/PrefWakeLockOnSummary"
+            android:title="@string/PrefWakeLockTitle" />
+    </PreferenceCategory>
 
 </PreferenceScreen>
