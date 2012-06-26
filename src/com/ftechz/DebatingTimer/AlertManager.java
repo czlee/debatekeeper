@@ -14,15 +14,15 @@ import android.os.Vibrator;
 
 
 /**
-* AlertManager manages all alerts for the Debating Timer application.
-*
-* Only a single instance of AlertManager should exist at any given time.  It receives requests from
-* other parts of the application.
-*
-* @author Phillip Cao
-* @author Chuan-Zheng Lee
-* @since  2012-03-30
-*/
+ * AlertManager manages all alerts for the Debating Timer application.
+ *
+ * Only a single instance of AlertManager should exist at any given time.  It receives requests from
+ * other parts of the application.
+ *
+ * @author Phillip Cao
+ * @author Chuan-Zheng Lee
+ * @since  2012-03-30
+ */
 public class AlertManager
 {
     public  static final int NOTIFICATION_ID = 1;
