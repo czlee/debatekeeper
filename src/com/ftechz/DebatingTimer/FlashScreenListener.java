@@ -6,6 +6,6 @@ package com.ftechz.DebatingTimer;
  * @author Chuan-Zheng Lee
  *
  */
-public interface ColourInvertListener {
-    public void setInverted(boolean invert);
+public interface FlashScreenListener {
+    public void flashScreen(boolean invert);
 }

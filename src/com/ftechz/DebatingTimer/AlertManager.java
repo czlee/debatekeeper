@@ -35,7 +35,7 @@ public class AlertManager
     private       PowerManager.WakeLock mWakeLock;
     private       Notification          mNotification;
     private       BellRepeater          mBellRepeater         = null;
-    private       ColourInvertListener  mColourInvertListener = null;
+    private       FlashScreenListener   mFlashScreenListener  = null;
     private       boolean               mShowingNotification  = false;
     private       boolean               mSilentMode           = false;
     private       boolean               mVibrateMode          = true;
@@ -151,24 +151,25 @@ public class AlertManager
             mVibrator.vibrate(300 * bsi.getTimesToPlay());
         }
 
-        if (mColourInvertListener != null) {
-            mColourInvertListener.setInverted(true);
+        if (mFlashScreenListener != null) {
+            // Flash the screen white and set a timer to turn it back normal after half a second
+            mFlashScreenListener.flashScreen(true);
             wakeUpScreenForBell();
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    mColourInvertListener.setInverted(false);
+                    mFlashScreenListener.flashScreen(false);
                 }
             }, BELL_SCREEN_FLASH_TIME);
         }
     }
 
     /**
-     * @param screenColourInverter the screenColourInverter to set
+     * @param flashScreenListener the {@link FlashScreenListener} to set
      */
-    public void setScreenColourInverter(ColourInvertListener screenColourInverter) {
-        this.mColourInvertListener = screenColourInverter;
+    public void setFlashScreenListener(FlashScreenListener flashScreenListener) {
+        this.mFlashScreenListener = flashScreenListener;
     }
 
     public void setSilentMode(boolean silentMode) {

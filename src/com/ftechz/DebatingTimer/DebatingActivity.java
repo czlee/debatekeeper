@@ -104,9 +104,9 @@ public class DebatingActivity extends Activity {
         }
     }
 
-    private class DebatingTimerColourInvertListener implements ColourInvertListener {
+    private class DebatingTimerFlashScreenListener implements FlashScreenListener {
         @Override
-        public void setInverted(boolean invert) {
+        public void flashScreen(boolean invert) {
             final int colour = (invert) ? 0xffffffff : 0x00000000;
             runOnUiThread(new Runnable() {
                 @Override
@@ -457,7 +457,7 @@ public class DebatingActivity extends Activity {
             am.setSilentMode(silentMode);
             am.setVibrateMode(vibrateMode);
             am.setKeepScreenOn(keepScreenOn);
-            am.setScreenColourInverter((flashScreen) ? new DebatingTimerColourInvertListener() : null);
+            am.setFlashScreenListener((flashScreen) ? new DebatingTimerFlashScreenListener() : null);
             mDebateManager.setOvertimeBells(firstOvertimeBell, overtimeBellPeriod);
             setVolumeControlStream((silentMode) ? AudioManager.STREAM_RING : AudioManager.STREAM_MUSIC);
             Log.v(this.getClass().getSimpleName(), "applyPreferences: successfully applied");
