@@ -7,7 +7,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
-import android.os.SystemClock;
 import android.os.Vibrator;
 
 
@@ -180,7 +179,9 @@ public class AlertManager
      * Wakes up the screen to attract user attention
      */
     public void wakeUpScreen() {
-        mPowerManager.userActivity(SystemClock.uptimeMillis(), false);
+        int flags = PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.FULL_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE;
+        PowerManager.WakeLock temporaryWakeLock = mPowerManager.newWakeLock(flags, "Debatekeeper-pause");
+        temporaryWakeLock.acquire(3000);
     }
 
     //******************************************************************************************
