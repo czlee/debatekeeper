@@ -40,8 +40,6 @@
 		<speech name="1st Negative" type="substantive" />
 		<speech name="2nd Affirmative" type="substantive" />
 		<speech name="2nd Negative" type="substantive" />
-		<speech name="3rd Affirmative" type="substantive" />
-		<speech name="3rd Negative" type="substantive" />
 		<speech name="Negative Leader's Reply" type="reply" />
 		<speech name="Affirmative Leader's Reply" type="reply" />
 	</speeches>
