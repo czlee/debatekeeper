@@ -26,14 +26,14 @@ public class AlertManager
     private final Service               mService;
     private final NotificationManager   mNotificationManager;
     private final PendingIntent         mIntentStartingHostActivity;
-    private final PowerManager.WakeLock mWakeLock;
+    private       PowerManager.WakeLock mWakeLock;
     private final Vibrator              mVibrator;
     private       Notification          mNotification;
     private       BellRepeater          mBellRepeater        = null;
     private       boolean               mShowingNotification = false;
     private       boolean               mSilentMode          = false;
     private       boolean               mVibrateMode         = true;
-    private       boolean               mWakeLockEnabled     = true;
+    private       boolean               mKeepScreenOn        = true;
 
     /**
      * Constructor.
@@ -47,19 +47,12 @@ public class AlertManager
         // Retrieve the notification manager
         mNotificationManager = (NotificationManager) debatingTimerService.getSystemService(
                 Context.NOTIFICATION_SERVICE);
+
         Intent notificationIntent = new Intent(debatingTimerService, DebatingActivity.class);
         mIntentStartingHostActivity = PendingIntent.getActivity(debatingTimerService, 0, notificationIntent, 0);
-
-        PowerManager pm = (PowerManager) debatingTimerService.getSystemService(Context.POWER_SERVICE);
-        mWakeLock = pm.newWakeLock(
-                PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE,
-                "DebatingWakeLock");
-
-        // Either we have the lock or we don't, we don't need to count how many times we locked
-        // it.  Turning this off makes it okay to acquire or release multiple times.
-        mWakeLock.setReferenceCounted(false);
-
         mVibrator = (Vibrator) debatingTimerService.getSystemService(Context.VIBRATOR_SERVICE);
+
+        createWakeLock();
     }
 
     public boolean isSilentMode() {
@@ -79,19 +72,16 @@ public class AlertManager
     }
 
     public boolean isWakeLockEnabled() {
-        return mWakeLockEnabled;
+        return mKeepScreenOn;
     }
 
     public void setWakeLockEnabled(boolean wakeLockEnabled) {
-        this.mWakeLockEnabled = wakeLockEnabled;
+        this.mKeepScreenOn = wakeLockEnabled;
 
-        // Also, acquire or release the wake lock accordingly
-        if (mShowingNotification) {
-            if (wakeLockEnabled)
-                mWakeLock.acquire();
-            else
-                mWakeLock.release();
-        }
+        // Also, re-create the wake lock and re-acquire if appropriate
+        createWakeLock();  // This also resets the wake lock
+        if (mShowingNotification)
+            mWakeLock.acquire();
     }
 
     public void makeActive(PeriodInfo currentPeriodInfo) {
@@ -107,7 +97,7 @@ public class AlertManager
             mShowingNotification = true;
         }
 
-        acquireWakeLock();
+        mWakeLock.acquire();
     }
 
     public void updateNotification(String notificationText) {
@@ -134,7 +124,7 @@ public class AlertManager
     }
 
     public void activityResume() {
-        acquireWakeLock();
+        mWakeLock.acquire();
     }
 
     public void triggerAlert(BellInfo alert, PeriodInfo currentPeriodInfo) {
@@ -172,9 +162,31 @@ public class AlertManager
         playBell(bellInfo);
     }
 
-    private void acquireWakeLock() {
-        if (mWakeLockEnabled) {
-            mWakeLock.acquire();
+    /**
+     * Creates the appropriate wake lock based on the "keep screen on" setting.
+     * If <code>mWakeLock</code> exists, this releases and overwrites it.
+     */
+    private void createWakeLock() {
+
+        // If there exists a wake lock, release it.
+        if (mWakeLock != null) {
+            mWakeLock.release();
+            mWakeLock = null;
         }
+
+        // First compile the correct flags.
+        // If "keep screen on" is enabled, get the dim wake lock, otherwise, partial lock (this
+        // just keeps the CPU running) is sufficient.
+        int flags = PowerManager.ON_AFTER_RELEASE;
+        if (mKeepScreenOn) flags |= PowerManager.SCREEN_DIM_WAKE_LOCK;
+        else flags |= PowerManager.PARTIAL_WAKE_LOCK;
+
+        PowerManager pm = (PowerManager) mService.getSystemService(Context.POWER_SERVICE);
+
+        mWakeLock = pm.newWakeLock(flags, "Debatekeeper");
+
+        // Either we have the lock or we don't, we don't need to count how many times we locked
+        // it.  Turning this off makes it okay to acquire or release multiple times.
+        mWakeLock.setReferenceCounted(false);
     }
 }
