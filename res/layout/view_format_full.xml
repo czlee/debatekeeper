@@ -11,6 +11,11 @@
         <include
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            layout="@layout/view_format_file_info" />
+        
+        <include
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             layout="@layout/view_format_short" />
 
         <TextView

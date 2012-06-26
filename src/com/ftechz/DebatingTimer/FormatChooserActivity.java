@@ -16,7 +16,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Xml;
@@ -40,6 +39,8 @@ import android.widget.Toast;
  */
 public class FormatChooserActivity extends Activity {
 
+    private FormatXmlFilesManager mFilesManager;
+
     private ListView mStylesListView;
     private Button   mOKButton;
     private Button   mCancelButton;
@@ -55,10 +56,6 @@ public class FormatChooserActivity extends Activity {
     public  static final int RESULT_ERROR = RESULT_FIRST_USER;
 
     public static final String EXTRA_XML_FILE_NAME = "xmlfn";
-
-    public FormatChooserActivity() {
-        super();
-    }
 
     //******************************************************************************************
     // Public classes
@@ -232,6 +229,8 @@ public class FormatChooserActivity extends Activity {
         setContentView(R.layout.format_chooser);
         DEBATING_TIMER_URI = getString(R.string.XmlUri);
 
+        mFilesManager = new FormatXmlFilesManager(this);
+
         mStylesListView = (ListView) findViewById(R.id.StylesListView);
         mOKButton       = (Button)   findViewById(R.id.FormatChooserOKButton);
         mCancelButton   = (Button)   findViewById(R.id.FormatChooserCancelButton);
@@ -277,8 +276,7 @@ public class FormatChooserActivity extends Activity {
     // Private methods
     //******************************************************************************************
     private void populateStylesLists() throws IOException {
-        final AssetManager assets = getAssets();
-        String[] fileList = assets.list("");
+        String[] fileList = mFilesManager.list();
 
         for (int i = 0; i < fileList.length; i++) {
             String filename = fileList[i];
@@ -288,7 +286,7 @@ public class FormatChooserActivity extends Activity {
                 continue;
 
             try {
-                is = assets.open(filename);
+                is = mFilesManager.open(filename);
             } catch (IOException e) {
                 Log.e(this.getClass().getSimpleName(),
                         String.format("Couldn't find file: %s", filename));
@@ -381,6 +379,8 @@ public class FormatChooserActivity extends Activity {
             return getBlankDetailsDialog(filename, e);
         }
 
+        populateFileInfo(view, filename);
+
         if (dfi != null) {
             populateBasicInfo(view, dfi);
             populateTwoColumnTable(view, R.id.ViewFormatTableSpeechTypes, R.layout.speech_type_row,
@@ -421,7 +421,7 @@ public class FormatChooserActivity extends Activity {
      */
     private DebateFormatInfo getDebateFormatInfo(String filename) throws IOException, SAXException {
         InputStream is;
-        is = this.getAssets().open(filename);
+        is = mFilesManager.open(filename);
         DebateFormatInfoExtractor dfie = new DebateFormatInfoExtractor(this);
         return dfie.getDebateFormatInfo(is);
     }
@@ -451,6 +451,15 @@ public class FormatChooserActivity extends Activity {
                 concatenate(dfi.getUsedAts()));
         ((TextView) view.findViewById(R.id.ViewFormatTableCellDescValue)).setText(
                 dfi.getDescription());
+    }
+
+    private void populateFileInfo(View view, String filename) {
+        if (mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_USER_DEFINED) {
+            TextView fileLocationText = (TextView) view.findViewById(R.id.ViewFormatFileLocationValue);
+            fileLocationText.setText(getString(R.string.ViewFormatFileLocationValueUserDefined));
+            fileLocationText.setVisibility(View.VISIBLE);
+        }
+        ((TextView) view.findViewById(R.id.ViewFormatFileNameValue)).setText(filename);
     }
 
     /**

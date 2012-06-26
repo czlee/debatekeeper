@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <TextView
+        android:id="@+id/ViewFormatFileNameLabel"
+        style="@style/ViewFormatTableLabelStyle"
+        android:text="@string/ViewFormatFileNameLabel"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+         />
+
+    <TextView
+        android:id="@+id/ViewFormatFileNameValue"
+        style="@style/ViewFormatTableValueStyle"
+        android:layout_toRightOf="@id/ViewFormatFileNameLabel"
+        android:layout_alignParentTop="true" />
+
+    <TextView
+        android:id="@+id/ViewFormatFileLocationValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/ViewFormatFileNameValue"
+        android:layout_below="@id/ViewFormatFileNameValue"
+        android:visibility="gone"
+        android:textStyle="italic" />
+    
+</RelativeLayout>

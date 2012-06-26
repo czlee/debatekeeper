@@ -62,6 +62,7 @@ public class DebatingActivity extends Activity {
 
 	private DebateManager mDebateManager;
 	private Bundle mLastStateBundle;
+    private FormatXmlFilesManager mFilesManager;
 
 	private String mFormatXmlFileName = null;
 	private UserPreferenceCountDirection mUserCountDirection = UserPreferenceCountDirection.GENERALLY_UP;
@@ -307,6 +308,8 @@ public class DebatingActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.debate_activity);
 
+        mFilesManager = new FormatXmlFilesManager(this);
+
         mPeriodDescriptionText = (TextView) findViewById(R.id.stateText);
         mSpeechNameText        = (TextView) findViewById(R.id.titleText);
         mCurrentTimeText       = (TextView) findViewById(R.id.currentTime);
@@ -484,7 +487,7 @@ public class DebatingActivity extends Activity {
         DebateFormat df;
 
 	    try {
-            is = getAssets().open(filename);
+            is = mFilesManager.open(filename);
         } catch (IOException e) {
             throw new FatalXmlError(getString(R.string.FatalProblemWithXmlFileMessage_CannotFind, filename), e);
         }
