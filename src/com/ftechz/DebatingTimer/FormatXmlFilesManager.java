@@ -49,6 +49,10 @@ public class FormatXmlFilesManager {
         mAssets = context.getAssets();
     }
 
+    //******************************************************************************************
+    // Public methods
+    //******************************************************************************************
+
     /**
      * Opens the file given by 'filename' and returns an <code>InputStream</code> for the file.
      * @param filename the name of the file
@@ -117,6 +121,10 @@ public class FormatXmlFilesManager {
 
         return LOCATION_NOT_FOUND;
     }
+
+    //******************************************************************************************
+    // Public methods
+    //******************************************************************************************
 
     private boolean isExternalStorageReadable() {
         String state = Environment.getExternalStorageState();
