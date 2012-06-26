@@ -7,6 +7,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
+import android.os.SystemClock;
 import android.os.Vibrator;
 
 
@@ -26,14 +27,16 @@ public class AlertManager
     private final Service               mService;
     private final NotificationManager   mNotificationManager;
     private final PendingIntent         mIntentStartingHostActivity;
-    private       PowerManager.WakeLock mWakeLock;
+    private final PowerManager          mPowerManager;
     private final Vibrator              mVibrator;
+    private       PowerManager.WakeLock mWakeLock;
     private       Notification          mNotification;
     private       BellRepeater          mBellRepeater        = null;
     private       boolean               mShowingNotification = false;
     private       boolean               mSilentMode          = false;
     private       boolean               mVibrateMode         = true;
     private       boolean               mKeepScreenOn        = true;
+
 
     /**
      * Constructor.
@@ -48,50 +51,48 @@ public class AlertManager
         mNotificationManager = (NotificationManager) debatingTimerService.getSystemService(
                 Context.NOTIFICATION_SERVICE);
 
-        Intent notificationIntent = new Intent(debatingTimerService, DebatingActivity.class);
-        mIntentStartingHostActivity = PendingIntent.getActivity(debatingTimerService, 0, notificationIntent, 0);
+        mIntentStartingHostActivity = PendingIntent.getActivity(debatingTimerService,
+                0, new Intent(debatingTimerService, DebatingActivity.class), 0);
         mVibrator = (Vibrator) debatingTimerService.getSystemService(Context.VIBRATOR_SERVICE);
+        mPowerManager = (PowerManager) mService.getSystemService(Context.POWER_SERVICE);
 
         createWakeLock();
+    }
+
+    //******************************************************************************************
+    // Public methods
+    //******************************************************************************************
+
+    /**
+     * Call this when the activity is paused (from onPause())
+     */
+    public void activityPause() {
+        mWakeLock.release();
+    }
+
+    /**
+     * Call this when the activity is resumed (from onResume())
+     */
+    public void activityResume() {
+        mWakeLock.acquire();
     }
 
     public boolean isSilentMode() {
         return mSilentMode;
     }
 
-    public void setSilentMode(boolean silentMode) {
-        this.mSilentMode = silentMode;
-    }
-
-    public boolean isVibrateMode() {
-        return mVibrateMode;
-    }
-
-    public void setVibrateMode(boolean vibrateMode) {
-        this.mVibrateMode = vibrateMode;
-    }
-
-    public boolean isWakeLockEnabled() {
-        return mKeepScreenOn;
-    }
-
-    public void setWakeLockEnabled(boolean wakeLockEnabled) {
-        this.mKeepScreenOn = wakeLockEnabled;
-
-        // Also, re-create the wake lock and re-acquire if appropriate
-        createWakeLock();  // This also resets the wake lock
-        if (mShowingNotification)
-            mWakeLock.acquire();
-    }
-
-    public void makeActive(PeriodInfo currentPeriodInfo) {
+    /**
+     * Shows the notification.  Call this when the timer is started.
+     * @param pi the {@link PeriodInfo} to use in the notification
+     */
+    public void makeActive(PeriodInfo pi) {
 
         if(!mShowingNotification) {
             mNotification = new Notification(R.drawable.ic_stat_name,
                     mService.getText(R.string.NotificationTickerText),
                     System.currentTimeMillis());
 
-            updateNotification(currentPeriodInfo.getDescription());
+            updateNotification(pi.getDescription());
             mService.startForeground(NOTIFICATION_ID, mNotification);
 
             mShowingNotification = true;
@@ -100,12 +101,9 @@ public class AlertManager
         mWakeLock.acquire();
     }
 
-    public void updateNotification(String notificationText) {
-            mNotification.setLatestEventInfo(mService,
-                    mService.getText(R.string.NotificationTitle),
-                    notificationText, mIntentStartingHostActivity);
-    }
-
+    /**
+     * Hides the notification.  Call this when the timer is stopped.
+     */
     public void makeInactive() {
         if(mShowingNotification) {
             mWakeLock.release();
@@ -117,29 +115,20 @@ public class AlertManager
     }
 
     /**
-     * Call this when the activity is paused (from onPause())
+     * Plays a single bell.
+     * Intended for use directly with a user button.
      */
-    public void activityPause() {
-        mWakeLock.release();
+    public void playBell() {
+        // TODO un-hardcode this R.raw.desk_bell
+        BellSoundInfo bellInfo = new BellSoundInfo(R.raw.desk_bell, 1);
+        playBell(bellInfo);
     }
 
-    public void activityResume() {
-        mWakeLock.acquire();
-    }
-
-    public void triggerAlert(BellInfo alert, PeriodInfo currentPeriodInfo) {
-        updateNotification(currentPeriodInfo.getDescription());
-        if(mShowingNotification) {
-
-            mNotificationManager.notify(NOTIFICATION_ID, mNotification);
-
-            playBell(alert.getBellSoundInfo());
-
-        }
-    }
-
-    // Plays a bell according to a given bellInfo.
-    // Does not play if in silent mode.
+    /**
+     * Plays a bell according to a given {@link BellSoundInfo}.
+     * Does not play if in silent mode.
+     * @param bsi the <code>BellSoundInfo</code> to play
+     */
     public void playBell(BellSoundInfo bsi) {
         if (mBellRepeater != null) {
             mBellRepeater.stop();
@@ -154,13 +143,49 @@ public class AlertManager
         }
     }
 
-    // Plays a single bell.
-    // Intended for use directly with a user button.
-    public void playBell() {
-        // TODO un-hardcode this R.raw.desk_bell
-        BellSoundInfo bellInfo = new BellSoundInfo(R.raw.desk_bell, 1);
-        playBell(bellInfo);
+    public void setSilentMode(boolean silentMode) {
+        this.mSilentMode = silentMode;
     }
+
+    public void setVibrateMode(boolean vibrateMode) {
+        this.mVibrateMode = vibrateMode;
+    }
+
+    public void setWakeLockEnabled(boolean wakeLockEnabled) {
+        this.mKeepScreenOn = wakeLockEnabled;
+
+        // Also, re-create the wake lock and re-acquire if appropriate
+        createWakeLock();  // This also resets the wake lock
+        if (mShowingNotification)
+            mWakeLock.acquire();
+    }
+
+    /**
+     * Triggers an alert.  Play this to activate a bell.
+     * @param bi the {@link BellInfo} to use to play the bell
+     * @param pi the {@link PeriodInfo} to use in the notification
+     */
+    public void triggerAlert(BellInfo bi, PeriodInfo pi) {
+        updateNotification(pi.getDescription());
+        if(mShowingNotification) {
+
+            mNotificationManager.notify(NOTIFICATION_ID, mNotification);
+
+            playBell(bi.getBellSoundInfo());
+
+        }
+    }
+
+    /**
+     * Wakes up the screen to attract user attention
+     */
+    public void wakeUpScreen() {
+        mPowerManager.userActivity(SystemClock.uptimeMillis(), false);
+    }
+
+    //******************************************************************************************
+    // Private methods
+    //******************************************************************************************
 
     /**
      * Creates the appropriate wake lock based on the "keep screen on" setting.
@@ -181,12 +206,18 @@ public class AlertManager
         if (mKeepScreenOn) flags |= PowerManager.SCREEN_DIM_WAKE_LOCK;
         else flags |= PowerManager.PARTIAL_WAKE_LOCK;
 
-        PowerManager pm = (PowerManager) mService.getSystemService(Context.POWER_SERVICE);
-
-        mWakeLock = pm.newWakeLock(flags, "Debatekeeper");
+        mWakeLock = mPowerManager.newWakeLock(flags, "Debatekeeper");
 
         // Either we have the lock or we don't, we don't need to count how many times we locked
         // it.  Turning this off makes it okay to acquire or release multiple times.
         mWakeLock.setReferenceCounted(false);
     }
+
+    private void updateNotification(String notificationText) {
+            mNotification.setLatestEventInfo(mService,
+                    mService.getText(R.string.NotificationTitle),
+                    notificationText, mIntentStartingHostActivity);
+    }
+
+
 }

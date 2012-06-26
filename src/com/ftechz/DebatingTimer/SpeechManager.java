@@ -293,12 +293,14 @@ public class SpeechManager {
 
     /**
      * Stops the timer and puts it into the "stopped by bell" state.
+     * Also wakes up the screen so that the user knows.
      */
     private void pause() {
         if (mTimer != null) {
             mTimer.cancel();
             mTimer = null;
         }
+        mAlertManager.wakeUpScreen();
         mState = DebatingTimerState.STOPPED_BY_BELL;
     }
 
