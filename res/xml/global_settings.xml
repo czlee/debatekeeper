@@ -15,6 +15,12 @@
             android:summaryOff="@string/PrefVibrateModeOffSummary"
             android:summaryOn="@string/PrefVibrateModeOnSummary"
             android:title="@string/PrefVibrateModeTitle" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="flashScreen"
+            android:summaryOff="@string/PrefFlashScreenOffSummary"
+            android:summaryOn="@string/PrefFlashScreenOnSummary"
+            android:title="@string/PrefFlashScreenTitle" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/PrefCategoryOvertimeBellsTitle" >
         <CheckBoxPreference
@@ -54,10 +60,10 @@
 
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="wakeLock"
-            android:summaryOff="@string/PrefWakeLockOffSummary"
-            android:summaryOn="@string/PrefWakeLockOnSummary"
-            android:title="@string/PrefWakeLockTitle" />
+            android:key="keepScreenOn"
+            android:summaryOff="@string/PrefKeepScreenOnOffSummary"
+            android:summaryOn="@string/PrefKeepScreenOnOnSummary"
+            android:title="@string/PrefKeepScreenOnTitle" />
     </PreferenceCategory>
 
 </PreferenceScreen>

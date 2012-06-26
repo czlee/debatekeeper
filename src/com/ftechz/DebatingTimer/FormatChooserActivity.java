@@ -119,7 +119,15 @@ public class FormatChooserActivity extends Activity {
     }
 
 
-    public class DetailsButtonOnClickListener implements OnClickListener {
+    // ******************************************************************************************
+    // Private classes
+    // ******************************************************************************************
+
+    private class AllInformationFoundException extends SAXException {
+        private static final long serialVersionUID = 3195935815375118010L;
+    }
+
+    private class DetailsButtonOnClickListener implements OnClickListener {
 
         private final Bundle bundleForDialog;
 
@@ -134,14 +142,6 @@ public class FormatChooserActivity extends Activity {
             showDialog(DIALOG_MORE_DETAILS, bundleForDialog);
         }
 
-    }
-
-    // ******************************************************************************************
-    // Private classes
-    // ******************************************************************************************
-
-    private class AllInformationFoundException extends SAXException {
-        private static final long serialVersionUID = 3195935815375118010L;
     }
 
     /**

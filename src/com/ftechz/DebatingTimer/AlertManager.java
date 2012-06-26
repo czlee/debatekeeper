@@ -1,5 +1,8 @@
 package com.ftechz.DebatingTimer;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -22,6 +25,7 @@ import android.os.Vibrator;
 public class AlertManager
 {
     public static final int NOTIFICATION_ID = 1;
+    private static final int BELL_SCREEN_FLASH_TIME = 500;
 
     private final Service               mService;
     private final NotificationManager   mNotificationManager;
@@ -30,11 +34,13 @@ public class AlertManager
     private final Vibrator              mVibrator;
     private       PowerManager.WakeLock mWakeLock;
     private       Notification          mNotification;
-    private       BellRepeater          mBellRepeater        = null;
-    private       boolean               mShowingNotification = false;
-    private       boolean               mSilentMode          = false;
-    private       boolean               mVibrateMode         = true;
-    private       boolean               mKeepScreenOn        = true;
+    private       BellRepeater          mBellRepeater         = null;
+    private       ColourInvertListener  mColourInvertListener = null;
+    private       boolean               mShowingNotification  = false;
+    private       boolean               mSilentMode           = false;
+    private       boolean               mVibrateMode          = true;
+    private       boolean               mKeepScreenOn         = true;
+    private       boolean               mActivityActive       = false;
 
 
     /**
@@ -63,17 +69,21 @@ public class AlertManager
     //******************************************************************************************
 
     /**
-     * Call this when the activity is paused (from onPause())
+     * Call this when the activity is stopped (from onStop())
      */
-    public void activityPause() {
+    public void activityStop() {
+        mActivityActive = false;
         mWakeLock.release();
     }
 
     /**
-     * Call this when the activity is resumed (from onResume())
+     * Call this when the activity is started (from onStart())
      */
-    public void activityResume() {
-        mWakeLock.acquire();
+    public void activityStart() {
+        // Note: Write this method so that it can be called multiple times with no bad effect.
+        mActivityActive = true;
+        if (mShowingNotification)
+            mWakeLock.acquire();
     }
 
     public boolean isSilentMode() {
@@ -117,7 +127,7 @@ public class AlertManager
      * Plays a single bell.
      * Intended for use directly with a user button.
      */
-    public void playBell() {
+    public void playSingleBell() {
         // TODO un-hardcode this R.raw.desk_bell
         BellSoundInfo bellInfo = new BellSoundInfo(R.raw.desk_bell, 1);
         playBell(bellInfo);
@@ -140,6 +150,25 @@ public class AlertManager
         if (mVibrateMode) {
             mVibrator.vibrate(300 * bsi.getTimesToPlay());
         }
+
+        if (mColourInvertListener != null) {
+            mColourInvertListener.setInverted(true);
+            wakeUpScreenForBell();
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    mColourInvertListener.setInverted(false);
+                }
+            }, BELL_SCREEN_FLASH_TIME);
+        }
+    }
+
+    /**
+     * @param screenColourInverter the screenColourInverter to set
+     */
+    public void setScreenColourInverter(ColourInvertListener screenColourInverter) {
+        this.mColourInvertListener = screenColourInverter;
     }
 
     public void setSilentMode(boolean silentMode) {
@@ -150,8 +179,8 @@ public class AlertManager
         this.mVibrateMode = vibrateMode;
     }
 
-    public void setWakeLockEnabled(boolean wakeLockEnabled) {
-        this.mKeepScreenOn = wakeLockEnabled;
+    public void setKeepScreenOn(boolean keepScreenOn) {
+        this.mKeepScreenOn = keepScreenOn;
 
         // Also, re-create the wake lock and re-acquire if appropriate
         createWakeLock();  // This also resets the wake lock
@@ -178,7 +207,7 @@ public class AlertManager
     /**
      * Wakes up the screen to attract user attention
      */
-    public void wakeUpScreen() {
+    public void wakeUpScreenForPause() {
         int flags = PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.FULL_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE;
         PowerManager.WakeLock temporaryWakeLock = mPowerManager.newWakeLock(flags, "Debatekeeper-pause");
         temporaryWakeLock.acquire(3000);
@@ -218,6 +247,17 @@ public class AlertManager
             mNotification.setLatestEventInfo(mService,
                     mService.getText(R.string.NotificationTitle),
                     notificationText, mIntentStartingHostActivity);
+    }
+
+    /**
+     * Wakes up the screen to attract user attention
+     */
+    private void wakeUpScreenForBell() {
+        if (mActivityActive) {
+            int flags = PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.FULL_WAKE_LOCK;
+            PowerManager.WakeLock temporaryWakeLock = mPowerManager.newWakeLock(flags, "Debatekeeper-bell");
+            temporaryWakeLock.acquire(BELL_SCREEN_FLASH_TIME);
+        }
     }
 
 

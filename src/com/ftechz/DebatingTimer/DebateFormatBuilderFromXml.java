@@ -2,6 +2,7 @@ package com.ftechz.DebatingTimer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
 
 import org.xml.sax.Attributes;
@@ -405,7 +406,9 @@ public class DebateFormatBuilderFromXml {
                         backgroundColor = null;
                     else if (bgcolorStr.startsWith("#")) {
                         try {
-                            backgroundColor = Integer.parseInt(bgcolorStr.substring(1), 16);
+                            // We need to do it via BigInteger in order for large unsigned 32-bit
+                            // integers to be parsed as unsigned integers.
+                            backgroundColor = new BigInteger(bgcolorStr.substring(1), 16).intValue();
                         } catch (NumberFormatException e) {
                             logXmlError(R.string.XmlErrorPeriodInvalidColor, reference, bgcolorStr);
                         }

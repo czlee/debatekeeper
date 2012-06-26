@@ -23,6 +23,10 @@
     <string name="PrefVibrateModeOnSummary">Vibrate at bell times</string>
     <string name="PrefVibrateModeOffSummary">Don\'t vibrate</string>
     
+    <string name="PrefFlashScreenTitle">Flash screen</string>
+    <string name="PrefFlashScreenOnSummary">Flash screen white briefly at bell times</string>
+    <string name="PrefFlashScreenOffSummary">Don\'t flash screen</string>
+    
     <string name="PrefOvertimeBellsEnableTitle">Enable overtime bells</string>
     <string name="PrefOvertimeBellsEnableOnSummary">Ring overtime bells as specified below</string>
     <string name="PrefOvertimeBellsEnableOffSummary">Don\'t ring any overtime bells</string>
@@ -53,7 +57,7 @@
     	<item>alwaysDown</item>
     </string-array>
     
-    <string name="PrefWakeLockTitle">Keep screen on</string>
-    <string name="PrefWakeLockOnSummary">Keep screen on (dimmed) while timer is running</string>
-    <string name="PrefWakeLockOffSummary">Apply normal screen timeout</string>
+    <string name="PrefKeepScreenOnTitle">Keep screen on</string>
+    <string name="PrefKeepScreenOnOnSummary">Keep screen on (dimmed) while timer is running</string>
+    <string name="PrefKeepScreenOnOffSummary">Apply normal screen timeout</string>
 </resources>

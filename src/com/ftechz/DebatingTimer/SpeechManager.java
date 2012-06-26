@@ -300,8 +300,8 @@ public class SpeechManager {
             mTimer.cancel();
             mTimer = null;
         }
-        mAlertManager.wakeUpScreen();
         mState = DebatingTimerState.STOPPED_BY_BELL;
+        mAlertManager.wakeUpScreenForPause();
     }
 
     /**

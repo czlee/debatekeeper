@@ -28,6 +28,7 @@
     <string name="NoDebateLoadedButtonText">Choose style</string>
     
     <color name="overtime">#ffff7878</color>
+    <color name="overtimeDuringInvert">#33ff0000</color>
     
     <!-- Menu -->
     <string name="ResetDebateMenuItem">Reset debate</string>

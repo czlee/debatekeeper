@@ -49,8 +49,8 @@ import com.ftechz.DebatingTimer.SpeechFormat.CountDirection;
  */
 public class DebatingActivity extends Activity {
 
-	private TextView mStateText;
-	private TextView mStageText;
+	private TextView mPeriodDescriptionText;
+	private TextView mSpeechNameText;
 	private TextView mCurrentTimeText;
 	private TextView mNextTimeText;
 	private TextView mFinalTimeText;
@@ -104,6 +104,19 @@ public class DebatingActivity extends Activity {
         }
     }
 
+    private class DebatingTimerColourInvertListener implements ColourInvertListener {
+        @Override
+        public void setInverted(boolean invert) {
+            final int colour = (invert) ? 0xffffffff : 0x00000000;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    findViewById(R.id.DebateActivityRootView).setBackgroundColor(colour);
+                }
+            });
+        }
+    }
+
     /**
      * Defines call-backs for service binding, passed to bindService()
      */
@@ -113,6 +126,7 @@ public class DebatingActivity extends Activity {
         public void onServiceConnected(ComponentName className, IBinder service) {
             mBinder = (DebatingTimerService.DebatingTimerServiceBinder) service;
             initialiseDebate();
+            restoreBinder();
         }
 
         @Override
@@ -130,7 +144,7 @@ public class DebatingActivity extends Activity {
         }
     }
 
-   private final class GuiUpdateBroadcastReceiver extends BroadcastReceiver {
+    private final class GuiUpdateBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             updateGui();
@@ -164,7 +178,7 @@ public class DebatingActivity extends Activity {
     private class PlayBellButtonOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            mBinder.getAlertManager().playBell();
+            mBinder.getAlertManager().playSingleBell();
         }
     }
 
@@ -293,15 +307,15 @@ public class DebatingActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.debate_activity);
 
-        mStateText           = (TextView) findViewById(R.id.stateText);
-        mStageText           = (TextView) findViewById(R.id.titleText);
-        mCurrentTimeText     = (TextView) findViewById(R.id.currentTime);
-        mNextTimeText        = (TextView) findViewById(R.id.nextTime);
-        mFinalTimeText       = (TextView) findViewById(R.id.finalTime);
-        mLeftControlButton   = (Button)   findViewById(R.id.leftControlButton);
-        mCentreControlButton = (Button)   findViewById(R.id.centreControlButton);
-        mRightControlButton  = (Button)   findViewById(R.id.rightControlButton);
-        mPlayBellButton      = (Button)   findViewById(R.id.playBellButton);
+        mPeriodDescriptionText = (TextView) findViewById(R.id.stateText);
+        mSpeechNameText        = (TextView) findViewById(R.id.titleText);
+        mCurrentTimeText       = (TextView) findViewById(R.id.currentTime);
+        mNextTimeText          = (TextView) findViewById(R.id.nextTime);
+        mFinalTimeText         = (TextView) findViewById(R.id.finalTime);
+        mLeftControlButton     = (Button)   findViewById(R.id.leftControlButton);
+        mCentreControlButton   = (Button)   findViewById(R.id.centreControlButton);
+        mRightControlButton    = (Button)   findViewById(R.id.rightControlButton);
+        mPlayBellButton        = (Button)   findViewById(R.id.playBellButton);
 
         //
         // OnClickListeners
@@ -329,7 +343,6 @@ public class DebatingActivity extends Activity {
         Intent intent = new Intent(this, DebatingTimerService.class);
         startService(intent);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-
     }
 
 	@Override
@@ -365,27 +378,29 @@ public class DebatingActivity extends Activity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        if (mBinder != null)
-            if (mBinder.getAlertManager() != null)
-                mBinder.getAlertManager().activityPause();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mGuiUpdateBroadcastReceiver);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mBinder != null)
-            if (mBinder.getAlertManager() != null)
-                mBinder.getAlertManager().activityResume();
+    protected void onStart() {
+        // TODO Auto-generated method stub
+        super.onStart();
+        restoreBinder();
         LocalBroadcastManager.getInstance(this).registerReceiver(mGuiUpdateBroadcastReceiver,
                 new IntentFilter(DebatingTimerService.UPDATE_GUI_BROADCAST_ACTION));
 
         if (!applyPreferences())
-            Log.w(this.getClass().getSimpleName(), "onResume: Couldn't restore preferences; mDebateManager doesn't yet exist");
+            Log.w(this.getClass().getSimpleName(), "onStart: Couldn't restore preferences; mDebateManager doesn't yet exist");
 
         updateGui();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mBinder != null) {
+            AlertManager am = mBinder.getAlertManager();
+            if (am != null) {
+                am.activityStop();
+            }
+        }
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mGuiUpdateBroadcastReceiver);
     }
 
     @Override
@@ -406,14 +421,15 @@ public class DebatingActivity extends Activity {
     private boolean applyPreferences() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (mDebateManager != null) {
-            boolean silentMode, vibrateMode, overtimeBellsEnabled, wakeLockEnabled;
+            boolean silentMode, vibrateMode, overtimeBellsEnabled, keepScreenOn, flashScreen;
             int firstOvertimeBell, overtimeBellPeriod;
             String userCountDirectionValue;
             try {
                 silentMode           = prefs.getBoolean("silentMode", false);
                 vibrateMode          = prefs.getBoolean("vibrateMode", false);
+                flashScreen          = prefs.getBoolean("flashScreen", false);
                 overtimeBellsEnabled = prefs.getBoolean("overtimeBellsEnable", true);
-                wakeLockEnabled      = prefs.getBoolean("wakeLock", true);
+                keepScreenOn         = prefs.getBoolean("keepScreenOn", true);
                 if (overtimeBellsEnabled) {
                     firstOvertimeBell  = prefs.getInt("firstOvertimeBell", 30);
                     overtimeBellPeriod = prefs.getInt("overtimeBellPeriod", 30);
@@ -437,9 +453,11 @@ public class DebatingActivity extends Activity {
                 Log.e(this.getClass().getSimpleName(), "applyPreferences: caught ClassCastException!");
                 return false;
             }
-            mBinder.getAlertManager().setSilentMode(silentMode);
-            mBinder.getAlertManager().setVibrateMode(vibrateMode);
-            mBinder.getAlertManager().setWakeLockEnabled(wakeLockEnabled);
+            AlertManager am = mBinder.getAlertManager();
+            am.setSilentMode(silentMode);
+            am.setVibrateMode(vibrateMode);
+            am.setKeepScreenOn(keepScreenOn);
+            am.setScreenColourInverter((flashScreen) ? new DebatingTimerColourInvertListener() : null);
             mDebateManager.setOvertimeBells(firstOvertimeBell, overtimeBellPeriod);
             setVolumeControlStream((silentMode) ? AudioManager.STREAM_RING : AudioManager.STREAM_MUSIC);
             Log.v(this.getClass().getSimpleName(), "applyPreferences: successfully applied");
@@ -632,6 +650,15 @@ public class DebatingActivity extends Activity {
         initialiseDebate();
     }
 
+    private void restoreBinder() {
+        if (mBinder != null) {
+            AlertManager am = mBinder.getAlertManager();
+            if (am != null) {
+                am.activityStart();
+            }
+        }
+    }
+
 	// Sets the text and visibility of a single button
 	private void setButton(Button button, int resid) {
         button.setText(resid);
@@ -703,10 +730,10 @@ public class DebatingActivity extends Activity {
             SpeechFormat currentSpeechFormat = mDebateManager.getCurrentSpeechFormat();
             PeriodInfo   currentPeriodInfo   = mDebateManager.getCurrentPeriodInfo();
 
-            mStateText.setText(currentPeriodInfo.getDescription());
-            mStageText.setText(mDebateManager.getCurrentSpeechName());
-            mStateText.setBackgroundColor(currentPeriodInfo.getBackgroundColor());
-            mStageText.setBackgroundColor(currentPeriodInfo.getBackgroundColor());
+            mSpeechNameText.setText(mDebateManager.getCurrentSpeechName());
+            mSpeechNameText.setBackgroundColor(currentPeriodInfo.getBackgroundColor());
+            mPeriodDescriptionText.setText(currentPeriodInfo.getDescription());
+            mPeriodDescriptionText.setBackgroundColor(currentPeriodInfo.getBackgroundColor());
 
             long currentSpeechTime = mDebateManager.getCurrentSpeechTime();
             Long nextBellTime = mDebateManager.getNextBellTime();
@@ -752,10 +779,10 @@ public class DebatingActivity extends Activity {
             mCentreControlButton.setEnabled(false);
             mRightControlButton.setEnabled(false);
             // Blank out all the fields
-            mStateText.setText(R.string.NoDebateLoadedText);
-            mStageText.setText("");
-            mStateText.setBackgroundColor(0);
-            mStageText.setBackgroundColor(0);
+            mPeriodDescriptionText.setText(R.string.NoDebateLoadedText);
+            mSpeechNameText.setText("");
+            mPeriodDescriptionText.setBackgroundColor(0);
+            mSpeechNameText.setBackgroundColor(0);
             mCurrentTimeText.setText("");
             mNextTimeText.setText("");
             mFinalTimeText.setText("");
