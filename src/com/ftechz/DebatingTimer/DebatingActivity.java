@@ -44,7 +44,7 @@ import com.ftechz.DebatingTimer.SpeechFormat.CountDirection;
  *
  * @author Phillip Cao
  * @author Chuan-Zheng Lee
- * @since  2012-03
+ * @since  2012-04-05
  *
  */
 public class DebatingActivity extends Activity {

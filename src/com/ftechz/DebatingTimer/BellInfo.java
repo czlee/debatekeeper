@@ -9,8 +9,7 @@ package com.ftechz.DebatingTimer;
  * what the name of the following period is.
  *
  * @author Chuan-Zheng Lee
- * @author Phillip Cao
- * @since  2012-04
+ * @since  2012-05-12
  *
  */
 public class BellInfo {

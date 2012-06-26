@@ -15,6 +15,7 @@ import android.os.Bundle;
  * use the update() and restoreState() methods.
  *
  * @author Chuan-Zheng Lee
+ * @since  2012-05-12
  */
 public class PeriodInfo {
 

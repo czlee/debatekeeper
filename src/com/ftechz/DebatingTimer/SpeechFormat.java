@@ -20,6 +20,7 @@ import java.util.Iterator;
  * You can't change the speech length after you've instantiated this object.
  *
  *  @author Chuan-Zheng Lee
+ *  @since  2012-06-09
  */
 public class SpeechFormat {
 

@@ -10,6 +10,10 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
+/**
+ * @author Chuan-Zheng Lee
+ * @since  2012-05-14
+ */
 public class GlobalSettingsActivity extends PreferenceActivity {
 
     private final HashMap<String, Integer> mPreferenceToStringResidMap = new HashMap<String, Integer>();

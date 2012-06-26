@@ -4,7 +4,7 @@ package com.ftechz.DebatingTimer;
  * Enumerated constants for the second-level context of a debate format XML file.
  * Also provides an overridden <code>toString()</code> method.
  * @author Chuan-Zheng Lee
- * @since  2012-06-12
+ * @since  2012-06-20
  */
 public enum DebateFormatXmlSecondLevelContext {
     NONE ("no context"),

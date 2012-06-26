@@ -35,7 +35,7 @@ import android.widget.Toast;
  * returns a file name to the calling activity.
  *
  * @author Chuan-Zheng Lee
- * @since 2012-06-17
+ * @since  2012-06-17
  */
 public class FormatChooserActivity extends Activity {
 

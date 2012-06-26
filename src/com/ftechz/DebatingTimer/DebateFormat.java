@@ -15,7 +15,7 @@ import android.util.Log;
  * know about how formats are specified (in e.g. XML), it just knows about its speech formats.
  *
  * @author Chuan-Zheng Lee
- * @since 2012-06-02
+ * @since  2012-06-02
  */
 public class DebateFormat {
 

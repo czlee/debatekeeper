@@ -18,7 +18,7 @@ import android.util.Xml.Encoding;
  * Extracts information form an XML file and returns a DebateFormatInfo object.
  *
  * @author Chuan-Zheng Lee
- *
+ * @since  2012-06-20
  */
 public class DebateFormatInfoExtractor {
 

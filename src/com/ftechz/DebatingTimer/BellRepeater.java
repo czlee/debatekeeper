@@ -20,7 +20,7 @@ import android.util.Log;
  * is what the caller wishes to do when a bell is started before a previous one is finished.
  *
  * @author Chuan-Zheng Lee
- * @since  2012-05-13
+ * @since  2012-05-12
  */
 public class BellRepeater {
 

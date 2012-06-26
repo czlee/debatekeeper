@@ -26,7 +26,7 @@ import android.content.Context;
  * </ul>
  *
  * @author Chuan-Zheng Lee
- *
+ * @since  2012-06-20
  */
 public class DebateFormatInfo {
 

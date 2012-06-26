@@ -37,7 +37,7 @@ import com.ftechz.DebatingTimer.FormatChooserActivity.FormatChooserActivityBinde
  * </p>
  *
  * @author Chuan-Zheng Lee
- * @since 2012-06-20
+ * @since  2012-06-20
  */
 public class DebateFormatEntryArrayAdapter extends
         ArrayAdapter<FormatChooserActivity.DebateFormatListEntry> {

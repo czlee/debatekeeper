@@ -32,10 +32,6 @@ import com.ftechz.DebatingTimer.DebatingTimerService.GuiUpdateBroadcastSender;
  * @since  2012-06-09
  */
 
-/**
- * @author Chuan-Zheng Lee
- *
- */
 public class DebateManager {
 
     private final DebateFormat  mDebateFormat;

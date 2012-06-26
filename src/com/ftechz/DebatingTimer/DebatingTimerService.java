@@ -21,7 +21,7 @@ import android.util.Log;
  *
  * @author Phillip Cao
  * @author Chuan-Zheng Lee
- * @since 2012-03
+ * @since  2012-03-30
  */
 public class DebatingTimerService extends Service
 {

@@ -21,10 +21,11 @@ import android.os.Vibrator;
 *
 * @author Phillip Cao
 * @author Chuan-Zheng Lee
+* @since  2012-03-30
 */
 public class AlertManager
 {
-    public static final int NOTIFICATION_ID = 1;
+    public  static final int NOTIFICATION_ID = 1;
     private static final int BELL_SCREEN_FLASH_TIME = 500;
 
     private final Service               mService;

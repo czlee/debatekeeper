@@ -22,7 +22,7 @@ import com.ftechz.DebatingTimer.SpeechFormat.CountDirection;
  * DebateFormatBuilderFromXml uses the information in an XML file to build a {@link DebateFormat}.
  *
  * @author Chuan-Zheng Lee
- * @since 2012-06-15
+ * @since  2012-06-15
  */
 public class DebateFormatBuilderFromXml {
 
