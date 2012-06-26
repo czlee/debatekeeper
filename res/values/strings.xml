@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Debating Timer</string>
+    <string name="app_name">Debatekeeper</string>
+    <string name="DebatingActivityTitleBarWithoutFormatName">Debatekeeper</string>
+    <string name="DebatingActivityTitleBarWithFormatName">Debatekeeper - %1$s</string>
     <string name="GlobalSettingsActivityName">Settings</string>
     <string name="FormatChooserActivityName">Choose style</string>
-    <string name="DebatingActivityTitleBarWithoutFormatName">Debating Timer</string>
-    <string name="DebatingActivityTitleBarWithFormatName">Debating Timer - %1$s</string>
 
     <!-- Buttons -->
     <string name="StartTimerButtonText">Start</string>
