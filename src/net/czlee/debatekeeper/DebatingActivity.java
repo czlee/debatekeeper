@@ -56,7 +56,7 @@ import android.widget.Toast;
 
 
 /**
- * This is the main activity for the Debating Timer application.  It is the launcher activity,
+ * This is the main activity for the Debatekeeper application.  It is the launcher activity,
  * and the activity in which the user spends the most time.
  *
  * @author Phillip Cao

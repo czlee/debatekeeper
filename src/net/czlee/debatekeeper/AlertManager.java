@@ -30,7 +30,7 @@ import android.os.PowerManager;
 import android.os.Vibrator;
 
 /**
- * AlertManager manages all alerts for the Debating Timer application.
+ * AlertManager manages all alerts for the Debatekeeper application.
  *
  * Only a single instance of AlertManager should exist at any given time.  It receives requests from
  * other parts of the application.
