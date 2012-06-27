@@ -66,23 +66,23 @@ import android.widget.Toast;
  */
 public class DebatingActivity extends Activity {
 
-	private TextView mPeriodDescriptionText;
-	private TextView mSpeechNameText;
-	private TextView mCurrentTimeText;
-	private TextView mNextTimeText;
-	private TextView mFinalTimeText;
+    private TextView mPeriodDescriptionText;
+    private TextView mSpeechNameText;
+    private TextView mCurrentTimeText;
+    private TextView mNextTimeText;
+    private TextView mFinalTimeText;
 
-	private Button mLeftControlButton;
-	private Button mCentreControlButton;
-	private Button mRightControlButton;
-	private Button mPlayBellButton;
+    private Button mLeftControlButton;
+    private Button mCentreControlButton;
+    private Button mRightControlButton;
+    private Button mPlayBellButton;
 
-	private DebateManager mDebateManager;
-	private Bundle mLastStateBundle;
+    private DebateManager mDebateManager;
+    private Bundle mLastStateBundle;
     private FormatXmlFilesManager mFilesManager;
 
-	private String mFormatXmlFileName = null;
-	private UserPreferenceCountDirection mUserCountDirection = UserPreferenceCountDirection.GENERALLY_UP;
+    private String mFormatXmlFileName = null;
+    private UserPreferenceCountDirection mUserCountDirection = UserPreferenceCountDirection.GENERALLY_UP;
 
     private static final String BUNDLE_SUFFIX_DEBATE_MANAGER           = "dm";
     private static final String PREFERENCE_XML_FILE_NAME               = "xmlfn";
@@ -255,56 +255,56 @@ public class DebatingActivity extends Activity {
     }
 
     @Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.debating_activity_menu, menu);
-	    return true;
-	}
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.debating_activity_menu, menu);
+        return true;
+    }
 
     @Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-	    switch (item.getItemId()) {
-	    case R.id.prevSpeaker:
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case R.id.prevSpeaker:
             if (mDebateManager == null) return true;
-	        mDebateManager.previousSpeaker();
+            mDebateManager.previousSpeaker();
             updateGui();
-	        return true;
-	    case R.id.chooseFormat:
-	        Intent getStyleIntent = new Intent(this, FormatChooserActivity.class);
-	        getStyleIntent.putExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME, mFormatXmlFileName);
-	        startActivityForResult(getStyleIntent, CHOOSE_STYLE_REQUEST);
-	        return true;
-	    case R.id.resetDebate:
+            return true;
+        case R.id.chooseFormat:
+            Intent getStyleIntent = new Intent(this, FormatChooserActivity.class);
+            getStyleIntent.putExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME, mFormatXmlFileName);
+            startActivityForResult(getStyleIntent, CHOOSE_STYLE_REQUEST);
+            return true;
+        case R.id.resetDebate:
             if (mDebateManager == null) return true;
-	        resetDebate();
-	        updateGui();
-	        return true;
-	    case R.id.settings:
-	        startActivity(new Intent(this, GlobalSettingsActivity.class));
-	        return true;
+            resetDebate();
+            updateGui();
+            return true;
+        case R.id.settings:
+            startActivity(new Intent(this, GlobalSettingsActivity.class));
+            return true;
         default:
             return super.onOptionsItemSelected(item);
-	    }
-	}
+        }
+    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
 
-	    MenuItem prevSpeakerItem = menu.findItem(R.id.prevSpeaker);
-	    MenuItem resetDebateItem = menu.findItem(R.id.resetDebate);
+        MenuItem prevSpeakerItem = menu.findItem(R.id.prevSpeaker);
+        MenuItem resetDebateItem = menu.findItem(R.id.resetDebate);
 
-	    if (mDebateManager != null) {
-	        prevSpeakerItem.setEnabled(!mDebateManager.isFirstSpeech() && !mDebateManager.isRunning());
+        if (mDebateManager != null) {
+            prevSpeakerItem.setEnabled(!mDebateManager.isFirstSpeech() && !mDebateManager.isRunning());
             resetDebateItem.setEnabled(true);
-	    } else {
-	        prevSpeakerItem.setEnabled(false);
-	        resetDebateItem.setEnabled(false);
-	    }
+        } else {
+            prevSpeakerItem.setEnabled(false);
+            resetDebateItem.setEnabled(false);
+        }
 
         return super.onPrepareOptionsMenu(menu);
     }
 
-	@Override
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -320,7 +320,7 @@ public class DebatingActivity extends Activity {
 
     }
 
-	@Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.debate_activity);
@@ -365,7 +365,7 @@ public class DebatingActivity extends Activity {
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
-	@Override
+    @Override
     protected Dialog onCreateDialog(int id, Bundle bundle) {
         switch (id) {
         case DIALOG_XML_FILE_FATAL:
@@ -434,7 +434,6 @@ public class DebatingActivity extends Activity {
 
     /**
      * Gets the preferences from the shared preferences file and applies them.
-     * @return true if applying preferences succeeded, false otherwise
      */
     private void applyPreferences() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -495,29 +494,29 @@ public class DebatingActivity extends Activity {
     }
 
     /**
-	 * Builds a <code>DebateFormat</code> from a specified XML file. Shows a <code>Dialog</code> if
-	 * the debate format builder logged non-fatal errors.
-	 * @param filename the file name of the XML file
-	 * @return the built <code>DebateFormat</code>
-	 * @throws FatalXmlError if there was any problem, which could include:
-	 * <ul><li>A problem opening or reading the file</li>
-	 * <li>A problem parsing the XML file</li>
-	 * <li>That there were no speeches in this debate format</li>
-	 * </ul>
-	 * The message of the exception will be human-readable and can be displayed in a dialogue box.
-	 */
-	private DebateFormat buildDebateFromXml(String filename) throws FatalXmlError {
+     * Builds a <code>DebateFormat</code> from a specified XML file. Shows a <code>Dialog</code> if
+     * the debate format builder logged non-fatal errors.
+     * @param filename the file name of the XML file
+     * @return the built <code>DebateFormat</code>
+     * @throws FatalXmlError if there was any problem, which could include:
+     * <ul><li>A problem opening or reading the file</li>
+     * <li>A problem parsing the XML file</li>
+     * <li>That there were no speeches in this debate format</li>
+     * </ul>
+     * The message of the exception will be human-readable and can be displayed in a dialogue box.
+     */
+    private DebateFormat buildDebateFromXml(String filename) throws FatalXmlError {
         DebateFormatBuilderFromXml dfbfx = new DebateFormatBuilderFromXml(this);
         InputStream is = null;
         DebateFormat df;
 
-	    try {
+        try {
             is = mFilesManager.open(filename);
         } catch (IOException e) {
             throw new FatalXmlError(getString(R.string.FatalProblemWithXmlFileMessage_CannotFind, filename), e);
         }
 
-	    try {
+        try {
             df = dfbfx.buildDebateFromXml(is);
         } catch (IOException e) {
             throw new FatalXmlError(getString(R.string.FatalProblemWithXmlFileMessage_CannotRead, filename), e);
@@ -529,15 +528,15 @@ public class DebatingActivity extends Activity {
                     R.string.FatalProblemWithXmlFileMessage_NoSpeeches, filename), e);
         }
 
-	    if (dfbfx.hasErrors()) {
-	        Bundle bundle = new Bundle();
-	        bundle.putStringArrayList(DIALOG_BUNDLE_XML_ERROR_LOG, dfbfx.getErrorLog());
-	        removeDialog(DIALOG_XML_FILE_ERRORS);
-	        showDialog(DIALOG_XML_FILE_ERRORS, bundle);
-	    }
+        if (dfbfx.hasErrors()) {
+            Bundle bundle = new Bundle();
+            bundle.putStringArrayList(DIALOG_BUNDLE_XML_ERROR_LOG, dfbfx.getErrorLog());
+            removeDialog(DIALOG_XML_FILE_ERRORS);
+            showDialog(DIALOG_XML_FILE_ERRORS, bundle);
+        }
 
-	    return df;
-	}
+        return df;
+    }
 
     /**
      * Assembles the speech format and user count directions to find the count direction to use
@@ -598,7 +597,8 @@ public class DebatingActivity extends Activity {
                 });
 
         return builder.create();
-    }
+    }
+
     private Dialog getFatalProblemWithXmlFileDialog(Bundle bundle) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -687,26 +687,26 @@ public class DebatingActivity extends Activity {
         }
     }
 
-	// Sets the text and visibility of a single button
-	private void setButton(Button button, int resid) {
+    // Sets the text and visibility of a single button
+    private void setButton(Button button, int resid) {
         button.setText(resid);
-	    int visibility = (resid == R.string.NullButtonText) ? View.GONE : View.VISIBLE;
-	    button.setVisibility(visibility);
-	}
+        int visibility = (resid == R.string.NullButtonText) ? View.GONE : View.VISIBLE;
+        button.setVisibility(visibility);
+    }
 
-	// Sets the text, visibility and "weight" of all buttons
-	private void setButtons(int leftResid, int centreResid, int rightResid) {
-	    setButton(mLeftControlButton, leftResid);
-	    setButton(mCentreControlButton, centreResid);
-	    setButton(mRightControlButton, rightResid);
+    // Sets the text, visibility and "weight" of all buttons
+    private void setButtons(int leftResid, int centreResid, int rightResid) {
+        setButton(mLeftControlButton, leftResid);
+        setButton(mCentreControlButton, centreResid);
+        setButton(mRightControlButton, rightResid);
 
-	    // If there are exactly two buttons, make the weight of the left button double,
-	    // so that it fills two-thirds of the width of the screen.
-	    float leftControlButtonWeight = (float) ((centreResid == R.string.NullButtonText && rightResid != R.string.NullButtonText) ? 2.0 : 1.0);
-	    mLeftControlButton.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, leftControlButtonWeight));
-	}
+        // If there are exactly two buttons, make the weight of the left button double,
+        // so that it fills two-thirds of the width of the screen.
+        float leftControlButtonWeight = (float) ((centreResid == R.string.NullButtonText && rightResid != R.string.NullButtonText) ? 2.0 : 1.0);
+        mLeftControlButton.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, leftControlButtonWeight));
+    }
 
-	private void setXmlFileName(String filename) {
+    private void setXmlFileName(String filename) {
         mFormatXmlFileName = filename;
         SharedPreferences sp = getPreferences(MODE_PRIVATE);
         Editor editor = sp.edit();
@@ -714,7 +714,7 @@ public class DebatingActivity extends Activity {
         editor.commit();
     }
 
-	/**
+    /**
      *  Updates the buttons according to the current status of the debate
      *  The buttons are allocated as follows:
      *  When at startOfSpeaker: [Start] [Next Speaker]
@@ -825,11 +825,11 @@ public class DebatingActivity extends Activity {
     }
 
     private static String secsToText(long time) {
-	    if (time >= 0) {
-	        return String.format("%02d:%02d", time / 60, time % 60);
-	    } else {
-	        return String.format("%02d:%02d over", -time / 60, -time % 60);
-	    }
-	}
+        if (time >= 0) {
+            return String.format("%02d:%02d", time / 60, time % 60);
+        } else {
+            return String.format("%02d:%02d over", -time / 60, -time % 60);
+        }
+    }
 
 }
