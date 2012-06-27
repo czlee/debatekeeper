@@ -1,5 +1,5 @@
-Debatekeeper &mdash; a timer for debate speeches
-================================================
+Debatekeeper &mdash; a timekeeper for debate speeches
+=====================================================
 
 Debatekeeper is an Android app that times speeches in debates and rings bells
 automatically at the correct times.  It supports most parliamentary styles
@@ -47,7 +47,7 @@ of positions, _etc._) at the contact details below and I'll write
 the XML file and add it to the repository.
 
 This app doesn't (yet) do the public policy, Lincoln-Douglas or policy
-debate styles.  There are other Android apps that do this.  This app 
+debate styles.  There are other Android apps that do this.  This app
 doesn't currently have support for preparation time that can be used
 by teams between speeches at their election; I may or may not add this
 in future.
@@ -55,7 +55,7 @@ in future.
 Contributions
 -------------
 If you want to contribute to this project (in other ways), I'm keen to
-hear from you.  Contact me at the details below, or just fork this 
+hear from you.  Contact me at the details below, or just fork this
 repository and then submit a pull request.
 
 Contacting the author
