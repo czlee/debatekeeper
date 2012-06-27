@@ -13,9 +13,19 @@ which are configurable.
 
 Licence
 -------
-This app is licensed under the GNU General Public License version 3.  You
-can find a copy of this licence in the "license.txt" file, or go to 
-http://www.gnu.org/licenses/gpl-3.0.html.
+This app (and all source code) is licensed under the GNU General Public
+License version 3.  You can find a copy of this licence in the "license.txt"
+file, or go to http://www.gnu.org/licenses/gpl-3.0.html.
+
+This app makes use of Mike Novak's
+[NumberPicker for Android](https://github.com/mrn/numberpicker) library.
+The NumberPicker library is licensed under the Apache 2.0 License (not
+the GPLv3).
+
+This source code for the NumberPicker component isn't in this repository.
+To build this app, you will need to check out [that repository](https://github.com/mrn/numberpicker)
+and put it in ../numberpicker (relative to the directory where this
+repository is checked out on your computer).
 
 Adding debate styles
 --------------------
