@@ -46,11 +46,11 @@ I'll add it to the repository.
 of positions, _etc._) at the contact details below and I'll write
 the XML file and add it to the repository.
 
-This app doesn't (yet) do the public policy, Lincoln-Douglas or policy
-debate styles.  There are other Android apps that do this.  This app
-doesn't currently have support for preparation time that can be used
-by teams between speeches at their election; I may or may not add this
-in future.
+This app doesn't (yet) do the public forum, Lincoln-Douglas or policy
+debate styles.  There are other Android apps that do this.  The reason
+this app can't currently do this is because it doesn't currently support
+preparation time that can be used by teams between speeches at their
+election.  I may or may not add this in future.
 
 Contributions
 -------------
