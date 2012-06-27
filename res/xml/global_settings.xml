@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:picker="http://schemas.android.com/apk/res/com.ftechz.DebatingTimer" >
+    xmlns:picker="http://schemas.android.com/apk/res/net.czlee.debatekeeper" >
 
     <PreferenceCategory android:title="@string/PrefCategoryBellsTitle" >
         <CheckBoxPreference

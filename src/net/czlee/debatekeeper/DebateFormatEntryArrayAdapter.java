@@ -15,10 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.ftechz.DebatingTimer;
+package net.czlee.debatekeeper;
 
 import java.io.IOException;
 import java.util.List;
+
+import net.czlee.debatekeeper.FormatChooserActivity.DebateFormatListEntry;
+import net.czlee.debatekeeper.FormatChooserActivity.FormatChooserActivityBinder;
 
 import org.xml.sax.SAXException;
 
@@ -28,9 +31,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckedTextView;
-
-import com.ftechz.DebatingTimer.FormatChooserActivity.DebateFormatListEntry;
-import com.ftechz.DebatingTimer.FormatChooserActivity.FormatChooserActivityBinder;
 
 /**
  * TODO Comment this class, before it's too late!

@@ -15,13 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.ftechz.DebatingTimer;
+package net.czlee.debatekeeper;
 
 import java.util.ArrayList;
 
+import net.czlee.debatekeeper.DebatingTimerService.GuiUpdateBroadcastSender;
+
 import android.os.Bundle;
 
-import com.ftechz.DebatingTimer.DebatingTimerService.GuiUpdateBroadcastSender;
 
 /**
  * DebateManager manages a debate by keeping track of speeches and running the speech timers.

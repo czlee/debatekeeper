@@ -15,15 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.ftechz.DebatingTimer;
+package net.czlee.debatekeeper;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
+import net.czlee.debatekeeper.DebatingTimerService.GuiUpdateBroadcastSender;
 import android.os.Bundle;
 import android.util.Log;
-
-import com.ftechz.DebatingTimer.DebatingTimerService.GuiUpdateBroadcastSender;
 
 /**
  * SpeechManager manages the mechanics of a single speech.  Exactly one instance should exist

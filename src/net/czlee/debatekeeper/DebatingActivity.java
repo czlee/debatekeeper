@@ -15,12 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.ftechz.DebatingTimer;
+package net.czlee.debatekeeper;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import net.czlee.debatekeeper.SpeechFormat.CountDirection;
 
 import org.xml.sax.SAXException;
 
@@ -51,8 +53,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.ftechz.DebatingTimer.SpeechFormat.CountDirection;
 
 
 /**

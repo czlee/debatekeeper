@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.ftechz.DebatingTimer;
+package net.czlee.debatekeeper;
 
 /**
  * BellSoundInfo is a passive data class containing information about a bell sound.

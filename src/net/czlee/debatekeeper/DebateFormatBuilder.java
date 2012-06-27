@@ -15,16 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.ftechz.DebatingTimer;
+package net.czlee.debatekeeper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import net.czlee.debatekeeper.DebateFormat.NoSuchFormatException;
 import android.content.Context;
-
-import com.ftechz.DebatingTimer.DebateFormat.NoSuchFormatException;
 
 /**
  * DebateFormatBuilder provides mechanisms for building DebateFormats.

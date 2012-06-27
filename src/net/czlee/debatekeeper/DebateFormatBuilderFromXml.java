@@ -15,12 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.ftechz.DebatingTimer;
+package net.czlee.debatekeeper;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
+
+import net.czlee.debatekeeper.DebateFormatBuilder.DebateFormatBuilderException;
+import net.czlee.debatekeeper.SpeechFormat.CountDirection;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -31,9 +34,6 @@ import android.content.Context;
 import android.util.Log;
 import android.util.Xml;
 import android.util.Xml.Encoding;
-
-import com.ftechz.DebatingTimer.DebateFormatBuilder.DebateFormatBuilderException;
-import com.ftechz.DebatingTimer.SpeechFormat.CountDirection;
 
 /**
  * DebateFormatBuilderFromXml uses the information in an XML file to build a {@link DebateFormat}.
