@@ -405,9 +405,7 @@ public class DebatingActivity extends Activity {
         LocalBroadcastManager.getInstance(this).registerReceiver(mGuiUpdateBroadcastReceiver,
                 new IntentFilter(DebatingTimerService.UPDATE_GUI_BROADCAST_ACTION));
 
-        if (!applyPreferences())
-            Log.w(this.getClass().getSimpleName(), "onStart: Couldn't restore preferences; mDebateManager doesn't yet exist");
-
+        applyPreferences();
         updateGui();
     }
 
@@ -438,52 +436,62 @@ public class DebatingActivity extends Activity {
      * Gets the preferences from the shared preferences file and applies them.
      * @return true if applying preferences succeeded, false otherwise
      */
-    private boolean applyPreferences() {
+    private void applyPreferences() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (mDebateManager != null) {
-            boolean silentMode, vibrateMode, overtimeBellsEnabled, keepScreenOn, flashScreen;
-            int firstOvertimeBell, overtimeBellPeriod;
-            String userCountDirectionValue;
-            try {
-                silentMode           = prefs.getBoolean("silentMode", false);
-                vibrateMode          = prefs.getBoolean("vibrateMode", false);
-                flashScreen          = prefs.getBoolean("flashScreen", false);
-                overtimeBellsEnabled = prefs.getBoolean("overtimeBellsEnable", true);
-                keepScreenOn         = prefs.getBoolean("keepScreenOn", true);
-                if (overtimeBellsEnabled) {
-                    firstOvertimeBell  = prefs.getInt("firstOvertimeBell", 30);
-                    overtimeBellPeriod = prefs.getInt("overtimeBellPeriod", 30);
-                } else {
-                    firstOvertimeBell = 0;
-                    overtimeBellPeriod = 0;
-                }
+        boolean silentMode, vibrateMode, overtimeBellsEnabled, keepScreenOn, flashScreen;
+        int firstOvertimeBell, overtimeBellPeriod;
+        String userCountDirectionValue;
 
-                userCountDirectionValue = prefs.getString("countDirection", USER_COUNT_DIRECTION_VALUE_GENERALLY_UP);
-                // This is like a switch statement (not supported for strings in Java 6)
-                if (userCountDirectionValue.equals(USER_COUNT_DIRECTION_VALUE_ALWAYS_DOWN))
-                    mUserCountDirection = UserPreferenceCountDirection.ALWAYS_DOWN;
-                else if (userCountDirectionValue.equals(USER_COUNT_DIRECTION_VALUE_ALWAYS_UP))
-                    mUserCountDirection = UserPreferenceCountDirection.ALWAYS_UP;
-                else if (userCountDirectionValue.equals(USER_COUNT_DIRECTION_VALUE_GENERALLY_DOWN))
-                    mUserCountDirection = UserPreferenceCountDirection.GENERALLY_DOWN;
-                else if (userCountDirectionValue.equals(USER_COUNT_DIRECTION_VALUE_GENERALLY_UP))
-                    mUserCountDirection = UserPreferenceCountDirection.GENERALLY_UP;
-
-            } catch (ClassCastException e) {
-                Log.e(this.getClass().getSimpleName(), "applyPreferences: caught ClassCastException!");
-                return false;
+        try {
+            silentMode           = prefs.getBoolean("silentMode", AlertManager.DEFAULT_SILENT_MODE);
+            vibrateMode          = prefs.getBoolean("vibrateMode", AlertManager.DEFAULT_VIBRATE_MODE);
+            flashScreen          = prefs.getBoolean("flashScreen", false);
+            overtimeBellsEnabled = prefs.getBoolean("overtimeBellsEnable", true);
+            keepScreenOn         = prefs.getBoolean("keepScreenOn", AlertManager.DEFAULT_KEEP_SCREEN_ON);
+            if (overtimeBellsEnabled) {
+                firstOvertimeBell  = prefs.getInt("firstOvertimeBell", 30);
+                overtimeBellPeriod = prefs.getInt("overtimeBellPeriod", 30);
+            } else {
+                firstOvertimeBell = 0;
+                overtimeBellPeriod = 0;
             }
+
+            userCountDirectionValue = prefs.getString("countDirection", USER_COUNT_DIRECTION_VALUE_GENERALLY_UP);
+            // This is like a switch statement (not supported for strings in Java 6)
+            if (userCountDirectionValue.equals(USER_COUNT_DIRECTION_VALUE_ALWAYS_DOWN))
+                mUserCountDirection = UserPreferenceCountDirection.ALWAYS_DOWN;
+            else if (userCountDirectionValue.equals(USER_COUNT_DIRECTION_VALUE_ALWAYS_UP))
+                mUserCountDirection = UserPreferenceCountDirection.ALWAYS_UP;
+            else if (userCountDirectionValue.equals(USER_COUNT_DIRECTION_VALUE_GENERALLY_DOWN))
+                mUserCountDirection = UserPreferenceCountDirection.GENERALLY_DOWN;
+            else if (userCountDirectionValue.equals(USER_COUNT_DIRECTION_VALUE_GENERALLY_UP))
+                mUserCountDirection = UserPreferenceCountDirection.GENERALLY_UP;
+
+        } catch (ClassCastException e) {
+            Log.e(this.getClass().getSimpleName(), "applyPreferences: caught ClassCastException!");
+            return;
+        }
+
+        if (mDebateManager != null) {
+            mDebateManager.setOvertimeBells(firstOvertimeBell, overtimeBellPeriod);
+        } else {
+            Log.w(this.getClass().getSimpleName(), "applyPreferences: Couldn't restore overtime bells, mDebateManager doesn't yet exist");
+        }
+
+        if (mBinder != null) {
             AlertManager am = mBinder.getAlertManager();
+
+            // Volume control stream is linked to silent mode
             am.setSilentMode(silentMode);
+            setVolumeControlStream((silentMode) ? AudioManager.STREAM_RING : AudioManager.STREAM_MUSIC);
+
             am.setVibrateMode(vibrateMode);
             am.setKeepScreenOn(keepScreenOn);
             am.setFlashScreenListener((flashScreen) ? new DebatingTimerFlashScreenListener() : null);
-            mDebateManager.setOvertimeBells(firstOvertimeBell, overtimeBellPeriod);
-            setVolumeControlStream((silentMode) ? AudioManager.STREAM_RING : AudioManager.STREAM_MUSIC);
             Log.v(this.getClass().getSimpleName(), "applyPreferences: successfully applied");
-            return true;
+        } else {
+            Log.w(this.getClass().getSimpleName(), "applyPreferences: Couldn't restore AlertManager preferences; mBinder doesn't yet exist");
         }
-        else return false;
     }
 
     /**
@@ -742,7 +750,7 @@ public class DebatingActivity extends Activity {
 
 
         // Show or hide the [Bell] button
-        mPlayBellButton.setVisibility((mBinder.getAlertManager().isSilentMode()) ? View.GONE : View.VISIBLE);
+        updatePlayBellButton();
     }
 
     private void updateGui() {
@@ -798,6 +806,7 @@ public class DebatingActivity extends Activity {
             mLeftControlButton.setEnabled(true);
             mCentreControlButton.setEnabled(false);
             mRightControlButton.setEnabled(false);
+            updatePlayBellButton();
             // Blank out all the fields
             mPeriodDescriptionText.setText(R.string.NoDebateLoadedText);
             mSpeechNameText.setText("");
@@ -808,6 +817,11 @@ public class DebatingActivity extends Activity {
             mFinalTimeText.setText("");
             setTitle(R.string.DebatingActivityTitleBarWithoutFormatName);
         }
+    }
+
+    private void updatePlayBellButton() {
+        if (mBinder != null)
+            mPlayBellButton.setVisibility((mBinder.getAlertManager().isSilentMode()) ? View.GONE : View.VISIBLE);
     }
 
     private static String secsToText(long time) {

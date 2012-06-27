@@ -44,6 +44,10 @@ public class AlertManager
     public  static final int NOTIFICATION_ID = 1;
     private static final int BELL_SCREEN_FLASH_TIME = 500;
 
+    public static final boolean DEFAULT_SILENT_MODE    = false;
+    public static final boolean DEFAULT_VIBRATE_MODE   = false;
+    public static final boolean DEFAULT_KEEP_SCREEN_ON = true;
+
     private final Service               mService;
     private final NotificationManager   mNotificationManager;
     private final PendingIntent         mIntentStartingHostActivity;
@@ -54,9 +58,9 @@ public class AlertManager
     private       BellRepeater          mBellRepeater         = null;
     private       FlashScreenListener   mFlashScreenListener  = null;
     private       boolean               mShowingNotification  = false;
-    private       boolean               mSilentMode           = false;
-    private       boolean               mVibrateMode          = true;
-    private       boolean               mKeepScreenOn         = true;
+    private       boolean               mSilentMode           = DEFAULT_SILENT_MODE;
+    private       boolean               mVibrateMode          = DEFAULT_VIBRATE_MODE;
+    private       boolean               mKeepScreenOn         = DEFAULT_KEEP_SCREEN_ON;
     private       boolean               mActivityActive       = false;
 
 
