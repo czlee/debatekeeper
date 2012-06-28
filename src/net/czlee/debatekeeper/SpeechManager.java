@@ -250,6 +250,17 @@ public class SpeechManager {
     }
 
     /**
+     * @return <code>true</code> if the next bell will pause the timer, <code>false</code> otherwise.
+     * Returns <code>false</code> if there are no more bells or if there are only overtime bells left.
+     */
+    public boolean isNextBellPause() {
+        BellInfo nextBell = mSpeechFormat.getFirstBellFromTime(mCurrentTime);
+        if (nextBell != null)
+            return nextBell.isPauseOnBell();
+        return false;
+    }
+
+    /**
      * Checks whether the speech is in overtime.
      * @return <code>true</code> if the current time exceeds the speech length,
      * <code>false</code> otherwise.

@@ -20,7 +20,6 @@ package net.czlee.debatekeeper;
 import java.util.ArrayList;
 
 import net.czlee.debatekeeper.DebatingTimerService.GuiUpdateBroadcastSender;
-
 import android.os.Bundle;
 
 
@@ -167,6 +166,14 @@ public class DebateManager {
      */
     public boolean isLastSpeech() {
         return mCurrentSpeechIndex == mDebateFormat.numberOfSpeeches() - 1;
+    }
+
+    /**
+     * @return <code>true</code> if the next bell will pause the timer, <code>false</code> otherwise.
+     * Returns <code>false</code> if there are no more bells or if there are only overtime bells left.
+     */
+    public boolean isNextBellPause() {
+        return mSpeechManager.isNextBellPause();
     }
 
     /**

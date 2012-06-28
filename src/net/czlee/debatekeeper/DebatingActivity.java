@@ -765,6 +765,7 @@ public class DebatingActivity extends Activity {
 
             long currentSpeechTime = mDebateManager.getCurrentSpeechTime();
             Long nextBellTime = mDebateManager.getNextBellTime();
+            boolean nextBellIsPause = mDebateManager.isNextBellPause();
 
             if (getCountDirection() == OverallCountDirection.COUNT_DOWN) {
                 currentSpeechTime = currentSpeechFormat.getSpeechLength() - currentSpeechTime;
@@ -782,10 +783,14 @@ public class DebatingActivity extends Activity {
             mCurrentTimeText.setTextColor(currentTimeTextColor);
 
             if (nextBellTime != null) {
-                mNextTimeText.setText(String.format(
-                    this.getString(R.string.NextBellText),
-                    secsToText(nextBellTime)
-                ));
+                if (nextBellIsPause) {
+                    mNextTimeText.setText(String.format(
+                            this.getString(R.string.NextBellWithPauseText),
+                            secsToText(nextBellTime)));
+                } else {
+                    mNextTimeText.setText(String.format(this.getString(R.string.NextBellText),
+                            secsToText(nextBellTime)));
+                }
             } else {
                 mNextTimeText.setText(this.getString(R.string.NoMoreBellsText));
             }
