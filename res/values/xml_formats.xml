@@ -56,11 +56,13 @@
     <string name="XmlErrorSomethingOutsideRoot">There was something outside the root debateformat element</string>
     <string name="XmlErrorResourceNoRef">"No 'ref' was specified for a resource"</string>
     <string name="XmlErrorResourceInsideContext">"The resource '%1$s' was inside a %2$s"</string>
+    <string name="XmlErrorResourcePeriodInfoNotFound">"There is no period with reference '%1$s' in resource '%2$s'"</string>
     <string name="XmlErrorSpeechFormatNoRef">"No 'ref' was specified for a speech format"</string>
     <string name="XmlErrorSpeechFormatNoLength">"Speech format '%1$s' had no length"</string>
     <string name="XmlErrorSpeechFormatInvalidLength">"Invalid time for length of speech format '%1$s': '%2$s'"</string>
     <string name="XmlErrorSpeechFormatUnexpectedlyNotFound">"Unexpectedly, I couldn't find speech format '%1$s'"</string>
     <string name="XmlErrorSpeechFormatInsideContext">"The speech format '%1$s' was inside a %2$s"</string>
+    <string name="XmlErrorSpeechFormatPeriodInfoNotFound">"There is no period with reference '%1$s' in speech format '%2$s'"</string>
     <string name="XmlErrorBellNoTime">"A bell in %1$s did not specify a time."</string>
     <string name="XmlErrorBellInvalidTime">"Invalid time for bell in %1$s: '%2$s'"</string>
     <string name="XmlErrorBellInvalidNumber">"Invalid number of bells in %1$s: '%2$s'"</string>
@@ -78,7 +80,7 @@
     <string name="XmlErrorSpeechOutsideSpeechesList">"The speech '%1$s' was outside the 'speeches' list"</string>
 
     <string name="DfbErrorPeriodInfoDuplicate">"The period '%1$s' was specified more than once"</string>
-    <string name="DfbErrorPeriodInfoNotFound">"There is no period with ref '%1$s'"</string>
+    <string name="DfbErrorPeriodInfoNotFound">"There is no period with reference '%1$s'"</string>
     <string name="DfbErrorBellDuplicate">"There is more than one bell at time %1$s"</string>
     <string name="DfbErrorBellAfterFinishTime">"The bell at %1$s is after the finish time"</string>
     <string name="DfbErrorResourceDuplicate">"The resource '%1$s' was specified more than once"</string>

@@ -147,6 +147,15 @@ public class DebateFormatBuilder {
         }
 
         /**
+         * Checks if a {@link PeriodInfo} with a given reference is in this container
+         * @param ref the reference of the <code>PeriodInfo</code>
+         * @return true if a {@link PeriodInfo} with that reference exists, false otherwise
+         */
+        public boolean hasPeriodInfo(String ref) {
+            return mPeriodInfos.containsKey(ref);
+        }
+
+        /**
          * @return the HashMap of {@link PeriodInfo}s associated with this container
          */
         public HashMap<String, PeriodInfo> getPeriodInfos() {
@@ -560,6 +569,30 @@ public class DebateFormatBuilder {
      */
     public void setDebateFormatName(String name) {
         mDebateFormatBeingBuilt.setName(name);
+    }
+
+    /**
+     * Checks if a {@link PeriodInfo} with a given reference has been added to a resource
+     * @param ref the name of the <code>PeriodInfo</code> to check
+     * @return true if a <code>PeriodInfo</code> with that name has been added, false otherwise
+     * @throws DebateFormatBuilderException if there is no resource with reference 'resourceRef'
+     */
+    public boolean hasPeriodInfoInResource(String resourceRef, String periodInfoRef)
+            throws DebateFormatBuilderException {
+        Resource res = getResource(resourceRef);
+        return res.hasPeriodInfo(periodInfoRef);
+    }
+
+    /**
+     * Checks if a {@link PeriodInfo} with a given reference has been added to a speech format
+     * @param ref the name of the <code>PeriodInfo</code> to check
+     * @return true if a <code>PeriodInfo</code> with that name has been added, false otherwise
+     * @throws DebateFormatBuilderException if there is no speech format with reference 'speechRef'
+     */
+    public boolean hasPeriodInfoInSpeechFormat(String speechRef, String periodInfoRef)
+            throws DebateFormatBuilderException {
+        SpeechFormatBuilder sfb = getSpeechFormatBuilder(speechRef);
+        return sfb.hasPeriodInfo(periodInfoRef);
     }
 
     /**

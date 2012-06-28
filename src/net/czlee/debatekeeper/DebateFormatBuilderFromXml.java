@@ -337,15 +337,15 @@ public class DebateFormatBuilderFromXml {
                     }
                 }
 
-                // 3. Get the next period reference, or default to null
+                // 3. We now have enough information to create the bell.
+                BellInfo bi = new BellInfo(time, number);
+
+                // 4. Get the next period reference, or default to null
                 // "#stay" means null (i.e. leave unchanged)
                 String periodInfoRef = getValue(atts, R.string.XmlAttrNameBellNextPeriod);
                 if (periodInfoRef != null)
                     if (areEqualIgnoringCase(periodInfoRef, R.string.XmlAttrValueCommonStay))
                         periodInfoRef = null;
-
-                // 4. We now have enough information to create the bell.
-                BellInfo bi = new BellInfo(time, number);
 
                 // 5. Get the sound to play, or default to the default
                 String bellSound = getValue(atts, R.string.XmlAttrNameBellSound);
@@ -371,20 +371,28 @@ public class DebateFormatBuilderFromXml {
                         logXmlError(R.string.XmlErrorBellInvalidPauseOnBell, getCurrentContextAndReferenceStr(), pauseOnBellStr);
                 }
 
-                // Finally, add the bell
+                // Finally, add the bell, but first check that the period info exists (and nullify
+                // if it doesn't, so that the bell still gets added)
                 try {
                     switch (getCurrentSecondLevelContext()) {
                     case RESOURCE:
-                        if (mCurrentResourceRef != null)
-                            mDfb.addBellInfoToResource(mCurrentResourceRef, bi, periodInfoRef);
+                        if (mCurrentResourceRef == null) break;
+                        if (!mDfb.hasPeriodInfoInResource(mCurrentResourceRef, periodInfoRef)) {
+                            logXmlError(R.string.XmlErrorResourcePeriodInfoNotFound, periodInfoRef, mCurrentResourceRef);
+                            periodInfoRef = null;
+                        }
+                        mDfb.addBellInfoToResource(mCurrentResourceRef, bi, periodInfoRef);
                         break;
                     case SPEECH_FORMAT:
-                        if (mCurrentSpeechFormatRef != null) {
-                            if (atFinish)
-                                mDfb.addBellInfoToSpeechFormatAtFinish(mCurrentSpeechFormatRef, bi, periodInfoRef);
-                            else
-                                mDfb.addBellInfoToSpeechFormat(mCurrentSpeechFormatRef, bi, periodInfoRef);
+                        if (mCurrentSpeechFormatRef == null) break;
+                        if (!mDfb.hasPeriodInfoInSpeechFormat(mCurrentSpeechFormatRef, periodInfoRef)) {
+                            logXmlError(R.string.XmlErrorSpeechFormatPeriodInfoNotFound, periodInfoRef, mCurrentSpeechFormatRef);
+                            periodInfoRef = null;
                         }
+                        if (atFinish)
+                            mDfb.addBellInfoToSpeechFormatAtFinish(mCurrentSpeechFormatRef, bi, periodInfoRef);
+                        else
+                            mDfb.addBellInfoToSpeechFormat(mCurrentSpeechFormatRef, bi, periodInfoRef);
                         break;
                     default:
                         logXmlError(R.string.XmlErrorBellOutsideContext);
