@@ -377,7 +377,7 @@ public class DebateFormatBuilderFromXml {
                     switch (getCurrentSecondLevelContext()) {
                     case RESOURCE:
                         if (mCurrentResourceRef == null) break;
-                        if (!mDfb.hasPeriodInfoInResource(mCurrentResourceRef, periodInfoRef)) {
+                        if (periodInfoRef != null && !mDfb.hasPeriodInfoInResource(mCurrentResourceRef, periodInfoRef)) {
                             logXmlError(R.string.XmlErrorResourcePeriodInfoNotFound, periodInfoRef, mCurrentResourceRef);
                             periodInfoRef = null;
                         }
@@ -385,7 +385,7 @@ public class DebateFormatBuilderFromXml {
                         break;
                     case SPEECH_FORMAT:
                         if (mCurrentSpeechFormatRef == null) break;
-                        if (!mDfb.hasPeriodInfoInSpeechFormat(mCurrentSpeechFormatRef, periodInfoRef)) {
+                        if (periodInfoRef != null && !mDfb.hasPeriodInfoInSpeechFormat(mCurrentSpeechFormatRef, periodInfoRef)) {
                             logXmlError(R.string.XmlErrorSpeechFormatPeriodInfoNotFound, periodInfoRef, mCurrentSpeechFormatRef);
                             periodInfoRef = null;
                         }
