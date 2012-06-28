@@ -68,7 +68,7 @@ public class DebateFormatBuilderFromXml {
         // we are inside one of these elements, if the element in question had an error.  (We will
         // still be between the relevant tags; there just won't be an active resource/
         // speech format).  That is:
-        //      m*m*Ref is NOT null         implies       we are in * context
+        //      m*Ref is NOT null           implies       we are in * context
         // but  m*Ref is null            does NOT imply   we are NOT in * context
         // and we are NOT in * context   does NOT imply   m*Ref is null
         private String  mCurrentSpeechFormatFirstPeriod = null;
