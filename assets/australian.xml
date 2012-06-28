@@ -18,11 +18,6 @@
 		<bell time="finish" number="2" nextperiod="overtime" />
 	</speechtype>
 
-	<speechtype ref="reply" length="4:00" firstperiod="initial">
-		<bell time="3:00" number="1" nextperiod="warning" />
-		<bell time="finish" number="2" nextperiod="overtime" />
-	</speechtype>
-
 	<speeches>
 		<speech name="1st Affirmative" type="all" />
 		<speech name="1st Negative" type="all" />
