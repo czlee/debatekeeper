@@ -421,7 +421,7 @@ public class DebateFormatBuilder {
             mDebateFormatBeingBuilt.addSpeech(name, formatRef);
         } catch (NoSuchFormatException e) {
             throw new DebateFormatBuilderException(
-                    getString(R.string.DfbErrorSpeechFormatNotFound, formatRef));
+                    getString(R.string.DfbErrorAddSpeechSpeechFormatNotFound, formatRef, name));
         }
 
     }

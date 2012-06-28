@@ -521,7 +521,7 @@ public class DebateFormatBuilderFromXml {
                 // 2. Get the speech format.
                 String format = getValue(atts, R.string.XmlAttrNameSpeechFormat);
                 if (format == null) {
-                    logXmlError(R.string.XmlErrorSpeechNoFormat);
+                    logXmlError(R.string.XmlErrorSpeechNoFormat, name);
                     return;
                 }
 
