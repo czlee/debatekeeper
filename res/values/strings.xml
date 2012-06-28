@@ -3,7 +3,7 @@
 
     <string name="app_name">Debatekeeper</string>
     <string name="DebatingActivityTitleBarWithoutFormatName">Debatekeeper</string>
-    <string name="DebatingActivityTitleBarWithFormatName">Debatekeeper - %1$s</string>
+    <string name="DebatingActivityTitleBarWithFormatName">%1$s - Debatekeeper</string>
     <string name="GlobalSettingsActivityName">Settings</string>
     <string name="FormatChooserActivityName">Choose style</string>
 
@@ -13,10 +13,10 @@
     <string name="ResumeTimerAfterAlarmButtonText">Resume</string>
     <string name="ResumeTimerAfterUserStopButtonText">Resume</string>
     <string name="ResetTimerButtonText">Reset</string>
-    <string name="NextSpeakerButtonText">Next speaker</string>
+    <string name="NextSpeakerButtonText">Next speech</string>
     <string name="NullButtonText">&lt;None></string>
     <string name="PlayBellButtonText">Bell</string>
-    
+
     <!-- Notices -->
     <string name="NotificationTitle">Debatekeeper</string>
     <string name="NotificationTickerText">Debatekeeper is timing</string>
@@ -26,14 +26,14 @@
     <string name="ResetDebateToastText">All speeches in debate reset</string>
     <string name="NoDebateLoadedText">No debate loaded</string>
     <string name="NoDebateLoadedButtonText">Choose style</string>
-    
+
     <color name="overtime">#ffff7878</color>
     <color name="overtimeDuringInvert">#33ff0000</color>
-    
+
     <!-- Menu -->
     <string name="ResetDebateMenuItem">Reset debate</string>
     <string name="SettingsMenuItem">Settings</string>
-    <string name="PrevSpeakerMenuItem">Previous speaker</string>
+    <string name="PrevSpeakerMenuItem">Previous speech</string>
     <string name="ChooseFormatMenuItem">Debate styles</string>
 
     <!-- Dialogs -->
@@ -46,10 +46,10 @@
     <string name="FatalProblemWithXmlFileMessageSuffix">"\nPlease choose another style."</string>
     <string name="FatalProblemWithXmlFileNoSchemaVersionSuffix">"\n\nNo schema version was specified; please ask the author of this XML file to specify one.\n"</string>
     <string name="FatalProblemWithXmlFileSchemaTooNewSuffix">"\n\nThis schema version (%1$s) isn't supported.  You might need to update this app.\n"</string>
-    
+
     <string name="ErrorsInXmlFileDialogTitle">Warning</string>
     <string name="ErrorsInXmlFileDialogButton">OK</string>
     <string name="ErrorsInXmlFileDialogMessagePrefix">"There are a few problems with this debate format XML file. I'll try to work with it, but it probably won't work properly. The problems are:\n"</string>
-    
-        
+
+
 </resources>
