@@ -6,36 +6,36 @@
 		<usedat>Nowhere</usedat>
 		<desc>Use this format to try out this app without waiting ages for bells</desc>
 	</info>
-	
+
 	<resource ref="speeches">
 		<period ref="initial" desc="Initial" bgcolor="#stay" />
 		<period ref="warning" desc="Warning bell rung" bgcolor="#77ffcc00" />
 		<period ref="overtime" desc="Overtime" bgcolor="#77ff0000" />
 	</resource>
-	
+
 	<speechtype ref="prep" length="20" firstperiod="moot" countdir="down">
 		<period ref="moot" desc="Choose moot" />
 		<period ref="side" desc="Choose side" />
 		<period ref="prepare" desc="Prepare debate" />
-	    <bell time="5" number="1" nextperiod="side" pauseonbell="true" />
+		<bell time="5" number="1" nextperiod="side" pauseonbell="true" />
 		<bell time="10" number="1" nextperiod="prepare" pauseonbell="true" />
 		<bell time="finish" number="2" />
 	</speechtype>
-	
+
 	<speechtype ref="substantive" length="15" firstperiod="initial">
-	    <include resource="speeches" />
+		<include resource="speeches" />
 		<bell time="10" number="1" nextperiod="warning" />
 		<bell time="finish" number="2" nextperiod="overtime" />
 	</speechtype>
-	
+
 	<speechtype ref="reply" length="10" firstperiod="initial">
-	    <include resource="speeches" />
-   		<bell time="5" number="1" nextperiod="warning" />
+		<include resource="speeches" />
+		<bell time="5" number="1" nextperiod="warning" />
 		<bell time="finish" number="2" nextperiod="overtime" />
 	</speechtype>
-	
+
 	<speeches>
-	    <speech name="Preparation" type="prep"></speech>
+		<speech name="Preparation" type="prep"></speech>
 		<speech name="1st Affirmative" type="substantive" />
 		<speech name="1st Negative" type="substantive" />
 		<speech name="2nd Affirmative" type="substantive" />

@@ -15,17 +15,17 @@
 	<speechtype ref="substantive" length="6:00" firstperiod="firstmin">
 		<period ref="firstmin" desc="First minute" bgcolor="#stay" />
 		<period ref="pois-allowed" name="POIs allowed" bgcolor="#7700ff00" />
-   		<bell time="1:00" number="1" nextperiod="pois-allowed" sound="#default" />
+		<bell time="1:00" number="1" nextperiod="pois-allowed" sound="#default" />
 		<bell time="5:00" number="1" nextperiod="warning" sound="#default" />
 		<bell time="finish" number="2" nextperiod="overtime" sound="#default" />
 	</speechtype>
-	
+
 	<speechtype ref="reply" length="3:00" firstperiod="main">
 		<period ref="main" desc="Main part" bgcolor="#stay" />
 		<bell time="2:00" number="1" nextperiod="warning" sound="#default" />
 		<bell time="finish" number="2" nextperiod="overtime" sound="#default" />
 	</speechtype>
-	
+
 	<speeches>
 		<speech name="1st Affirmative" type="substantive" />
 		<speech name="1st Negative" type="substantive" />

@@ -17,26 +17,26 @@
 		<period ref="moot" desc="Choose moot" />
 		<period ref="side" desc="Choose side" />
 		<period ref="prepare" desc="Prepare debate" />
-	    <bell time="1:00" number="1" nextperiod="side" pauseonbell="true" />
+		<bell time="1:00" number="1" nextperiod="side" pauseonbell="true" />
 		<bell time="2:00" number="1" nextperiod="prepare" pauseonbell="true" />
 		<bell time="finish" number="2" />
 	</speechtype>
-	
+
 	<speechtype ref="substantive" length="6:00" firstperiod="initial">
 		<include resource="speeches" />
-   		<bell time="4:00" number="1" nextperiod="warning" />
+		<bell time="4:00" number="1" nextperiod="warning" />
 		<bell time="finish" number="2" nextperiod="overtime" />
 	</speechtype>
-	
+
 	<speechtype ref="reply" length="3:00" firstperiod="initial">
 		<include resource="speeches" />
-   		<bell time="2:00" number="1" nextperiod="warning" />
+		<bell time="2:00" number="1" nextperiod="warning" />
 		<bell time="finish" number="2" nextperiod="overtime" />
 	</speechtype>
-	
+
 	<speeches>
 		<speech name="Preparation time" type="prep" />
-   		<speech name="1st Affirmative" type="substantive" />
+		<speech name="1st Affirmative" type="substantive" />
 		<speech name="1st Negative" type="substantive" />
 		<speech name="2nd Affirmative" type="substantive" />
 		<speech name="2nd Negative" type="substantive" />

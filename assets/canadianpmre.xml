@@ -15,13 +15,13 @@
 	</resource>
 
 	<speechtype ref="pm-const" length="6:00" firstperiod="firstmin">
-   		<bell time="1:00" number="1" nextperiod="pois-allowed" />
+		<bell time="1:00" number="1" nextperiod="pois-allowed" />
 		<bell time="5:00" number="1" nextperiod="warning" />
 		<bell time="finish" number="2" nextperiod="overtime" />
 	</speechtype>
 
 	<speechtype ref="constructive" length="7:00" firstperiod="firstmin">
-   		<bell time="1:00" number="1" nextperiod="pois-allowed" />
+		<bell time="1:00" number="1" nextperiod="pois-allowed" />
 		<bell time="6:00" number="1" nextperiod="warning" />
 		<bell time="finish" number="2" nextperiod="overtime" />
 	</speechtype>
@@ -32,13 +32,13 @@
 		<bell time="7:00" number="1" nextperiod="lastthree" />
 		<bell time="finish" number="2" nextperiod="overtime" />
 	</speechtype>
-	
+
 	<speechtype ref="pm-rebuttal" length="4:00" firstperiod="main">
 		<period ref="main" desc="Main part" bgcolor="#stay" />
-	    <bell time="3:00" number="1" nextperiod="warning" />
+		<bell time="3:00" number="1" nextperiod="warning" />
 		<bell time="finish" number="2" nextperiod="overtime" />
 	</speechtype>
-	
+
 	<speeches>
 		<speech name="Prime Minister's Constructive" type="pm-const" />
 		<speech name="Member of the Opposition" type="constructive" />
