@@ -13,9 +13,9 @@ which are configurable.
 
 Licence
 -------
-This app (and all source code) is licensed under the GNU General Public
-License version 3.  You can find a copy of this licence in the "license.txt"
-file, or go to http://www.gnu.org/licenses/gpl-3.0.html.
+This app (and all source code, with exceptions noted below) is licensed under 
+the GNU General Public License version 3.  You can find a copy of this licence
+in the "license.txt" file, or go to http://www.gnu.org/licenses/gpl-3.0.html.
 
 This app makes use of Mike Novak's
 [NumberPicker for Android](https://github.com/mrn/numberpicker) library.
@@ -26,6 +26,12 @@ This source code for the NumberPicker component isn't in this repository.
 To build this app, you will need to check out [that repository](https://github.com/mrn/numberpicker)
 and put it in ../numberpicker (relative to the directory where this
 repository is checked out on your computer).
+
+The other exclusion in this repository is the bell sound.  I bought the bell
+sound from [SFXsource](http://www.sfxsource.com/), so I can't make it freely
+available.  If you want to contribute and need this file, get in touch with me.
+The file (any sound file will do) should go at **res/raw/desk_bell.mp3**.
+(You'll probably find you can't build this app without a sound file there.)
 
 Adding debate styles
 --------------------
