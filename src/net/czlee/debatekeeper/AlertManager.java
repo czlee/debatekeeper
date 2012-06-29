@@ -265,6 +265,10 @@ public class AlertManager
     }
 
 
+    /**
+     * Flashes the screen according to the specifications of a bell.
+     * @param bsi the {@link BellSoundInfo} for this bell
+     */
     private void flashScreen(BellSoundInfo bsi) {
         Timer       repeatTimer  = new Timer();
         final long  repeatPeriod = bsi.getRepeatPeriod();
@@ -272,6 +276,13 @@ public class AlertManager
         if (timesToPlay == 0) return; // Do nothing if the number of bells is zero
 
         wakeUpScreenForBell(repeatPeriod * timesToPlay);
+
+        /* Note: To avoid race conditions, we do NOT have a single TimerTask to toggle the
+         * screen flash at a fixed rate.  We have one timer to govern turning the screen on
+         * at a fixed repeat period.  Each time the screen starts a flash, a *separate* timer
+         * is started to turn the screen off.  This guarantees (hopefully) that the last timer
+         * task that affects the screen is always one that turns it off.
+         */
 
         repeatTimer.scheduleAtFixedRate(new TimerTask() {
             int timesSoFar = 0;
@@ -294,6 +305,10 @@ public class AlertManager
         }, 0, bsi.getRepeatPeriod());
     }
 
+    /**
+     * Flashes the screen once.
+     * @param flashTime how long in milliseconds to flash the screen for
+     */
     private void startSingleFlashScreen(long flashTime) {
         // Flash the screen white and set a timer to turn it back normal after half a second
         mFlashScreenListener.flashScreen(true);
