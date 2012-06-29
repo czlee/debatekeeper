@@ -169,7 +169,9 @@ public class AlertManager
             mBellRepeater.play();
         }
         if (mVibrateMode) {
-            mVibrator.vibrate(300 * bsi.getTimesToPlay());
+            final long[] vibratePattern = getVibratePattern(bsi);
+            if (vibratePattern != null)
+                mVibrator.vibrate(vibratePattern, -1);
         }
 
         if (mFlashScreenListener != null) {
@@ -282,5 +284,36 @@ public class AlertManager
         }
     }
 
+    /**
+     * @param bsi the {@link BellSoundInfo} for this bell
+     * @return a long array that can be passed to Vibrator.vibrate(), or <code>null</code> if it
+     * should not vibrate.
+     */
+    private long[] getVibratePattern(BellSoundInfo bsi) {
+        long repeatPeriod = bsi.getRepeatPeriod();
+        int  timesToPlay  = bsi.getTimesToPlay();
 
+        // Don't vibrate on a bell that is rung zero times
+        if (timesToPlay == 0) return null;
+
+        // Generally, we want the total period to be the same as the bell sound period,
+        // and we want the gap between vibrations to be 100ms.  But if that would cause
+        // the vibration on time to be less than 80% of the total time, then reduce the
+        // gap so that it is equal to 20%.  The threshold here is 100 * 5 = 500 ms.
+        long vibrateOffTime = (repeatPeriod < 500) ? repeatPeriod / 5 : 100;
+        long vibrateOnTime = repeatPeriod - vibrateOffTime;
+
+        // We guaranteed that timesToPlay is not zero at the beginning of this method.
+        long[] pattern = new long[timesToPlay * 2];
+
+        // The pattern is {0, ON, OFF, ON, OFF, ..., OFF, ON}
+        pattern[0] = 0;
+        for (int i = 1; i < pattern.length-1; i = i + 2) {
+            pattern[i]   = vibrateOnTime;
+            pattern[i+1] = vibrateOffTime;
+        }
+        pattern[pattern.length - 1] = vibrateOnTime;
+
+        return pattern;
+    }
 }
