@@ -272,8 +272,13 @@ public class FormatChooserActivity extends Activity {
         adapter.sort(new StyleEntryComparatorByStyleName());
 
         mStylesListView.setAdapter(adapter);
-        mStylesListView.setItemChecked(getIncomingSelection(), true);
-        mStylesListView.smoothScrollToPosition(getIncomingSelection());
+
+        // Select and scroll to the incoming selection (if existent)
+        int incomingSelection = getIncomingSelection();
+        if (incomingSelection != ListView.INVALID_POSITION) {
+            mStylesListView.setItemChecked(incomingSelection, true);
+            mStylesListView.smoothScrollToPosition(incomingSelection);
+        }
     }
 
     @Override
