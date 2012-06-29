@@ -63,11 +63,12 @@
     <string name="XmlErrorSpeechFormatUnexpectedlyNotFound">"Unexpectedly, I couldn't find speech type '%1$s'"</string>
     <string name="XmlErrorSpeechFormatInsideContext">"The speech type '%1$s' was inside a %2$s"</string>
     <string name="XmlErrorSpeechFormatPeriodInfoNotFound">"There is no period with reference '%1$s' in speech type '%2$s'"</string>
+    <string name="XmlErrorSpeechFormatNoFinishBell">"The speech type '%1$s' has no finish bell defined, so I'll default to a double bell at the end of this speech type. To avoid this warning, please explicitly define a finish bell in the XML file. If you don't want a finish bell to sound, use &lt;bell time=\"finish\" number=\"0\"&gt;"</string>
     <string name="XmlErrorBellNoTime">"A bell in %1$s did not specify a time."</string>
     <string name="XmlErrorBellInvalidTime">"Invalid time for bell in %1$s: '%2$s'"</string>
     <string name="XmlErrorBellInvalidNumber">"Invalid number of bells in %1$s: '%2$s'"</string>
     <string name="XmlErrorBellInvalidSound">"Invalid bell sound in %1$s: '%2$s'"</string>
-    <string name="XmlErrorBellInvalidPauseOnBell">"Invalid pauseonbell value in %1$s: %2$s"</string>
+    <string name="XmlErrorBellInvalidPauseOnBell">"Invalid pauseonbell value in %1$s: '%2$s'"</string>
     <string name="XmlErrorBellOutsideContext">"A bell is not inside a valid resource or speech type"</string>
     <string name="XmlErrorPeriodNoRef">"No 'ref' was specified for a period in %1$s."</string>
     <string name="XmlErrorPeriodInvalidColor">"Invalid background colour (bgcolor) specified for period %1$s: '%2$s'</string>

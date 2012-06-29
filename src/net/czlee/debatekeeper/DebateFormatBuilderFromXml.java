@@ -120,6 +120,16 @@ public class DebateFormatBuilderFromXml {
                     logXmlError(e);
                 }
 
+                try {
+                    // If there isn't already a finish bell in this, add one and log the error.
+                    if (!mDfb.hasFinishBellInSpeechFormat(mCurrentSpeechFormatRef)) {
+                        logXmlError(R.string.XmlErrorSpeechFormatNoFinishBell, mCurrentSpeechFormatRef);
+                        mDfb.addBellInfoToSpeechFormatAtFinish(mCurrentSpeechFormatRef, new BellInfo(0, 2), null);
+                    }
+                } catch (DebateFormatBuilderException e) {
+                    logXmlError(e);
+                }
+
                 mCurrentSecondLevelContext = DebateFormatXmlSecondLevelContext.NONE;
                 mCurrentSpeechFormatFirstPeriod = null;
                 mCurrentSpeechFormatRef = null;
@@ -607,6 +617,12 @@ public class DebateFormatBuilderFromXml {
         return mDfb.getDebateFormat();
     }
 
+    public void logXmlErrorStyled(int xmlerrorspeechformatnofinishbell,
+            String mCurrentSpeechFormatRef) {
+        // TODO Auto-generated method stub
+
+    }
+
     /**
      * @return true if there are errors in the error log
      */
@@ -702,12 +718,18 @@ public class DebateFormatBuilderFromXml {
         return result;
     }
 
+    private void addToErrorLog(String message) {
+        String bullet = "• ";
+        String line   = bullet.concat(message);
+        mErrorLog.add(line);
+    }
+
     /**
      * Logs an XML-related error from an exception.
      * @param e the Exception
      */
     private void logXmlError(Exception e) {
-        mErrorLog.add(e.getMessage());
+        addToErrorLog(e.getMessage());
         Log.e("logXmlError", e.getMessage());
     }
 
@@ -716,7 +738,7 @@ public class DebateFormatBuilderFromXml {
      * @param resId the resource ID of the string resource
      */
     private void logXmlError(int resId) {
-        mErrorLog.add(mContext.getString(resId));
+        addToErrorLog(mContext.getString(resId));
         Log.e("logXmlError", mContext.getString(resId));
     }
 
@@ -727,7 +749,7 @@ public class DebateFormatBuilderFromXml {
      * @param formatArgs arguments to pass to <code>String.format</code>
      */
     private void logXmlError(int resId, Object... formatArgs) {
-        mErrorLog.add(mContext.getString(resId, formatArgs));
+        addToErrorLog(mContext.getString(resId, formatArgs));
         Log.e("logXmlError", mContext.getString(resId, formatArgs));
     }
 

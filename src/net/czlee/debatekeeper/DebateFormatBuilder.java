@@ -177,12 +177,11 @@ public class DebateFormatBuilder {
          */
         protected void checkBellInfo(BellInfo bi) throws DebateFormatBuilderException {
             Iterator<BellInfo> biIterator = mBellInfos.iterator();
-            BellInfo checkBi;
             long bellTime = bi.getBellTime();
 
             // Check for duplicate bells (bells with the same time)
             while (biIterator.hasNext()) {
-                checkBi = biIterator.next();
+                BellInfo checkBi = biIterator.next();
                 if (checkBi.getBellTime() == bellTime) {
                     String timeStr = secsToText(bellTime);
                     throw new DebateFormatBuilderException(
@@ -245,8 +244,7 @@ public class DebateFormatBuilder {
          * @throws DebateFormatBuilderException if the PeriodInfo referenced doesn't exist
          */
         public void setFirstPeriod(String firstPeriodRef) throws DebateFormatBuilderException {
-            PeriodInfo pi;
-            pi = mPeriodInfos.get(firstPeriodRef);
+            PeriodInfo pi = mPeriodInfos.get(firstPeriodRef);
             if (pi == null) {
                 throw new DebateFormatBuilderException(
                         getString(R.string.DfbErrorPeriodInfoNotFound, firstPeriodRef));
@@ -292,12 +290,24 @@ public class DebateFormatBuilder {
                 sf.setFirstPeriodInfo(mFirstPeriodInfo);
             }
             Iterator<BellInfo> biIterator = mBellInfos.iterator();
-            BellInfo bi;
             while (biIterator.hasNext()) {
-                bi = biIterator.next();
+                BellInfo bi = biIterator.next();
                 sf.addBellInfo(bi);
             }
             return sf;
+        }
+
+        /**
+         * @return <code>true</code> if a finish bell has been defined, <code>false</code> otherwise
+         */
+        public boolean hasFinishBell() {
+            Iterator<BellInfo> biIterator = mBellInfos.iterator();
+            while (biIterator.hasNext()) {
+                BellInfo checkBi = biIterator.next();
+                if (checkBi.getBellTime() == this.getSpeechLength())
+                    return true;
+            }
+            return false;
         }
 
         /**
@@ -573,7 +583,8 @@ public class DebateFormatBuilder {
 
     /**
      * Checks if a {@link PeriodInfo} with a given reference has been added to a resource
-     * @param ref the name of the <code>PeriodInfo</code> to check
+     * @param resourceRef the name of the {@link Resource} to check
+     * @param periodInfoRef the name of the <code>PeriodInfo</code> to check
      * @return true if a <code>PeriodInfo</code> with that name has been added, false otherwise
      * @throws DebateFormatBuilderException if there is no resource with reference 'resourceRef'
      */
@@ -584,9 +595,23 @@ public class DebateFormatBuilder {
     }
 
     /**
+     * Checks if a speech format has a finish bell.
+     * @param speechRef the name of the {@link SpeechFormat} to check
+     * @return <code>true</code> if the speech has a finish bell, <code>false</code> otherwise
+     * @throws DebateFormatBuilderException if there is no speech format with reference 'speechRef'
+     */
+    public boolean hasFinishBellInSpeechFormat(String speechRef)
+            throws DebateFormatBuilderException {
+        SpeechFormatBuilder sfb = getSpeechFormatBuilder(speechRef);
+        return sfb.hasFinishBell();
+    }
+
+    /**
      * Checks if a {@link PeriodInfo} with a given reference has been added to a speech format
-     * @param ref the name of the <code>PeriodInfo</code> to check
-     * @return true if a <code>PeriodInfo</code> with that name has been added, false otherwise
+     * @param speechRef the name of the {@link SpeechFormat} to check
+     * @param periodInfoRef the name of the <code>PeriodInfo</code> to check
+     * @return <code>true</code> if a <code>PeriodInfo</code> with that name has been added,
+     * <code>false</code> otherwise
      * @throws DebateFormatBuilderException if there is no speech format with reference 'speechRef'
      */
     public boolean hasPeriodInfoInSpeechFormat(String speechRef, String periodInfoRef)
