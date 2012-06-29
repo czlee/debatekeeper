@@ -139,10 +139,10 @@ public class BellRepeater {
 
     /**
      * Starts playing the repeated sound.
-     * Has no effect if the sound resid is 0.
+     * Has no effect if the sound resid is 0 or the times to play is 0.
      */
     public void play() {
-        if (mSoundInfo.getSoundResid() == 0)
+        if (mSoundInfo.getSoundResid() == 0 || mSoundInfo.getTimesToPlay() == 0)
             return;
 
         if (mState == BellRepeaterState.INITIAL) {
