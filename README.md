@@ -24,7 +24,7 @@ the GPLv3).
 
 This source code for the NumberPicker component isn't in this repository.
 To build this app, you will need to check out [that repository](https://github.com/mrn/numberpicker)
-and put it in ../numberpicker (relative to the directory where this
+and put it in **../numberpicker** (relative to the directory where this
 repository is checked out on your computer).
 
 The other exclusion in this repository is the bell sound.  I bought the bell
