@@ -42,7 +42,7 @@ import android.os.Vibrator;
 public class AlertManager
 {
     public  static final int NOTIFICATION_ID = 1;
-    private static final int BELL_SCREEN_FLASH_TIME = 500;
+    private static final long MAX_BELL_SCREEN_FLASH_TIME = 500;
 
     public static final boolean DEFAULT_SILENT_MODE    = false;
     public static final boolean DEFAULT_VIBRATE_MODE   = false;
@@ -175,16 +175,7 @@ public class AlertManager
         }
 
         if (mFlashScreenListener != null) {
-            // Flash the screen white and set a timer to turn it back normal after half a second
-            mFlashScreenListener.flashScreen(true);
-            wakeUpScreenForBell();
-            Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    mFlashScreenListener.flashScreen(false);
-                }
-            }, BELL_SCREEN_FLASH_TIME);
+            flashScreen(bsi);
         }
     }
 
@@ -273,14 +264,56 @@ public class AlertManager
                     notificationText, mIntentStartingHostActivity);
     }
 
+
+    private void flashScreen(BellSoundInfo bsi) {
+        Timer       repeatTimer  = new Timer();
+        final long  repeatPeriod = bsi.getRepeatPeriod();
+        final int   timesToPlay  = bsi.getTimesToPlay();
+        if (timesToPlay == 0) return; // Do nothing if the number of bells is zero
+
+        wakeUpScreenForBell(repeatPeriod * timesToPlay);
+
+        repeatTimer.scheduleAtFixedRate(new TimerTask() {
+            int timesSoFar = 0;
+            @Override
+            public void run() {
+                long flashTime = repeatPeriod / 2;
+
+                // If half the repeat period is more than the maximum flash time, or if this is
+                // the last repetition, make the flash time equal to the maximum
+                if (flashTime > MAX_BELL_SCREEN_FLASH_TIME)
+                    flashTime = MAX_BELL_SCREEN_FLASH_TIME;
+
+                if (++timesSoFar >= timesToPlay) {
+                    flashTime = MAX_BELL_SCREEN_FLASH_TIME;
+                    this.cancel();
+                }
+
+                startSingleFlashScreen(flashTime);
+            }
+        }, 0, bsi.getRepeatPeriod());
+    }
+
+    private void startSingleFlashScreen(long flashTime) {
+        // Flash the screen white and set a timer to turn it back normal after half a second
+        mFlashScreenListener.flashScreen(true);
+        Timer offTimer = new Timer();
+        offTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                mFlashScreenListener.flashScreen(false);
+            }
+        }, flashTime);
+    }
+
     /**
      * Wakes up the screen to attract user attention
      */
-    private void wakeUpScreenForBell() {
+    private void wakeUpScreenForBell(long wakeTime) {
         if (mActivityActive) {
             int flags = PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.FULL_WAKE_LOCK;
             PowerManager.WakeLock temporaryWakeLock = mPowerManager.newWakeLock(flags, "Debatekeeper-bell");
-            temporaryWakeLock.acquire(BELL_SCREEN_FLASH_TIME);
+            temporaryWakeLock.acquire(wakeTime);
         }
     }
 
