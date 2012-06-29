@@ -12,8 +12,15 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.faketouch"
+        android:required="true" />
+
     <uses-library android:name="com.michaelnovakjr.numberpicker" />
-    
+
     <application
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
@@ -36,7 +43,7 @@
             android:label="@string/FormatChooserActivityName" >
         </activity>
 
-        <service android:name=".DebatingTimerService"/>
+        <service android:name=".DebatingTimerService" />
     </application>
 
 </manifest>
