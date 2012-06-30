@@ -27,9 +27,9 @@
 
 	<speeches>
 		<speech name="Prime Minister" type="substantive" />
-		<speech name="Leader of Opposition" type="substantive" />
+		<speech name="Leader of the Opposition" type="substantive" />
 		<speech name="Deputy Prime Minister" type="substantive" />
-		<speech name="Deputy Leader of Opposition" type="substantive" />
+		<speech name="Deputy Leader of the Opposition" type="substantive" />
 		<speech name="Government Whip" type="substantive" />
 		<speech name="Opposition Whip" type="substantive" />
 		<speech name="Opposition Reply" type="reply" />
