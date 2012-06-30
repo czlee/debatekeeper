@@ -297,6 +297,8 @@ public class DebateFormatBuilderFromXml {
                         } else if (areEqualIgnoringCase(countdir,
                                 R.string.XmlAttrValueSpeechFormatCountDirUser)) {
                             mDfb.setCountDirection(reference, CountDirection.COUNT_USER);
+                        } else {
+                            logXmlError(R.string.XmlErrorSpeechFormatInvalidCountDir, reference, countdir);
                         }
                     } catch (DebateFormatBuilderException e) {
                         logXmlError(R.string.XmlErrorSpeechFormatUnexpectedlyNotFound, reference);
