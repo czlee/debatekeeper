@@ -11,6 +11,12 @@ The app rings a bell, vibrates and/or flashes the screen white (or any
 combination of the three) at bell times.  It also rings overtime bells,
 which are configurable.
 
+The website for this app is at http://tryingtoreason.wordpress.com/debatekeeper.
+
+You can install the app on the Google Play Store:
+
+[![Get this app on Google Play](http://www.android.com/images/brand/get_it_on_play_logo_large.png)](https://play.google.com/store/apps/details?id=net.czlee.debatekeeper)
+
 Licence
 -------
 This app (and all source code, with exceptions noted below) is licensed under 
@@ -51,6 +57,10 @@ I'll add it to the repository.
 3. Describe the debate style to me (speech times, bell times, names
 of positions, _etc._) at the contact details below and I'll write
 the XML file and add it to the repository.
+
+I've written a page on [how to write a debate format XML file](http://tryingtoreason.wordpress.com/debatekeeper/writing-your-own-debate-format-xml-file/).
+But it is probably easiest in the first instance to look in the **assets**
+directory for the XML files there, and follow those.
 
 This app doesn't (yet) do the public forum, Lincoln-Douglas or policy
 debate styles.  There are other Android apps that do this.  The reason
