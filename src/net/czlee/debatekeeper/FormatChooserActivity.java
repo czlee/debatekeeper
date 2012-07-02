@@ -409,10 +409,12 @@ public class FormatChooserActivity extends Activity {
                     dfi.getSpeechFormatDescriptions());
             populateTwoColumnTable(view, R.id.ViewFormatTableSpeeches, R.layout.speech_row,
                     dfi.getSpeeches());
+            builder.setTitle(dfi.getName());
+        } else {
+            builder.setTitle(filename);
         }
 
-        builder.setTitle(dfi.getName())
-               .setCancelable(true);
+        builder.setCancelable(true);
 
         AlertDialog dialog = builder.create();
         dialog.setView(view, 0, 10, 10, 15);
