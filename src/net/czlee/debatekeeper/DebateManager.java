@@ -249,11 +249,16 @@ public class DebateManager {
      * @param bundle The Bundle to which to save this information.
      */
     public void saveState(String key, Bundle bundle) {
+
+        // Take note of which speech we're on
         bundle.putInt(key + BUNDLE_SUFFIX_INDEX, mCurrentSpeechIndex);
+
+        // Save the speech times
         long[] speechTimes = new long[mSpeechTimes.size()];
         for (int i = 0; i < mSpeechTimes.size(); i++)
             speechTimes[i] = mSpeechTimes.get(i);
         bundle.putLongArray(key + BUNDLE_SUFFIX_SPEECH_TIMES, speechTimes);
+
         mSpeechManager.saveState(key + BUNDLE_SUFFIX_SPEECH, bundle);
     }
 
@@ -264,11 +269,17 @@ public class DebateManager {
      * @param bundle The Bundle from which to restore this information.
      */
     public void restoreState(String key, Bundle bundle) {
+
+        // Restore the current speech
         mCurrentSpeechIndex = bundle.getInt(key + BUNDLE_SUFFIX_INDEX, 0);
         loadSpeech();
+
+        // If there are saved speech times, restore them as well
         long[] speechTimes = bundle.getLongArray(key + BUNDLE_SUFFIX_SPEECH_TIMES);
-        for (int i = 0; i < speechTimes.length; i++)
-            mSpeechTimes.set(i, speechTimes[i]);
+        if (speechTimes != null)
+            for (int i = 0; i < speechTimes.length; i++)
+                mSpeechTimes.set(i, speechTimes[i]);
+
         mSpeechManager.restoreState(key + BUNDLE_SUFFIX_SPEECH, bundle);
     }
 
