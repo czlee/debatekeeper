@@ -52,9 +52,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -171,11 +174,31 @@ public class DebatingActivity extends Activity {
             if (Math.abs(e1.getX() - e2.getX()) > SWIPE_MIN_DISTANCE) {
                 if (velocityX < -SWIPE_THRESHOLD_VELOCITY) {
                     // Go to the next speaker if it's not the last speech
-                    if (!mDebateManager.isLastSpeech())
+                    if (!mDebateManager.isLastSpeech()) {
                         mDebateManager.nextSpeaker();
+                        Interpolator decelerate = new DecelerateInterpolator();
+                        Animation slideFromRight = new TranslateAnimation(
+                                Animation.RELATIVE_TO_SELF, 1.0f,
+                                Animation.RELATIVE_TO_SELF, 0.0f,
+                                Animation.RELATIVE_TO_SELF, 0.0f,
+                                Animation.RELATIVE_TO_SELF, 0.0f);
+                        slideFromRight.setInterpolator(decelerate);
+                        slideFromRight.setDuration(350);
+                        findViewById(R.id.debateActivityMainPart).startAnimation(slideFromRight);
+                    }
                 } else if (velocityX > SWIPE_THRESHOLD_VELOCITY) {
-                    if (!mDebateManager.isFirstSpeech())
+                    if (!mDebateManager.isFirstSpeech()) {
                         mDebateManager.previousSpeaker();
+                        Interpolator decelerate = new DecelerateInterpolator();
+                        Animation slideFromLeft = new TranslateAnimation(
+                                Animation.RELATIVE_TO_SELF, -1.0f,
+                                Animation.RELATIVE_TO_SELF, 0.0f,
+                                Animation.RELATIVE_TO_SELF, 0.0f,
+                                Animation.RELATIVE_TO_SELF, 0.0f);
+                        slideFromLeft.setInterpolator(decelerate);
+                        slideFromLeft.setDuration(350);
+                        findViewById(R.id.debateActivityMainPart).startAnimation(slideFromLeft);
+                    }
                 } else {
                     return false;
                 }
@@ -412,7 +435,7 @@ public class DebatingActivity extends Activity {
         //
         // OnTouchListener
         mGestureDetector = new GestureDetector(new DebatingTimerOnGestureListener());
-        RelativeLayout mainPartOfView = (RelativeLayout) findViewById(R.id.debateActivityMainPart);
+        View mainPartOfView = findViewById(R.id.debateActivityMainPart);
         mainPartOfView.setOnTouchListener(new DebatingTimerOnTouchListener());
 
         //
