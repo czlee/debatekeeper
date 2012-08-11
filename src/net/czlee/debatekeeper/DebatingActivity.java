@@ -45,12 +45,16 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -81,6 +85,8 @@ public class DebatingActivity extends Activity {
     private Bundle mLastStateBundle;
     private FormatXmlFilesManager mFilesManager;
 
+    private GestureDetector mGestureDetector;
+
     private String mFormatXmlFileName = null;
     private UserPreferenceCountDirection mUserCountDirection = UserPreferenceCountDirection.GENERALLY_UP;
 
@@ -98,6 +104,11 @@ public class DebatingActivity extends Activity {
     private static final int    CHOOSE_STYLE_REQUEST          = 0;
     private static final int    DIALOG_XML_FILE_FATAL         = 0;
     private static final int    DIALOG_XML_FILE_ERRORS        = 1;
+
+    // Constants for touch gesture sensitivity
+    private static final float  SWIPE_MIN_DISTANCE = 120;
+    private static final float  SWIPE_MAX_OFF_PATH = 250;
+    private static final float  SWIPE_THRESHOLD_VELOCITY = 200;
 
     private DebatingTimerService.DebatingTimerServiceBinder mBinder;
     private final BroadcastReceiver mGuiUpdateBroadcastReceiver = new GuiUpdateBroadcastReceiver();
@@ -129,10 +140,62 @@ public class DebatingActivity extends Activity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    findViewById(R.id.DebateActivityRootView).setBackgroundColor(colour);
+                    findViewById(R.id.debateActivityRootView).setBackgroundColor(colour);
                 }
             });
         }
+    }
+
+    private class DebatingTimerOnGestureListener extends SimpleOnGestureListener {
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            // Ignore all touch events if no debate is loaded
+            return (mDebateManager != null);
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+
+            if (mDebateManager == null) return false;
+
+            // Ignore all flings if the timer is running
+            if (mDebateManager.isRunning()) return false;
+
+            // If we go too far up or down, ignore as it's then not a horizontal swipe
+            if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
+                return false;
+
+            // If we go left or right far enough, then it's a horizontal swipe.
+            // Check for the direction.
+            if (Math.abs(e1.getX() - e2.getX()) > SWIPE_MIN_DISTANCE) {
+                if (velocityX < -SWIPE_THRESHOLD_VELOCITY) {
+                    // Go to the next speaker if it's not the last speech
+                    if (!mDebateManager.isLastSpeech())
+                        mDebateManager.nextSpeaker();
+                } else if (velocityX > SWIPE_THRESHOLD_VELOCITY) {
+                    if (!mDebateManager.isFirstSpeech())
+                        mDebateManager.previousSpeaker();
+                } else {
+                    return false;
+                }
+                updateGui();
+                return true;
+            }
+            return false;
+        }
+
+    }
+
+    private class DebatingTimerOnTouchListener implements View.OnTouchListener {
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (mGestureDetector != null)
+                return mGestureDetector.onTouchEvent(event);
+            return false;
+        }
+
     }
 
     /**
@@ -345,6 +408,12 @@ public class DebatingActivity extends Activity {
         mPlayBellButton     .setOnClickListener(new PlayBellButtonOnClickListener());
 
         mLastStateBundle = savedInstanceState; // This could be null
+
+        //
+        // OnTouchListener
+        mGestureDetector = new GestureDetector(new DebatingTimerOnGestureListener());
+        RelativeLayout mainPartOfView = (RelativeLayout) findViewById(R.id.debateActivityMainPart);
+        mainPartOfView.setOnTouchListener(new DebatingTimerOnTouchListener());
 
         //
         // Find the style file name
