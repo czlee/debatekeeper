@@ -33,11 +33,14 @@ import android.preference.PreferenceManager;
  */
 public class GlobalSettingsActivity extends PreferenceActivity {
 
-    private final HashMap<String, Integer> mPreferenceToStringResidMap = new HashMap<String, Integer>();
+    private final HashMap<String, Integer> mPreferenceToSummaryResidMap = new HashMap<String, Integer>();
+    private final HashMap<String, Integer> mPreferenceToDefaultResidMap = new HashMap<String, Integer>();
 
     private final ChangeSummaryOnSharedPreferenceChangeListener listener = new ChangeSummaryOnSharedPreferenceChangeListener();
 
-    private static final int DEFAULT_COUNT_DIRECTION = 1;
+    private static String KEY_FIRST_OVERTIME_BELL;
+    private static String KEY_OVERTIME_BELL_PERIOD;
+    private static String KEY_COUNT_DIRECTION;
 
     //******************************************************************************************
     // Private classes
@@ -47,9 +50,9 @@ public class GlobalSettingsActivity extends PreferenceActivity {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (mPreferenceToStringResidMap.containsKey(key))
+            if (mPreferenceToSummaryResidMap.containsKey(key))
                 updateSummaryWithInt(key);
-            else if (key.equals("countDirection"))
+            else if (key.equals(KEY_COUNT_DIRECTION))
                 updateCountDirectionSummary();
         }
 
@@ -64,11 +67,18 @@ public class GlobalSettingsActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.global_settings);
 
-        mPreferenceToStringResidMap.put("firstOvertimeBell", R.string.PrefFirstOvertimeBellSummary);
-        mPreferenceToStringResidMap.put("overtimeBellPeriod", R.string.PrefOvertimeBellPeriodSummary);
+        KEY_FIRST_OVERTIME_BELL  = getString(R.string.PrefFirstOvertimeBellKey);
+        KEY_OVERTIME_BELL_PERIOD = getString(R.string.PrefOvertimeBellPeriodKey);
+        KEY_COUNT_DIRECTION      = getString(R.string.PrefCountDirectionKey);
 
-        updateSummaryWithInt("firstOvertimeBell");
-        updateSummaryWithInt("overtimeBellPeriod");
+        mPreferenceToSummaryResidMap.put(KEY_FIRST_OVERTIME_BELL, R.string.PrefFirstOvertimeBellSummary);
+        mPreferenceToSummaryResidMap.put(KEY_OVERTIME_BELL_PERIOD, R.string.PrefOvertimeBellPeriodSummary);
+
+        mPreferenceToDefaultResidMap.put(KEY_FIRST_OVERTIME_BELL, R.integer.DefaultPrefFirstOvertimeBell);
+        mPreferenceToDefaultResidMap.put(KEY_OVERTIME_BELL_PERIOD, R.integer.DefaultPrefOvertimeBellPeriod);
+
+        updateSummaryWithInt(KEY_FIRST_OVERTIME_BELL);
+        updateSummaryWithInt(KEY_OVERTIME_BELL_PERIOD);
         updateCountDirectionSummary();
 
     }
@@ -91,20 +101,21 @@ public class GlobalSettingsActivity extends PreferenceActivity {
     //******************************************************************************************
     private void updateSummaryWithInt(String key) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        int value  = prefs.getInt(key, 30);
+        int defaultValueResid = mPreferenceToDefaultResidMap.get(key);
+        int value = prefs.getInt(key, this.getResources().getInteger(defaultValueResid));
         Preference pref = findPreference(key);
-        int summaryTextResid = mPreferenceToStringResidMap.get(key);
+        int summaryTextResid = mPreferenceToSummaryResidMap.get(key);
         pref.setSummary(getString(summaryTextResid, value));
     }
 
     private void updateCountDirectionSummary() {
-        String key = "countDirection";
+        String key = KEY_COUNT_DIRECTION;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Resources resources = this.getResources();
         String[] values = resources.getStringArray(R.array.PrefCountDirectionValues);
         String[] summaries = resources.getStringArray(R.array.PrefCountDirectionSummaries);
-        String value = prefs.getString(key, values[DEFAULT_COUNT_DIRECTION]);
-        int index = getIndexOfItemInArray(values, value, DEFAULT_COUNT_DIRECTION);
+        String value = prefs.getString(key, getString(R.string.DefaultPrefCountDirection));
+        int index = getIndexOfItemInArray(values, value, 0);
         Preference pref = findPreference(key);
         pref.setSummary(summaries[index]);
     }

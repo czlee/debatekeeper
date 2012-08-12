@@ -548,21 +548,31 @@ public class DebatingActivity extends Activity {
         int firstOvertimeBell, overtimeBellPeriod;
         String userCountDirectionValue;
 
+        Resources res = getResources();
+
         try {
-            silentMode           = prefs.getBoolean("silentMode", AlertManager.DEFAULT_SILENT_MODE);
-            vibrateMode          = prefs.getBoolean("vibrateMode", AlertManager.DEFAULT_VIBRATE_MODE);
-            flashScreen          = prefs.getBoolean("flashScreen", false);
-            overtimeBellsEnabled = prefs.getBoolean("overtimeBellsEnable", true);
-            keepScreenOn         = prefs.getBoolean("keepScreenOn", AlertManager.DEFAULT_KEEP_SCREEN_ON);
+            silentMode = prefs.getBoolean(res.getString(R.string.PrefSilentModeKey),
+                    res.getBoolean(R.bool.DefaultPrefSilentMode));
+            vibrateMode = prefs.getBoolean(res.getString(R.string.PrefVibrateModeKey),
+                    res.getBoolean(R.bool.DefaultPrefVibrateMode));
+            flashScreen = prefs.getBoolean(res.getString(R.string.PrefFlashScreenKey),
+                    res.getBoolean(R.bool.DefaultPrefFlashScreen));
+            overtimeBellsEnabled = prefs.getBoolean(res.getString(R.string.PrefOvertimeBellsEnableKey),
+                    res.getBoolean(R.bool.DefaultPrefOvertimeBellsEnable));
+            keepScreenOn = prefs.getBoolean(res.getString(R.string.PrefKeepScreenOnKey),
+                    res.getBoolean(R.bool.DefaultPrefKeepScreenOn));
             if (overtimeBellsEnabled) {
-                firstOvertimeBell  = prefs.getInt("firstOvertimeBell", 30);
-                overtimeBellPeriod = prefs.getInt("overtimeBellPeriod", 30);
+                firstOvertimeBell  = prefs.getInt(res.getString(R.string.PrefFirstOvertimeBellKey),
+                        res.getInteger(R.integer.DefaultPrefFirstOvertimeBell));
+                overtimeBellPeriod = prefs.getInt(res.getString(R.string.PrefOvertimeBellPeriodKey),
+                        res.getInteger(R.integer.DefaultPrefOvertimeBellPeriod));
             } else {
                 firstOvertimeBell = 0;
                 overtimeBellPeriod = 0;
             }
 
-            userCountDirectionValue = prefs.getString("countDirection", USER_COUNT_DIRECTION_VALUE_GENERALLY_UP);
+            userCountDirectionValue = prefs.getString(res.getString(R.string.PrefCountDirectionKey),
+                    res.getString(R.string.DefaultPrefCountDirection));
             // This is like a switch statement (not supported for strings in Java 6)
             if (userCountDirectionValue.equals(USER_COUNT_DIRECTION_VALUE_ALWAYS_DOWN))
                 mUserCountDirection = UserPreferenceCountDirection.ALWAYS_DOWN;

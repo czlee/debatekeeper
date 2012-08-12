@@ -1,42 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
-<!-- These aren't currently used; we just hard-code the key names into the source code.
-(The user will never see them so it's not locale-dependent.)
+    <!-- Keys -->
+    <!-- These strings must be unique. -->
     <string name="PrefSilentModeKey">sm</string>
     <string name="PrefVibrateModeKey">v</string>
+    <string name="PrefFlashScreenKey">fs</string>
     <string name="PrefOvertimeBellsEnableKey">obe</string>
     <string name="PrefFirstOvertimeBellKey">fob</string>
     <string name="PrefOvertimeBellPeriodKey">obp</string>
     <string name="PrefCountDirectionKey">cd</string>
--->
+    <string name="PrefKeepScreenOnKey">kso</string>
 
+    <!-- Category titles -->
 	<string name="PrefCategoryOvertimeBellsTitle">Overtime bells</string>
 	<string name="PrefCategoryBellsTitle">Bells</string>
 	<string name="PrefCategoryGeneralTitle">General</string>
 		
+	<!-- Silent mode -->
     <string name="PrefSilentModeTitle">Silent mode</string>
     <string name="PrefSilentModeOnSummary">Bell will not sound (this doesn\'t affect other sounds from your phone)</string>
     <string name="PrefSilentModeOffSummary">Bell will sound</string>
+    <bool   name="DefaultPrefSilentMode">false</bool>
     
+    <!-- Vibrate mode -->
     <string name="PrefVibrateModeTitle">Vibrator</string>
     <string name="PrefVibrateModeOnSummary">Vibrate at bell times</string>
     <string name="PrefVibrateModeOffSummary">Don\'t vibrate</string>
+    <bool   name="DefaultPrefVibrateMode">false</bool>
     
+    <!-- Flash screen -->
     <string name="PrefFlashScreenTitle">Flash screen</string>
     <string name="PrefFlashScreenOnSummary">Flash screen white briefly at bell times</string>
     <string name="PrefFlashScreenOffSummary">Don\'t flash screen</string>
+    <bool   name="DefaultPrefFlashScreen">false</bool>
     
+    <!-- Overtime bells -->
     <string name="PrefOvertimeBellsEnableTitle">Enable overtime bells</string>
     <string name="PrefOvertimeBellsEnableOnSummary">Ring overtime bells as specified below</string>
     <string name="PrefOvertimeBellsEnableOffSummary">Don\'t ring any overtime bells</string>
+    <bool   name="DefaultPrefOvertimeBellsEnable">true</bool>
+    
     <string name="PrefFirstOvertimeBellTitle">First overtime bell</string>
     <string name="PrefFirstOvertimeBellSummary">Ring the first overtime bell after %s seconds…</string>
     <string name="PrefFirstOvertimeBellDialogMessage">"The time after finish in seconds of the first overtime bell:"</string>
+    <integer name="DefaultPrefFirstOvertimeBell">15</integer>
+    
     <string name="PrefOvertimeBellPeriodTitle">Overtime bell period</string>
     <string name="PrefOvertimeBellPeriodSummary">…and then every %s seconds after that</string>
     <string name="PrefOvertimeBellPeriodDialogMessage">"The time between overtime bells (after the first) in seconds:"</string>
+    <integer name="DefaultPrefOvertimeBellPeriod">15</integer>
     
+    <!-- Count direction -->
     <string name="PrefCountDirectionTitle">Count direction</string>
     <string-array name="PrefCountDirectionSummaries">
         <item>Always count up</item>
@@ -56,8 +71,11 @@
     	<item>generallyDown</item>
     	<item>alwaysDown</item>
     </string-array>
+    <string name="DefaultPrefCountDirection">generallyUp</string>
     
+    <!-- Keep screen on -->
     <string name="PrefKeepScreenOnTitle">Keep screen on</string>
     <string name="PrefKeepScreenOnOnSummary">Keep screen on (dimmed) while timer is running</string>
     <string name="PrefKeepScreenOnOffSummary">Apply normal screen timeout</string>
+    <bool   name="DefaultPrefKeepScreenOn">true</bool>
 </resources>

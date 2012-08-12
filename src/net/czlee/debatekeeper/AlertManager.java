@@ -26,6 +26,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.PowerManager;
 import android.os.Vibrator;
 
@@ -44,9 +45,9 @@ public class AlertManager
     public  static final int NOTIFICATION_ID = 1;
     private static final long MAX_BELL_SCREEN_FLASH_TIME = 500;
 
-    public static final boolean DEFAULT_SILENT_MODE    = false;
-    public static final boolean DEFAULT_VIBRATE_MODE   = false;
-    public static final boolean DEFAULT_KEEP_SCREEN_ON = true;
+//    public static final boolean DEFAULT_SILENT_MODE    = false;
+//    public static final boolean DEFAULT_VIBRATE_MODE   = false;
+//    public static final boolean DEFAULT_KEEP_SCREEN_ON = true;
 
     private final Service               mService;
     private final NotificationManager   mNotificationManager;
@@ -58,9 +59,9 @@ public class AlertManager
     private       BellRepeater          mBellRepeater         = null;
     private       FlashScreenListener   mFlashScreenListener  = null;
     private       boolean               mShowingNotification  = false;
-    private       boolean               mSilentMode           = DEFAULT_SILENT_MODE;
-    private       boolean               mVibrateMode          = DEFAULT_VIBRATE_MODE;
-    private       boolean               mKeepScreenOn         = DEFAULT_KEEP_SCREEN_ON;
+    private       boolean               mSilentMode           ;//= DEFAULT_SILENT_MODE;
+    private       boolean               mVibrateMode          ;//= DEFAULT_VIBRATE_MODE;
+    private       boolean               mKeepScreenOn         ;//= DEFAULT_KEEP_SCREEN_ON;
     private       boolean               mActivityActive       = false;
 
 
@@ -81,6 +82,12 @@ public class AlertManager
                 0, new Intent(debatingTimerService, DebatingActivity.class), 0);
         mVibrator = (Vibrator) debatingTimerService.getSystemService(Context.VIBRATOR_SERVICE);
         mPowerManager = (PowerManager) mService.getSystemService(Context.POWER_SERVICE);
+
+        // Set up defaults
+        Resources res = mService.getResources();
+        mSilentMode   = res.getBoolean(R.bool.DefaultPrefSilentMode);
+        mVibrateMode  = res.getBoolean(R.bool.DefaultPrefVibrateMode);
+        mKeepScreenOn = res.getBoolean(R.bool.DefaultPrefKeepScreenOn);
 
         createWakeLock();
     }

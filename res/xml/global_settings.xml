@@ -4,63 +4,63 @@
 
     <PreferenceCategory android:title="@string/PrefCategoryBellsTitle" >
         <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="silentMode"
+            android:defaultValue="@bool/DefaultPrefSilentMode"
+            android:key="@string/PrefSilentModeKey"
             android:summaryOff="@string/PrefSilentModeOffSummary"
             android:summaryOn="@string/PrefSilentModeOnSummary"
             android:title="@string/PrefSilentModeTitle" />
         <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="vibrateMode"
+            android:defaultValue="@bool/DefaultPrefVibrateMode"
+            android:key="@string/PrefVibrateModeKey"
             android:summaryOff="@string/PrefVibrateModeOffSummary"
             android:summaryOn="@string/PrefVibrateModeOnSummary"
             android:title="@string/PrefVibrateModeTitle" />
         <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="flashScreen"
+            android:defaultValue="@bool/DefaultPrefFlashScreen"
+            android:key="@string/PrefFlashScreenKey"
             android:summaryOff="@string/PrefFlashScreenOffSummary"
             android:summaryOn="@string/PrefFlashScreenOnSummary"
             android:title="@string/PrefFlashScreenTitle" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/PrefCategoryOvertimeBellsTitle" >
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="@bool/DefaultPrefOvertimeBellsEnable"
             android:disableDependentsState="false"
-            android:key="overtimeBellsEnable"
+            android:key="@string/PrefOvertimeBellsEnableKey"
             android:summaryOff="@string/PrefOvertimeBellsEnableOffSummary"
             android:summaryOn="@string/PrefOvertimeBellsEnableOnSummary"
             android:title="@string/PrefOvertimeBellsEnableTitle" />
 
         <com.michaelnovakjr.numberpicker.NumberPickerPreference
-            android:dependency="overtimeBellsEnable"
+            android:dependency="@string/PrefOvertimeBellsEnableKey"
             android:dialogMessage="@string/PrefFirstOvertimeBellDialogMessage"
-            android:key="firstOvertimeBell"
+            android:key="@string/PrefFirstOvertimeBellKey"
             android:summary="@string/PrefFirstOvertimeBellSummary"
             android:title="@string/PrefFirstOvertimeBellTitle"
-            picker:defaultValue="30"
+            picker:defaultValue="@integer/DefaultPrefFirstOvertimeBell"
             picker:endRange="120"
             picker:startRange="3" />
         <com.michaelnovakjr.numberpicker.NumberPickerPreference
-            android:dependency="overtimeBellsEnable"
+            android:dependency="@string/PrefOvertimeBellsEnableKey"
             android:dialogMessage="@string/PrefOvertimeBellPeriodDialogMessage"
-            android:key="overtimeBellPeriod"
+            android:key="@string/PrefOvertimeBellPeriodKey"
             android:summary="@string/PrefOvertimeBellPeriodSummary"
             android:title="@string/PrefOvertimeBellPeriodTitle"
-            picker:defaultValue="30"
+            picker:defaultValue="@integer/DefaultPrefOvertimeBellPeriod"
             picker:endRange="120"
             picker:startRange="3" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/PrefCategoryGeneralTitle" >
         <ListPreference
-            android:defaultValue="generallyUp"
+            android:defaultValue="@string/DefaultPrefCountDirection"
             android:entries="@array/PrefCountDirectionEntries"
             android:entryValues="@array/PrefCountDirectionValues"
-            android:key="countDirection"
+            android:key="@string/PrefCountDirectionKey"
             android:title="@string/PrefCountDirectionTitle" />
 
         <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="keepScreenOn"
+            android:defaultValue="@bool/DefaultPrefKeepScreenOn"
+            android:key="@string/PrefKeepScreenOnKey"
             android:summaryOff="@string/PrefKeepScreenOnOffSummary"
             android:summaryOn="@string/PrefKeepScreenOnOnSummary"
             android:title="@string/PrefKeepScreenOnTitle" />
