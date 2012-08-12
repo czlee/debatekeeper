@@ -322,6 +322,12 @@ public class DebatingActivity extends Activity {
             return;
         }
 
+        // If we're in editing mode, exit editing mode
+        if (mIsEditingTime) {
+            editCurrentTimeFinish();
+            return;
+        }
+
         // If the timer is stopped AND it's not the first speaker, go back one speaker.
         // Note: We do not just leave this check to goToPreviousSpeaker(), because we want to do
         // other things if it's not in a state in which it could go to the previous speaker.
