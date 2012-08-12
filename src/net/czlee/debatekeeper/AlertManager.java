@@ -305,7 +305,7 @@ public class AlertManager
 
                 startSingleFlashScreen(flashTime);
             }
-        }, 0, bsi.getRepeatPeriod());
+        }, 0, repeatPeriod);
     }
 
     /**
