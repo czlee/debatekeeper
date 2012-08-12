@@ -45,10 +45,6 @@ public class AlertManager
     public  static final int NOTIFICATION_ID = 1;
     private static final long MAX_BELL_SCREEN_FLASH_TIME = 500;
 
-//    public static final boolean DEFAULT_SILENT_MODE    = false;
-//    public static final boolean DEFAULT_VIBRATE_MODE   = false;
-//    public static final boolean DEFAULT_KEEP_SCREEN_ON = true;
-
     private final Service               mService;
     private final NotificationManager   mNotificationManager;
     private final PendingIntent         mIntentStartingHostActivity;
@@ -56,13 +52,13 @@ public class AlertManager
     private final Vibrator              mVibrator;
     private       PowerManager.WakeLock mWakeLock;
     private       Notification          mNotification;
-    private       BellRepeater          mBellRepeater         = null;
-    private       FlashScreenListener   mFlashScreenListener  = null;
+    private       BellRepeater          mBellRepeater        = null;
+    private       FlashScreenListener   mFlashScreenListener = null;
     private       boolean               mShowingNotification  = false;
-    private       boolean               mSilentMode           ;//= DEFAULT_SILENT_MODE;
-    private       boolean               mVibrateMode          ;//= DEFAULT_VIBRATE_MODE;
-    private       boolean               mKeepScreenOn         ;//= DEFAULT_KEEP_SCREEN_ON;
-    private       boolean               mActivityActive       = false;
+    private       boolean               mSilentMode;
+    private       boolean               mVibrateMode;
+    private       boolean               mKeepScreenOn;
+    private       boolean               mActivityActive      = false;
 
 
     /**
