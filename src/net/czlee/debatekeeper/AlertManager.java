@@ -331,8 +331,7 @@ public class AlertManager
 
     /**
      * Runs a strobe flash
-     * @param flashTime how long in milliseconds the strobe should last. The method rounds this
-     * to the nearest 100 milliseconds.
+     * @param numberOfStrobes The number of strobes to do.
      */
     private void startSingleStrobeFlashScreen(int numberOfStrobes) {
         Timer     strobeTimer = new Timer();
