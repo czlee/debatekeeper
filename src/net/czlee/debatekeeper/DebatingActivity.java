@@ -175,7 +175,7 @@ public class DebatingActivity extends Activity {
                 if (velocityX < -SWIPE_THRESHOLD_VELOCITY) {
                     // Go to the next speaker if it's not the last speech
                     if (!mDebateManager.isLastSpeech()) {
-                        mDebateManager.nextSpeaker();
+                        mDebateManager.goToNextSpeaker();
                         Interpolator decelerate = new DecelerateInterpolator();
                         Animation slideFromRight = new TranslateAnimation(
                                 Animation.RELATIVE_TO_SELF, 1.0f,
@@ -188,7 +188,7 @@ public class DebatingActivity extends Activity {
                     }
                 } else if (velocityX > SWIPE_THRESHOLD_VELOCITY) {
                     if (!mDebateManager.isFirstSpeech()) {
-                        mDebateManager.previousSpeaker();
+                        mDebateManager.goToPreviousSpeaker();
                         Interpolator decelerate = new DecelerateInterpolator();
                         Animation slideFromLeft = new TranslateAnimation(
                                 Animation.RELATIVE_TO_SELF, -1.0f,
@@ -294,7 +294,7 @@ public class DebatingActivity extends Activity {
             case NOT_STARTED:
             case STOPPED_BY_USER:
                 if (!mDebateManager.isLastSpeech())
-                    mDebateManager.nextSpeaker();
+                    mDebateManager.goToNextSpeaker();
                 break;
             default:
                 break;
@@ -327,7 +327,7 @@ public class DebatingActivity extends Activity {
         // If the timer is stopped AND it's not the first speaker, go back one
         // speaker
         if (!mDebateManager.isFirstSpeech() && !mDebateManager.isRunning()) {
-            mDebateManager.previousSpeaker();
+            mDebateManager.goToPreviousSpeaker();
             updateGui();
             return;
 
@@ -352,7 +352,7 @@ public class DebatingActivity extends Activity {
         switch (item.getItemId()) {
         case R.id.prevSpeaker:
             if (mDebateManager == null) return true;
-            mDebateManager.previousSpeaker();
+            mDebateManager.goToPreviousSpeaker();
             updateGui();
             return true;
         case R.id.chooseFormat:

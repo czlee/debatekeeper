@@ -120,7 +120,7 @@ public class DebateManager {
      * Moves to the next speaker.
      * If already on the last speaker, reloads the last speaker.
      */
-    public void nextSpeaker() {
+    public void goToNextSpeaker() {
         saveSpeech();
         mSpeechManager.stop();
         if (!isLastSpeech()) mCurrentSpeechIndex++;
@@ -131,7 +131,7 @@ public class DebateManager {
      * Moves to the previous speaker.
      * If already on the first speaker, reloads the first speaker.
      */
-    public void previousSpeaker() {
+    public void goToPreviousSpeaker() {
         saveSpeech();
         mSpeechManager.stop();
         if (!isFirstSpeech()) mCurrentSpeechIndex--;
