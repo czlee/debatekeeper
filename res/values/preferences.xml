@@ -3,14 +3,14 @@
     
     <!-- Keys -->
     <!-- These strings must be unique. -->
-    <string name="PrefSilentModeKey">sm</string>
-    <string name="PrefVibrateModeKey">v</string>
-    <string name="PrefFlashScreenKey">fs</string>
-    <string name="PrefOvertimeBellsEnableKey">obe</string>
-    <string name="PrefFirstOvertimeBellKey">fob</string>
-    <string name="PrefOvertimeBellPeriodKey">obp</string>
-    <string name="PrefCountDirectionKey">cd</string>
-    <string name="PrefKeepScreenOnKey">kso</string>
+    <string name="PrefSilentModeKey">silentMode</string>
+    <string name="PrefVibrateModeKey">vibrateMode</string>
+    <string name="PrefFlashScreenKey">flashScreen</string>
+    <string name="PrefOvertimeBellsEnableKey">overtimeBellsEnable</string>
+    <string name="PrefFirstOvertimeBellKey">firstOvertimeBell</string>
+    <string name="PrefOvertimeBellPeriodKey">overtimeBellPeriod</string>
+    <string name="PrefCountDirectionKey">countDirection</string>
+    <string name="PrefKeepScreenOnKey">keepScreenOn</string>
 
     <!-- Category titles -->
 	<string name="PrefCategoryOvertimeBellsTitle">Overtime bells</string>
