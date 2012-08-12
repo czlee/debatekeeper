@@ -234,6 +234,15 @@ public class DebateManager {
     }
 
     /**
+     * Sets the current speech time.
+     * This method sets the current speech time even if the timer is running.
+     * @param seconds the new time in seconds
+     */
+    public void setCurrentSpeechTime(long seconds) {
+        mSpeechManager.setCurrentTime(seconds);
+    }
+
+    /**
      * Sets the overtime bell specifications
      * @param firstBell The number of seconds after the finish time to ring the first overtime bell
      * @param period The time in between subsequence overtime bells

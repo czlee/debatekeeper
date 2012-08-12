@@ -53,10 +53,12 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
@@ -75,6 +77,7 @@ public class DebatingActivity extends Activity {
     private ViewFlipper mDebateTimerViewFlipper;
     private RelativeLayout[] mDebateTimerDisplays;
     private int mCurrentDebateTimerDisplayIndex = 0;
+    private boolean mIsEditingTime = false;
 
     private Button mLeftControlButton;
     private Button mCentreControlButton;
@@ -84,8 +87,6 @@ public class DebatingActivity extends Activity {
     private DebateManager mDebateManager;
     private Bundle mLastStateBundle;
     private FormatXmlFilesManager mFilesManager;
-
-    private GestureDetector mGestureDetector;
 
     private String mFormatXmlFileName = null;
     private UserPreferenceCountDirection mUserCountDirection = UserPreferenceCountDirection.GENERALLY_UP;
@@ -133,6 +134,20 @@ public class DebatingActivity extends Activity {
         }
     }
 
+    /**
+     * We can't just use an OnLongClickListener because the current time TextView also needs to
+     * detect flings, just like the rest of the debate timer display.
+     */
+    private class CurrentTimeOnGestureListener extends DebateTimerDisplayOnGestureListener {
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+            editCurrentTimeStart();
+            return;
+        }
+
+    }
+
     private class DebatingTimerFlashScreenListener implements FlashScreenListener {
         @Override
         public void flashScreen(boolean invert) {
@@ -146,7 +161,7 @@ public class DebatingActivity extends Activity {
         }
     }
 
-    private class DebatingTimerOnGestureListener extends SimpleOnGestureListener {
+    private class DebateTimerDisplayOnGestureListener extends SimpleOnGestureListener {
 
         @Override
         public boolean onDown(MotionEvent e) {
@@ -179,15 +194,10 @@ public class DebatingActivity extends Activity {
             return false;
         }
 
-    }
-
-    private class DebatingTimerOnTouchListener implements View.OnTouchListener {
-
         @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            if (mGestureDetector != null)
-                return mGestureDetector.onTouchEvent(event);
-            return false;
+        public boolean onSingleTapUp(MotionEvent e) {
+            editCurrentTimeFinish();
+            return true;
         }
 
     }
@@ -217,6 +227,24 @@ public class DebatingActivity extends Activity {
         public FatalXmlError(String detailMessage, Throwable throwable) {
             super(detailMessage, throwable);
         }
+    }
+
+    private class GestureOnTouchListener implements View.OnTouchListener {
+
+        GestureDetector gd;
+
+        public GestureOnTouchListener(GestureDetector gestureDetector) {
+            super();
+            this.gd = gestureDetector;
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (gd != null)
+                return gd.onTouchEvent(event);
+            return false;
+        }
+
     }
 
     private final class GuiUpdateBroadcastReceiver extends BroadcastReceiver {
@@ -348,7 +376,7 @@ public class DebatingActivity extends Activity {
         MenuItem resetDebateItem = menu.findItem(R.id.resetDebate);
 
         if (mDebateManager != null) {
-            prevSpeakerItem.setEnabled(!mDebateManager.isFirstSpeech() && !mDebateManager.isRunning());
+            prevSpeakerItem.setEnabled(!mDebateManager.isFirstSpeech() && !mDebateManager.isRunning() && !mIsEditingTime);
             resetDebateItem.setEnabled(true);
         } else {
             prevSpeakerItem.setEnabled(false);
@@ -386,6 +414,11 @@ public class DebatingActivity extends Activity {
         mDebateTimerDisplays[0]    = (RelativeLayout) findViewById(R.id.debateTimerDisplay0);
         mDebateTimerDisplays[1]    = (RelativeLayout) findViewById(R.id.debateTimerDisplay1);
 
+        for (int i = 0; i < mDebateTimerDisplays.length; i++) {
+            TimePicker currentTimePicker = (TimePicker) mDebateTimerDisplays[i].findViewById(R.id.currentTimePicker);
+            currentTimePicker.setIs24HourView(true);
+        }
+
         mDebateTimerViewFlipper.setDisplayedChild(mCurrentDebateTimerDisplayIndex);
 
         mLeftControlButton   = (Button) findViewById(R.id.leftControlButton);
@@ -403,10 +436,16 @@ public class DebatingActivity extends Activity {
         mLastStateBundle = savedInstanceState; // This could be null
 
         //
-        // OnTouchListener
-        mGestureDetector = new GestureDetector(new DebatingTimerOnGestureListener());
+        // OnTouchListeners
+        GestureDetector gd1 = new GestureDetector(new DebateTimerDisplayOnGestureListener());
         View displayFlipper = findViewById(R.id.debateTimerDisplayFlipper);
-        displayFlipper.setOnTouchListener(new DebatingTimerOnTouchListener());
+        displayFlipper.setOnTouchListener(new GestureOnTouchListener(gd1));
+
+        GestureDetector gd2 = new GestureDetector(new CurrentTimeOnGestureListener());
+        for (int i = 0; i < mDebateTimerDisplays.length; i++) {
+            View currentTimeText = mDebateTimerDisplays[i].findViewById(R.id.currentTime);
+            currentTimeText.setOnTouchListener(new GestureOnTouchListener(gd2));
+        }
 
         //
         // Find the style file name
@@ -601,6 +640,64 @@ public class DebatingActivity extends Activity {
     }
 
     /**
+     * Displays the time picker to edit the current time.
+     * Does nothing if there is no debate loaded or if the timer is running.
+     */
+    private void editCurrentTimeStart() {
+        mIsEditingTime = true;
+
+        if (mDebateManager == null) return;
+        if (mDebateManager.isRunning()) return;
+
+        TextView   currentTimeText   = (TextView)   getCurrentDebateTimerDisplay().findViewById(R.id.currentTime);
+        TimePicker currentTimePicker = (TimePicker) getCurrentDebateTimerDisplay().findViewById(R.id.currentTimePicker);
+
+        // Change the visible GUI elements
+        currentTimeText.setVisibility(View.GONE);
+        currentTimePicker.setVisibility(View.VISIBLE);
+
+        mLeftControlButton.setEnabled(false);
+        mCentreControlButton.setEnabled(false);
+        mRightControlButton.setEnabled(false);
+
+        // We're using this in hours and minutes, not minutes and seconds
+        long currentTime = mDebateManager.getCurrentSpeechTime();
+        currentTimePicker.setCurrentHour((int) (currentTime / 60));
+        currentTimePicker.setCurrentMinute((int) (currentTime % 60));
+    }
+
+    private void editCurrentTimeFinish() {
+        mIsEditingTime = false;
+
+        TextView   currentTimeText   = (TextView)   getCurrentDebateTimerDisplay().findViewById(R.id.currentTime);
+        TimePicker currentTimePicker = (TimePicker) getCurrentDebateTimerDisplay().findViewById(R.id.currentTimePicker);
+
+        currentTimePicker.clearFocus();
+
+        // Hide the keyboard
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(currentTimePicker.getWindowToken(), 0);
+
+        // We're using this in hours and minutes, not minutes and seconds
+        int minutes = currentTimePicker.getCurrentHour();
+        int seconds = currentTimePicker.getCurrentMinute();
+        long newTime = minutes * 60 + seconds;
+
+        if (mDebateManager != null)
+            mDebateManager.setCurrentSpeechTime(newTime);
+
+        // Change the visible GUI elements
+        currentTimeText.setVisibility(View.VISIBLE);
+        currentTimePicker.setVisibility(View.GONE);
+
+        mLeftControlButton.setEnabled(true);
+        mCentreControlButton.setEnabled(true);
+        mRightControlButton.setEnabled(true);
+
+        updateGui();
+    }
+
+    /**
      * Assembles the speech format and user count directions to find the count direction to use
      * currently.
      * @return OverallCountDirection.UP or OverallCountDirection.DOWN
@@ -633,6 +730,13 @@ public class DebatingActivity extends Activity {
         // We've now covered all possibilities.  But just in case (and to satisfy the compiler)...
         return OverallCountDirection.COUNT_UP;
 
+    }
+
+    /**
+     * @return the current RelativeLayout for the debate timer display
+     */
+    private RelativeLayout getCurrentDebateTimerDisplay() {
+        return mDebateTimerDisplays[mCurrentDebateTimerDisplayIndex];
     }
 
     private Dialog getErrorsWithXmlFileDialog(Bundle bundle) {
@@ -689,14 +793,15 @@ public class DebatingActivity extends Activity {
 
     /**
      * Goes to the next speech.
-     * Does nothing if there is no debate loaded, if the current speech is the last speech or if
-     * the timer is running.
+     * Does nothing if there is no debate loaded, if the current speech is the last speech, if
+     * the timer is running, or if the current time is being edited.
      */
     private void goToNextSpeech() {
 
         if (mDebateManager == null) return;
         if (mDebateManager.isRunning()) return;
         if (mDebateManager.isLastSpeech()) return;
+        if (mIsEditingTime) return;
 
         // Swap the current display index
         mCurrentDebateTimerDisplayIndex = (mCurrentDebateTimerDisplayIndex == 1) ? 0 : 1;
@@ -715,14 +820,15 @@ public class DebatingActivity extends Activity {
 
     /**
      * Goes to the previous speech.
-     * Does nothing if there is no debate loaded, if the current speech is the first speech or if
-     * the timer is running.
+     * Does nothing if there is no debate loaded, if the current speech is the first speech, if
+     * the timer is running, or if the current time is being edited.
      */
     private void goToPreviousSpeech() {
 
         if (mDebateManager == null) return;
         if (mDebateManager.isRunning()) return;
         if (mDebateManager.isFirstSpeech()) return;
+        if (mIsEditingTime) return;
 
         // Swap the current display index
         mCurrentDebateTimerDisplayIndex = (mCurrentDebateTimerDisplayIndex == 1) ? 0 : 1;
