@@ -44,53 +44,26 @@
             android:text="@string/PlayBellButtonText" />
     </LinearLayout>
 
-    <RelativeLayout
-        android:id="@+id/debateActivityMainPart"
+    <ViewFlipper
+        android:id="@+id/debateTimerDisplayFlipper"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@id/controlButtons"
         android:layout_alignParentTop="true"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/titleText"
+        <include
+            android:id="@+id/debateTimerDisplay0"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:paddingTop="4dip"
-            android:gravity="center_horizontal"
-            android:textSize="20dip" />
-
-        <TextView
-            android:id="@+id/stateText"
+            android:layout_height="fill_parent"
+            layout="@layout/debate_timer_display" />
+        
+		<include
+            android:id="@+id/debateTimerDisplay1"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/titleText"
-            android:gravity="center_horizontal"
-            android:textSize="14dip" />
-
-        <TextView
-            android:id="@+id/currentTime"
-            android:gravity="center"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:textSize="72dip" />
-
-        <TextView
-            android:id="@+id/finalTime"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="4dip"
-            android:gravity="center_horizontal" />
-
-        <TextView
-            android:id="@+id/nextTime"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/finalTime"
-            android:gravity="center_horizontal" />
-    </RelativeLayout>
+            android:layout_height="fill_parent"
+            layout="@layout/debate_timer_display" />
+        
+    </ViewFlipper>
 
 </RelativeLayout>

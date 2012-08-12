@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   	<style name="SlideAnimation">
+	    <item name="android:interpolator">@android:anim/decelerate_interpolator</item>
+	    <item name="android:duration">350</item>
+	    <item name="android:fromYDelta">0</item>
+	    <item name="android:toYDelta">0</item>
+   	</style>
+</resources>
