@@ -19,13 +19,13 @@
             android:layout_below="@id/speechNameText"
             android:gravity="center_horizontal"
             android:textSize="14dip" />
-
+
         <TextView
             android:id="@+id/currentTime"
-            android:gravity="center"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:gravity="center"
             android:textSize="72dip" />
 
         <TextView
