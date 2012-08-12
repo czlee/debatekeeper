@@ -673,8 +673,6 @@ public class DebatingActivity extends Activity {
     }
 
     private void editCurrentTimeFinish() {
-        mIsEditingTime = false;
-
         TextView   currentTimeText   = (TextView)   getCurrentDebateTimerDisplay().findViewById(R.id.currentTime);
         TimePicker currentTimePicker = (TimePicker) getCurrentDebateTimerDisplay().findViewById(R.id.currentTimePicker);
 
@@ -684,13 +682,13 @@ public class DebatingActivity extends Activity {
         InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(currentTimePicker.getWindowToken(), 0);
 
-        // We're using this in hours and minutes, not minutes and seconds
-        int minutes = currentTimePicker.getCurrentHour();
-        int seconds = currentTimePicker.getCurrentMinute();
-        long newTime = minutes * 60 + seconds;
-
-        if (mDebateManager != null)
+        if (mDebateManager != null && mIsEditingTime) {
+            // We're using this in hours and minutes, not minutes and seconds
+            int minutes = currentTimePicker.getCurrentHour();
+            int seconds = currentTimePicker.getCurrentMinute();
+            long newTime = minutes * 60 + seconds;
             mDebateManager.setCurrentSpeechTime(newTime);
+        }
 
         // Change the visible GUI elements
         currentTimeText.setVisibility(View.VISIBLE);
@@ -700,7 +698,10 @@ public class DebatingActivity extends Activity {
         mCentreControlButton.setEnabled(true);
         mRightControlButton.setEnabled(true);
 
+        mIsEditingTime = false;
+
         updateGui();
+
     }
 
     /**
