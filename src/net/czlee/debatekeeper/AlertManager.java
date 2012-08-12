@@ -44,6 +44,7 @@ public class AlertManager
 {
     public  static final int NOTIFICATION_ID = 1;
     private static final long MAX_BELL_SCREEN_FLASH_TIME = 500;
+    private static final int STROBE_PERIOD = 100;
 
     private final Service               mService;
     private final NotificationManager   mNotificationManager;
@@ -303,7 +304,11 @@ public class AlertManager
                     this.cancel();
                 }
 
-                startSingleFlashScreen(flashTime);
+//                startSingleFlashScreen(flashTime);
+
+                int numStrobes = (int) (flashTime / STROBE_PERIOD);
+                if (flashTime % STROBE_PERIOD > STROBE_PERIOD / 2) numStrobes++;
+                startSingleStrobeFlashScreen(numStrobes);
             }
         }, 0, repeatPeriod);
     }
@@ -322,6 +327,36 @@ public class AlertManager
                 mFlashScreenListener.flashScreen(false);
             }
         }, flashTime);
+    }
+
+    /**
+     * Runs a strobe flash
+     * @param flashTime how long in milliseconds the strobe should last. The method rounds this
+     * to the nearest 100 milliseconds.
+     */
+    private void startSingleStrobeFlashScreen(int numberOfStrobes) {
+        Timer     strobeTimer = new Timer();
+        final int numStrobes  = numberOfStrobes;
+
+        if (numStrobes == 0) return; // Do nothing if the number of bells is zero
+
+        /* Note: To avoid race conditions, we do NOT have a single TimerTask to toggle the
+         * screen flash at a fixed rate.  We have one timer to govern turning the screen on
+         * at a fixed repeat period.  Each time the screen starts a flash, a *separate* timer
+         * is started to turn the screen off.  This guarantees (hopefully) that the last timer
+         * task that affects the screen is always one that turns it off.
+         */
+
+        strobeTimer.scheduleAtFixedRate(new TimerTask() {
+            int timesSoFar = 0;
+            @Override
+            public void run() {
+                startSingleFlashScreen(STROBE_PERIOD * 2 / 3);
+                if (++timesSoFar >= numStrobes) {
+                    this.cancel();
+                }
+            }
+        }, 0, STROBE_PERIOD);
     }
 
     /**
