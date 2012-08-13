@@ -55,11 +55,12 @@ public class AlertManager
     private       Notification          mNotification;
     private       BellRepeater          mBellRepeater        = null;
     private       FlashScreenListener   mFlashScreenListener = null;
-    private       boolean               mShowingNotification  = false;
+    private       boolean               mShowingNotification = false;
+    private       boolean               mActivityActive      = false;
     private       boolean               mSilentMode;
     private       boolean               mVibrateMode;
     private       boolean               mKeepScreenOn;
-    private       boolean               mActivityActive      = false;
+    private final       FlashScreenMode       mFlashScreenMode     = FlashScreenMode.OFF;
 
 
     /**
@@ -87,6 +88,13 @@ public class AlertManager
         mKeepScreenOn = res.getBoolean(R.bool.DefaultPrefKeepScreenOn);
 
         createWakeLock();
+    }
+
+    //******************************************************************************************
+    // Public classes
+    //******************************************************************************************
+    public enum FlashScreenMode {
+        OFF, STROBE_FLASH, SOLID_FLASH
     }
 
     //******************************************************************************************

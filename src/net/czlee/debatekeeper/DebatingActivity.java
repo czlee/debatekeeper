@@ -544,9 +544,9 @@ public class DebatingActivity extends Activity {
      */
     private void applyPreferences() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean silentMode, vibrateMode, overtimeBellsEnabled, keepScreenOn, flashScreen;
+        boolean silentMode, vibrateMode, overtimeBellsEnabled, keepScreenOn;
         int firstOvertimeBell, overtimeBellPeriod;
-        String userCountDirectionValue;
+        String userCountDirectionValue, flashScreenModeValue;
 
         Resources res = getResources();
 
@@ -555,8 +555,6 @@ public class DebatingActivity extends Activity {
                     res.getBoolean(R.bool.DefaultPrefSilentMode));
             vibrateMode = prefs.getBoolean(res.getString(R.string.PrefVibrateModeKey),
                     res.getBoolean(R.bool.DefaultPrefVibrateMode));
-            flashScreen = prefs.getBoolean(res.getString(R.string.PrefFlashScreenKey),
-                    res.getBoolean(R.bool.DefaultPrefFlashScreen));
             overtimeBellsEnabled = prefs.getBoolean(res.getString(R.string.PrefOvertimeBellsEnableKey),
                     res.getBoolean(R.bool.DefaultPrefOvertimeBellsEnable));
             keepScreenOn = prefs.getBoolean(res.getString(R.string.PrefKeepScreenOnKey),
@@ -571,6 +569,11 @@ public class DebatingActivity extends Activity {
                 overtimeBellPeriod = 0;
             }
 
+            // CONTINUE HERE
+            // Need to move the value strings to string resources (R.string.PrefCountDir...)
+            // Need to make a function to convert between the enum and the value string, and vice
+            // versa, then use this here and in GlobalSettingsActivity
+
             userCountDirectionValue = prefs.getString(res.getString(R.string.PrefCountDirectionKey),
                     res.getString(R.string.DefaultPrefCountDirection));
             // This is like a switch statement (not supported for strings in Java 6)
@@ -582,6 +585,9 @@ public class DebatingActivity extends Activity {
                 mUserCountDirection = UserPreferenceCountDirection.GENERALLY_DOWN;
             else if (userCountDirectionValue.equals(USER_COUNT_DIRECTION_VALUE_GENERALLY_UP))
                 mUserCountDirection = UserPreferenceCountDirection.GENERALLY_UP;
+
+            flashScreenModeValue = prefs.getString(res.getString(R.string.PrefFlashScreenModeKey),
+                    res.getString(R.string.DefaultPrefFlashScreenMode));
 
         } catch (ClassCastException e) {
             Log.e(this.getClass().getSimpleName(), "applyPreferences: caught ClassCastException!");
@@ -603,7 +609,7 @@ public class DebatingActivity extends Activity {
 
             am.setVibrateMode(vibrateMode);
             am.setKeepScreenOn(keepScreenOn);
-            am.setFlashScreenListener((flashScreen) ? new DebatingTimerFlashScreenListener() : null);
+            am.setFlashScreenListener((flashScreenModeValue != "off") ? new DebatingTimerFlashScreenListener() : null);
             Log.v(this.getClass().getSimpleName(), "applyPreferences: successfully applied");
         } else {
             Log.w(this.getClass().getSimpleName(), "applyPreferences: Couldn't restore AlertManager preferences; mBinder doesn't yet exist");

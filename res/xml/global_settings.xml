@@ -15,12 +15,12 @@
             android:summaryOff="@string/PrefVibrateModeOffSummary"
             android:summaryOn="@string/PrefVibrateModeOnSummary"
             android:title="@string/PrefVibrateModeTitle" />
-        <CheckBoxPreference
-            android:defaultValue="@bool/DefaultPrefFlashScreen"
-            android:key="@string/PrefFlashScreenKey"
-            android:summaryOff="@string/PrefFlashScreenOffSummary"
-            android:summaryOn="@string/PrefFlashScreenOnSummary"
-            android:title="@string/PrefFlashScreenTitle" />
+        <ListPreference
+            android:defaultValue="@string/DefaultPrefFlashScreenMode"
+            android:entries="@array/PrefFlashScreenModeEntries"
+            android:entryValues="@array/PrefFlashScreenModeValues"
+            android:key="@string/PrefFlashScreenModeKey"
+            android:title="@string/PrefFlashScreenModeTitle" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/PrefCategoryOvertimeBellsTitle" >
         <CheckBoxPreference

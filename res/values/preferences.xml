@@ -5,13 +5,16 @@
     <!-- These strings must be unique. -->
     <string name="PrefSilentModeKey">silentMode</string>
     <string name="PrefVibrateModeKey">vibrateMode</string>
-    <string name="PrefFlashScreenKey">flashScreen</string>
+    <string name="PrefFlashScreenModeKey">flashScreenMode</string>
     <string name="PrefOvertimeBellsEnableKey">overtimeBellsEnable</string>
     <string name="PrefFirstOvertimeBellKey">firstOvertimeBell</string>
     <string name="PrefOvertimeBellPeriodKey">overtimeBellPeriod</string>
     <string name="PrefCountDirectionKey">countDirection</string>
     <string name="PrefKeepScreenOnKey">keepScreenOn</string>
 
+    <!-- Keys for backwards-compatibility -->
+    <string name="PrefFlashScreenBoolKey">flashScreen</string> <!-- replaced in version 0.6 -->
+    
     <!-- Category titles -->
 	<string name="PrefCategoryOvertimeBellsTitle">Overtime bells</string>
 	<string name="PrefCategoryBellsTitle">Bells</string>
@@ -30,10 +33,23 @@
     <bool   name="DefaultPrefVibrateMode">false</bool>
     
     <!-- Flash screen -->
-    <string name="PrefFlashScreenTitle">Flash screen</string>
-    <string name="PrefFlashScreenOnSummary">Flash screen white briefly at bell times</string>
-    <string name="PrefFlashScreenOffSummary">Don\'t flash screen</string>
-    <bool   name="DefaultPrefFlashScreen">false</bool>
+    <string name="PrefFlashScreenModeTitle">Flash screen</string>
+    <string-array name="PrefFlashScreenModeSummaries">
+        <item>Don\'t flash screen</item>
+    	<item>Do a strobe flash at bell times</item>
+    	<item>Flash screen white briefly at bell times</item>
+    </string-array>
+    <string-array name="PrefFlashScreenModeEntries">
+        <item>Off</item>
+    	<item>Strobe flash</item>
+    	<item>Solid flash</item>
+    </string-array>
+    <string-array name="PrefFlashScreenModeValues">
+        <item>off</item>
+    	<item>strobeFlash</item>
+    	<item>solidFlash</item>
+    </string-array>
+    <string name="DefaultPrefFlashScreenMode">off</string>
     
     <!-- Overtime bells -->
     <string name="PrefOvertimeBellsEnableTitle">Enable overtime bells</string>
