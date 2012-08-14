@@ -725,8 +725,16 @@ public class DebatingActivity extends Activity {
         mCentreControlButton.setEnabled(false);
         mRightControlButton.setEnabled(false);
 
-        // We're using this in hours and minutes, not minutes and seconds
         long currentTime = mDebateManager.getCurrentSpeechTime();
+
+        // Invert the time if in count-down mode
+        currentTime = subtractFromSpeechLengthIfCountingDown(currentTime);
+
+        // Limit to the allowable time range
+        if (currentTime < 0) currentTime = 0;
+        if (currentTime >= 24 * 60) currentTime = 24 * 60 - 1;
+
+        // We're using this in hours and minutes, not minutes and seconds
         currentTimePicker.setCurrentHour((int) (currentTime / 60));
         currentTimePicker.setCurrentMinute((int) (currentTime % 60));
     }
@@ -751,6 +759,8 @@ public class DebatingActivity extends Activity {
             int minutes = currentTimePicker.getCurrentHour();
             int seconds = currentTimePicker.getCurrentMinute();
             long newTime = minutes * 60 + seconds;
+            // Invert the time if in count-down mode
+            newTime = subtractFromSpeechLengthIfCountingDown(newTime);
             mDebateManager.setCurrentSpeechTime(newTime);
         }
 
@@ -1083,11 +1093,10 @@ public class DebatingActivity extends Activity {
             Long nextBellTime = mDebateManager.getNextBellTime();
             boolean nextBellIsPause = mDebateManager.isNextBellPause();
 
-            if (getCountDirection() == OverallCountDirection.COUNT_DOWN) {
-                currentSpeechTime = currentSpeechFormat.getSpeechLength() - currentSpeechTime;
-                if (nextBellTime != null)
-                    nextBellTime = currentSpeechFormat.getSpeechLength() - nextBellTime;
-            }
+            // Take count direction into account for display
+            currentSpeechTime = subtractFromSpeechLengthIfCountingDown(currentSpeechTime);
+            if (nextBellTime != null)
+                nextBellTime = subtractFromSpeechLengthIfCountingDown(nextBellTime);
 
             Resources resources = getResources();
             int currentTimeTextColor;
@@ -1154,6 +1163,20 @@ public class DebatingActivity extends Activity {
         } else {
             return String.format("%02d:%02d over", -time / 60, -time % 60);
         }
+    }
+
+    /**
+     * Returns the number of seconds that would be displayed, taking into account the count
+     * direction.  If the overall count direction is <code>COUNT_DOWN</code> and there is a speech
+     * format ready, it returns (speechLength - time).  Otherwise, it just returns time.
+     * @param time the time that is wished to be formatted (in seconds)
+     * @return the time that would be displayed (as an integer, number of seconds)
+     */
+    private long subtractFromSpeechLengthIfCountingDown(long time) {
+        if (mDebateManager != null)
+            if (getCountDirection() == OverallCountDirection.COUNT_DOWN)
+                return mDebateManager.getCurrentSpeechFormat().getSpeechLength() - time;
+        return time;
     }
 
 }
