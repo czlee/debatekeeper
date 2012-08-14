@@ -314,11 +314,6 @@ public class DebatingActivity extends Activity {
             this.key = key;
         }
 
-        @Override
-        public String toString() {
-            return key;
-        }
-
         public static UserPreferenceCountDirection toEnum(String key) {
             UserPreferenceCountDirection[] values = UserPreferenceCountDirection.values();
             for (int i = 0; i < values.length; i++)
