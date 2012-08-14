@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import net.czlee.debatekeeper.AlertManager.FlashScreenMode;
 import net.czlee.debatekeeper.SpeechFormat.CountDirection;
 
 import org.xml.sax.SAXException;
@@ -561,11 +562,14 @@ public class DebatingActivity extends Activity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean silentMode, vibrateMode, overtimeBellsEnabled, keepScreenOn;
         int firstOvertimeBell, overtimeBellPeriod;
-        String userCountDirectionValue, flashScreenModeValue;
+        String userCountDirectionValue;
+        FlashScreenMode flashScreenMode;
 
         Resources res = getResources();
 
         try {
+
+            // The boolean preferences
             silentMode = prefs.getBoolean(res.getString(R.string.PrefSilentModeKey),
                     res.getBoolean(R.bool.DefaultPrefSilentMode));
             vibrateMode = prefs.getBoolean(res.getString(R.string.PrefVibrateModeKey),
@@ -574,6 +578,8 @@ public class DebatingActivity extends Activity {
                     res.getBoolean(R.bool.DefaultPrefOvertimeBellsEnable));
             keepScreenOn = prefs.getBoolean(res.getString(R.string.PrefKeepScreenOnKey),
                     res.getBoolean(R.bool.DefaultPrefKeepScreenOn));
+
+            // Overtime bell integers
             if (overtimeBellsEnabled) {
                 firstOvertimeBell  = prefs.getInt(res.getString(R.string.PrefFirstOvertimeBellKey),
                         res.getInteger(R.integer.DefaultPrefFirstOvertimeBell));
@@ -584,17 +590,46 @@ public class DebatingActivity extends Activity {
                 overtimeBellPeriod = 0;
             }
 
-            // TODO CONTINUE HERE
-            // Need to move the value strings to string resources (R.string.PrefCountDir...)
-            // Need to make a function to convert between the enum and the value string, and vice
-            // versa, then use this here and in GlobalSettingsActivity
-
+            // List preference: Count direction
             userCountDirectionValue = prefs.getString(res.getString(R.string.PrefCountDirectionKey),
                     res.getString(R.string.DefaultPrefCountDirection));
             mUserCountDirection = UserPreferenceCountDirection.toEnum(userCountDirectionValue);
 
-            flashScreenModeValue = prefs.getString(res.getString(R.string.PrefFlashScreenModeKey),
-                    res.getString(R.string.DefaultPrefFlashScreenMode));
+            // List preference: Flash screen mode
+            // This changed from a boolean to a list preference in version 0.6, so there is
+            // backwards compatibility to take care of.  Backwards compatibility applies if
+            // (a) the list preference is NOT present AND (b) the boolean preference IS present.
+            // In this case, retrieve the boolean preference, delete it and write the corresponding
+            // list preference.  In all other cases, just take the list preference (using the
+            // normal default mechanism if it isn't present, i.e. neither are present).
+
+            if (!prefs.contains(res.getString(R.string.PrefFlashScreenModeKey)) &&
+                    prefs.contains(res.getString(R.string.PrefFlashScreenBoolKey))) {
+                // Boolean preference.
+                // First, get the string and convert it to an enum.
+                boolean flashScreenModeBool = prefs.getBoolean(
+                        res.getString(R.string.PrefFlashScreenBoolKey), false);
+                flashScreenMode = (flashScreenModeBool) ? FlashScreenMode.SOLID_FLASH : FlashScreenMode.OFF;
+
+                // Then, convert that enum to the list preference value (a string) and write that
+                // back to the preferences.  Also, remove the old boolean preference.
+                String flashStringModePrefValue = flashScreenMode.toPrefValue();
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString(res.getString(R.string.PrefFlashScreenModeKey), flashStringModePrefValue);
+                editor.remove(res.getString(R.string.PrefFlashScreenBoolKey));
+                editor.commit();
+                Log.w(this.getClass().getSimpleName(),
+                        String.format("flashScreenMode: replaced boolean preference with list preference: %s", flashStringModePrefValue));
+
+            } else {
+                // List preference.
+                // Get the string and convert it to an enum.
+                String flashScreenModeValue;
+                flashScreenModeValue = prefs.getString(res.getString(R.string.PrefFlashScreenModeKey),
+                        res.getString(R.string.DefaultPrefFlashScreenMode));
+                flashScreenMode = FlashScreenMode.toEnum(flashScreenModeValue);
+            }
+
 
         } catch (ClassCastException e) {
             Log.e(this.getClass().getSimpleName(), "applyPreferences: caught ClassCastException!");
@@ -616,7 +651,8 @@ public class DebatingActivity extends Activity {
 
             am.setVibrateMode(vibrateMode);
             am.setKeepScreenOn(keepScreenOn);
-            am.setFlashScreenListener((flashScreenModeValue != "off") ? new DebatingTimerFlashScreenListener() : null);
+            am.setFlashScreenListener((flashScreenMode != FlashScreenMode.OFF) ? new DebatingTimerFlashScreenListener() : null);
+            am.setFlashScreenMode(flashScreenMode);
             Log.v(this.getClass().getSimpleName(), "applyPreferences: successfully applied");
         } else {
             Log.w(this.getClass().getSimpleName(), "applyPreferences: Couldn't restore AlertManager preferences; mBinder doesn't yet exist");

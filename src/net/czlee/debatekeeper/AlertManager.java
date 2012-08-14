@@ -60,7 +60,7 @@ public class AlertManager
     private       boolean               mSilentMode;
     private       boolean               mVibrateMode;
     private       boolean               mKeepScreenOn;
-    private final       FlashScreenMode       mFlashScreenMode     = FlashScreenMode.OFF;
+    private       FlashScreenMode       mFlashScreenMode     = FlashScreenMode.OFF;
 
 
     /**
@@ -94,7 +94,31 @@ public class AlertManager
     // Public classes
     //******************************************************************************************
     public enum FlashScreenMode {
-        OFF, STROBE_FLASH, SOLID_FLASH
+
+        // These must match the values string array in the preference.xml file.
+        // (We can pull strings from the resource automatically,
+        // but we can't assign them to enums automatically.)
+        OFF ("off"),
+        STROBE_FLASH ("strobeFlash"),
+        SOLID_FLASH ("solidFlash");
+
+        private final String prefValue;
+
+        private FlashScreenMode(String prefValue) {
+            this.prefValue = prefValue;
+        }
+
+        public String toPrefValue() {
+            return this.prefValue;
+        }
+
+        public static FlashScreenMode toEnum(String key) {
+            FlashScreenMode[] values = FlashScreenMode.values();
+            for (int i = 0; i < values.length; i++)
+                if (key.equals(values[i].prefValue))
+                    return values[i];
+            throw new IllegalArgumentException(String.format("There is no enumerated constant '%s'", key));
+        }
     }
 
     //******************************************************************************************
@@ -196,6 +220,10 @@ public class AlertManager
      */
     public void setFlashScreenListener(FlashScreenListener flashScreenListener) {
         this.mFlashScreenListener = flashScreenListener;
+    }
+
+    public void setFlashScreenMode(FlashScreenMode flashScreenMode) {
+        this.mFlashScreenMode = flashScreenMode;
     }
 
     public void setSilentMode(boolean silentMode) {
@@ -312,11 +340,20 @@ public class AlertManager
                     this.cancel();
                 }
 
-//                startSingleFlashScreen(flashTime);
+                switch (mFlashScreenMode) {
+                case SOLID_FLASH:
+                    startSingleFlashScreen(flashTime);
+                    break;
+                case STROBE_FLASH:
+                    int numStrobes = (int) (flashTime / STROBE_PERIOD);
+                    if (flashTime % STROBE_PERIOD > STROBE_PERIOD / 2) numStrobes++;
+                    startSingleStrobeFlashScreen(numStrobes);
+                    break;
+                case OFF:
+                    // Do nothing
+                    break;
+                }
 
-                int numStrobes = (int) (flashTime / STROBE_PERIOD);
-                if (flashTime % STROBE_PERIOD > STROBE_PERIOD / 2) numStrobes++;
-                startSingleStrobeFlashScreen(numStrobes);
             }
         }, 0, repeatPeriod);
     }
