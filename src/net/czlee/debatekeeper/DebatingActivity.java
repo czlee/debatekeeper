@@ -96,20 +96,9 @@ public class DebatingActivity extends Activity {
     private static final String DIALOG_BUNDLE_FATAL_MESSAGE            = "fm";
     private static final String DIALOG_BUNDLE_XML_ERROR_LOG            = "xel";
 
-    // These must match the string array R.array.PrefCountDirectionValues in preferences.xml
-    private static final String USER_COUNT_DIRECTION_VALUE_ALWAYS_UP      = "alwaysUp";
-    private static final String USER_COUNT_DIRECTION_VALUE_GENERALLY_UP   = "generallyUp";
-    private static final String USER_COUNT_DIRECTION_VALUE_GENERALLY_DOWN = "generallyDown";
-    private static final String USER_COUNT_DIRECTION_VALUE_ALWAYS_DOWN    = "alwaysDown";
-
     private static final int    CHOOSE_STYLE_REQUEST          = 0;
     private static final int    DIALOG_XML_FILE_FATAL         = 0;
     private static final int    DIALOG_XML_FILE_ERRORS        = 1;
-
-    // Constants for touch gesture sensitivity
-    private static final float  SWIPE_MIN_DISTANCE = 80;
-    private static final float  SWIPE_MAX_OFF_PATH = 250;
-    private static final float  SWIPE_THRESHOLD_VELOCITY = 200;
 
     private DebatingTimerService.DebatingTimerServiceBinder mBinder;
     private final BroadcastReceiver mGuiUpdateBroadcastReceiver = new GuiUpdateBroadcastReceiver();
@@ -163,6 +152,10 @@ public class DebatingActivity extends Activity {
 
     private class DebateTimerDisplayOnGestureListener extends SimpleOnGestureListener {
 
+        // Constants for touch gesture sensitivity
+        private static final float SWIPE_MIN_DISTANCE = 80;
+        private static final float SWIPE_MAX_OFF_PATH = 250;
+        private static final float SWIPE_THRESHOLD_VELOCITY = 200;
         @Override
         public boolean onDown(MotionEvent e) {
             // Ignore all touch events if no debate is loaded
@@ -306,7 +299,29 @@ public class DebatingActivity extends Activity {
     }
 
     private enum UserPreferenceCountDirection {
-        ALWAYS_UP, GENERALLY_UP, GENERALLY_DOWN, ALWAYS_DOWN;
+
+        // These must match the values string array in the preference.xml file.
+        // (We can pull strings from the resource automatically,
+        // but we can't assign them to enums automatically.)
+        ALWAYS_UP      ("alwaysUp"),
+        GENERALLY_UP   ("generallyUp"),
+        GENERALLY_DOWN ("generallyDown"),
+        ALWAYS_DOWN    ("alwaysDown");
+
+        private final String key;
+
+        private UserPreferenceCountDirection(String key) {
+            this.key = key;
+        }
+
+        public static UserPreferenceCountDirection toEnum(String key) {
+            UserPreferenceCountDirection[] values = UserPreferenceCountDirection.values();
+            for (int i = 0; i < values.length; i++)
+                if (key.equals(values[i].key))
+                    return values[i];
+            throw new IllegalArgumentException(String.format("There is no enumerated constant '%s'", key));
+        }
+
     }
 
     //******************************************************************************************
@@ -507,7 +522,6 @@ public class DebatingActivity extends Activity {
 
     @Override
     protected void onStart() {
-        // TODO Auto-generated method stub
         super.onStart();
         restoreBinder();
         LocalBroadcastManager.getInstance(this).registerReceiver(mGuiUpdateBroadcastReceiver,
@@ -577,15 +591,7 @@ public class DebatingActivity extends Activity {
 
             userCountDirectionValue = prefs.getString(res.getString(R.string.PrefCountDirectionKey),
                     res.getString(R.string.DefaultPrefCountDirection));
-            // This is like a switch statement (not supported for strings in Java 6)
-            if (userCountDirectionValue.equals(USER_COUNT_DIRECTION_VALUE_ALWAYS_DOWN))
-                mUserCountDirection = UserPreferenceCountDirection.ALWAYS_DOWN;
-            else if (userCountDirectionValue.equals(USER_COUNT_DIRECTION_VALUE_ALWAYS_UP))
-                mUserCountDirection = UserPreferenceCountDirection.ALWAYS_UP;
-            else if (userCountDirectionValue.equals(USER_COUNT_DIRECTION_VALUE_GENERALLY_DOWN))
-                mUserCountDirection = UserPreferenceCountDirection.GENERALLY_DOWN;
-            else if (userCountDirectionValue.equals(USER_COUNT_DIRECTION_VALUE_GENERALLY_UP))
-                mUserCountDirection = UserPreferenceCountDirection.GENERALLY_UP;
+            mUserCountDirection = UserPreferenceCountDirection.toEnum(userCountDirectionValue);
 
             flashScreenModeValue = prefs.getString(res.getString(R.string.PrefFlashScreenModeKey),
                     res.getString(R.string.DefaultPrefFlashScreenMode));

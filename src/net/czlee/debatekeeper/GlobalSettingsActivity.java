@@ -23,6 +23,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
@@ -71,10 +72,10 @@ public class GlobalSettingsActivity extends PreferenceActivity {
         KEY_OVERTIME_BELL_PERIOD = getString(R.string.PrefOvertimeBellPeriodKey);
         KEY_COUNT_DIRECTION      = getString(R.string.PrefCountDirectionKey);
 
-        mPreferenceToSummaryResidMap.put(KEY_FIRST_OVERTIME_BELL, R.string.PrefFirstOvertimeBellSummary);
+        mPreferenceToSummaryResidMap.put(KEY_FIRST_OVERTIME_BELL,  R.string.PrefFirstOvertimeBellSummary);
         mPreferenceToSummaryResidMap.put(KEY_OVERTIME_BELL_PERIOD, R.string.PrefOvertimeBellPeriodSummary);
 
-        mPreferenceToDefaultResidMap.put(KEY_FIRST_OVERTIME_BELL, R.integer.DefaultPrefFirstOvertimeBell);
+        mPreferenceToDefaultResidMap.put(KEY_FIRST_OVERTIME_BELL,  R.integer.DefaultPrefFirstOvertimeBell);
         mPreferenceToDefaultResidMap.put(KEY_OVERTIME_BELL_PERIOD, R.integer.DefaultPrefOvertimeBellPeriod);
 
         updateSummaryWithInt(KEY_FIRST_OVERTIME_BELL);
@@ -100,39 +101,25 @@ public class GlobalSettingsActivity extends PreferenceActivity {
     // Protected methods
     //******************************************************************************************
     private void updateSummaryWithInt(String key) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        int defaultValueResid = mPreferenceToDefaultResidMap.get(key);
-        int value = prefs.getInt(key, this.getResources().getInteger(defaultValueResid));
-        Preference pref = findPreference(key);
-        int summaryTextResid = mPreferenceToSummaryResidMap.get(key);
+        SharedPreferences prefs             = PreferenceManager.getDefaultSharedPreferences(this);
+        int               defaultValueResid = mPreferenceToDefaultResidMap.get(key);
+        int               value             = prefs.getInt(key, this.getResources().getInteger(defaultValueResid));
+        Preference        pref              = findPreference(key);
+        int               summaryTextResid  = mPreferenceToSummaryResidMap.get(key);
+
         pref.setSummary(getString(summaryTextResid, value));
     }
 
     private void updateCountDirectionSummary() {
-        String key = KEY_COUNT_DIRECTION;
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        Resources resources = this.getResources();
-        String[] values = resources.getStringArray(R.array.PrefCountDirectionValues);
-        String[] summaries = resources.getStringArray(R.array.PrefCountDirectionSummaries);
-        String value = prefs.getString(key, getString(R.string.DefaultPrefCountDirection));
-        int index = getIndexOfItemInArray(values, value, 0);
-        Preference pref = findPreference(key);
-        pref.setSummary(summaries[index]);
-    }
+        String            key       = KEY_COUNT_DIRECTION;
+        SharedPreferences prefs     = PreferenceManager.getDefaultSharedPreferences(this);
+        Resources         resources = this.getResources();
+        String[]          summaries = resources.getStringArray(R.array.PrefCountDirectionSummaries);
+        String            value     = prefs.getString(key, getString(R.string.DefaultPrefCountDirection));
+        ListPreference    pref      = (ListPreference) findPreference(key);
+        int               index     = pref.findIndexOfValue(value);
 
-    /**
-     * Returns the index of an item in an array.
-     * @param array the array
-     * @param value the item to find in the array
-     * @param defaultIndex the index to return if the item isn't found in the array
-     * @return
-     */
-    private static int getIndexOfItemInArray(String[] array, String item, int defaultIndex) {
-        for (int i = 0; i < array.length; i++) {
-            if (item.equals(array[i]))
-                return i;
-        }
-        return defaultIndex;
+        pref.setSummary(summaries[index]);
     }
 
 }
