@@ -196,7 +196,7 @@ public class DebatingActivity extends Activity {
 
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
-            editCurrentTimeFinish();
+            editCurrentTimeFinish(true);
             return true;
         }
 
@@ -324,7 +324,7 @@ public class DebatingActivity extends Activity {
 
         // If we're in editing mode, exit editing mode
         if (mIsEditingTime) {
-            editCurrentTimeFinish();
+            editCurrentTimeFinish(false);
             return;
         }
 
@@ -353,6 +353,7 @@ public class DebatingActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        editCurrentTimeFinish(false);
         switch (item.getItemId()) {
         case R.id.prevSpeaker:
             goToPreviousSpeech();
@@ -682,7 +683,12 @@ public class DebatingActivity extends Activity {
         currentTimePicker.setCurrentMinute((int) (currentTime % 60));
     }
 
-    private void editCurrentTimeFinish() {
+    /**
+     * Finishes editing the current time and restores the GUI to its prior state.
+     * @param save true if the edited time should become the new current time, false if it should
+     * be discarded.
+     */
+    private void editCurrentTimeFinish(boolean save) {
         TextView   currentTimeText   = (TextView)   getCurrentDebateTimerDisplay().findViewById(R.id.currentTime);
         TimePicker currentTimePicker = (TimePicker) getCurrentDebateTimerDisplay().findViewById(R.id.currentTimePicker);
 
@@ -692,7 +698,7 @@ public class DebatingActivity extends Activity {
         InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(currentTimePicker.getWindowToken(), 0);
 
-        if (mDebateManager != null && mIsEditingTime) {
+        if (save && mDebateManager != null && mIsEditingTime) {
             // We're using this in hours and minutes, not minutes and seconds
             int minutes = currentTimePicker.getCurrentHour();
             int seconds = currentTimePicker.getCurrentMinute();
