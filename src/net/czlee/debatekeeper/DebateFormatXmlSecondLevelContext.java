@@ -32,7 +32,7 @@ public enum DebateFormatXmlSecondLevelContext {
 
     private final String name;
 
-    private DebateFormatXmlSecondLevelContext(String name){
+    private DebateFormatXmlSecondLevelContext(String name) {
         this.name = name;
     }
 
