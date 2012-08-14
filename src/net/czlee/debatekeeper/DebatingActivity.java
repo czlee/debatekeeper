@@ -306,7 +306,7 @@ public class DebatingActivity extends Activity {
     }
 
     private enum UserPreferenceCountDirection {
-        ALWAYS_UP, GENERALLY_UP, GENERALLY_DOWN, ALWAYS_DOWN
+        ALWAYS_UP, GENERALLY_UP, GENERALLY_DOWN, ALWAYS_DOWN;
     }
 
     //******************************************************************************************
@@ -570,7 +570,7 @@ public class DebatingActivity extends Activity {
                 overtimeBellPeriod = 0;
             }
 
-            // CONTINUE HERE
+            // TODO CONTINUE HERE
             // Need to move the value strings to string resources (R.string.PrefCountDir...)
             // Need to make a function to convert between the enum and the value string, and vice
             // versa, then use this here and in GlobalSettingsActivity
