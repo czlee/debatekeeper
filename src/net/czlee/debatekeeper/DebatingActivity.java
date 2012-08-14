@@ -106,11 +106,6 @@ public class DebatingActivity extends Activity {
     private static final int    DIALOG_XML_FILE_FATAL         = 0;
     private static final int    DIALOG_XML_FILE_ERRORS        = 1;
 
-    // Constants for touch gesture sensitivity
-    private static final float  SWIPE_MIN_DISTANCE = 80;
-    private static final float  SWIPE_MAX_OFF_PATH = 250;
-    private static final float  SWIPE_THRESHOLD_VELOCITY = 200;
-
     private DebatingTimerService.DebatingTimerServiceBinder mBinder;
     private final BroadcastReceiver mGuiUpdateBroadcastReceiver = new GuiUpdateBroadcastReceiver();
     private final ServiceConnection mConnection = new DebatingTimerServiceConnection();
@@ -163,6 +158,10 @@ public class DebatingActivity extends Activity {
 
     private class DebateTimerDisplayOnGestureListener extends SimpleOnGestureListener {
 
+        // Constants for touch gesture sensitivity
+        private static final float SWIPE_MIN_DISTANCE = 80;
+        private static final float SWIPE_MAX_OFF_PATH = 250;
+        private static final float SWIPE_THRESHOLD_VELOCITY = 200;
         @Override
         public boolean onDown(MotionEvent e) {
             // Ignore all touch events if no debate is loaded
@@ -507,7 +506,6 @@ public class DebatingActivity extends Activity {
 
     @Override
     protected void onStart() {
-        // TODO Auto-generated method stub
         super.onStart();
         restoreBinder();
         LocalBroadcastManager.getInstance(this).registerReceiver(mGuiUpdateBroadcastReceiver,
