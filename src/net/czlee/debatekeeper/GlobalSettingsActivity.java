@@ -18,10 +18,10 @@
 package net.czlee.debatekeeper;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -37,11 +37,15 @@ public class GlobalSettingsActivity extends PreferenceActivity {
     private final HashMap<String, Integer> mPreferenceToSummaryResidMap = new HashMap<String, Integer>();
     private final HashMap<String, Integer> mPreferenceToDefaultResidMap = new HashMap<String, Integer>();
 
+    private final HashSet<String> mIntegerPreferenceKeys = new HashSet<String>();
+    private final HashSet<String> mListPreferenceKeys    = new HashSet<String>();
+
     private final ChangeSummaryOnSharedPreferenceChangeListener listener = new ChangeSummaryOnSharedPreferenceChangeListener();
 
     private static String KEY_FIRST_OVERTIME_BELL;
     private static String KEY_OVERTIME_BELL_PERIOD;
     private static String KEY_COUNT_DIRECTION;
+    private static String KEY_FLASH_SCREEN_MODE;
 
     //******************************************************************************************
     // Private classes
@@ -51,10 +55,10 @@ public class GlobalSettingsActivity extends PreferenceActivity {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (mPreferenceToSummaryResidMap.containsKey(key))
-                updateSummaryWithInt(key);
-            else if (key.equals(KEY_COUNT_DIRECTION))
-                updateCountDirectionSummary();
+            if (mIntegerPreferenceKeys.contains(key))
+                updateIntegerPreferenceSummary(key);
+            else if (mListPreferenceKeys.contains(key))
+                updateListPreferenceSummary(key);
         }
 
 
@@ -71,16 +75,27 @@ public class GlobalSettingsActivity extends PreferenceActivity {
         KEY_FIRST_OVERTIME_BELL  = getString(R.string.PrefFirstOvertimeBellKey);
         KEY_OVERTIME_BELL_PERIOD = getString(R.string.PrefOvertimeBellPeriodKey);
         KEY_COUNT_DIRECTION      = getString(R.string.PrefCountDirectionKey);
+        KEY_FLASH_SCREEN_MODE    = getString(R.string.PrefFlashScreenModeKey);
+
+        mIntegerPreferenceKeys.add(KEY_FIRST_OVERTIME_BELL);
+        mIntegerPreferenceKeys.add(KEY_OVERTIME_BELL_PERIOD);
+        mListPreferenceKeys.add(KEY_COUNT_DIRECTION);
+        mListPreferenceKeys.add(KEY_FLASH_SCREEN_MODE);
 
         mPreferenceToSummaryResidMap.put(KEY_FIRST_OVERTIME_BELL,  R.string.PrefFirstOvertimeBellSummary);
         mPreferenceToSummaryResidMap.put(KEY_OVERTIME_BELL_PERIOD, R.string.PrefOvertimeBellPeriodSummary);
+        mPreferenceToSummaryResidMap.put(KEY_COUNT_DIRECTION,      R.array.PrefCountDirectionSummaries);
+        mPreferenceToSummaryResidMap.put(KEY_FLASH_SCREEN_MODE,    R.array.PrefFlashScreenModeSummaries);
 
         mPreferenceToDefaultResidMap.put(KEY_FIRST_OVERTIME_BELL,  R.integer.DefaultPrefFirstOvertimeBell);
         mPreferenceToDefaultResidMap.put(KEY_OVERTIME_BELL_PERIOD, R.integer.DefaultPrefOvertimeBellPeriod);
+        mPreferenceToDefaultResidMap.put(KEY_COUNT_DIRECTION,      R.string.DefaultPrefCountDirection);
+        mPreferenceToDefaultResidMap.put(KEY_FLASH_SCREEN_MODE,    R.string.DefaultPrefFlashScreenMode);
 
-        updateSummaryWithInt(KEY_FIRST_OVERTIME_BELL);
-        updateSummaryWithInt(KEY_OVERTIME_BELL_PERIOD);
-        updateCountDirectionSummary();
+        updateIntegerPreferenceSummary(KEY_FIRST_OVERTIME_BELL);
+        updateIntegerPreferenceSummary(KEY_OVERTIME_BELL_PERIOD);
+        updateListPreferenceSummary(KEY_COUNT_DIRECTION);
+        updateListPreferenceSummary(KEY_FLASH_SCREEN_MODE);
 
     }
 
@@ -100,7 +115,7 @@ public class GlobalSettingsActivity extends PreferenceActivity {
     //******************************************************************************************
     // Protected methods
     //******************************************************************************************
-    private void updateSummaryWithInt(String key) {
+    private void updateIntegerPreferenceSummary(String key) {
         SharedPreferences prefs             = PreferenceManager.getDefaultSharedPreferences(this);
         int               defaultValueResid = mPreferenceToDefaultResidMap.get(key);
         int               value             = prefs.getInt(key, this.getResources().getInteger(defaultValueResid));
@@ -110,14 +125,14 @@ public class GlobalSettingsActivity extends PreferenceActivity {
         pref.setSummary(getString(summaryTextResid, value));
     }
 
-    private void updateCountDirectionSummary() {
-        String            key       = KEY_COUNT_DIRECTION;
-        SharedPreferences prefs     = PreferenceManager.getDefaultSharedPreferences(this);
-        Resources         resources = this.getResources();
-        String[]          summaries = resources.getStringArray(R.array.PrefCountDirectionSummaries);
-        String            value     = prefs.getString(key, getString(R.string.DefaultPrefCountDirection));
-        ListPreference    pref      = (ListPreference) findPreference(key);
-        int               index     = pref.findIndexOfValue(value);
+    private void updateListPreferenceSummary(String key) {
+        SharedPreferences prefs              = PreferenceManager.getDefaultSharedPreferences(this);
+        int               defaultValueResid  = mPreferenceToDefaultResidMap.get(key);
+        String            value              = prefs.getString(key, getString(defaultValueResid));
+        ListPreference    pref               = (ListPreference) findPreference(key);
+        int               index              = pref.findIndexOfValue(value);
+        int               summariesTextResid = mPreferenceToSummaryResidMap.get(key);
+        String[]          summaries          = this.getResources().getStringArray(summariesTextResid);
 
         pref.setSummary(summaries[index]);
     }
