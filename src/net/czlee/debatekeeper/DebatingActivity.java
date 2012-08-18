@@ -1013,8 +1013,8 @@ public class DebatingActivity extends Activity {
      *  The [Bell] button always is on the right of any of the above three buttons.
      */
     private void updateControls() {
-        TextView   currentTimeText   = (TextView)   getCurrentDebateTimerDisplay().findViewById(R.id.currentTime);
-        TimePicker currentTimePicker = (TimePicker) getCurrentDebateTimerDisplay().findViewById(R.id.currentTimePicker);
+        View currentTimeText   = getCurrentDebateTimerDisplay().findViewById(R.id.currentTime);
+        View currentTimePicker = getCurrentDebateTimerDisplay().findViewById(R.id.currentTimePicker);
 
         if (mDebateManager != null) {
 
@@ -1058,7 +1058,8 @@ public class DebatingActivity extends Activity {
             }
 
         } else {
-            // If no debate is loaded, disable the control buttons
+            // If no debate is loaded, show only one control button, which leads the user to
+            // choose a style.
             // (Keep the play bell button enabled.)
             setButtons(R.string.NoDebateLoadedButtonText, R.string.NullButtonText, R.string.NullButtonText);
             mLeftControlButton.setEnabled(true);
