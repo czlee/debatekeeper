@@ -277,7 +277,17 @@ public class SpeechManager {
      */
     public void setCurrentTime(long seconds){
         mCurrentTime = seconds;
-        mState = (mCurrentTime == 0) ? DebatingTimerState.NOT_STARTED : DebatingTimerState.STOPPED_BY_USER;
+
+        // If the timer is currently stopped, then change the state to the appropriate stopped state.
+        // If the timer is running, then it will still be running after this.  (This class will
+        // allow this, but the UI probably shouldn't allow editing during running.)  Note that
+        // if the timer is paused by a bell (STOPPED_BY_BELL) then its state will change to either
+        // NOT_STARTED or STOPPED_BY_USER, since the user has now intervened so it's not really a
+        // pause-by-bell anymore.
+        if (mState != DebatingTimerState.RUNNING)
+            mState = (mCurrentTime == 0) ? DebatingTimerState.NOT_STARTED : DebatingTimerState.STOPPED_BY_USER;
+
+        // restore the appropriate period info
         mCurrentPeriodInfo = mSpeechFormat.getPeriodInfoForTime(seconds);
     }
 
