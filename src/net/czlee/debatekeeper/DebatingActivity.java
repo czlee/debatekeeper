@@ -718,17 +718,7 @@ public class DebatingActivity extends Activity {
         // Only if things were in a valid state do we enter edit time mode
         mIsEditingTime = true;
 
-        TextView   currentTimeText   = (TextView)   getCurrentDebateTimerDisplay().findViewById(R.id.currentTime);
         TimePicker currentTimePicker = (TimePicker) getCurrentDebateTimerDisplay().findViewById(R.id.currentTimePicker);
-
-        // Change the visible GUI elements
-        currentTimeText.setVisibility(View.GONE);
-        currentTimePicker.setVisibility(View.VISIBLE);
-
-        mLeftControlButton.setEnabled(false);
-        mCentreControlButton.setEnabled(false);
-        mRightControlButton.setEnabled(false);
-
         long currentTime = mDebateManager.getCurrentSpeechTime();
 
         // Invert the time if in count-down mode
@@ -741,6 +731,8 @@ public class DebatingActivity extends Activity {
         // We're using this in hours and minutes, not minutes and seconds
         currentTimePicker.setCurrentHour((int) (currentTime / 60));
         currentTimePicker.setCurrentMinute((int) (currentTime % 60));
+
+        updateGui();
     }
 
     /**
@@ -1028,7 +1020,10 @@ public class DebatingActivity extends Activity {
      *  When stopped by alarm:  [Resume]
      *  The [Bell] button always is on the right of any of the above three buttons.
      */
-    private void updateButtons() {
+    private void updateControls() {
+        TextView   currentTimeText   = (TextView)   getCurrentDebateTimerDisplay().findViewById(R.id.currentTime);
+        TimePicker currentTimePicker = (TimePicker) getCurrentDebateTimerDisplay().findViewById(R.id.currentTimePicker);
+
         if (mDebateManager != null) {
 
             // If it's the last speaker, don't show a "next speaker" button.
@@ -1050,10 +1045,25 @@ public class DebatingActivity extends Activity {
                 break;
             }
 
-            // Disable the [Next Speaker] button if there are no more speakers
-            mLeftControlButton.setEnabled(true);
-            mCentreControlButton.setEnabled(true);
-            mRightControlButton.setEnabled(!mDebateManager.isLastSpeech());
+            if (mIsEditingTime) {
+                // Show the time picker, not the text
+                currentTimeText.setVisibility(View.GONE);
+                currentTimePicker.setVisibility(View.VISIBLE);
+
+                // Disable all control buttons
+                mLeftControlButton.setEnabled(false);
+                mCentreControlButton.setEnabled(false);
+                mRightControlButton.setEnabled(false);
+            } else {
+                // Show the time as text, not the picker
+                currentTimeText.setVisibility(View.VISIBLE);
+                currentTimePicker.setVisibility(View.GONE);
+
+                // Disable the [Next Speaker] button if there are no more speakers
+                mLeftControlButton.setEnabled(true);
+                mCentreControlButton.setEnabled(true);
+                mRightControlButton.setEnabled(!mDebateManager.isLastSpeech());
+            }
 
         } else {
             // If no debate is loaded, disable the control buttons
@@ -1146,7 +1156,7 @@ public class DebatingActivity extends Activity {
      */
     private void updateGui() {
         updateDebateTimerDisplay(mCurrentDebateTimerDisplayIndex);
-        updateButtons();
+        updateControls();
 
         if (mDebateManager != null) {
             this.setTitle(getString(R.string.DebatingActivityTitleBarWithFormatName, mDebateManager.getDebateFormatName()));
