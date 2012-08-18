@@ -709,10 +709,14 @@ public class DebatingActivity extends Activity {
      * Does nothing if there is no debate loaded or if the timer is running.
      */
     private void editCurrentTimeStart() {
-        mIsEditingTime = true;
 
+        // Check that things are in a valid state to enter edit time mode
+        // If they aren't, return straight away
         if (mDebateManager == null) return;
         if (mDebateManager.isRunning()) return;
+
+        // Only if things were in a valid state do we enter edit time mode
+        mIsEditingTime = true;
 
         TextView   currentTimeText   = (TextView)   getCurrentDebateTimerDisplay().findViewById(R.id.currentTime);
         TimePicker currentTimePicker = (TimePicker) getCurrentDebateTimerDisplay().findViewById(R.id.currentTimePicker);
