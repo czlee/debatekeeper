@@ -741,7 +741,7 @@ public class DebatingActivity extends Activity {
      * be discarded.
      */
     private void editCurrentTimeFinish(boolean save) {
-        TextView   currentTimeText   = (TextView)   getCurrentDebateTimerDisplay().findViewById(R.id.currentTime);
+
         TimePicker currentTimePicker = (TimePicker) getCurrentDebateTimerDisplay().findViewById(R.id.currentTimePicker);
 
         currentTimePicker.clearFocus();
@@ -759,14 +759,6 @@ public class DebatingActivity extends Activity {
             newTime = subtractFromSpeechLengthIfCountingDown(newTime);
             mDebateManager.setCurrentSpeechTime(newTime);
         }
-
-        // Change the visible GUI elements
-        currentTimeText.setVisibility(View.VISIBLE);
-        currentTimePicker.setVisibility(View.GONE);
-
-        mLeftControlButton.setEnabled(true);
-        mCentreControlButton.setEnabled(true);
-        mRightControlButton.setEnabled(true);
 
         mIsEditingTime = false;
 
