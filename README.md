@@ -46,8 +46,8 @@ repository is checked out on your computer).
 
 	If you're using Eclipse with ADT, you'll then need to open the project in
 	**../numberpicker/lib** (so you	now have two new projects in your workspace).
-	Then add that project as an *Android Classpath Container* to the Java Build 
-	Path in the Debatekeeper project's properties.
+	Then add that library as an *Android Classpath Container* to the Java Build 
+	Path (via *Add Library…*) in the Debatekeeper project's properties.
 	
 	If you're using another environment, I can't help you,
 	sorry.  I spent ages trying to figure out how to include this library, so
