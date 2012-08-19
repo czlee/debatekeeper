@@ -39,6 +39,8 @@ import android.util.Xml;
 import android.util.Xml.Encoding;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TableLayout;
@@ -63,6 +65,7 @@ public class FormatChooserActivity extends Activity {
     private Button   mCancelButton;
     private String   mCurrentStyleName = null;
 
+    private DebateFormatEntryArrayAdapter mStylesArrayAdapter;
     private final ArrayList<DebateFormatListEntry> mStylesList = new ArrayList<DebateFormatListEntry>();
 
     private String DEBATING_TIMER_URI;
@@ -236,6 +239,14 @@ public class FormatChooserActivity extends Activity {
 
     }
 
+    private class StylesListViewOnItemClickListener implements OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position,
+                long id) {
+            mStylesArrayAdapter.notifyDataSetChanged();
+        }
+    }
+
     //******************************************************************************************
     // Protected methods
     //******************************************************************************************
@@ -255,9 +266,6 @@ public class FormatChooserActivity extends Activity {
         mOKButton.setOnClickListener(new OKButtonOnClickListener());
         mCancelButton.setOnClickListener(new CancelButtonOnClickListener());
 
-        // mStylesListView.setOnItemClickListener(new
-        // StylesListOnItemClickListener());
-
         try {
             populateStylesLists();
         } catch (IOException e) {
@@ -265,13 +273,15 @@ public class FormatChooserActivity extends Activity {
             this.showDialog(DIALOG_IO_ERROR);
         }
 
-        DebateFormatEntryArrayAdapter adapter = new DebateFormatEntryArrayAdapter(
-                this, mStylesList, new FormatChooserActivityBinder());
+        mStylesArrayAdapter = new DebateFormatEntryArrayAdapter(this, mStylesList,
+                new FormatChooserActivityBinder());
 
         // Sort alphabetically by style name
-        adapter.sort(new StyleEntryComparatorByStyleName());
+        mStylesArrayAdapter.sort(new StyleEntryComparatorByStyleName());
 
-        mStylesListView.setAdapter(adapter);
+        mStylesListView.setAdapter(mStylesArrayAdapter);
+
+        mStylesListView.setOnItemClickListener(new StylesListViewOnItemClickListener());
 
         // Select and scroll to the incoming selection (if existent)
         int incomingSelection = getIncomingSelection();
