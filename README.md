@@ -28,16 +28,35 @@ This app makes use of Mike Novak's
 The NumberPicker library is licensed under the Apache 2.0 License (not
 the GPLv3).
 
+The other exclusion in this repository is the bell sound.  I bought the bell
+sound from [SFXsource](http://www.sfxsource.com/), so I can't make it freely
+available.  If you want to contribute and need this file, get in touch with me.
+
+Getting started
+---------------
+Before you can build this project, you'll need to:
+
+1. Check out this repository (and put it somewhere useful)
+
+2. Add the **numberpicker** library to your set-up.
 This source code for the NumberPicker component isn't in this repository.
 To build this app, you will need to check out [that repository](https://github.com/mrn/numberpicker)
 and put it in **../numberpicker** (relative to the directory where this
 repository is checked out on your computer).
 
-The other exclusion in this repository is the bell sound.  I bought the bell
-sound from [SFXsource](http://www.sfxsource.com/), so I can't make it freely
-available.  If you want to contribute and need this file, get in touch with me.
-The file (any sound file will do) should go at **res/raw/desk_bell.mp3**.
-(You'll probably find you can't build this app without a sound file there.)
+	If you're using Eclipse with ADT, you'll then need to open the project in
+	**../numberpicker/lib** (so you	now have two new projects in your workspace).
+	Then add that project as an *Android Classpath Container* to the Java Build 
+	Path in the Debatekeeper project's properties.
+	
+	If you're using another environment, I can't help you,
+	sorry.  I spent ages trying to figure out how to include this library, so
+	if you have a better way, I'm really keen to hear from you.
+
+3. Add the bell sound at **res/raw/desk_bell.mp3**.  You won't be able to build
+this app without a sound file of some sort there.  Any sound file will do, but
+if you want to help with this app, it'll probably be useful for it to be the same
+one I'm using.  In that case, contact me at the details below.
 
 Adding debate styles
 --------------------
