@@ -25,7 +25,6 @@ import java.util.Iterator;
 import android.content.Context;
 
 /**
- * TODO Comment this class, before it's too late!
  * Passive data class for holding quick information about a debate format. This
  * is NOT the same as the {@link DebateFormat} class itself.
  * <code>DebateFormatInfo</code> holds only information that is human-readable
@@ -103,6 +102,10 @@ public class DebateFormatInfo {
             this.length = length;
         }
 
+        /**
+         * Adds all the bells in a {@link Resource} to this SpeechFormatInfo.
+         * @param res the <code>Resource</code> to add
+         */
         public void addResource(Resource res) {
             Iterator<MiniBellInfo> biIterator = res.getBells().iterator();
             MiniBellInfo bi;
@@ -178,19 +181,41 @@ public class DebateFormatInfo {
         resources.put(ref, new Resource());
     }
 
+    /**
+     * Adds a speech format to this debate format.
+     * @param ref a short reference for this speech format
+     * @param length the length in seconds of this speech
+     */
     public void addSpeechFormat(String ref, long length) {
         speechFormats.put(ref, new SpeechFormatInfo());
         speechFormats.get(ref).setLength(length);
     }
 
+    /**
+     * Adds a bell to a resource in this debate format.
+     * @param time the bell time within the speech
+     * @param pause <b>true</b> if this bell pauses the timer, <b>false</b> if not
+     * @param resourceRef the short reference for the resource to which this bell should be added
+     */
     public void addBellToResource(long time, boolean pause, String resourceRef) {
         resources.get(resourceRef).addBell(time, pause);
     }
 
+    /**
+     * Adds a bell to a speech format in this debate format.
+     * @param time the bell time within the speech
+     * @param pause <b>true</b> if this bell pauses the timer, <b>false</b> if not
+     * @param speechRef the short reference for the speech format to which this bell should be added
+     */
     public void addBellToSpeechFormat(long time, boolean pause, String speechRef) {
         speechFormats.get(speechRef).addBell(time, pause);
     }
 
+    /**
+     * Adds a finish bell to a speech format in this debate format.
+     * @param pause <b>true</b> if this bell pauses the timer, <b>false</b> if not
+     * @param speechRef the short reference for the speech format to which this bell should be added
+     */
     public void addFinishBellToSpeechFormat(boolean pause, String speechRef) {
         SpeechFormatInfo sfi = speechFormats.get(speechRef);
         long finishTime = sfi.getLength();
@@ -201,6 +226,12 @@ public class DebateFormatInfo {
         speeches.add(new SpeechInfo(name, formatRef));
     }
 
+    /**
+     * Instructs that all the bells in a specified resource should be included in a specified
+     * speech format
+     * @param speechRef the short reference for the speech format
+     * @param resourceRef the short reference for the resource
+     */
     public void includeResource(String speechRef, String resourceRef) {
         Resource res = resources.get(resourceRef);
         speechFormats.get(speechRef).addResource(res);
@@ -215,6 +246,7 @@ public class DebateFormatInfo {
     }
 
     /**
+     * Returns a list of all the speech formats in this debate format, with descriptions.
      * @return An <code>ArrayList</code> of <code>String</code> arrays. Each
      *         <code>String</code> array has two elements. The first element is
      *         the speech type reference. The second element is a short
@@ -245,7 +277,11 @@ public class DebateFormatInfo {
     }
 
     /**
-     * @return
+     * Returns a list of speeches in this debate format.
+     * @return An <code>ArrayList</code> of <code>String</code> arrays. Each
+     *         <code>String</code> array has two elements.  The first element
+     *         is the name of the speech, the second element is the reference
+     *         for the format that speech uses.
      */
     public ArrayList<String[]> getSpeeches() {
         ArrayList<String[]> result = new ArrayList<String[]>();
@@ -266,6 +302,11 @@ public class DebateFormatInfo {
         }
     }
 
+    /**
+     * Concatenates all the bell times in a list into a single user-readable string
+     * @param list a list of <code>MiniBellInfo</code>s
+     * @return the single string listing all the bell times
+     */
     private String concatenate(ArrayList<MiniBellInfo> list) {
         String str = new String();
         Iterator<MiniBellInfo> iterator = list.iterator();
