@@ -16,7 +16,8 @@
     <string name="NextSpeakerButtonText">Next speech</string>
     <string name="NullButtonText">&lt;None></string>
     <string name="PlayBellButtonText">Bell</string>
-
+    <string name="PoiButtonText">POI</string>
+    
     <!-- Notices -->
     <string name="NotificationTitle">Debatekeeper</string>
     <string name="NotificationTickerText">Debatekeeper is timing</string>
