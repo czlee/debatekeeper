@@ -54,12 +54,21 @@ public class SpeechManager {
     private long                     mFirstOvertimeBellTime = 30;
     private long                     mOvertimeBellPeriod    = 20;
 
-    private final long TIMER_DELAY  = 1000;
-    private final long TIMER_PERIOD = 1000;
+    private static final long TIMER_DELAY  = 1000;
+    private static final long TIMER_PERIOD = 1000;
 
-    private final String BUNDLE_SUFFIX_TIME        = ".t";
-    private final String BUNDLE_SUFFIX_STATE       = ".s";
-    private final String BUNDLE_SUFFIX_PERIOD_INFO = ".cpi";
+    private static final String BUNDLE_SUFFIX_TIME        = ".t";
+    private static final String BUNDLE_SUFFIX_STATE       = ".s";
+    private static final String BUNDLE_SUFFIX_PERIOD_INFO = ".cpi";
+
+    /**
+     * Constructor.
+     * @param am the AlertManager associated with this instance
+     */
+    public SpeechManager(AlertManager am) {
+        super();
+        this.mAlertManager = am;
+    }
 
     //******************************************************************************************
     // Public classes
@@ -99,15 +108,6 @@ public class SpeechManager {
     //******************************************************************************************
     // Public methods
     //******************************************************************************************
-
-    /**
-     * Constructor.
-     * @param am the AlertManager associated with this instance
-     */
-    public SpeechManager(AlertManager am) {
-        super();
-        this.mAlertManager = am;
-    }
 
     /**
      * Sets a broadcast sender for this speech manager.

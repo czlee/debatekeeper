@@ -259,6 +259,10 @@ public class AlertManager
         }
     }
 
+    public void triggerPoiAlert() {
+        startSingleFlashScreen(MAX_BELL_SCREEN_FLASH_TIME);
+    }
+
     /**
      * Wakes up the screen to attract user attention
      */
@@ -446,4 +450,5 @@ public class AlertManager
 
         return pattern;
     }
+
 }

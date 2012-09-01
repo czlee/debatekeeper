@@ -53,6 +53,7 @@ public class DebateManager {
 
     private final DebateFormat  mDebateFormat;
     private final SpeechManager mSpeechManager;
+    private final PoiManager    mPoiManager;
 
     private final ArrayList<Long> mSpeechTimes;
 
@@ -62,18 +63,17 @@ public class DebateManager {
     private static final String BUNDLE_SUFFIX_SPEECH       = ".sm";
     private static final String BUNDLE_SUFFIX_SPEECH_TIMES = ".st";
 
-    //******************************************************************************************
-    // Public methods
-    //******************************************************************************************
-
     /**
      * Constructor.
-     * @param df
+     * @param df The {@link DebateFormat} used by this debate manager.
+     * @param am The {@link AlertManager} used by this debate manager.
      */
     public DebateManager(DebateFormat df, AlertManager am) {
         super();
         this.mDebateFormat  = df;
         this.mSpeechManager = new SpeechManager(am);
+        // TODO un-hardcode this '15'
+        this.mPoiManager    = new PoiManager(am, 15);
         this.mSpeechTimes   = new ArrayList<Long>();
 
         this.mSpeechTimes.ensureCapacity(df.numberOfSpeeches());
@@ -84,6 +84,10 @@ public class DebateManager {
         this.mSpeechManager.loadSpeech(mDebateFormat.getSpeechFormat(mCurrentSpeechIndex));
 
     }
+
+    //******************************************************************************************
+    // Public methods
+    //******************************************************************************************
 
     /**
      * Sets a broadcast sender for this speech manager.
@@ -189,6 +193,17 @@ public class DebateManager {
      */
     public long getCurrentSpeechTime() {
         return mSpeechManager.getCurrentTime();
+    }
+
+    /**
+     * @return the current time for the POI timer, or if the POI timer is
+     * not currently running, then null.
+     */
+    public Integer getCurrentPoiTime() {
+        if (mPoiManager.isRunning())
+            return mPoiManager.getCurrentTime();
+        else
+            return null;
     }
 
     /**

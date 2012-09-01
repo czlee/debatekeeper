@@ -1164,6 +1164,11 @@ public class DebatingActivity extends Activity {
             mPlayBellButton.setVisibility((mBinder.getAlertManager().isSilentMode()) ? View.GONE : View.VISIBLE);
     }
 
+    private void updatePoiTimerButton(int debateTimerDisplayIndex) {
+        // TODO populate this method
+        View v = mDebateTimerDisplays[debateTimerDisplayIndex];
+    }
+
     private static String secsToText(long time) {
         if (time >= 0) {
             return String.format("%02d:%02d", time / 60, time % 60);
