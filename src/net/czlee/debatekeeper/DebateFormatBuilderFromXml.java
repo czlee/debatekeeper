@@ -619,12 +619,6 @@ public class DebateFormatBuilderFromXml {
         return mDfb.getDebateFormat();
     }
 
-    public void logXmlErrorStyled(int xmlerrorspeechformatnofinishbell,
-            String mCurrentSpeechFormatRef) {
-        // TODO Auto-generated method stub
-
-    }
-
     /**
      * @return true if there are errors in the error log
      */

@@ -49,12 +49,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * TODO Comment this class, before it's too late!
  * This Activity displays a list of formats for the user to choose from. It
  * returns a file name to the calling activity.
  *
  * @author Chuan-Zheng Lee
  * @since  2012-06-17
+ */
+/**
+ * @author Chuan-Zheng Lee
+ *
  */
 public class FormatChooserActivity extends Activity {
 
@@ -229,6 +232,10 @@ public class FormatChooserActivity extends Activity {
         }
     }
 
+    /**
+     * A comparator for DebateFormatListEntries, which sorts the debate formats alphabetically
+     * by style name.
+     */
     private class StyleEntryComparatorByStyleName implements
             Comparator<DebateFormatListEntry> {
 
@@ -307,6 +314,13 @@ public class FormatChooserActivity extends Activity {
     //******************************************************************************************
     // Private methods
     //******************************************************************************************
+    /**
+     * Populates the master styles list, <code>mStylesList</code>.  Should be called when this
+     * Activity is created.
+     * @throws IOException if there is an IOException that is so serious that it cannot
+     * hope to populate the StylesLists.  Note that this does <b>not</b> include an error
+     * opening a single specific file.
+     */
     private void populateStylesLists() throws IOException {
         String[] fileList = mFilesManager.list();
 
@@ -344,10 +358,19 @@ public class FormatChooserActivity extends Activity {
 
     }
 
+    /**
+     * Adds a style to the master styles list.
+     * @param filename the file name for this style
+     * @param styleName the name of this style
+     */
     private void addStyleToList(String filename, String styleName) {
         mStylesList.add(new DebateFormatListEntry(filename, styleName));
     }
 
+    /**
+     * @return the selection (as an integer) that was passed in the <code>Intent</code> that
+     * started this <code>Activity</code>, or <code>ListView.INVALID_POSITION</code>
+     */
     private int getIncomingSelection() {
         Intent data = getIntent();
         String incomingFilename = data.getStringExtra(EXTRA_XML_FILE_NAME);
@@ -364,6 +387,10 @@ public class FormatChooserActivity extends Activity {
         return ListView.INVALID_POSITION;
     }
 
+    /**
+     * Ends this Activity, returning a result to the activity that called this Activity.
+     * @param position the integer position in the styles list of the user-selected position.
+     */
     private void returnSelectionByPosition(int position) {
         Log.v(this.getClass().getSimpleName(),
                 String.format("Picked item %d", position));
@@ -383,6 +410,10 @@ public class FormatChooserActivity extends Activity {
         FormatChooserActivity.this.finish();
     }
 
+    /**
+     * @return An AlertDialog alerting the user to a fatal problem retrieving the styles list,
+     * which then exits this Activity upon dismissal.
+     */
     private AlertDialog getIOErrorAlert() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.IOErrorDialogTitle)
@@ -398,6 +429,13 @@ public class FormatChooserActivity extends Activity {
         return builder.create();
     }
 
+    /**
+     * Returns an AlertDialog with information about a debate format, populated from the
+     * debate format XML file.
+     * @param filename the file name of the debate format XML file to which this Dialog should
+     * relate
+     * @return the AlertDialog
+     */
     private AlertDialog getMoreDetailsDialog(String filename) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = View.inflate(this, R.layout.view_format_full, null);
@@ -432,6 +470,14 @@ public class FormatChooserActivity extends Activity {
 
     }
 
+    /**
+     * Returns an AlertDialog with an error message explaining why the "more details" Dialog
+     * for a given debate format couldn't be populated.
+     * @param filename the file name of the debate format XML file to which this Dialog should
+     * relate
+     * @param e
+     * @return the AlertDialog
+     */
     private AlertDialog getBlankDetailsDialog(String filename, Exception e) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.BlankDetailsDialogTitle)
@@ -487,6 +533,11 @@ public class FormatChooserActivity extends Activity {
                 dfi.getDescription());
     }
 
+    /**
+     * Populates a View with information about a given file
+     * @param view the View to populate
+     * @param filename the file name
+     */
     private void populateFileInfo(View view, String filename) {
         if (mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_USER_DEFINED) {
             TextView fileLocationText = (TextView) view.findViewById(R.id.ViewFormatFileLocationValue);

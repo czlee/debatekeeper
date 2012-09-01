@@ -33,25 +33,10 @@ import android.widget.Button;
 import android.widget.CheckedTextView;
 
 /**
- * TODO Comment this class, before it's too late!
  * An ArrayAdapter for displaying a list of debate formats. This adapter changes
  * the layout depending on whether or not the item is selected. If it's
  * selected, it expands to show information about the format. If not, it just
  * returns the standard android simple_list_item_single_choice.
- * <p>
- * Please note that the current implementation of this class specifically
- * hard-codes a number of things that arguably don't need to be hard-coded. If
- * this class needs to be generalised, the following could likely be generalised
- * without adverse effect:
- * <ul>
- * <li>{@link FormatChooserActivityBinder} can be generalised to an interface
- * with a single abstract method <code>getSelectedPosition()</code>.</li>
- * <li>The layout resources are hard-coded. This isn't strictly necessary; the
- * constructor could take in resource IDs as arguments. But the layout resources
- * provided do need to be able to support all the calls in
- * <code>getView()</code>, so if one does take this route, checking for class
- * cast exceptions might be a good idea.</li>
- * </p>
  *
  * @author Chuan-Zheng Lee
  * @since  2012-06-20
@@ -89,7 +74,10 @@ public class DebateFormatEntryArrayAdapter extends
 
             String filename = this.getItem(position).getFilename();
             try {
+                // Population information like the region, level, where used and short
+                // description of the style.
                 mBinder.populateBasicInfo(view, filename);
+
             } catch (IOException e) {
                 // Do nothing.
                 // This basically just means the view won't be populated with information,
@@ -104,15 +92,20 @@ public class DebateFormatEntryArrayAdapter extends
                 // error message.
             }
 
+            // Set the OnClickListener of the "More" details button
             Button showDetailsButton = (Button) view.findViewById(R.id.ViewFormatShowDetailsButton);
             showDetailsButton.setVisibility(View.VISIBLE);
             showDetailsButton.setOnClickListener(mBinder.getDetailsButtonOnClickListener(filename));
 
         } else {
+
+            // If not selected, this just shows the style name and a blank radio button
             view = View.inflate(getContext(),
                     R.layout.format_item_not_selected, null);
         }
 
+        // Regardless of whether this item is selected, we need to populate the style name
+        // and set whether the radio button is checked.
         CheckedTextView titleView = (CheckedTextView) view
                 .findViewById(android.R.id.text1);
         titleView.setText(this.getItem(position).getStyleName());

@@ -31,7 +31,6 @@ import android.util.Xml;
 import android.util.Xml.Encoding;
 
 /**
- * TODO Comment this class, before it's too late!
  * Extracts information form an XML file and returns a DebateFormatInfo object.
  *
  * @author Chuan-Zheng Lee
