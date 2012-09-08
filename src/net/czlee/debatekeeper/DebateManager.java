@@ -48,7 +48,6 @@ import android.os.Bundle;
  * @author Chuan-Zheng Lee
  * @since  2012-06-09
  */
-
 public class DebateManager {
 
     private final DebateFormat  mDebateFormat;
@@ -97,6 +96,7 @@ public class DebateManager {
      */
     public void setBroadcastSender(GuiUpdateBroadcastSender sender) {
         this.mSpeechManager.setBroadcastSender(sender);
+        this.mPoiManager.setBroadcastSender(sender);
     }
 
     /**
@@ -108,9 +108,25 @@ public class DebateManager {
 
     /**
      * Stops the timer.
+     * Also stops the POI timer, since POIs can't be running when the timer is stopped.
      */
     public void stopTimer() {
         mSpeechManager.stop();
+        stopPoiTimer();
+    }
+
+    /**
+     * Starts the POI timer.
+     */
+    public void startPoiTimer() {
+        mPoiManager.start();
+    }
+
+    /**
+     * Stops the POI timer.
+     */
+    public void stopPoiTimer() {
+        mPoiManager.stop();
     }
 
     /**
@@ -186,6 +202,21 @@ public class DebateManager {
      */
     public boolean isOvertime() {
         return mSpeechManager.isOvertime();
+    }
+
+    /**
+     * @return <code>true</code> if GUI elements relating to POIs should be displayed.
+     */
+    public boolean isPoisActive() {
+        // TODO write this properly
+        return true;
+    }
+
+    /**
+     * @return <code>true</code> if the POI timer is running.
+     */
+    public boolean isPoiRunning() {
+        return mPoiManager.isRunning();
     }
 
     /**

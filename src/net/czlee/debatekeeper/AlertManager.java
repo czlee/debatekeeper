@@ -260,7 +260,8 @@ public class AlertManager
     }
 
     public void triggerPoiAlert() {
-        startSingleFlashScreen(MAX_BELL_SCREEN_FLASH_TIME);
+        if (mFlashScreenListener != null)
+            startSingleFlashScreen(MAX_BELL_SCREEN_FLASH_TIME);
     }
 
     /**

@@ -24,8 +24,8 @@ import net.czlee.debatekeeper.DebatingTimerService.GuiUpdateBroadcastSender;
 
 /**
  * PoiManager governs the timer for points of information.
- * It does not check that POIs are currently permissible or anything like that,
- * it just times POIs.
+ * It does <b>not</b> check that POIs are currently permissible or anything like that,
+ * it just times POIs.  The GUI should control whether POIs can actually be started.
  * @author Chuan-Zheng Lee
  * @since  2012-09-01
  */
@@ -88,10 +88,13 @@ public class PoiManager {
      * Starts a new POI timer.  If a POI timer is currently running, that is discarded.
      */
     public void start() {
+        if (mTimer != null)
+            mTimer.cancel();
         mCurrentTime = mPoiLength;
         mTimer = new Timer();
         mTimer.scheduleAtFixedRate(new DecrementTimeTask(), TIMER_DELAY, TIMER_PERIOD);
         mState = PoiTimerState.RUNNING;
+        mBroadcastSender.sendBroadcast();
     }
 
     /**
@@ -104,6 +107,7 @@ public class PoiManager {
         }
         mState = PoiTimerState.NOT_RUNNING;
         mCurrentTime = 0;
+        mBroadcastSender.sendBroadcast();
     }
 
     /**

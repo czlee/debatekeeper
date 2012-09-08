@@ -49,16 +49,16 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:visibility="gone" />
-
+
         <Button
             android:id="@+id/poiTimerButton"
-            android:layout_width="wrap_content"
+            android:layout_width="75dp"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="24dp"
             android:padding="16dip"
             android:text="@string/PoiButtonText"
-            android:textSize="20dip" />
+            android:textSize="24dip" />
 
     </RelativeLayout>

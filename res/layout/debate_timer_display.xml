@@ -51,14 +51,14 @@
             android:visibility="gone" />
 
         <Button
-            android:id="@+id/button1"
-            android:layout_width="wrap_content"
+            android:id="@+id/poiTimerButton"
+            android:layout_width="75dp"
             android:layout_height="wrap_content"
             android:layout_above="@+id/nextTime"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="20dip"
             android:padding="16dip"
             android:text="@string/PoiButtonText"
-            android:textSize="20dip" />
+            android:textSize="24dip" />
 
     </RelativeLayout>

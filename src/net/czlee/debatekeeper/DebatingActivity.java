@@ -279,6 +279,18 @@ public class DebatingActivity extends Activity {
         }
     }
 
+    private class PoiButtonOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            if (mDebateManager != null) {
+                if (mDebateManager.isPoiRunning())
+                    mDebateManager.stopPoiTimer();
+                else
+                    mDebateManager.startPoiTimer();
+            }
+        }
+    }
+
     private class RightControlButtonOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View pV) {
@@ -457,6 +469,11 @@ public class DebatingActivity extends Activity {
         mPlayBellButton     .setOnClickListener(new PlayBellButtonOnClickListener());
 
         mLastStateBundle = savedInstanceState; // This could be null
+
+        for (int i = 0; i < mDebateTimerDisplays.length; i++) {
+            View poiTimerButton  = mDebateTimerDisplays[i].findViewById(R.id.poiTimerButton);
+            poiTimerButton.setOnClickListener(new PoiButtonOnClickListener());
+        }
 
         //
         // OnTouchListeners
@@ -1142,6 +1159,9 @@ public class DebatingActivity extends Activity {
             finalTimeText.setText("");
         }
 
+        // Update the POI timer button
+        updatePoiTimerButton(debateTimerDisplayIndex);
+
     }
 
     /**
@@ -1165,8 +1185,28 @@ public class DebatingActivity extends Activity {
     }
 
     private void updatePoiTimerButton(int debateTimerDisplayIndex) {
-        // TODO populate this method
         View v = mDebateTimerDisplays[debateTimerDisplayIndex];
+
+        Button poiButton = (Button) v.findViewById(R.id.poiTimerButton);
+
+        if (mDebateManager != null) {
+            if (mDebateManager.isPoisActive()) {
+                poiButton.setVisibility(View.VISIBLE);
+                poiButton.setEnabled(mDebateManager.isRunning());
+
+                Integer poiTime = mDebateManager.getCurrentPoiTime();
+                if (poiTime == null)
+                    poiButton.setText(R.string.PoiButtonText);
+                else
+                    poiButton.setText(poiTime.toString());
+            } else {
+                poiButton.setVisibility(View.INVISIBLE);
+            }
+
+         } else {
+            // Hide the button when there is no debate loaded
+            poiButton.setVisibility(View.GONE);
+        }
     }
 
     private static String secsToText(long time) {
