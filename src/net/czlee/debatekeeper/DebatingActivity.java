@@ -668,7 +668,6 @@ public class DebatingActivity extends Activity {
 
             am.setVibrateMode(vibrateMode);
             am.setKeepScreenOn(keepScreenOn);
-            am.setFlashScreenListener((flashScreenMode != FlashScreenMode.OFF) ? new DebatingTimerFlashScreenListener() : null);
             am.setFlashScreenMode(flashScreenMode);
             Log.v(this.getClass().getSimpleName(), "applyPreferences: successfully applied");
         } else {
@@ -988,6 +987,7 @@ public class DebatingActivity extends Activity {
         if (mBinder != null) {
             AlertManager am = mBinder.getAlertManager();
             if (am != null) {
+                am.setFlashScreenListener(new DebatingTimerFlashScreenListener());
                 am.activityStart();
             }
         }
