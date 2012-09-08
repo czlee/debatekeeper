@@ -139,15 +139,23 @@ public class DebatingActivity extends Activity {
     }
 
     private class DebatingTimerFlashScreenListener implements FlashScreenListener {
-        @Override
-        public void flashScreen(boolean invert) {
-            final int colour = (invert) ? 0xffffffff : 0x00000000;
+        private void flashScreen(final int colour) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     findViewById(R.id.debateActivityRootView).setBackgroundColor(colour);
                 }
             });
+        }
+
+        @Override
+        public void flashScreenOn(int colour) {
+            flashScreen(colour);
+        }
+
+        @Override
+        public void flashScreenOff() {
+            flashScreen(0x00000000);
         }
     }
 

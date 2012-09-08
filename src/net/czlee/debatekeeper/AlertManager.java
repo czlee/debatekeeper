@@ -45,6 +45,8 @@ public class AlertManager
     public  static final int NOTIFICATION_ID = 1;
     private static final long MAX_BELL_SCREEN_FLASH_TIME = 500;
     private static final int STROBE_PERIOD = 100;
+    private static final int BELL_FLASH_COLOUR = 0xffffffff;
+    private static final int POI_FLASH_COLOUR  = 0xffadd6ff;
 
     private final Service               mService;
     private final NotificationManager   mNotificationManager;
@@ -211,7 +213,7 @@ public class AlertManager
         }
 
         if (mFlashScreenListener != null) {
-            flashScreen(bsi);
+            flashScreen(bsi, BELL_FLASH_COLOUR);
         }
     }
 
@@ -261,7 +263,7 @@ public class AlertManager
 
     public void triggerPoiAlert() {
         if (mFlashScreenListener != null)
-            startSingleFlashScreen(MAX_BELL_SCREEN_FLASH_TIME);
+            startSingleFlashScreen(MAX_BELL_SCREEN_FLASH_TIME, POI_FLASH_COLOUR);
     }
 
     /**
@@ -314,7 +316,7 @@ public class AlertManager
      * Flashes the screen according to the specifications of a bell.
      * @param bsi the {@link BellSoundInfo} for this bell
      */
-    private void flashScreen(BellSoundInfo bsi) {
+    private void flashScreen(BellSoundInfo bsi, final int colour) {
         Timer       repeatTimer  = new Timer();
         final long  repeatPeriod = bsi.getRepeatPeriod();
         final int   timesToPlay  = bsi.getTimesToPlay();
@@ -347,12 +349,12 @@ public class AlertManager
 
                 switch (mFlashScreenMode) {
                 case SOLID_FLASH:
-                    startSingleFlashScreen(flashTime);
+                    startSingleFlashScreen(flashTime, colour);
                     break;
                 case STROBE_FLASH:
                     int numStrobes = (int) (flashTime / STROBE_PERIOD);
                     if (flashTime % STROBE_PERIOD > STROBE_PERIOD / 2) numStrobes++;
-                    startSingleStrobeFlashScreen(numStrobes);
+                    startSingleStrobeFlashScreen(numStrobes, colour);
                     break;
                 case OFF:
                     // Do nothing
@@ -367,14 +369,14 @@ public class AlertManager
      * Flashes the screen once.
      * @param flashTime how long in milliseconds to flash the screen for
      */
-    private void startSingleFlashScreen(long flashTime) {
+    private void startSingleFlashScreen(long flashTime, final int colour) {
         // Flash the screen white and set a timer to turn it back normal after half a second
-        mFlashScreenListener.flashScreen(true);
+        mFlashScreenListener.flashScreenOn(colour);
         Timer offTimer = new Timer();
         offTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                mFlashScreenListener.flashScreen(false);
+                mFlashScreenListener.flashScreenOff();
             }
         }, flashTime);
     }
@@ -383,7 +385,7 @@ public class AlertManager
      * Runs a strobe flash
      * @param numberOfStrobes The number of strobes to do.
      */
-    private void startSingleStrobeFlashScreen(int numberOfStrobes) {
+    private void startSingleStrobeFlashScreen(int numberOfStrobes, final int colour) {
         Timer     strobeTimer = new Timer();
         final int numStrobes  = numberOfStrobes;
 
@@ -400,7 +402,7 @@ public class AlertManager
             int timesSoFar = 0;
             @Override
             public void run() {
-                startSingleFlashScreen(STROBE_PERIOD * 2 / 3);
+                startSingleFlashScreen(STROBE_PERIOD * 2 / 3, colour);
                 if (++timesSoFar >= numStrobes) {
                     this.cancel();
                 }
