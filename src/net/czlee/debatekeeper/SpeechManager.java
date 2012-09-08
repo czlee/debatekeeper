@@ -20,7 +20,6 @@ package net.czlee.debatekeeper;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import net.czlee.debatekeeper.DebatingTimerService.GuiUpdateBroadcastSender;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -42,20 +41,15 @@ import android.util.Log;
  * @since  2012-06-09
  *
  */
-public class SpeechManager {
+public class SpeechManager extends DebateElementManager {
 
-    private final AlertManager       mAlertManager;
-    private GuiUpdateBroadcastSender mBroadcastSender;
     private SpeechFormat             mSpeechFormat;
     private PeriodInfo               mCurrentPeriodInfo;
     private Timer                    mTimer;
     private DebatingTimerState       mState = DebatingTimerState.NOT_STARTED;
-    private long                     mCurrentTime;
     private long                     mFirstOvertimeBellTime = 30;
     private long                     mOvertimeBellPeriod    = 20;
-
-    private static final long TIMER_DELAY  = 1000;
-    private static final long TIMER_PERIOD = 1000;
+    protected long mCurrentTime;
 
     private static final String BUNDLE_SUFFIX_TIME        = ".t";
     private static final String BUNDLE_SUFFIX_STATE       = ".s";
@@ -66,8 +60,7 @@ public class SpeechManager {
      * @param am the AlertManager associated with this instance
      */
     public SpeechManager(AlertManager am) {
-        super();
-        this.mAlertManager = am;
+        super(am);
     }
 
     //******************************************************************************************
@@ -91,9 +84,8 @@ public class SpeechManager {
             mCurrentTime++;
 
             // Send an update GUI broadcast, if applicable
-            if (mBroadcastSender != null) {
-                mBroadcastSender.sendBroadcast();
-            }
+            sendBroadcast();
+
             // If this is a bell time, raise the bell
             BellInfo thisBell = mSpeechFormat.getBellAtTime(mCurrentTime);
             if (thisBell != null)
@@ -108,16 +100,6 @@ public class SpeechManager {
     //******************************************************************************************
     // Public methods
     //******************************************************************************************
-
-    /**
-     * Sets a broadcast sender for this speech manager.
-     * <code>SpeechManager</code> will call <code>sendBroadcast()</code> on the broadcast sender
-     * when the timer counts up/down.
-     * @param sender the {@link GuiUpdateBroadcastSender}
-     */
-    public void setBroadcastSender(GuiUpdateBroadcastSender sender) {
-        this.mBroadcastSender = sender;
-    }
 
     /**
      * Loads a speech with time zero seconds.
@@ -156,6 +138,7 @@ public class SpeechManager {
      * Calling this while the timer is running has no effect.
      * Calling this before a speech format has been set has no effect.
      */
+    @Override
     public void start() {
         if (mSpeechFormat == null)
             return;
@@ -170,6 +153,7 @@ public class SpeechManager {
     /**
      * Stops the timer.
      */
+    @Override
     public void stop() {
         if (mTimer != null) {
             mTimer.cancel();
@@ -197,17 +181,17 @@ public class SpeechManager {
     }
 
     /**
-     * @return the {@link PeriodInfo} object currently appropriate to be displayed to the user
-     */
-    public PeriodInfo getCurrentPeriodInfo() {
-        return mCurrentPeriodInfo;
-    }
-
-    /**
      * @return the current time in seconds, starting from zero and counting up (always)
      */
     public long getCurrentTime() {
         return mCurrentTime;
+    }
+
+    /**
+     * @return the {@link PeriodInfo} object currently appropriate to be displayed to the user
+     */
+    public PeriodInfo getCurrentPeriodInfo() {
+        return mCurrentPeriodInfo;
     }
 
     /**
@@ -258,6 +242,13 @@ public class SpeechManager {
         if (nextBell != null)
             return nextBell.isPauseOnBell();
         return false;
+    }
+
+    /**
+     * @return <code>true</code> if the timer is running, <code>false</code> otherwise
+     */
+    public boolean isRunning() {
+        return getStatus() == DebatingTimerState.RUNNING;
     }
 
     /**

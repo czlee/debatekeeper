@@ -20,7 +20,6 @@ package net.czlee.debatekeeper;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import net.czlee.debatekeeper.DebatingTimerService.GuiUpdateBroadcastSender;
 
 /**
  * PoiManager governs the timer for points of information.
@@ -29,31 +28,24 @@ import net.czlee.debatekeeper.DebatingTimerService.GuiUpdateBroadcastSender;
  * @author Chuan-Zheng Lee
  * @since  2012-09-01
  */
-public class PoiManager {
+public class PoiManager extends DebateElementManager {
 
-    private final AlertManager mAlertManager;
-    private GuiUpdateBroadcastSender mBroadcastSender;
     private Timer mTimer;
     private PoiTimerState mState;
     private int mPoiLength;
-    private int mCurrentTime = 0;
-
-    private static final long TIMER_DELAY  = 1000;
-    private static final long TIMER_PERIOD = 1000;
-
+    protected long mCurrentTime;
     /**
      * @param poiLength the length of points of information timed by this PoiManager.
      */
     public PoiManager(AlertManager am, int poiLength) {
-        super();
-        this.mAlertManager = am;
+        super(am);
         this.mPoiLength = poiLength;
     }
 
     //******************************************************************************************
     // Public classes
     //******************************************************************************************
-    public enum PoiTimerState {
+    private enum PoiTimerState {
         NOT_RUNNING,
         RUNNING,
     }
@@ -69,8 +61,7 @@ public class PoiManager {
             mCurrentTime--;
 
             // Send an update GUI broadcast, if applicable
-            if (mBroadcastSender != null)
-                mBroadcastSender.sendBroadcast();
+            sendBroadcast();
 
             // If time has expired, stop the timer
             if (mCurrentTime == 0) {
@@ -87,6 +78,7 @@ public class PoiManager {
     /**
      * Starts a new POI timer.  If a POI timer is currently running, that is discarded.
      */
+    @Override
     public void start() {
         if (mTimer != null)
             mTimer.cancel();
@@ -94,12 +86,13 @@ public class PoiManager {
         mTimer = new Timer();
         mTimer.scheduleAtFixedRate(new DecrementTimeTask(), TIMER_DELAY, TIMER_PERIOD);
         mState = PoiTimerState.RUNNING;
-        mBroadcastSender.sendBroadcast();
+        sendBroadcast();
     }
 
     /**
      * Stops the current POI timer.
      */
+    @Override
     public void stop() {
         if (mTimer != null) {
             mTimer.cancel();
@@ -107,7 +100,7 @@ public class PoiManager {
         }
         mState = PoiTimerState.NOT_RUNNING;
         mCurrentTime = 0;
-        mBroadcastSender.sendBroadcast();
+        sendBroadcast();
     }
 
     /**
@@ -117,18 +110,11 @@ public class PoiManager {
         return mState == PoiTimerState.RUNNING;
     }
 
-    public int getCurrentTime() {
-        return mCurrentTime;
-    }
-
     /**
-     * Sets a broadcast sender for this speech manager.
-     * <code>PoiManager</code> will call <code>sendBroadcast()</code> on the broadcast sender
-     * when the timer counts up/down.
-     * @param sender the {@link GuiUpdateBroadcastSender}
+     * @return the current time in seconds, as it would be displayed on the countdown.
      */
-    public void setBroadcastSender(GuiUpdateBroadcastSender sender) {
-        this.mBroadcastSender = sender;
+    public long getCurrentTime() {
+        return mCurrentTime;
     }
 
     /**
@@ -145,6 +131,5 @@ public class PoiManager {
     private void doTimeExpiredAlert() {
         mAlertManager.triggerPoiAlert();
     }
-
 
 }

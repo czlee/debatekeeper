@@ -1194,7 +1194,7 @@ public class DebatingActivity extends Activity {
                 poiButton.setVisibility(View.VISIBLE);
                 poiButton.setEnabled(mDebateManager.isRunning());
 
-                Integer poiTime = mDebateManager.getCurrentPoiTime();
+                Long poiTime = mDebateManager.getCurrentPoiTime();
                 if (poiTime == null)
                     poiButton.setText(R.string.PoiButtonText);
                 else

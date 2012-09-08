@@ -169,7 +169,7 @@ public class DebateManager {
      * @return <code>true</code> if the timer is running, <code>false</code> otherwise
      */
     public boolean isRunning() {
-        return mSpeechManager.getStatus() == SpeechManager.DebatingTimerState.RUNNING;
+        return mSpeechManager.isRunning();
     }
 
     /**
@@ -230,7 +230,7 @@ public class DebateManager {
      * @return the current time for the POI timer, or if the POI timer is
      * not currently running, then null.
      */
-    public Integer getCurrentPoiTime() {
+    public Long getCurrentPoiTime() {
         if (mPoiManager.isRunning())
             return mPoiManager.getCurrentTime();
         else
