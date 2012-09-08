@@ -69,13 +69,13 @@ public class BellRepeater {
             case PREPARED:
                 mState = BellRepeaterState.PLAYING;
                 mMediaPlayer.start();
-                Log.i("BellRepeater", "Media player starting");
+                // Log.i("BellRepeater", "Media player starting");
                 break;
             case PLAYING:
                 // Restart the tone
                 // mState remains PLAYING
                 mMediaPlayer.seekTo(0);
-                Log.i("BellRepeater", "Media player restarting");
+                // Log.i("BellRepeater", "Media player restarting");
                 break;
             case STOPPED:
                 // In theory this shouldn't happen, because the timer should be cancelled.
@@ -93,7 +93,7 @@ public class BellRepeater {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
                         mState = BellRepeaterState.PREPARED;
-                        Log.i("BellRepeater", "Media player completed");
+                        // Log.i("BellRepeater", "Media player completed");
                     }
                 });
 
@@ -111,7 +111,7 @@ public class BellRepeater {
                         mMediaPlayer.release();
                         mMediaPlayer = null;
                         mState = BellRepeaterState.FINISHED;
-                        Log.i("BellRepeater", "Over and out");
+                        // Log.i("BellRepeater", "Over and out");
                     }
                 });
 
@@ -187,7 +187,7 @@ public class BellRepeater {
             mMediaPlayer.stop();
             mMediaPlayer.release();
             mMediaPlayer = null;
-            Log.i("BellRepeater", "Stopped");
+            // Log.i("BellRepeater", "Stopped");
         }
         if (mTimer != null) {
             mTimer.cancel();

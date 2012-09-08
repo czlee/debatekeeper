@@ -42,27 +42,39 @@ import android.os.Vibrator;
  */
 public class AlertManager
 {
-    public  static final int NOTIFICATION_ID = 1;
     private static final long MAX_BELL_SCREEN_FLASH_TIME = 500;
-    private static final int STROBE_PERIOD = 100;
-    private static final int BELL_FLASH_COLOUR = 0xffffffff;
-    private static final int POI_FLASH_COLOUR  = 0xffadd6ff;
+    private static final int  POI_VIBRATE_TIME           = 350;
+    public  static final int  NOTIFICATION_ID            = 1;
+    private static final int  STROBE_PERIOD              = 100;
+    private static final int  BELL_FLASH_COLOUR          = 0xffffffff;
+    private static final int  POI_FLASH_COLOUR           = 0xffadd6ff;
 
     private final Service               mService;
+
+    // System services
     private final NotificationManager   mNotificationManager;
     private final PendingIntent         mIntentStartingHostActivity;
     private final PowerManager          mPowerManager;
     private final Vibrator              mVibrator;
     private       PowerManager.WakeLock mWakeLock;
+
+    // Other things
     private       Notification          mNotification;
     private       BellRepeater          mBellRepeater        = null;
     private       FlashScreenListener   mFlashScreenListener = null;
     private       boolean               mShowingNotification = false;
     private       boolean               mActivityActive      = false;
+
+    // Preferences for speech bells
     private       boolean               mSilentMode;
     private       boolean               mVibrateMode;
     private       boolean               mKeepScreenOn;
     private       FlashScreenMode       mFlashScreenMode     = FlashScreenMode.OFF;
+
+    // Preferences for POI bells
+    private       boolean               mPoiBuzzerEnabled;
+    private       boolean               mPoiVibrateEnabled = true;
+    private       FlashScreenMode       mPoiFlashScreenMode  = FlashScreenMode.SOLID_FLASH;
 
 
     /**
@@ -194,7 +206,7 @@ public class AlertManager
 
     /**
      * Plays a bell according to a given {@link BellSoundInfo}.
-     * Does not play if in silent mode.
+     * Takes preferences like silent mode, vibrate mode, flash screen mode into account.
      * @param bsi the <code>BellSoundInfo</code> to play
      */
     public void playBell(BellSoundInfo bsi) {
@@ -206,13 +218,14 @@ public class AlertManager
             mBellRepeater = new BellRepeater(mService.getApplicationContext(), bsi);
             mBellRepeater.play();
         }
+
         if (mVibrateMode) {
             final long[] vibratePattern = getVibratePattern(bsi);
             if (vibratePattern != null)
                 mVibrator.vibrate(vibratePattern, -1);
         }
 
-        if (mFlashScreenListener != null) {
+        if (mFlashScreenMode != FlashScreenMode.OFF) {
             flashScreen(bsi, BELL_FLASH_COLOUR);
         }
     }
@@ -245,6 +258,18 @@ public class AlertManager
             mWakeLock.acquire();
     }
 
+    public void setPoiBuzzerEnabled(boolean poiBuzzerEnabled) {
+        this.mPoiBuzzerEnabled = poiBuzzerEnabled;
+    }
+
+    public void setPoiVibrateEnabled(boolean poiVibrateEnabled) {
+        this.mPoiVibrateEnabled = poiVibrateEnabled;
+    }
+
+    public void setPoiFlashScreenMode(FlashScreenMode poiFlashScreenMode) {
+        this.mPoiFlashScreenMode = poiFlashScreenMode;
+    }
+
     /**
      * Triggers an alert.  Play this to activate a bell.
      * @param bi the {@link BellInfo} to use to play the bell
@@ -262,7 +287,14 @@ public class AlertManager
     }
 
     public void triggerPoiAlert() {
-        if (mFlashScreenListener != null)
+        if (mPoiBuzzerEnabled)
+            // TODO fill this space
+            ;
+
+        if (mPoiVibrateEnabled)
+            mVibrator.vibrate(POI_VIBRATE_TIME);
+
+        if (mPoiFlashScreenMode != FlashScreenMode.OFF)
             startSingleFlashScreen(MAX_BELL_SCREEN_FLASH_TIME, POI_FLASH_COLOUR);
     }
 
@@ -370,6 +402,8 @@ public class AlertManager
      * @param flashTime how long in milliseconds to flash the screen for
      */
     private void startSingleFlashScreen(long flashTime, final int colour) {
+        if (mFlashScreenListener == null) return;
+
         // Flash the screen white and set a timer to turn it back normal after half a second
         mFlashScreenListener.flashScreenOn(colour);
         Timer offTimer = new Timer();
