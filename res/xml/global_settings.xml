@@ -24,6 +24,11 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/PrefCategoryPoisTitle"><PreferenceScreen android:summary="@string/PrefPoiScreenSummary" android:title="@string/PrefPoiScreenTitle" android:key="@string/PrefScreenPoiKey">
         <CheckBoxPreference android:key="@string/PrefPoiTimerEnableKey" android:summaryOff="@string/PrefPoiTimerEnableOffSummary" android:title="@string/PrefPoiTimerEnableTitle" android:summaryOn="@string/PrefPoiTimerEnableOnSummary" android:disableDependentsState="false" android:defaultValue="@bool/DefaultPrefPoiTimerEnable" />
+<!-- The POI buzzer option isn't used.  The only part that isn't implemented is the part that
+actually plays the buzzer using a MediaPlayer (and the sound file itself).  I'm not sure whether
+this is worth implementing - adjudicators would have to stop the timer for speakers who stay
+under the POI time limit, i.e. most of the time - it's easier to have it quiet all the time and
+to be alerted without sound at the 15 second mark?  -->        
 <!--         <CheckBoxPreference android:key="@string/PrefPoiBuzzerEnableKey" android:summaryOff="@string/PrefPoiBuzzerEnableOffSummary" android:title="@string/PrefPoiBuzzerEnableTitle" android:summaryOn="@string/PrefPoiBuzzerEnableOnSummary" android:dependency="@string/PrefPoiTimerEnableKey" android:defaultValue="@bool/DefaultPrefPoiBuzzerEnable" /> -->
         <CheckBoxPreference android:key="@string/PrefPoiVibrateEnableKey" android:summaryOff="@string/PrefPoiVibrateEnableOffSummary" android:title="@string/PrefPoiVibrateEnableTitle" android:summaryOn="@string/PrefPoiVibrateEnableOnSummary" android:dependency="@string/PrefPoiTimerEnableKey" android:defaultValue="@bool/DefaultPrefPoiVibrateEnable" />
         <ListPreference android:dialogTitle="@string/PrefPoiFlashScreenModeDialogTitle" android:entryValues="@array/PrefFlashScreenModeValues" android:entries="@array/PrefFlashScreenModeEntries" android:key="@string/PrefPoiFlashScreenModeKey" android:title="@string/PrefFlashScreenModeTitle" android:dependency="@string/PrefPoiTimerEnableKey" android:defaultValue="@string/DefaultPrefPoiFlashScreenMode" />
