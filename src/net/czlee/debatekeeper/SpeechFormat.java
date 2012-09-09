@@ -49,7 +49,7 @@ public class SpeechFormat {
 
     protected final long          mSpeechLength;
     protected CountDirection      mCountDirection  = CountDirection.COUNT_USER;
-    protected PeriodInfo          mFirstPeriodInfo = new PeriodInfo(null, null);
+    protected PeriodInfo          mFirstPeriodInfo = new PeriodInfo();
 
     // Note: There is no guarantee that this list is sorted.
     protected ArrayList<BellInfo> mBells           = new ArrayList<BellInfo>();
@@ -76,7 +76,7 @@ public class SpeechFormat {
     }
 
     public PeriodInfo getFirstPeriodInfo() {
-        PeriodInfo pi = new PeriodInfo("Initial", 0);
+        PeriodInfo pi = new PeriodInfo("Initial", 0, false);
         pi.update(mFirstPeriodInfo);
         return pi;
     }

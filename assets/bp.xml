@@ -11,7 +11,7 @@
 
 	<speechtype ref="all" length="7:00" firstperiod="initial">
 		<period ref="initial" desc="First minute" bgcolor="#stay" />
-		<period ref="pois-allowed" desc="POIs allowed" bgcolor="#7700ff00" />
+		<period ref="pois-allowed" desc="POIs allowed" bgcolor="#7700ff00" poisallowed="true"/>
 		<period ref="warning" desc="Warning bell rung" bgcolor="#77ffcc00" />
 		<period ref="overtime" desc="Overtime" bgcolor="#77ff0000" />
 		<bell time="1:00" number="1" nextperiod="pois-allowed" sound="#default" />

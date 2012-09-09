@@ -206,10 +206,11 @@ public class DebateManager {
 
     /**
      * @return <code>true</code> if GUI elements relating to POIs should be displayed.
+     * This is the case if either POIs are currently allowed, or the POI timer is currently
+     * running (i.e. the POI in action started before the warning bell).
      */
     public boolean isPoisActive() {
-        // TODO write this properly
-        return true;
+        return mSpeechManager.getCurrentPeriodInfo().isPoisAllowed() || mPoiManager.isRunning();
     }
 
     /**

@@ -1228,6 +1228,7 @@ public class DebatingActivity extends Activity {
                 else
                     poiButton.setText(poiTime.toString());
             } else {
+                poiButton.setText(R.string.PoiButtonText);
                 poiButton.setEnabled(false);
             }
 

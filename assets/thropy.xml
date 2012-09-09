@@ -14,7 +14,7 @@
 
 	<speechtype ref="substantive" length="6:00" firstperiod="firstmin">
 		<period ref="firstmin" desc="First minute" bgcolor="#stay" />
-		<period ref="pois-allowed" desc="POIs allowed" bgcolor="#7700ff00" />
+		<period ref="pois-allowed" desc="POIs allowed" bgcolor="#7700ff00" poisallowed="true" />
 		<bell time="1:00" number="1" nextperiod="pois-allowed" sound="#default" />
 		<bell time="5:00" number="1" nextperiod="warning" sound="#default" />
 		<bell time="finish" number="2" nextperiod="overtime" sound="#default" />

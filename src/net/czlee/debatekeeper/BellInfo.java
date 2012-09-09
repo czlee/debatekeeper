@@ -31,10 +31,10 @@ package net.czlee.debatekeeper;
  */
 public class BellInfo {
 
-    private long          mBellTime       = 0;
-    private boolean       mPauseOnBell    = false;
-    private PeriodInfo    mNextPeriodInfo = new PeriodInfo(null, null);
-    private final BellSoundInfo mSoundInfo      = new BellSoundInfo();
+    private long          mBellTime        = 0;
+    private boolean       mPauseOnBell     = false;
+    private PeriodInfo    mNextPeriodInfo  = new PeriodInfo();
+    private final BellSoundInfo mSoundInfo = new BellSoundInfo();
 
     public BellInfo(long seconds, int timesToPlay) {
         super();

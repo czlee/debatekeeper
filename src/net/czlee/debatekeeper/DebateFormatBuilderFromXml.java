@@ -454,8 +454,20 @@ public class DebateFormatBuilderFromXml {
                     }
                 }
 
-                // 4. We now have enough information to make the PeriodInfo
-                PeriodInfo pi = new PeriodInfo(description, backgroundColor);
+                // 4. Get whether POIs are allowed (implicitly default to false)
+                String poisAllowedStr = getValue(atts, R.string.XmlAttrNamePeriodPoisAllowed);
+                boolean poisAllowed = false;
+                if (poisAllowedStr != null) {
+                    if (areEqualIgnoringCase(poisAllowedStr, R.string.XmlAttrValueCommonTrue))
+                        poisAllowed = true;
+                    else if (areEqualIgnoringCase(poisAllowedStr, R.string.XmlAttrValueCommonFalse))
+                        poisAllowed = false;
+                    else
+                        logXmlError(R.string.XmlErrorPeriodInvalidPoisAllowed, reference, poisAllowedStr);
+                }
+
+                // 5. We now have enough information to make the PeriodInfo
+                PeriodInfo pi = new PeriodInfo(description, backgroundColor, poisAllowed);
 
                 // Finally, add the period
                 try {

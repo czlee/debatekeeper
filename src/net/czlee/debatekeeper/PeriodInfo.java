@@ -37,12 +37,14 @@ import android.os.Bundle;
 public class PeriodInfo {
 
     // The meaning of "null" in both these objects is "do not change from what it is currently".
-    protected String  mDescription      = null;
-    protected Integer mBackgroundColor  = null; // Use Integer so that we can also use null.
+    private String  mDescription      = null;
+    private Integer mBackgroundColor  = null; // Use Integer so that we can also use null.
+    private boolean mPoisAllowed      = false; // There is no "null" option for this, it is always updated.
 
     // Bundle suffixes
     private final String BUNDLE_SUFFIX_DESC = ".d";
     private final String BUNDLE_SUFFIX_BGCOLOR = ".b";
+    private final String BUNDLE_SUFFIX_POIS_ALLOWED = ".p";
 
     //******************************************************************************************
     // Public methods
@@ -52,10 +54,11 @@ public class PeriodInfo {
         super();
     }
 
-    public PeriodInfo(String description, Integer backgroundColor) {
+    public PeriodInfo(String description, Integer backgroundColor, boolean poisAllowed) {
         super();
         mDescription     = description;
         mBackgroundColor = backgroundColor;
+        mPoisAllowed     = poisAllowed;
     }
 
     public String  getDescription() {
@@ -66,6 +69,10 @@ public class PeriodInfo {
         return mBackgroundColor;
     }
 
+    public boolean isPoisAllowed() {
+        return mPoisAllowed;
+    }
+
     /**
      * Updates this <code>PeriodInfo</code> using the information in another PeriodInfo.
      * It replaces members if they are not null, and leaves them as they are if they are null.
@@ -74,6 +81,9 @@ public class PeriodInfo {
     public void update(PeriodInfo pi) {
         if (pi.mDescription != null)     mDescription     = pi.mDescription;
         if (pi.mBackgroundColor != null) mBackgroundColor = pi.mBackgroundColor;
+
+        // There is no "do not change" option for POIs allowed
+        mPoisAllowed = pi.mPoisAllowed;
     }
 
     /**
@@ -85,6 +95,9 @@ public class PeriodInfo {
     public void addInfo(PeriodInfo pi) {
         if (this.mDescription != null)     mDescription     = pi.mDescription;
         if (this.mBackgroundColor != null) mBackgroundColor = pi.mBackgroundColor;
+
+        // There is no "do not change" option for POIs allowed
+        mPoisAllowed = pi.mPoisAllowed;
     }
 
     /**
@@ -96,6 +109,7 @@ public class PeriodInfo {
     public void saveState(String key, Bundle bundle) {
         bundle.putString(key + BUNDLE_SUFFIX_DESC, mDescription);
         bundle.putInt(key + BUNDLE_SUFFIX_BGCOLOR, mBackgroundColor);
+        bundle.putBoolean(key + BUNDLE_SUFFIX_POIS_ALLOWED, mPoisAllowed);
     }
 
     /**
@@ -108,5 +122,6 @@ public class PeriodInfo {
         String description = bundle.getString(key + BUNDLE_SUFFIX_DESC);
         if (description != null) mDescription = description;
         mBackgroundColor = bundle.getInt(key + BUNDLE_SUFFIX_BGCOLOR);
+        mPoisAllowed = bundle.getBoolean(key + BUNDLE_SUFFIX_POIS_ALLOWED, false);
     }
 }
