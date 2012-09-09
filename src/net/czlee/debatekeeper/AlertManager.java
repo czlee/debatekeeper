@@ -294,8 +294,17 @@ public class AlertManager
         if (mPoiVibrateEnabled)
             mVibrator.vibrate(POI_VIBRATE_TIME);
 
-        if (mPoiFlashScreenMode != FlashScreenMode.OFF)
+        switch (mPoiFlashScreenMode) {
+        case SOLID_FLASH:
             startSingleFlashScreen(MAX_BELL_SCREEN_FLASH_TIME, POI_FLASH_COLOUR);
+            break;
+        case STROBE_FLASH:
+            startSingleStrobeFlashScreen(MAX_BELL_SCREEN_FLASH_TIME, POI_FLASH_COLOUR);
+            break;
+        case OFF:
+            // Do nothing
+            break;
+        }
     }
 
     /**
@@ -384,9 +393,7 @@ public class AlertManager
                     startSingleFlashScreen(flashTime, colour);
                     break;
                 case STROBE_FLASH:
-                    int numStrobes = (int) (flashTime / STROBE_PERIOD);
-                    if (flashTime % STROBE_PERIOD > STROBE_PERIOD / 2) numStrobes++;
-                    startSingleStrobeFlashScreen(numStrobes, colour);
+                    startSingleStrobeFlashScreen(flashTime, colour);
                     break;
                 case OFF:
                     // Do nothing
@@ -419,9 +426,12 @@ public class AlertManager
      * Runs a strobe flash
      * @param numberOfStrobes The number of strobes to do.
      */
-    private void startSingleStrobeFlashScreen(int numberOfStrobes, final int colour) {
+    private void startSingleStrobeFlashScreen(long flashTime, final int colour) {
         Timer     strobeTimer = new Timer();
-        final int numStrobes  = numberOfStrobes;
+
+        int numberOfStrobes = (int) (flashTime / STROBE_PERIOD);
+        if (flashTime % STROBE_PERIOD > STROBE_PERIOD / 2) numberOfStrobes++;
+        final int numStrobes = numberOfStrobes;
 
         if (numStrobes == 0) return; // Do nothing if the number of bells is zero
 

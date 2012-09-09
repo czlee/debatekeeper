@@ -91,6 +91,7 @@ public class DebatingActivity extends Activity {
 
     private String mFormatXmlFileName = null;
     private UserPreferenceCountDirection mUserCountDirection = UserPreferenceCountDirection.GENERALLY_UP;
+    private boolean mPoiTimerEnabled = true;
 
     private static final String BUNDLE_SUFFIX_DEBATE_MANAGER           = "dm";
     private static final String PREFERENCE_XML_FILE_NAME               = "xmlfn";
@@ -586,9 +587,10 @@ public class DebatingActivity extends Activity {
     private void applyPreferences() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean silentMode, vibrateMode, overtimeBellsEnabled, keepScreenOn;
+        boolean poiBuzzerEnabled, poiVibrateEnabled;
         int firstOvertimeBell, overtimeBellPeriod;
-        String userCountDirectionValue;
-        FlashScreenMode flashScreenMode;
+        String userCountDirectionValue, poiFlashScreenModeValue;
+        FlashScreenMode flashScreenMode, poiFlashScreenMode;
 
         Resources res = getResources();
 
@@ -603,6 +605,13 @@ public class DebatingActivity extends Activity {
                     res.getBoolean(R.bool.DefaultPrefOvertimeBellsEnable));
             keepScreenOn = prefs.getBoolean(res.getString(R.string.PrefKeepScreenOnKey),
                     res.getBoolean(R.bool.DefaultPrefKeepScreenOn));
+
+            mPoiTimerEnabled = prefs.getBoolean(res.getString(R.string.PrefPoiTimerEnableKey),
+                    res.getBoolean(R.bool.DefaultPrefPoiTimerEnable));
+            poiBuzzerEnabled = prefs.getBoolean(res.getString(R.string.PrefPoiBuzzerEnableKey),
+                    res.getBoolean(R.bool.DefaultPrefPoiBuzzerEnable));
+            poiVibrateEnabled = prefs.getBoolean(res.getString(R.string.PrefPoiVibrateEnableKey),
+                    res.getBoolean(R.bool.DefaultPrefPoiVibrateEnable));
 
             // Overtime bell integers
             if (overtimeBellsEnabled) {
@@ -619,6 +628,11 @@ public class DebatingActivity extends Activity {
             userCountDirectionValue = prefs.getString(res.getString(R.string.PrefCountDirectionKey),
                     res.getString(R.string.DefaultPrefCountDirection));
             mUserCountDirection = UserPreferenceCountDirection.toEnum(userCountDirectionValue);
+
+            // List preference: POI flash screen mode
+            poiFlashScreenModeValue = prefs.getString(res.getString(R.string.PrefPoiFlashScreenModeKey),
+                    res.getString(R.string.DefaultPrefPoiFlashScreenMode));
+            poiFlashScreenMode = FlashScreenMode.toEnum(poiFlashScreenModeValue);
 
             // List preference: Flash screen mode
             // This changed from a boolean to a list preference in version 0.6, so there is
@@ -677,6 +691,11 @@ public class DebatingActivity extends Activity {
             am.setVibrateMode(vibrateMode);
             am.setKeepScreenOn(keepScreenOn);
             am.setFlashScreenMode(flashScreenMode);
+
+            am.setPoiBuzzerEnabled(poiBuzzerEnabled);
+            am.setPoiVibrateEnabled(poiVibrateEnabled);
+            am.setPoiFlashScreenMode(poiFlashScreenMode);
+
             Log.v(this.getClass().getSimpleName(), "applyPreferences: successfully applied");
         } else {
             Log.w(this.getClass().getSimpleName(), "applyPreferences: Couldn't restore AlertManager preferences; mBinder doesn't yet exist");
@@ -1197,7 +1216,7 @@ public class DebatingActivity extends Activity {
 
         Button poiButton = (Button) v.findViewById(R.id.poiTimerButton);
 
-        if (mDebateManager != null) {
+        if (mPoiTimerEnabled && mDebateManager != null) {
             if (mDebateManager.isPoisActive()) {
                 poiButton.setVisibility(View.VISIBLE);
                 poiButton.setEnabled(mDebateManager.isRunning());

@@ -11,12 +11,19 @@
     <string name="PrefOvertimeBellPeriodKey">overtimeBellPeriod</string>
     <string name="PrefCountDirectionKey">countDirection</string>
     <string name="PrefKeepScreenOnKey">keepScreenOn</string>
+    <string name="PrefPoiTimerEnableKey">poiTimerEnable</string>
+    <string name="PrefPoiBuzzerEnableKey">poiBuzzerEnable</string>
+    <string name="PrefPoiVibrateEnableKey">poiVibrateEnable</string>
+    <string name="PrefPoiFlashScreenModeKey">poiFlashScreenMode</string>
 
+    <string name="PrefScreenPoiKey">poiPrefs</string>    
+    
     <!-- Keys for backwards-compatibility -->
     <string name="PrefFlashScreenBoolKey">flashScreen</string> <!-- replaced in version 0.6 -->
     
     <!-- Category titles -->
 	<string name="PrefCategoryOvertimeBellsTitle">Overtime bells</string>
+	<string name="PrefCategoryPoisTitle">Points of information</string>
 	<string name="PrefCategoryBellsTitle">Bells</string>
 	<string name="PrefCategoryGeneralTitle">General</string>
 		
@@ -94,4 +101,35 @@
     <string name="PrefKeepScreenOnOnSummary">Keep screen on (dimmed) while timer is running</string>
     <string name="PrefKeepScreenOnOffSummary">Apply normal screen timeout</string>
     <bool   name="DefaultPrefKeepScreenOn">true</bool>
+    
+    <!-- *** Points of information *** -->
+	<string name="PrefPoiScreenTitle">Points of information</string>
+	<string name="PrefPoiScreenSummary">Change settings for the POIs timer</string>
+	<string name="PrefPoiScreenSummaryWhenEnabled">Change settings for the POIs timer (enabled)</string>
+	<string name="PrefPoiScreenSummaryWhenDisabled">Change settings for the POIs timer (disabled)</string>
+	
+    <string name="PrefPoiTimerEnableTitle">Enable POIs timer</string>
+    <string name="PrefPoiTimerEnableOnSummary">Use the POIs timer when appropriate</string>
+    <string name="PrefPoiTimerEnableOffSummary">Don\'t use the POIs timer</string>
+    <bool   name="DefaultPrefPoiTimerEnable">true</bool>
+    
+    <string name="PrefPoiBuzzerEnableTitle">Play buzzer</string>
+    <string name="PrefPoiBuzzerEnableOnSummary">Play a buzzer when POI time expires</string>
+    <string name="PrefPoiBuzzerEnableOffSummary">Don\'t play POI buzzers</string>
+    <bool   name="DefaultPrefPoiBuzzerEnable">false</bool>
+    
+    <string name="PrefPoiVibrateEnableTitle">Vibrate</string>
+    <string name="PrefPoiVibrateEnableOnSummary">Vibrate when POI time expires</string>
+    <string name="PrefPoiVibrateEnableOffSummary">Don\'t vibrate for POIs</string>
+    <bool   name="DefaultPrefPoiVibrateEnable">false</bool>
+    
+    <string name="PrefPoiFlashScreenModeDialogTitle">Flash screen for POIs</string>
+    <string name="DefaultPrefPoiFlashScreenMode">solidFlash</string>
+    <string-array name="PrefPoiFlashScreenModeSummaries">
+        <item>Don\'t flash screen for POIs</item>
+    	<item>Do a strobe flash when POI time expires</item>
+    	<item>Flash screen blue briefly when POI time expires</item>
+    </string-array>
+    <!-- For the entries and entry values, use the same ones as the main flash screen preference -->
+
 </resources>
