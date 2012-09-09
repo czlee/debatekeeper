@@ -214,6 +214,14 @@ public class DebateManager {
     }
 
     /**
+     * @return <code>true</code> if if POIs are allowed somewhere in the current speech,
+     * <code>false</code> otherwise.
+     */
+    public boolean hasPoisInCurrentSpeech() {
+        return mSpeechManager.getSpeechFormat().hasPoisAllowedSomewhere();
+    }
+
+    /**
      * @return <code>true</code> if the POI timer is running.
      */
     public boolean isPoiRunning() {

@@ -192,4 +192,24 @@ public class SpeechFormat {
         return workingPi;
     }
 
+    /**
+     * Finds whether any period anywhere in the speech has POIs allowed.
+     * @return <code>true</code> if POIs are allowed somewhere in the speech,
+     * <code>false</code> otherwise.
+     */
+    public boolean hasPoisAllowedSomewhere() {
+        if (mFirstPeriodInfo.isPoisAllowed()) return true;
+
+        Iterator<BellInfo> bellIterator = mBells.iterator();
+        BellInfo thisBell = null;
+
+        while (bellIterator.hasNext()) {
+            // Return true as soon as we find one with POIs allowed
+            thisBell = bellIterator.next();
+            if (thisBell.getNextPeriodInfo().isPoisAllowed()) return true;
+        }
+
+        return false;
+    }
+
 }

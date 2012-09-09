@@ -1216,7 +1216,17 @@ public class DebatingActivity extends Activity {
 
         Button poiButton = (Button) v.findViewById(R.id.poiTimerButton);
 
-        if (mPoiTimerEnabled && mDebateManager != null) {
+        // Determine whether or not we display the POI timer button
+        // Display only when user has POI timer enabled, and a debate is loaded and the current
+        // speech has POIs in it.
+        boolean displayPoiTimerButton = false;
+        if (mPoiTimerEnabled)
+            if (mDebateManager != null)
+                if (mDebateManager.hasPoisInCurrentSpeech())
+                    displayPoiTimerButton = true;
+
+        // If it's appropriate to display the button, do so
+        if (displayPoiTimerButton) {
             poiButton.setVisibility(View.VISIBLE);
 
             if (mDebateManager.isPoisActive()) {
@@ -1232,8 +1242,8 @@ public class DebatingActivity extends Activity {
                 poiButton.setEnabled(false);
             }
 
-         } else {
-            // Hide the button when there is no debate loaded
+        // Otherwise, hide the button
+        } else {
             poiButton.setVisibility(View.GONE);
         }
     }
