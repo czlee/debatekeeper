@@ -57,16 +57,20 @@ public class PoiManager extends DebateElementManager {
 
         @Override
         public void run() {
-            // Decrement the counter
-            mCurrentTime--;
-
-            // Send an update GUI broadcast, if applicable
-            sendBroadcast();
-
-            // If time has expired, stop the timer
             if (mCurrentTime == 0) {
+                // If time expired a second ago (i.e. before the decrement), stop the timer
                 PoiManager.this.stop();
-                PoiManager.this.doTimeExpiredAlert();
+
+            } else {
+                // Decrement the counter
+                mCurrentTime--;
+
+                // If time has just expired, do the alert
+                if (mCurrentTime == 0)
+                    PoiManager.this.doTimeExpiredAlert();
+
+                // Send an update GUI broadcast, if applicable
+                sendBroadcast();
             }
         }
     }
@@ -106,6 +110,7 @@ public class PoiManager extends DebateElementManager {
     /**
      * @return true if the POI timer is running, false otherwise.
      */
+    @Override
     public boolean isRunning() {
         return mState == PoiTimerState.RUNNING;
     }
