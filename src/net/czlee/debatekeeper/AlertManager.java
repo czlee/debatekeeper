@@ -296,7 +296,7 @@ public class AlertManager
 
         switch (mPoiFlashScreenMode) {
         case SOLID_FLASH:
-            startSingleFlashScreen(MAX_BELL_SCREEN_FLASH_TIME, POI_FLASH_COLOUR, true);
+            startSingleFlashScreen(MAX_BELL_SCREEN_FLASH_TIME, POI_FLASH_COLOUR);
             break;
         case STROBE_FLASH:
             startSingleStrobeFlashScreen(MAX_BELL_SCREEN_FLASH_TIME, POI_FLASH_COLOUR);
@@ -390,7 +390,7 @@ public class AlertManager
 
                 switch (mFlashScreenMode) {
                 case SOLID_FLASH:
-                    startSingleFlashScreen(flashTime, colour, true);
+                    startSingleFlashScreen(flashTime, colour);
                     break;
                 case STROBE_FLASH:
                     startSingleStrobeFlashScreen(flashTime, colour);
@@ -407,6 +407,17 @@ public class AlertManager
     /**
      * Flashes the screen once.
      * @param flashTime how long in milliseconds to flash the screen for
+     * @param colour colour to flash screen
+     */
+    private void startSingleFlashScreen(long flashTime, final int colour) {
+        startSingleFlashScreen(flashTime, colour);
+    }
+
+    /**
+     * Flashes the screen once.
+     * @param flashTime how long in milliseconds to flash the screen for
+     * @param colour colour to flash screen
+     * @param lastFlash true if the GUI should be reset after this
      */
     private void startSingleFlashScreen(long flashTime, final int colour, final boolean lastFlash) {
         if (mFlashScreenListener == null) return;
