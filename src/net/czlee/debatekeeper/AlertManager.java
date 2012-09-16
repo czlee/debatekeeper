@@ -410,7 +410,7 @@ public class AlertManager
      * @param colour colour to flash screen
      */
     private void startSingleFlashScreen(long flashTime, final int colour) {
-        startSingleFlashScreen(flashTime, colour);
+        startSingleFlashScreen(flashTime, colour, true);
     }
 
     /**
