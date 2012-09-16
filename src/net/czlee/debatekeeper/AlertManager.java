@@ -296,7 +296,7 @@ public class AlertManager
 
         switch (mPoiFlashScreenMode) {
         case SOLID_FLASH:
-            startSingleFlashScreen(MAX_BELL_SCREEN_FLASH_TIME, POI_FLASH_COLOUR);
+            startSingleFlashScreen(MAX_BELL_SCREEN_FLASH_TIME, POI_FLASH_COLOUR, true);
             break;
         case STROBE_FLASH:
             startSingleStrobeFlashScreen(MAX_BELL_SCREEN_FLASH_TIME, POI_FLASH_COLOUR);
@@ -390,7 +390,7 @@ public class AlertManager
 
                 switch (mFlashScreenMode) {
                 case SOLID_FLASH:
-                    startSingleFlashScreen(flashTime, colour);
+                    startSingleFlashScreen(flashTime, colour, true);
                     break;
                 case STROBE_FLASH:
                     startSingleStrobeFlashScreen(flashTime, colour);
@@ -408,7 +408,7 @@ public class AlertManager
      * Flashes the screen once.
      * @param flashTime how long in milliseconds to flash the screen for
      */
-    private void startSingleFlashScreen(long flashTime, final int colour) {
+    private void startSingleFlashScreen(long flashTime, final int colour, final boolean lastFlash) {
         if (mFlashScreenListener == null) return;
 
         // Flash the screen white and set a timer to turn it back normal after half a second
@@ -418,6 +418,9 @@ public class AlertManager
             @Override
             public void run() {
                 mFlashScreenListener.flashScreenOff();
+                if (lastFlash) {
+                    mFlashScreenListener.done();
+                }
             }
         }, flashTime);
     }
@@ -446,8 +449,10 @@ public class AlertManager
             int timesSoFar = 0;
             @Override
             public void run() {
-                startSingleFlashScreen(STROBE_PERIOD * 2 / 3, colour);
-                if (++timesSoFar >= numStrobes) {
+                if (++timesSoFar < numStrobes) {
+                    startSingleFlashScreen(STROBE_PERIOD * 2 / 3, colour, false);
+                } else {
+                    startSingleFlashScreen(STROBE_PERIOD * 2 / 3, colour, true);
                     this.cancel();
                 }
             }

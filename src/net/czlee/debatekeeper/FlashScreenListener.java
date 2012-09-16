@@ -26,4 +26,5 @@ package net.czlee.debatekeeper;
 public interface FlashScreenListener {
     public void flashScreenOn(int colour);
     public void flashScreenOff();
+    public void done();
 }

@@ -158,6 +158,16 @@ public class DebatingActivity extends Activity {
         public void flashScreenOff() {
             flashScreen(0x00000000);
         }
+
+        @Override
+        public void done() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    updateGui();
+                }
+            });
+        }
     }
 
     private class DebateTimerDisplayOnGestureListener extends SimpleOnGestureListener {
