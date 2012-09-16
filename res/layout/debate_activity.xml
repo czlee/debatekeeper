@@ -14,33 +14,26 @@
 
         <Button
             android:id="@+id/leftControlButton"
-            android:layout_width="0dip"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center"
+            style="@style/controlButton"
             android:layout_weight="1"
             android:text="@string/StartTimerButtonText" />
 
         <Button
             android:id="@+id/centreControlButton"
-            android:layout_width="0dip"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center"
+            style="@style/controlButton"
             android:layout_weight="1"
             android:text="@string/ResetTimerButtonText" />
 
         <Button
             android:id="@+id/rightControlButton"
-            android:layout_width="0dip"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center"
+            style="@style/controlButton"
             android:layout_weight="1"
             android:text="@string/NextSpeakerButtonText" />
 
         <Button
             android:id="@+id/playBellButton"
+            style="@style/controlButton"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
             android:text="@string/PlayBellButtonText" />
     </LinearLayout>
 
