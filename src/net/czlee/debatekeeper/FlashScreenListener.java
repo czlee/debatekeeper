@@ -25,4 +25,5 @@ package net.czlee.debatekeeper;
  */
 public interface FlashScreenListener {
     public void flashScreen(boolean invert);
+    public void done();
 }

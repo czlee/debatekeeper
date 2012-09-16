@@ -342,7 +342,7 @@ public class AlertManager
 
                 switch (mFlashScreenMode) {
                 case SOLID_FLASH:
-                    startSingleFlashScreen(flashTime);
+                    startSingleFlashScreen(flashTime, true);
                     break;
                 case STROBE_FLASH:
                     int numStrobes = (int) (flashTime / STROBE_PERIOD);
@@ -362,7 +362,7 @@ public class AlertManager
      * Flashes the screen once.
      * @param flashTime how long in milliseconds to flash the screen for
      */
-    private void startSingleFlashScreen(long flashTime) {
+    private void startSingleFlashScreen(long flashTime, final boolean lastFlash) {
         // Flash the screen white and set a timer to turn it back normal after half a second
         mFlashScreenListener.flashScreen(true);
         Timer offTimer = new Timer();
@@ -370,6 +370,9 @@ public class AlertManager
             @Override
             public void run() {
                 mFlashScreenListener.flashScreen(false);
+                if (lastFlash) {
+                    mFlashScreenListener.done();
+                }
             }
         }, flashTime);
     }
@@ -395,8 +398,10 @@ public class AlertManager
             int timesSoFar = 0;
             @Override
             public void run() {
-                startSingleFlashScreen(STROBE_PERIOD * 2 / 3);
-                if (++timesSoFar >= numStrobes) {
+                if (++timesSoFar < numStrobes) {
+                    startSingleFlashScreen(STROBE_PERIOD * 2 / 3, false);
+                } else {
+                    startSingleFlashScreen(STROBE_PERIOD * 2 / 3, true);
                     this.cancel();
                 }
             }
