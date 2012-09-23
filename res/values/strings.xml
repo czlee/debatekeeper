@@ -53,5 +53,11 @@
     <string name="ErrorsInXmlFileDialogButton">OK</string>
     <string name="ErrorsInXmlFileDialogMessagePrefix">"There are a few problems with this debate format XML file. I'll try to work with it, but it probably won't work properly. The problems are:\n"</string>
 
-
+	<!-- POI timer -->
+	<string name="PoiTimerInfoDialogTitle">About the POI timer</string>
+	<string name="PoiTimerInfoDialogMessage">Pressing the <b>POI</b> button starts a 15-second countdown for POIs.\n\nIf you don\'t want to use it, you can hide it under <b>Settings &gt; Points of information</b>.</string>
+	<string name="PoiTimerInfoDialogDontShow">Do not show this again</string>
+	<string name="PoiTimerInfoDialogButtonOK">OK</string>
+	<string name="PoiTimerInfoDialogButtonLearnMore">Learn more</string>
+	<string name="PoiTimerMoreInfoUrl">http://tryingtoreason.wordpress.com/debatekeeper/points-of-information/</string>
 </resources>

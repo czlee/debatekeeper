@@ -32,6 +32,7 @@ to be alerted without sound at the 15 second mark?  -->
 <!--         <CheckBoxPreference android:key="@string/PrefPoiBuzzerEnableKey" android:summaryOff="@string/PrefPoiBuzzerEnableOffSummary" android:title="@string/PrefPoiBuzzerEnableTitle" android:summaryOn="@string/PrefPoiBuzzerEnableOnSummary" android:dependency="@string/PrefPoiTimerEnableKey" android:defaultValue="@bool/DefaultPrefPoiBuzzerEnable" /> -->
         <CheckBoxPreference android:key="@string/PrefPoiVibrateEnableKey" android:summaryOff="@string/PrefPoiVibrateEnableOffSummary" android:title="@string/PrefPoiVibrateEnableTitle" android:summaryOn="@string/PrefPoiVibrateEnableOnSummary" android:dependency="@string/PrefPoiTimerEnableKey" android:defaultValue="@bool/DefaultPrefPoiVibrateEnable" />
         <ListPreference android:dialogTitle="@string/PrefPoiFlashScreenModeDialogTitle" android:entryValues="@array/PrefFlashScreenModeValues" android:entries="@array/PrefFlashScreenModeEntries" android:key="@string/PrefPoiFlashScreenModeKey" android:title="@string/PrefFlashScreenModeTitle" android:dependency="@string/PrefPoiTimerEnableKey" android:defaultValue="@string/DefaultPrefPoiFlashScreenMode" />
+        <Preference android:summary="@string/PrefPoiLearnMoreSummary" android:key="@string/PrefPoiLearnMoreKey" android:title="@string/PrefPoiLearnMoreTitle"/>
     </PreferenceScreen></PreferenceCategory><PreferenceCategory android:title="@string/PrefCategoryOvertimeBellsTitle" >
         <CheckBoxPreference
             android:defaultValue="@bool/DefaultPrefOvertimeBellsEnable"

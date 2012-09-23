@@ -201,11 +201,10 @@ public class SpeechFormat {
         if (mFirstPeriodInfo.isPoisAllowed()) return true;
 
         Iterator<BellInfo> bellIterator = mBells.iterator();
-        BellInfo thisBell = null;
 
         while (bellIterator.hasNext()) {
             // Return true as soon as we find one with POIs allowed
-            thisBell = bellIterator.next();
+            BellInfo thisBell = bellIterator.next();
             if (thisBell.getNextPeriodInfo().isPoisAllowed()) return true;
         }
 

@@ -41,6 +41,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -56,6 +57,7 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -93,14 +95,16 @@ public class DebatingActivity extends Activity {
     private UserPreferenceCountDirection mUserCountDirection = UserPreferenceCountDirection.GENERALLY_UP;
     private boolean mPoiTimerEnabled = true;
 
-    private static final String BUNDLE_SUFFIX_DEBATE_MANAGER           = "dm";
-    private static final String PREFERENCE_XML_FILE_NAME               = "xmlfn";
-    private static final String DIALOG_BUNDLE_FATAL_MESSAGE            = "fm";
-    private static final String DIALOG_BUNDLE_XML_ERROR_LOG            = "xel";
+    private static final String BUNDLE_SUFFIX_DEBATE_MANAGER = "dm";
+    private static final String PREFERENCE_XML_FILE_NAME     = "xmlfn";
+    private static final String DO_NOT_SHOW_POI_TIMER_DIALOG = "dnspoi";
+    private static final String DIALOG_BUNDLE_FATAL_MESSAGE  = "fm";
+    private static final String DIALOG_BUNDLE_XML_ERROR_LOG  = "xel";
 
-    private static final int    CHOOSE_STYLE_REQUEST          = 0;
-    private static final int    DIALOG_XML_FILE_FATAL         = 0;
-    private static final int    DIALOG_XML_FILE_ERRORS        = 1;
+    private static final int    CHOOSE_STYLE_REQUEST   = 0;
+    private static final int    DIALOG_XML_FILE_FATAL  = 0;
+    private static final int    DIALOG_XML_FILE_ERRORS = 1;
+    private static final int    DIALOG_POI_TIMERS_INFO = 2;
 
     private DebatingTimerService.DebatingTimerServiceBinder mBinder;
     private final BroadcastReceiver mGuiUpdateBroadcastReceiver = new GuiUpdateBroadcastReceiver();
@@ -532,6 +536,8 @@ public class DebatingActivity extends Activity {
             return getFatalProblemWithXmlFileDialog(bundle);
         case DIALOG_XML_FILE_ERRORS:
             return getErrorsWithXmlFileDialog(bundle);
+        case DIALOG_POI_TIMERS_INFO:
+            return getPoiTimerInfoDialog();
         }
         return super.onCreateDialog(id);
     }
@@ -913,6 +919,41 @@ public class DebatingActivity extends Activity {
         return builder.create();
     }
 
+    private Dialog getPoiTimerInfoDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        View content = getLayoutInflater().inflate(R.layout.poi_timer_dialog, null);
+        final CheckBox doNotShowAgain = (CheckBox) content.findViewById(R.id.poiTimerInfoDialogDontShow);
+
+        builder.setTitle(R.string.PoiTimerInfoDialogTitle)
+               .setView(content)
+               .setCancelable(false)
+               .setPositiveButton(R.string.PoiTimerInfoDialogButtonOK, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        // Take note of "do not show again" setting
+                        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+                        Editor editor = prefs.edit();
+                        editor.putBoolean(DO_NOT_SHOW_POI_TIMER_DIALOG, doNotShowAgain.isChecked());
+                        editor.commit();
+
+                        dialog.dismiss();
+                    }
+                })
+               .setNeutralButton(R.string.PoiTimerInfoDialogButtonLearnMore, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Uri uri = Uri.parse(getString(R.string.PoiTimerMoreInfoUrl));
+                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        startActivity(intent);
+                    }
+                });
+
+        return builder.create();
+
+    }
+
     /**
      * Goes to the next speech.
      * Does nothing if there is no debate loaded, if the current speech is the last speech, if
@@ -996,6 +1037,11 @@ public class DebatingActivity extends Activity {
                 mDebateManager.restoreState(BUNDLE_SUFFIX_DEBATE_MANAGER, mLastStateBundle);
                 mLastStateBundle = null;
             }
+
+            SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+            if (!prefs.getBoolean(DO_NOT_SHOW_POI_TIMER_DIALOG, false))
+                if (df.hasPoisAllowedSomewhere())
+                    showDialog(DIALOG_POI_TIMERS_INFO);
         }
 
         applyPreferences();

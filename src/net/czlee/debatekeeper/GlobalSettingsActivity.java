@@ -20,8 +20,10 @@ package net.czlee.debatekeeper;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -47,6 +49,7 @@ public class GlobalSettingsActivity extends PreferenceActivity {
     private static String KEY_COUNT_DIRECTION;
     private static String KEY_FLASH_SCREEN_MODE;
     private static String KEY_POI_FLASH_SCREEN_MODE;
+    private static String KEY_POI_TIMER_LEARN_MORE;
 
     private static String KEY_POI_TIMER_ENABLE;
     private static String KEY_POI_SCREEN;
@@ -82,6 +85,7 @@ public class GlobalSettingsActivity extends PreferenceActivity {
         KEY_COUNT_DIRECTION       = getString(R.string.PrefCountDirectionKey);
         KEY_FLASH_SCREEN_MODE     = getString(R.string.PrefFlashScreenModeKey);
         KEY_POI_FLASH_SCREEN_MODE = getString(R.string.PrefPoiFlashScreenModeKey);
+        KEY_POI_TIMER_LEARN_MORE  = getString(R.string.PrefPoiLearnMoreKey);
 
         KEY_POI_TIMER_ENABLE      = getString(R.string.PrefPoiTimerEnableKey);
         KEY_POI_SCREEN            = getString(R.string.PrefScreenPoiKey);
@@ -111,6 +115,18 @@ public class GlobalSettingsActivity extends PreferenceActivity {
         updateListPreferenceSummary(KEY_FLASH_SCREEN_MODE);
         updateListPreferenceSummary(KEY_POI_FLASH_SCREEN_MODE);
         updatePoiScreenSummary();
+
+        // Set what the "Learn More" option in POIs timer sub-screen does
+        getPreferenceManager().findPreference(KEY_POI_TIMER_LEARN_MORE)
+            .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Uri uri = Uri.parse(getString(R.string.PoiTimerMoreInfoUrl));
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                    return true;
+                }
+            });
 
     }
 
