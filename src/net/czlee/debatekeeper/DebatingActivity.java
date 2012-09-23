@@ -927,7 +927,7 @@ public class DebatingActivity extends Activity {
 
         builder.setTitle(R.string.PoiTimerInfoDialogTitle)
                .setView(content)
-               .setCancelable(false)
+               .setCancelable(true)
                .setPositiveButton(R.string.PoiTimerInfoDialogButtonOK, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -947,6 +947,12 @@ public class DebatingActivity extends Activity {
                         Uri uri = Uri.parse(getString(R.string.PoiTimerMoreInfoUrl));
                         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                         startActivity(intent);
+                    }
+                })
+                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        dialog.dismiss();
                     }
                 });
 
