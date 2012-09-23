@@ -109,7 +109,7 @@
 	<string name="PrefPoiScreenSummaryWhenEnabled">Change settings for the POIs timer (enabled)</string>
 	<string name="PrefPoiScreenSummaryWhenDisabled">Change settings for the POIs timer (disabled)</string>
 	
-    <string name="PrefPoiTimerEnableTitle">Enable POIs timer</string>
+    <string name="PrefPoiTimerEnableTitle">Show POIs timer</string>
     <string name="PrefPoiTimerEnableOnSummary">Show the POIs timer when appropriate</string>
     <string name="PrefPoiTimerEnableOffSummary">Hide the POIs timer</string>
     <bool   name="DefaultPrefPoiTimerEnable">true</bool>
