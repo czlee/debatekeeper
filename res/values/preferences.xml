@@ -134,6 +134,6 @@
     <!-- For the entries and entry values, use the same ones as the main flash screen preference -->
 
 	<string name="PrefPoiLearnMoreTitle">Learn more</string>
-	<string name="PrefPoiLearnMoreSummary">Learn more about the POIs timer (launches browser)</string>
+	<string name="PrefPoiLearnMoreSummary">Learn more about the POIs timer (launches web browser)</string>
 
 </resources>
