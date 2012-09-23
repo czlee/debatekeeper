@@ -1047,7 +1047,8 @@ public class DebatingActivity extends Activity {
             SharedPreferences prefs = getPreferences(MODE_PRIVATE);
             if (!prefs.getBoolean(DO_NOT_SHOW_POI_TIMER_DIALOG, false))
                 if (df.hasPoisAllowedSomewhere())
-                    showDialog(DIALOG_POI_TIMERS_INFO);
+                    if (mPoiTimerEnabled)
+                        showDialog(DIALOG_POI_TIMERS_INFO);
         }
 
         applyPreferences();
