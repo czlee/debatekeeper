@@ -9,12 +9,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:paddingTop="4dip"
-            android:text="Leader of the Opposition"
             android:gravity="center_horizontal"
             android:textSize="20dip" />
 
         <TextView
-            android:text="Warning bell rung"
             android:id="@+id/periodDescriptionText"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -23,7 +21,6 @@
             android:textSize="14dip" />
 
         <TextView
-            android:text="00:00"
             android:id="@+id/currentTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,7 +29,6 @@
             android:textSize="72dip" />
 
         <TextView
-            android:text="The length of this speech is 07:00"
             android:id="@+id/finalTime"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -41,7 +37,6 @@
             android:gravity="center_horizontal" />
 
         <TextView
-            android:text="The next bell is at 09:00"
             android:id="@+id/nextTime"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
