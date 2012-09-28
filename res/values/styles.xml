@@ -5,7 +5,8 @@
         <item name="android:layout_width">0dip</item>
         <item name="android:layout_height">fill_parent</item>
         <item name="android:layout_gravity">center</item>
-        <item name="android:padding">4dip</item>
+        <item name="android:padding">6dip</item>
+        <item name="android:layout_weight">1</item>
     </style>
     
 </resources>

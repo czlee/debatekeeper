@@ -15,19 +15,16 @@
         <Button
             android:id="@+id/leftControlButton"
             style="@style/controlButton"
-            android:layout_weight="1"
             android:text="@string/StartTimerButtonText" />
 
         <Button
             android:id="@+id/centreControlButton"
             style="@style/controlButton"
-            android:layout_weight="1"
             android:text="@string/ResetTimerButtonText" />
 
         <Button
             android:id="@+id/rightControlButton"
             style="@style/controlButton"
-            android:layout_weight="1"
             android:text="@string/NextSpeakerButtonText" />
 
         <Button

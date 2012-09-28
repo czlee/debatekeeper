@@ -5,6 +5,7 @@
 
         <TextView
             android:id="@+id/speechNameText"
+            android:text="Leader of the Opposition"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
@@ -15,6 +16,7 @@
         <TextView
             android:id="@+id/periodDescriptionText"
             android:layout_width="fill_parent"
+            android:text="Warning bell rung"
             android:layout_height="wrap_content"
             android:layout_below="@id/speechNameText"
             android:gravity="center_horizontal"
@@ -23,6 +25,7 @@
         <TextView
             android:id="@+id/currentTime"
             android:layout_width="wrap_content"
+            android:text="00:00"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center"
@@ -31,6 +34,7 @@
         <TextView
             android:id="@+id/finalTime"
             android:layout_width="fill_parent"
+            android:text="The length of this speech is 07:00"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="4dip"
@@ -39,6 +43,7 @@
         <TextView
             android:id="@+id/nextTime"
             android:layout_width="fill_parent"
+            android:text="The next bell is at 07:00"
             android:layout_height="wrap_content"
             android:layout_above="@id/finalTime"
             android:gravity="center_horizontal" />
