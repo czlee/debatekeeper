@@ -32,8 +32,9 @@
 
         <Button
             android:id="@+id/playBellButton"
-            style="@style/controlButton"
             android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:layout_height="fill_parent"
             android:text="@string/PlayBellButtonText" />
     </LinearLayout>
 
