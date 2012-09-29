@@ -178,7 +178,6 @@ public class DebatingActivity extends Activity {
 
         // Constants for touch gesture sensitivity
         private static final float SWIPE_MIN_DISTANCE = 80;
-        private static final float SWIPE_MAX_OFF_PATH = 250;
         private static final float SWIPE_THRESHOLD_VELOCITY = 200;
         @Override
         public boolean onDown(MotionEvent e) {
@@ -192,13 +191,23 @@ public class DebatingActivity extends Activity {
             // The goToNextSpeech() and goToPreviousSpeech() methods check that the debate manager
             // is in a valid state, so we don't have to here.
 
-            // If we go too far up or down, ignore as it's then not a horizontal swipe
-            if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
+            float distanceX = e2.getX() - e1.getX();
+            float distanceY = e2.getY() - e1.getY();
+
+            // Log.v(this.getClass().getSimpleName(), String.format("dX=%.1f dY=%.1f Xv=%.1f Yv=%.1f",
+            //                 distanceX, distanceY, velocityX, velocityY));
+
+            // If we go further up/down than left/right, ignore as it's then not a horizontal swipe
+            if (Math.abs(distanceY) > Math.abs(distanceX))
+                return false;
+
+            // If the distance and velocity aren't in the same direction, then ignore for confusion
+            if (Math.signum(distanceX) != Math.signum(velocityX))
                 return false;
 
             // If we go left or right far enough, then it's a horizontal swipe.
             // Check for the direction.
-            if (Math.abs(e1.getX() - e2.getX()) > SWIPE_MIN_DISTANCE) {
+            if (Math.abs(distanceX) > SWIPE_MIN_DISTANCE) {
                 if (velocityX < -SWIPE_THRESHOLD_VELOCITY) {
                     goToNextSpeech();
                 } else if (velocityX > SWIPE_THRESHOLD_VELOCITY) {
