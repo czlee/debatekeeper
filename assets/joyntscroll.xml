@@ -9,92 +9,92 @@
 
 	<resource ref="#all">
 		<period ref="warning">
-            <description>Warning bell rung</description>
-            <bgcolor>#77ffcc00</bgcolor>
+			<description>Warning bell rung</description>
+			<bgcolor>#77ffcc00</bgcolor>
 		</period>
 		<period ref="overtime">
-            <description>Overtime</description>
-            <bgcolor>#77ff0000</bgcolor>
-        </period>
+			<description>Overtime</description>
+			<bgcolor>#77ff0000</bgcolor>
+		</period>
 	</resource>
 
 	<speechtype ref="substantive">
-        <length>10:00</length>
-        <firstperiod ref="firstmin"/>
-        <period ref="firstmin">
-            <description>First minute</description>
-            <bgcolor>#stay</bgcolor>
-        </period>
+		<length>10:00</length>
+		<firstperiod ref="firstmin"/>
+		<period ref="firstmin">
+			<description>First minute</description>
+			<bgcolor>#stay</bgcolor>
+		</period>
 		<period ref="pois-allowed">
-            <description>POIs allowed</description>
-            <bgcolor>#7700ff00</bgcolor>
-            <pois-allowed/>
+			<description>POIs allowed</description>
+			<bgcolor>#7700ff00</bgcolor>
+			<pois-allowed/>
 		</period>
 		<bell>
-            <time>1:00</time>
-            <number>1</number>
-            <nextperiod ref="pois-allowed"/>
-            <sound>#default</sound>
-        </bell>
-        <bell>
-            <time refpoint="finish">-1:00</time>
-            <number>1</number>
-            <nextperiod ref="warning"/>
-            <sound>#default</sound>
-        </bell>
-        <bell>
-            <time refpoint="finish">0</time>
-            <number>2</number>
-            <nextperiod ref="overtime"/>
-            <sound>#default</sound>
-        </bell>
+			<time>1:00</time>
+			<number>1</number>
+			<nextperiod ref="pois-allowed"/>
+			<sound>#default</sound>
+		</bell>
+		<bell>
+			<time refpoint="finish">-1:00</time>
+			<number>1</number>
+			<nextperiod ref="warning"/>
+			<sound>#default</sound>
+		</bell>
+		<bell>
+			<time refpoint="finish">0</time>
+			<number>2</number>
+			<nextperiod ref="overtime"/>
+			<sound>#default</sound>
+		</bell>
 	</speechtype>
 
 	<speechtype ref="reply">
-        <length>5:00</length>
-        <firstperiod ref="main"/>
-        <period ref="main">
-            <description>Main part</description>
-            <bgcolor>#stay</bgcolor>
-        </period>
-        <bell>
-            <time refpoint="finish">-1:00</time>
-            <number>1</number>
-            <nextperiod ref="warning"/>
-            <sound>#default</sound>
-        </bell>
-        <bell>
-            <time refpoint="finish">0</time>
-            <number>2</number>
-            <nextperiod ref="overtime"/>
-            <sound>#default</sound>
-        </bell>
+		<length>5:00</length>
+		<firstperiod ref="main"/>
+		<period ref="main">
+			<description>Main part</description>
+			<bgcolor>#stay</bgcolor>
+		</period>
+		<bell>
+			<time refpoint="finish">-1:00</time>
+			<number>1</number>
+			<nextperiod ref="warning"/>
+			<sound>#default</sound>
+		</bell>
+		<bell>
+			<time refpoint="finish">0</time>
+			<number>2</number>
+			<nextperiod ref="overtime"/>
+			<sound>#default</sound>
+		</bell>
 	</speechtype>
 
 	<speeches>
 		<speech type="substantive">
-            <name>1st Affirmative</name>
+			<name>1st Affirmative</name>
 		</speech>
-        <speech type="substantive">
-            <name>1st Negative</name>
-        </speech>
-        <speech type="substantive">
-            <name>2nd Affirmative</name>
-        </speech>
-        <speech type="substantive">
-            <name>2nd Negative</name>
-        </speech>
-        <speech type="substantive">
-            <name>3rd Affirmative</name>
-        </speech>
-        <speech type="substantive">
-            <name>3rd Negative</name>
-        </speech>
-        <speech type="reply">
-            <name>Negative Leader's Reply</name>
-        </speech>
-        <speech type="reply">
-            <name>Affirmative Leader's Reply</name>
-        </speech>
+		<speech type="substantive">
+			<name>1st Negative</name>
+		</speech>
+		<speech type="substantive">
+			<name>2nd Affirmative</name>
+		</speech>
+		<speech type="substantive">
+			<name>2nd Negative</name>
+		</speech>
+		<speech type="substantive">
+			<name>3rd Affirmative</name>
+		</speech>
+		<speech type="substantive">
+			<name>3rd Negative</name>
+		</speech>
+		<speech type="reply">
+			<name>Negative Leader's Reply</name>
+		</speech>
+		<speech type="reply">
+			<name>Affirmative Leader's Reply</name>
+		</speech>
 	</speeches>
 </debateformat>
