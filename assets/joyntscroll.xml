@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<debateformat name="Joynt Scroll" schemaversion="2.0">
+<debateformat schemaversion="2.0">
+	<name>Joynt Scroll</name>
+
 	<info>
 		<region>New Zealand</region>
 		<level>University</level>
