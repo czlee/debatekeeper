@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<debateformat name="Joynt Scroll" schemaversion="1.0">
+<debateformat name="Joynt Scroll" schemaversion="2.0">
 	<info>
 		<region>New Zealand</region>
 		<level>University</level>
@@ -8,32 +8,93 @@
 	</info>
 
 	<resource ref="#all">
-		<period ref="warning" desc="Warning bell rung" bgcolor="#77ffcc00" />
-		<period ref="overtime" desc="Overtime" bgcolor="#77ff0000" />
+		<period ref="warning">
+            <description>Warning bell rung</description>
+            <bgcolor>#77ffcc00</bgcolor>
+		</period>
+		<period ref="overtime">
+            <description>Overtime</description>
+            <bgcolor>#77ff0000</bgcolor>
+        </period>
 	</resource>
 
-	<speechtype ref="substantive" length="10:00" firstperiod="firstmin">
-		<period ref="firstmin" desc="First minute" bgcolor="#stay" />
-		<period ref="pois-allowed" desc="POIs allowed" bgcolor="#7700ff00" poisallowed="true" />
-		<bell time="1:00" number="1" nextperiod="pois-allowed" sound="#default" />
-		<bell time="9:00" number="1" nextperiod="warning" sound="#default" />
-		<bell time="finish" number="2" nextperiod="overtime" sound="#default" />
+	<speechtype ref="substantive">
+        <length>10:00</length>
+        <firstperiod ref="firstmin"/>
+        <period ref="firstmin">
+            <description>First minute</description>
+            <bgcolor>#stay</bgcolor>
+        </period>
+		<period ref="pois-allowed">
+            <description>POIs allowed</description>
+            <bgcolor>#7700ff00</bgcolor>
+            <pois-allowed/>
+		</period>
+		<bell>
+            <time>1:00</time>
+            <number>1</number>
+            <nextperiod ref="pois-allowed"/>
+            <sound>#default</sound>
+        </bell>
+        <bell>
+            <time refpoint="finish">-1:00</time>
+            <number>1</number>
+            <nextperiod ref="warning"/>
+            <sound>#default</sound>
+        </bell>
+        <bell>
+            <time refpoint="finish">0</time>
+            <number>2</number>
+            <nextperiod ref="overtime"/>
+            <sound>#default</sound>
+        </bell>
 	</speechtype>
 
-	<speechtype ref="reply" length="5:00" firstperiod="main">
-		<period ref="main" desc="Main part" bgcolor="#stay" />
-		<bell time="4:00" number="1" nextperiod="warning" sound="#default" />
-		<bell time="finish" number="2" nextperiod="overtime" sound="#default" />
+	<speechtype ref="reply">
+        <length>5:00</length>
+        <firstperiod ref="main"/>
+        <period ref="main">
+            <description>Main part</description>
+            <bgcolor>#stay</bgcolor>
+        </period>
+        <bell>
+            <time refpoint="finish">-1:00</time>
+            <number>1</number>
+            <nextperiod ref="warning"/>
+            <sound>#default</sound>
+        </bell>
+        <bell>
+            <time refpoint="finish">0</time>
+            <number>2</number>
+            <nextperiod ref="overtime"/>
+            <sound>#default</sound>
+        </bell>
 	</speechtype>
 
 	<speeches>
-		<speech name="1st Affirmative" type="substantive" />
-		<speech name="1st Negative" type="substantive" />
-		<speech name="2nd Affirmative" type="substantive" />
-		<speech name="2nd Negative" type="substantive" />
-		<speech name="3rd Affirmative" type="substantive" />
-		<speech name="3rd Negative" type="substantive" />
-		<speech name="Negative Leader's Reply" type="reply" />
-		<speech name="Affirmative Leader's Reply" type="reply" />
+		<speech type="substantive">
+            <name>1st Affirmative</name>
+		</speech>
+        <speech type="substantive">
+            <name>1st Negative</name>
+        </speech>
+        <speech type="substantive">
+            <name>2nd Affirmative</name>
+        </speech>
+        <speech type="substantive">
+            <name>2nd Negative</name>
+        </speech>
+        <speech type="substantive">
+            <name>3rd Affirmative</name>
+        </speech>
+        <speech type="substantive">
+            <name>3rd Negative</name>
+        </speech>
+        <speech type="reply">
+            <name>Negative Leader's Reply</name>
+        </speech>
+        <speech type="reply">
+            <name>Affirmative Leader's Reply</name>
+        </speech>
 	</speeches>
 </debateformat>
