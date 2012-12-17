@@ -9,69 +9,71 @@
 		<desc>3 vs 3, 10-minute speeches, 5-minute replies, POIs allowed</desc>
 	</info>
 
-	<resource ref="#all">
-		<period ref="warning">
-			<description>Warning bell rung</description>
-			<bgcolor>#77ffcc00</bgcolor>
-		</period>
-		<period ref="overtime">
-			<description>Overtime</description>
-			<bgcolor>#77ff0000</bgcolor>
-		</period>
-	</resource>
+	<speechtypes>
+		<resource ref="#all">
+			<period ref="warning">
+				<description>Warning bell rung</description>
+				<bgcolor>#77ffcc00</bgcolor>
+			</period>
+			<period ref="overtime">
+				<description>Overtime</description>
+				<bgcolor>#77ff0000</bgcolor>
+			</period>
+		</resource>
 
-	<speechtype ref="substantive">
-		<length>10:00</length>
-		<firstperiod ref="firstmin"/>
-		<period ref="firstmin">
-			<description>First minute</description>
-			<bgcolor>#stay</bgcolor>
-		</period>
-		<period ref="pois-allowed">
-			<description>POIs allowed</description>
-			<bgcolor>#7700ff00</bgcolor>
-			<pois-allowed/>
-		</period>
-		<bell>
-			<time>1:00</time>
-			<number>1</number>
-			<nextperiod ref="pois-allowed"/>
-			<sound>#default</sound>
-		</bell>
-		<bell>
-			<time refpoint="finish">-1:00</time>
-			<number>1</number>
-			<nextperiod ref="warning"/>
-			<sound>#default</sound>
-		</bell>
-		<bell>
-			<time refpoint="finish">0</time>
-			<number>2</number>
-			<nextperiod ref="overtime"/>
-			<sound>#default</sound>
-		</bell>
-	</speechtype>
+		<speechtype ref="substantive">
+			<length>10:00</length>
+			<firstperiod ref="firstmin"/>
+			<period ref="firstmin">
+				<description>First minute</description>
+				<bgcolor>#stay</bgcolor>
+			</period>
+			<period ref="pois-allowed">
+				<description>POIs allowed</description>
+				<bgcolor>#7700ff00</bgcolor>
+				<pois-allowed/>
+			</period>
+			<bell>
+				<time>1:00</time>
+				<number>1</number>
+				<nextperiod ref="pois-allowed"/>
+				<sound>#default</sound>
+			</bell>
+			<bell>
+				<time refpoint="finish">-1:00</time>
+				<number>1</number>
+				<nextperiod ref="warning"/>
+				<sound>#default</sound>
+			</bell>
+			<bell>
+				<time refpoint="finish">0</time>
+				<number>2</number>
+				<nextperiod ref="overtime"/>
+				<sound>#default</sound>
+			</bell>
+		</speechtype>
 
-	<speechtype ref="reply">
-		<length>5:00</length>
-		<firstperiod ref="main"/>
-		<period ref="main">
-			<description>Main part</description>
-			<bgcolor>#stay</bgcolor>
-		</period>
-		<bell>
-			<time refpoint="finish">-1:00</time>
-			<number>1</number>
-			<nextperiod ref="warning"/>
-			<sound>#default</sound>
-		</bell>
-		<bell>
-			<time refpoint="finish">0</time>
-			<number>2</number>
-			<nextperiod ref="overtime"/>
-			<sound>#default</sound>
-		</bell>
-	</speechtype>
+		<speechtype ref="reply">
+			<length>5:00</length>
+			<firstperiod ref="main"/>
+			<period ref="main">
+				<description>Main part</description>
+				<bgcolor>#stay</bgcolor>
+			</period>
+			<bell>
+				<time refpoint="finish">-1:00</time>
+				<number>1</number>
+				<nextperiod ref="warning"/>
+				<sound>#default</sound>
+			</bell>
+			<bell>
+				<time refpoint="finish">0</time>
+				<number>2</number>
+				<nextperiod ref="overtime"/>
+				<sound>#default</sound>
+			</bell>
+		</speechtype>
+	</speechtypes>
 
 	<speeches>
 		<speech type="substantive">
