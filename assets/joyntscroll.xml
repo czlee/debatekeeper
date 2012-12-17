@@ -19,6 +19,18 @@
 				<description>Overtime</description>
 				<bgcolor>#77ff0000</bgcolor>
 			</period>
+			<bell>
+				<time relativeto="finish">-1:00</time>
+				<number>1</number>
+				<nextperiod ref="warning"/>
+				<sound>#default</sound>
+			</bell>
+			<bell>
+				<time relativeto="finish">0</time>
+				<number>2</number>
+				<nextperiod ref="overtime"/>
+				<sound>#default</sound>
+			</bell>
 		</resource>
 
 		<speechtype ref="substantive">
@@ -39,18 +51,6 @@
 				<nextperiod ref="pois-allowed"/>
 				<sound>#default</sound>
 			</bell>
-			<bell>
-				<time refpoint="finish">-1:00</time>
-				<number>1</number>
-				<nextperiod ref="warning"/>
-				<sound>#default</sound>
-			</bell>
-			<bell>
-				<time refpoint="finish">0</time>
-				<number>2</number>
-				<nextperiod ref="overtime"/>
-				<sound>#default</sound>
-			</bell>
 		</speechtype>
 
 		<speechtype ref="reply">
@@ -60,18 +60,6 @@
 				<description>Main part</description>
 				<bgcolor>#stay</bgcolor>
 			</period>
-			<bell>
-				<time refpoint="finish">-1:00</time>
-				<number>1</number>
-				<nextperiod ref="warning"/>
-				<sound>#default</sound>
-			</bell>
-			<bell>
-				<time refpoint="finish">0</time>
-				<number>2</number>
-				<nextperiod ref="overtime"/>
-				<sound>#default</sound>
-			</bell>
 		</speechtype>
 	</speechtypes>
 
