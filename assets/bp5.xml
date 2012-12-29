@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <debateformat name="British Parliamentary (5 minutes)" schemaversion="1.0">
 	<info>
-		<region>World</region>
+		<region>UK</region>
 		<level>University</level>
+		<usedat>Various UK IVs/Opens</usedat>
+		<usedat>Welsh Novices</usedat>
 		<desc>Four teams of two, 15 minutes prep, 5 minute speeches, POIs allowed</desc>
 	</info>
 
