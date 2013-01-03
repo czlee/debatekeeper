@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="" xmlns="http://relaxng.org/ns/structure/1.0"
+         datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+         xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">
+
+    <start>
+
+        <element name="debateformat">
+
+            <attribute name="schemaversion">
+                <value>2.0</value>
+            </attribute>
+
+            <element name="name">
+                <data type="string"/>
+            </element>
+
+            <element name="info">
+                <interleave>
+                    <zeroOrMore>
+                        <element name="region">
+                            <data type="string"/>
+                        </element>
+                    </zeroOrMore>
+                    <zeroOrMore>
+                        <element name="level">
+                            <data type="string"/>
+                        </element>
+                    </zeroOrMore>
+                    <zeroOrMore>
+                        <element name="usedat">
+                            <data type="string"/>
+                        </element>
+                    </zeroOrMore>
+                    <ref name="common.description"/>
+                </interleave>
+            </element>
+
+            <element name="speechtypes">
+
+                <interleave>
+
+                    <zeroOrMore>
+                        <element name="resource">
+                            <ref name="common.speechelementscontainer"/>
+                        </element>
+                    </zeroOrMore>
+
+                    <zeroOrMore>
+                        <element name="speechtype">
+                            <interleave>
+                                <element name="length">
+                                    <data type="string"/>
+                                </element>
+                                <element name="firstperiod">
+                                    <attribute name="ref">
+                                        <data type="string"/>
+                                    </attribute>
+                                </element>
+                            </interleave>
+                            <interleave>
+                                <zeroOrMore>
+                                    <element name="resource">
+                                        <attribute name="ref">
+                                            <data type="string"/>
+                                        </attribute>
+                                    </element>
+                                </zeroOrMore>
+                                <ref name="common.speechelementscontainer"/>
+                            </interleave>
+                        </element>
+                    </zeroOrMore>
+                </interleave>
+
+            </element>
+
+            <element name="speeches">
+                <oneOrMore>
+                    <element name="speech">
+                        <attribute name="type">
+                            <data type="string"/>
+                        </attribute>
+
+                        <element name="name">
+                            <data type="string"/>
+                        </element>
+                    </element>
+                </oneOrMore>
+            </element>
+
+        </element>
+
+    </start>
+
+    <define name="common.speechelementscontainer">
+        <attribute name="ref">
+            <data type="string"/>
+        </attribute>
+        <interleave>
+            <zeroOrMore>
+                <ref name="common.period"/>
+            </zeroOrMore>
+            <zeroOrMore>
+                <ref name="common.bell"/>
+            </zeroOrMore>
+        </interleave>
+    </define>
+
+    <define name="common.period">
+        <element name="period">
+            <attribute name="ref">
+                <data type="string"/>
+            </attribute>
+            <interleave>
+                <ref name="common.description"/>
+                <element name="bgcolor">
+                    <data type="string"/>
+                </element>
+                <optional>
+                    <element name="pois-allowed">
+                        <empty/>
+                    </element>
+                </optional>
+            </interleave>
+        </element>
+    </define>
+
+    <define name="common.bell">
+        <element name="bell">
+            <interleave>
+                <element name="time">
+                    <optional>
+                        <attribute name="relativeto">
+                            <choice>
+                                <value>start</value>
+                                <value>finish</value>
+                            </choice>
+                        </attribute>
+                    </optional>
+                    <data type="string"/>
+                </element>
+                <element name="number">
+                    <data type="integer"/>
+                </element>
+                <element name="nextperiod">
+                    <attribute name="ref">
+                        <data type="string"/>
+                    </attribute>
+                </element>
+                <element name="sound">
+                    <data type="string"/>
+                </element>
+            </interleave>
+        </element>
+    </define>
+
+    <define name="common.description">
+        <element name="description">
+            <data type="string"/>
+        </element>
+    </define>
+
+</grammar>
