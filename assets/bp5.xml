@@ -8,13 +8,6 @@
 		<desc>Four teams of two, 15 minutes prep, 5 minute speeches, POIs allowed</desc>
 	</info>
 
-	<speechtype ref="prep" length="15:00" firstperiod="prepare" countdir="down">
-		<period ref="prepare" desc="Prepare debate" />
-		<period ref="final5" desc="Last 5 minutes" />
-		<bell time="10:00" number="1" nextperiod="final5" />
-		<bell time="finish" number="2" />
-	</speechtype>
-
 	<speechtype ref="all" length="5:00" firstperiod="initial">
 		<period ref="initial" desc="First minute" bgcolor="#stay" />
 		<period ref="pois-allowed" desc="POIs allowed" bgcolor="#7700ff00" poisallowed="true"/>
@@ -26,7 +19,6 @@
 	</speechtype>
 
 	<speeches>
-		<speech name="Preparation Time" type="prep" />
 		<speech name="Prime Minister" type="all" />
 		<speech name="Leader of the Opposition" type="all" />
 		<speech name="Deputy Prime Minister" type="all" />
