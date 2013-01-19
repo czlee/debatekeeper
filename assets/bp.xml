@@ -8,6 +8,8 @@
 		<usedat>Pan-African Universities Debating Championships</usedat>
 		<desc>Four teams of two, 7 minute speeches, POIs allowed</desc>
 	</info>
+	
+	<preptime length="15:00" />
 
 	<speechtype ref="all" length="7:00" firstperiod="initial">
 		<period ref="initial" desc="First minute" bgcolor="#stay" />

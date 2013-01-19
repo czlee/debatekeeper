@@ -12,15 +12,17 @@
 		<period ref="warning" desc="Warning bell rung" bgcolor="#77ffcc00" />
 		<period ref="overtime" desc="Overtime" bgcolor="#77ff0000" />
 	</resource>
-
-	<speechtype ref="prep" length="7:00" firstperiod="moot" countdir="down">
-		<period ref="moot" desc="Choose moot" />
-		<period ref="side" desc="Choose side" />
-		<period ref="prepare" desc="Prepare debate" />
-		<bell time="1:00" number="1" nextperiod="side" pauseonbell="true" />
-		<bell time="2:00" number="1" nextperiod="prepare" pauseonbell="true" />
+	
+	<periodtypes>
+		<period ref="easters.moot" desc="Choose moot" />
+		<period ref="easters.side" desc="Choose side" />
+	</periodtypes>
+	
+	<preptime length="7:00" firstperiod="easters.moot">
+		<bell time="1:00" number="1" nextperiod="easters.side" pauseonbell="true" />
+		<bell time="2:00" number="1" nextperiod="normal" pauseonbell="true" />
 		<bell time="finish" number="2" />
-	</speechtype>
+	</preptime>
 
 	<speechtype ref="substantive" length="6:00" firstperiod="initial">
 		<include resource="speeches" />
