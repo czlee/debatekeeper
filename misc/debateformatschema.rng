@@ -5,9 +5,9 @@
 
     <start>
 
-        <element name="debateformat">
+        <element name="debate-format">
 
-            <attribute name="schemaversion">
+            <attribute name="schema-version">
                 <value>2.0</value>
             </attribute>
 
@@ -28,7 +28,7 @@
                         </element>
                     </zeroOrMore>
                     <zeroOrMore>
-                        <element name="usedat">
+                        <element name="used-at">
                             <data type="string"/>
                         </element>
                     </zeroOrMore>
@@ -36,7 +36,7 @@
                 </interleave>
             </element>
 
-            <element name="speechtypes">
+            <element name="speech-types">
 
                 <interleave>
 
@@ -47,12 +47,12 @@
                     </zeroOrMore>
 
                     <zeroOrMore>
-                        <element name="speechtype">
+                        <element name="speech-type">
                             <interleave>
                                 <element name="length">
                                     <data type="string"/>
                                 </element>
-                                <element name="firstperiod">
+                                <element name="first-period">
                                     <attribute name="ref">
                                         <data type="string"/>
                                     </attribute>
@@ -130,7 +130,7 @@
             <interleave>
                 <element name="time">
                     <optional>
-                        <attribute name="relativeto">
+                        <attribute name="relative-to">
                             <choice>
                                 <value>start</value>
                                 <value>finish</value>
@@ -142,7 +142,7 @@
                 <element name="number">
                     <data type="integer"/>
                 </element>
-                <element name="nextperiod">
+                <element name="next-period">
                     <attribute name="ref">
                         <data type="string"/>
                     </attribute>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<debate-format schemaversion="2.0">
+<debate-format schema-version="2.0">
 	<name>Joynt Scroll</name>
 
 	<info>
 		<region>New Zealand</region>
 		<level>University</level>
-		<usedat>New Zealand Universities Prepared Debating Championships</usedat>
+		<used-at>New Zealand Universities Prepared Debating Championships</used-at>
 		<description>3 vs 3, 10-minute speeches, 5-minute replies, POIs allowed</description>
 	</info>
 
@@ -20,13 +20,13 @@
 				<bgcolor>#77ff0000</bgcolor>
 			</period>
 			<bell>
-				<time relativeto="finish">-1:00</time>
+				<time relative-to="finish">-1:00</time>
 				<number>1</number>
 				<next-period ref="warning"/>
 				<sound>#default</sound>
 			</bell>
 			<bell>
-				<time relativeto="finish">0</time>
+				<time relative-to="finish">0</time>
 				<number>2</number>
 				<next-period ref="overtime"/>
 				<sound>#default</sound>
