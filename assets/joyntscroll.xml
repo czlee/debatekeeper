@@ -10,56 +10,39 @@
 	</info>
 
 	<speech-types>
-		<resource ref="#all">
-			<period ref="warning">
-				<description>Warning bell rung</description>
-				<bgcolor>#77ffcc00</bgcolor>
-			</period>
-			<period ref="overtime">
-				<description>Overtime</description>
-				<bgcolor>#77ff0000</bgcolor>
-			</period>
+		<speech-type ref="substantive">
+			<length>10:00</length>
+			<first-period ref="normal"/>
+			<bell>
+				<time>1:00</time>
+				<number>1</number>
+				<next-period ref="pois-allowed"/>
+			</bell>
 			<bell>
 				<time relative-to="finish">-1:00</time>
 				<number>1</number>
 				<next-period ref="warning"/>
-				<sound>#default</sound>
 			</bell>
 			<bell>
 				<time relative-to="finish">0</time>
 				<number>2</number>
 				<next-period ref="overtime"/>
-				<sound>#default</sound>
-			</bell>
-		</resource>
-
-		<speech-type ref="substantive">
-			<length>10:00</length>
-			<first-period ref="firstmin"/>
-			<period ref="firstmin">
-				<description>First minute</description>
-				<bgcolor>#stay</bgcolor>
-			</period>
-			<period ref="pois-allowed">
-				<description>POIs allowed</description>
-				<bgcolor>#7700ff00</bgcolor>
-				<pois-allowed/>
-			</period>
-			<bell>
-				<time>1:00</time>
-				<number>1</number>
-				<next-period ref="pois-allowed"/>
-				<sound>#default</sound>
 			</bell>
 		</speech-type>
 
 		<speech-type ref="reply">
 			<length>5:00</length>
-			<first-period ref="main"/>
-			<period ref="main">
-				<description>Main part</description>
-				<bgcolor>#stay</bgcolor>
-			</period>
+			<first-period ref="normal"/>
+			<bell>
+				<time relative-to="finish">-1:00</time>
+				<number>1</number>
+				<next-period ref="warning"/>
+			</bell>
+			<bell>
+				<time relative-to="finish">0</time>
+				<number>2</number>
+				<next-period ref="overtime"/>
+			</bell>			
 		</speech-type>
 	</speech-types>
 
