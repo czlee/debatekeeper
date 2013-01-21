@@ -20,6 +20,7 @@ package net.czlee.debatekeeper;
 import java.util.ArrayList;
 
 import net.czlee.debatekeeper.DebatingTimerService.GuiUpdateBroadcastSender;
+import android.content.Context;
 import android.os.Bundle;
 
 
@@ -41,7 +42,7 @@ import android.os.Bundle;
  *  <li> handling the GUI, but it sends a message to the DebatingActivity to update the GUI
  *  </ul>
  *
- * The internal mechanics of a single speech are handled by {@link SpeechManager}.
+ * The internal mechanics of a single speech are handled by {@link SpeechOrPrepManager}.
  *
  * It does not handle the GUI.
  *
@@ -50,38 +51,60 @@ import android.os.Bundle;
  */
 public class DebateManager {
 
-    private final DebateFormat  mDebateFormat;
-    private final SpeechManager mSpeechManager;
-    private final PoiManager    mPoiManager;
+    private final DebateFormat        mDebateFormat;
+    private final SpeechOrPrepManager mSpeechManager;
+    private final PoiManager          mPoiManager;
+    private final Context             mContext;
 
     private final ArrayList<Long> mSpeechTimes;
+    private long                  mPrepTime;
 
-    private int mCurrentSpeechIndex;
+    private boolean           mPrepTimeEnabledByUser = true;
+    private int               mCurrentSpeechIndex;
+    private DebateManagerItem mCurrentItemType;
 
     private static final String BUNDLE_SUFFIX_INDEX        = ".csi";
     private static final String BUNDLE_SUFFIX_SPEECH       = ".sm";
     private static final String BUNDLE_SUFFIX_SPEECH_TIMES = ".st";
+    private static final String BUNDLE_SUFFIX_PREP_TIME    = ".pt";
 
     /**
      * Constructor.
      * @param df The {@link DebateFormat} used by this debate manager.
      * @param am The {@link AlertManager} used by this debate manager.
      */
-    public DebateManager(DebateFormat df, AlertManager am) {
+    public DebateManager(Context context, DebateFormat df, AlertManager am) {
         super();
+        this.mContext       = context;
         this.mDebateFormat  = df;
-        this.mSpeechManager = new SpeechManager(am);
+        this.mSpeechManager = new SpeechOrPrepManager(am);
         // TODO un-hardcode this '15'
         this.mPoiManager    = new PoiManager(am, 15);
         this.mSpeechTimes   = new ArrayList<Long>();
+        this.mPrepTime      = 0;
 
         this.mSpeechTimes.ensureCapacity(df.numberOfSpeeches());
         for (int i = 0; i < df.numberOfSpeeches(); i++)
             mSpeechTimes.add((long) 0);
 
-        this.mCurrentSpeechIndex = 0;
-        this.mSpeechManager.loadSpeech(mDebateFormat.getSpeechFormat(mCurrentSpeechIndex));
+        if (hasPrepTime()) {
+            this.mCurrentItemType = DebateManagerItem.PREP_TIME;
+            this.mCurrentSpeechIndex = 0;
+            this.mSpeechManager.loadSpeech(mDebateFormat.getPrepFormat());
+        } else {
+            this.mCurrentItemType = DebateManagerItem.SPEECH;
+            this.mCurrentSpeechIndex = 0;
+            this.mSpeechManager.loadSpeech(mDebateFormat.getSpeechFormat(mCurrentSpeechIndex));
+        }
 
+
+    }
+
+    //******************************************************************************************
+    // Public classes
+    //******************************************************************************************
+    public enum DebateManagerItem {
+        PREP_TIME, SPEECH
     }
 
     //******************************************************************************************
@@ -137,31 +160,46 @@ public class DebateManager {
     }
 
     /**
-     * Moves to the next speaker.
+     * Moves to the next item (speech or prep time).
      * If already on the last speaker, reloads the last speaker.
      */
-    public void goToNextSpeaker() {
+    public void goToNextItem() {
         saveSpeech();
         mSpeechManager.stop();
-        if (!isLastSpeech()) mCurrentSpeechIndex++;
+        switch (mCurrentItemType) {
+        case PREP_TIME:
+            mCurrentSpeechIndex = 0;
+            mCurrentItemType    = DebateManagerItem.SPEECH;
+            break;
+        case SPEECH:
+            if (!isLastItem()) mCurrentSpeechIndex++;
+        }
         loadSpeech();
     }
 
     /**
-     * Moves to the previous speaker.
-     * If already on the first speaker, reloads the first speaker.
+     * Moves to the previous item (speech or prep time).
+     * If already on the first item, reloads the first item.
      */
-    public void goToPreviousSpeaker() {
+    public void goToPreviousItem() {
         saveSpeech();
         mSpeechManager.stop();
-        if (!isFirstSpeech()) mCurrentSpeechIndex--;
+        switch (mCurrentItemType) {
+        case PREP_TIME:
+            break;
+        case SPEECH:
+            if (mCurrentSpeechIndex == 0)
+                mCurrentItemType = DebateManagerItem.PREP_TIME;
+            else
+                mCurrentSpeechIndex--;
+        }
         loadSpeech();
     }
 
     /**
      * @return the current state
      */
-    public SpeechManager.DebatingTimerState getStatus() {
+    public SpeechOrPrepManager.DebatingTimerState getStatus() {
         return mSpeechManager.getStatus();
     }
 
@@ -176,16 +214,27 @@ public class DebateManager {
      * @return <code>true</code> if the current speech is the first speech, <code>false</code>
      * otherwise
      */
-    public boolean isFirstSpeech() {
-        return mCurrentSpeechIndex == 0;
+    public boolean isFirstItem() {
+        if (hasPrepTime())
+            return mCurrentItemType == DebateManagerItem.PREP_TIME;
+        else
+            return mCurrentSpeechIndex == 0;
     }
 
     /**
      * @return <code>true</code> if the current speech is the last speech, <code>false</code>
      * otherwise
      */
-    public boolean isLastSpeech() {
-        return mCurrentSpeechIndex == mDebateFormat.numberOfSpeeches() - 1;
+    public boolean isLastItem() {
+        return mCurrentItemType == DebateManagerItem.SPEECH &&
+                mCurrentSpeechIndex == mDebateFormat.numberOfSpeeches() - 1;
+    }
+
+    /**
+     * @return <code>true</code> if the current item is prep time, <code>false</code> otherwise
+     */
+    public boolean isPrepTime() {
+        return mCurrentItemType == DebateManagerItem.PREP_TIME;
     }
 
     /**
@@ -218,7 +267,11 @@ public class DebateManager {
      * <code>false</code> otherwise.
      */
     public boolean hasPoisInCurrentSpeech() {
-        return mSpeechManager.getSpeechFormat().hasPoisAllowedSomewhere();
+        SpeechOrPrepFormat spf = mSpeechManager.getFormat();
+        if (spf.getClass() == SpeechFormat.class)
+            return ((SpeechFormat) spf).hasPoisAllowedSomewhere();
+        else
+            return false;
     }
 
     /**
@@ -278,14 +331,17 @@ public class DebateManager {
      * @return the current speech name
      */
     public String getCurrentSpeechName() {
-        return mDebateFormat.getSpeechName(mCurrentSpeechIndex);
+        if (mCurrentItemType == DebateManagerItem.PREP_TIME)
+            return mContext.getString(R.string.PrepTimeTitle);
+        else
+            return mDebateFormat.getSpeechName(mCurrentSpeechIndex);
     }
 
     /**
      * @return the current {@link SpeechFormat}
      */
-    public SpeechFormat getCurrentSpeechFormat() {
-        return mSpeechManager.getSpeechFormat();
+    public SpeechOrPrepFormat getCurrentSpeechFormat() {
+        return mSpeechManager.getFormat();
     }
 
     /**
@@ -306,6 +362,22 @@ public class DebateManager {
         mSpeechManager.setOvertimeBells(firstBell, period);
     }
 
+    public void setPrepTimeEnabled(boolean prepTimeEnabled) {
+        mPrepTimeEnabledByUser = prepTimeEnabled;
+
+        // Switch out of prep time if necessary, since if you disable prep time it doesn't make
+        // any sense to continue to be in prep time
+        if (prepTimeEnabled == false) {
+            if (mCurrentItemType == DebateManagerItem.PREP_TIME) {
+                saveSpeech();
+                mSpeechManager.stop();
+                mCurrentItemType    = DebateManagerItem.SPEECH;
+                mCurrentSpeechIndex = 0;
+                loadSpeech();
+            }
+        }
+    }
+
     /**
      * Saves the state of this <code>DebateManager</code> to a {@link Bundle}.
      * @param key A String to uniquely distinguish this <code>DebateManager</code> from any other
@@ -322,6 +394,9 @@ public class DebateManager {
         for (int i = 0; i < mSpeechTimes.size(); i++)
             speechTimes[i] = mSpeechTimes.get(i);
         bundle.putLongArray(key + BUNDLE_SUFFIX_SPEECH_TIMES, speechTimes);
+
+        // Save the prep time
+        bundle.putLong(key + BUNDLE_SUFFIX_PREP_TIME, mPrepTime);
 
         mSpeechManager.saveState(key + BUNDLE_SUFFIX_SPEECH, bundle);
     }
@@ -344,6 +419,9 @@ public class DebateManager {
             for (int i = 0; i < speechTimes.length; i++)
                 mSpeechTimes.set(i, speechTimes[i]);
 
+        // Restore the prep time
+        mPrepTime = bundle.getLong(key + BUNDLE_SUFFIX_PREP_TIME, 0);
+
         mSpeechManager.restoreState(key + BUNDLE_SUFFIX_SPEECH, bundle);
     }
 
@@ -358,13 +436,29 @@ public class DebateManager {
     // Private methods
     //******************************************************************************************
 
+    private boolean hasPrepTime() {
+        return mPrepTimeEnabledByUser && mDebateFormat.hasPrepFormat();
+    }
+
     private void saveSpeech() {
-        mSpeechTimes.set(mCurrentSpeechIndex, mSpeechManager.getCurrentTime());
+        switch (mCurrentItemType) {
+        case PREP_TIME:
+            mPrepTime = mSpeechManager.getCurrentTime();
+            break;
+        case SPEECH:
+            mSpeechTimes.set(mCurrentSpeechIndex, mSpeechManager.getCurrentTime());
+        }
     }
 
     private void loadSpeech() {
-        mSpeechManager.loadSpeech(mDebateFormat.getSpeechFormat(mCurrentSpeechIndex),
-                mSpeechTimes.get(mCurrentSpeechIndex));
+        switch (mCurrentItemType) {
+        case PREP_TIME:
+            mSpeechManager.loadSpeech(mDebateFormat.getPrepFormat(), mPrepTime);
+            break;
+        case SPEECH:
+            mSpeechManager.loadSpeech(mDebateFormat.getSpeechFormat(mCurrentSpeechIndex),
+                    mSpeechTimes.get(mCurrentSpeechIndex));
+        }
     }
 
 }

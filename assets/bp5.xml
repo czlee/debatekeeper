@@ -8,6 +8,8 @@
 		<desc>Four teams of two, 15 minutes prep, 5 minute speeches, POIs allowed</desc>
 	</info>
 
+	<preptime length="15:00" />
+	
 	<speechtype ref="all" length="5:00" firstperiod="initial">
 		<period ref="initial" desc="First minute" bgcolor="#stay" />
 		<period ref="pois-allowed" desc="POIs allowed" bgcolor="#7700ff00" poisallowed="true"/>

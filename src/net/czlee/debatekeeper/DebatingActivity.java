@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import net.czlee.debatekeeper.AlertManager.FlashScreenMode;
-import net.czlee.debatekeeper.SpeechFormat.CountDirection;
+import net.czlee.debatekeeper.SpeechOrPrepFormat.CountDirection;
 
 import org.xml.sax.SAXException;
 
@@ -391,7 +391,7 @@ public class DebatingActivity extends Activity {
         // If the timer is stopped AND it's not the first speaker, go back one speaker.
         // Note: We do not just leave this check to goToPreviousSpeaker(), because we want to do
         // other things if it's not in a state in which it could go to the previous speaker.
-        if (!mDebateManager.isFirstSpeech() && !mDebateManager.isRunning()) {
+        if (!mDebateManager.isFirstItem() && !mDebateManager.isRunning()) {
             goToPreviousSpeech();
             return;
 
@@ -443,7 +443,7 @@ public class DebatingActivity extends Activity {
         MenuItem resetDebateItem = menu.findItem(R.id.resetDebate);
 
         if (mDebateManager != null) {
-            prevSpeakerItem.setEnabled(!mDebateManager.isFirstSpeech() && !mDebateManager.isRunning() && !mIsEditingTime);
+            prevSpeakerItem.setEnabled(!mDebateManager.isFirstItem() && !mDebateManager.isRunning() && !mIsEditingTime);
             resetDebateItem.setEnabled(true);
         } else {
             prevSpeakerItem.setEnabled(false);
@@ -725,6 +725,7 @@ public class DebatingActivity extends Activity {
         } else {
             Log.w(this.getClass().getSimpleName(), "applyPreferences: Couldn't restore AlertManager preferences; mBinder doesn't yet exist");
         }
+
     }
 
     /**
@@ -850,7 +851,7 @@ public class DebatingActivity extends Activity {
         // If the user hasn't specified, and the speech format has specified a count direction,
         // use the speech format suggestion.
         if (mDebateManager != null) {
-            SpeechFormat currentSpeechFormat = mDebateManager.getCurrentSpeechFormat();
+            SpeechOrPrepFormat currentSpeechFormat = mDebateManager.getCurrentSpeechFormat();
             CountDirection sfCountDirection = currentSpeechFormat.getCountDirection();
             if (sfCountDirection == CountDirection.COUNT_DOWN)
                 return OverallCountDirection.COUNT_DOWN;
@@ -978,13 +979,13 @@ public class DebatingActivity extends Activity {
 
         if (mDebateManager == null) return;
         if (mDebateManager.isRunning()) return;
-        if (mDebateManager.isLastSpeech()) return;
+        if (mDebateManager.isLastItem()) return;
         if (mIsEditingTime) return;
 
         // Swap the current display index
         mCurrentDebateTimerDisplayIndex = (mCurrentDebateTimerDisplayIndex == 1) ? 0 : 1;
 
-        mDebateManager.goToNextSpeaker();
+        mDebateManager.goToNextItem();
         updateDebateTimerDisplay(mCurrentDebateTimerDisplayIndex);
         mDebateTimerViewFlipper.setInAnimation(AnimationUtils.loadAnimation(
                 DebatingActivity.this, R.anim.slide_from_right));
@@ -1005,13 +1006,13 @@ public class DebatingActivity extends Activity {
 
         if (mDebateManager == null) return;
         if (mDebateManager.isRunning()) return;
-        if (mDebateManager.isFirstSpeech()) return;
+        if (mDebateManager.isFirstItem()) return;
         if (mIsEditingTime) return;
 
         // Swap the current display index
         mCurrentDebateTimerDisplayIndex = (mCurrentDebateTimerDisplayIndex == 1) ? 0 : 1;
 
-        mDebateManager.goToPreviousSpeaker();
+        mDebateManager.goToPreviousItem();
         updateDebateTimerDisplay(mCurrentDebateTimerDisplayIndex);
         mDebateTimerViewFlipper.setInAnimation(AnimationUtils.loadAnimation(
                 DebatingActivity.this, R.anim.slide_from_left));
@@ -1170,7 +1171,7 @@ public class DebatingActivity extends Activity {
                 // Disable the [Next Speaker] button if there are no more speakers
                 mLeftControlButton.setEnabled(true);
                 mCentreControlButton.setEnabled(true);
-                mRightControlButton.setEnabled(!mDebateManager.isLastSpeech());
+                mRightControlButton.setEnabled(!mDebateManager.isLastItem());
             }
 
         } else {
@@ -1204,8 +1205,8 @@ public class DebatingActivity extends Activity {
 
         if (mDebateManager != null) {
 
-            SpeechFormat currentSpeechFormat = mDebateManager.getCurrentSpeechFormat();
-            PeriodInfo   currentPeriodInfo   = mDebateManager.getCurrentPeriodInfo();
+            SpeechOrPrepFormat currentSpeechFormat = mDebateManager.getCurrentSpeechFormat();
+            PeriodInfo         currentPeriodInfo   = mDebateManager.getCurrentPeriodInfo();
 
             speechNameText.setText(mDebateManager.getCurrentSpeechName());
             speechNameText.setBackgroundColor(currentPeriodInfo.getBackgroundColor());
@@ -1242,10 +1243,10 @@ public class DebatingActivity extends Activity {
             } else {
                 nextTimeText.setText(this.getString(R.string.NoMoreBellsText));
             }
-            finalTimeText.setText(String.format(
-                this.getString(R.string.SpeechLengthText),
-                secsToText(currentSpeechFormat.getSpeechLength())
-            ));
+
+            int finalTimeTextUnformattedResid = (mDebateManager.isPrepTime()) ? R.string.PrepTimeLengthText : R.string.SpeechLengthText;
+            finalTimeText.setText(String.format(this.getString(finalTimeTextUnformattedResid),
+                    secsToText(currentSpeechFormat.getLength())));
 
         } else {
             // Blank out all the fields
@@ -1338,7 +1339,7 @@ public class DebatingActivity extends Activity {
     private long subtractFromSpeechLengthIfCountingDown(long time) {
         if (mDebateManager != null)
             if (getCountDirection() == OverallCountDirection.COUNT_DOWN)
-                return mDebateManager.getCurrentSpeechFormat().getSpeechLength() - time;
+                return mDebateManager.getCurrentSpeechFormat().getLength() - time;
         return time;
     }
 

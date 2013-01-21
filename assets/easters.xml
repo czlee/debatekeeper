@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<debateformat name="Easters" schemaversion="1.0">
+<debateformat name="Easters" schemaversion="1.1">
 	<info>
 		<region>New Zealand</region>
 		<level>University</level>
@@ -8,36 +8,33 @@
 	</info>
 
 	<resource ref="speeches">
-		<period ref="initial" desc="Initial" bgcolor="#stay" />
-		<period ref="warning" desc="Warning bell rung" bgcolor="#77ffcc00" />
+		<period ref="normal" desc="" bgcolor="#stay" />
+	    		<period ref="warning" desc="Warning bell rung" bgcolor="#77ffcc00" />
 		<period ref="overtime" desc="Overtime" bgcolor="#77ff0000" />
 	</resource>
 	
-	<periodtypes>
-		<period ref="easters.moot" desc="Choose moot" />
+	<preptime-controlled length="7:00" firstperiod="easters.moot">
+		<period ref="normal" desc="" bgcolor="#stay" />
+	    <period ref="easters.moot" desc="Choose moot" />
 		<period ref="easters.side" desc="Choose side" />
-	</periodtypes>
-	
-	<preptime length="7:00" firstperiod="easters.moot">
-		<bell time="1:00" number="1" nextperiod="easters.side" pauseonbell="true" />
+	    <bell time="1:00" number="1" nextperiod="easters.side" pauseonbell="true" />
 		<bell time="2:00" number="1" nextperiod="normal" pauseonbell="true" />
 		<bell time="finish" number="2" />
-	</preptime>
+	</preptime-controlled>
 
-	<speechtype ref="substantive" length="6:00" firstperiod="initial">
+	<speechtype ref="substantive" length="6:00" firstperiod="normal">
 		<include resource="speeches" />
 		<bell time="4:00" number="1" nextperiod="warning" />
 		<bell time="finish" number="2" nextperiod="overtime" />
 	</speechtype>
 
-	<speechtype ref="reply" length="3:00" firstperiod="initial">
+	<speechtype ref="reply" length="3:00" firstperiod="normal">
 		<include resource="speeches" />
 		<bell time="2:00" number="1" nextperiod="warning" />
 		<bell time="finish" number="2" nextperiod="overtime" />
 	</speechtype>
 
 	<speeches>
-		<speech name="Preparation time" type="prep" />
 		<speech name="1st Affirmative" type="substantive" />
 		<speech name="1st Negative" type="substantive" />
 		<speech name="2nd Affirmative" type="substantive" />

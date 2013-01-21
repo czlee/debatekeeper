@@ -7,6 +7,8 @@
 		<desc>3 vs 3, 6-minute speeches, 3-minute replies, POIs allowed</desc>
 	</info>
 
+	<preptime length="30:00" />
+	
 	<resource ref="#all">
 		<period ref="warning" desc="Warning bell rung" bgcolor="#77ffcc00" />
 		<period ref="overtime" desc="Overtime" bgcolor="#77ff0000" />

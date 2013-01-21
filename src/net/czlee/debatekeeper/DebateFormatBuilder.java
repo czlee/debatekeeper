@@ -48,6 +48,7 @@ public class DebateFormatBuilder {
     protected Resource                             mResourceForAll;
     protected HashMap<String, Resource>            mResources;
     protected HashMap<String, SpeechFormatBuilder> mSpeechFormatBuilders;
+    protected PrepTimeControlledBuilder            mPrepTimeControlledBuilder;
     protected DebateFormat                         mDebateFormatBeingBuilt;
 
     //******************************************************************************************
@@ -62,8 +63,12 @@ public class DebateFormatBuilder {
 
         private static final long serialVersionUID = 6082009537966140387L;
 
-        public DebateFormatBuilderException(String detailMessage) {
-            super(detailMessage);
+        public DebateFormatBuilderException(int resId) {
+            super(getString(resId));
+        }
+
+        public DebateFormatBuilderException(int resId, Object... formatArgs) {
+            super(getString(resId, formatArgs));
         }
 
     }
@@ -99,8 +104,7 @@ public class DebateFormatBuilder {
 
             // Check for duplicate keys
             if (mPeriodInfos.containsKey(ref)) {
-                throw new DebateFormatBuilderException(
-                        getString(R.string.DfbErrorPeriodInfoDuplicate, ref));
+                throw new DebateFormatBuilderException(R.string.DfbErrorPeriodInfoDuplicate, ref);
             }
 
             // If okay, then add
@@ -137,7 +141,7 @@ public class DebateFormatBuilder {
                 pi = mPeriodInfos.get(periodInfoRef);
                 if (pi == null) {
                     throw new DebateFormatBuilderException(
-                            getString(R.string.DfbErrorPeriodInfoNotFound, periodInfoRef));
+                            R.string.DfbErrorPeriodInfoNotFound, periodInfoRef);
                 }
                 bi.setNextPeriodInfo(pi);
             }
@@ -184,8 +188,7 @@ public class DebateFormatBuilder {
                 BellInfo checkBi = biIterator.next();
                 if (checkBi.getBellTime() == bellTime) {
                     String timeStr = secsToText(bellTime);
-                    throw new DebateFormatBuilderException(
-                            getString(R.string.DfbErrorBellDuplicate, timeStr));
+                    throw new DebateFormatBuilderException(R.string.DfbErrorBellDuplicate, timeStr);
                 }
             }
         }
@@ -205,34 +208,26 @@ public class DebateFormatBuilder {
     }
 
     /**
-     * A class that is used to build a {@link SpeechFormat}.  {@link PeriodInfo}s, {@link BellInfo}s
-     * and other information can be added using the <code>add*</code> and <code>set*</code> methods,
-     * then <code>getSpeechFormat()</code> is used to get the built <code>SpeechFormat</code>.
+     * A class that is used to build a {@link SpeechFormat} and {@link PrepTimeControlledFormat}.
+     * {@link PeriodInfo}s, {@link BellInfo}s and other information can be added using the
+     * <code>add*</code> and <code>set*</code> methods.  The child classes implement
+     * getSpeechFormat or getPrepTimeControlledFormat to return the
      */
-    private class SpeechFormatBuilder extends SpeechElementsContainer {
+    private abstract class ControlledTimeBuilder extends SpeechElementsContainer {
 
-        private long                        mSpeechLength     = 0;
-        private SpeechFormat.CountDirection mCountDirection  = null;
-        private PeriodInfo                  mFirstPeriodInfo = null;
+        private   long                        mLength          = 0;
+        protected PeriodInfo                  mFirstPeriodInfo = null;
 
-        public SpeechFormatBuilder(long speechLength) {
+        public ControlledTimeBuilder(long length) {
             super();
-            this.mSpeechLength = speechLength;
+            this.mLength = length;
         }
 
         /**
          * @return the length of this speech
          */
-        public long getSpeechLength() {
-            return mSpeechLength;
-        }
-
-        /**
-         * Sets the count direction of this speech.
-         * @param countDirection the new count direction
-         */
-        public void setCountDirection(SpeechFormat.CountDirection countDirection) {
-            this.mCountDirection = countDirection;
+        public long getLength() {
+            return mLength;
         }
 
         /**
@@ -246,8 +241,7 @@ public class DebateFormatBuilder {
         public void setFirstPeriod(String firstPeriodRef) throws DebateFormatBuilderException {
             PeriodInfo pi = mPeriodInfos.get(firstPeriodRef);
             if (pi == null) {
-                throw new DebateFormatBuilderException(
-                        getString(R.string.DfbErrorPeriodInfoNotFound, firstPeriodRef));
+                throw new DebateFormatBuilderException(R.string.DfbErrorPeriodInfoNotFound, firstPeriodRef);
             }
             mFirstPeriodInfo = pi;
         }
@@ -278,33 +272,13 @@ public class DebateFormatBuilder {
         }
 
         /**
-         * Returns the assembled {@link SpeechFormat}
-         * @return the assembled <code>SpeechFormat</code>
-         */
-        public SpeechFormat getSpeechFormat() {
-            SpeechFormat sf = new SpeechFormat(mSpeechLength);
-            if (mCountDirection != null) {
-                sf.setCountDirection(mCountDirection);
-            }
-            if (mFirstPeriodInfo != null) {
-                sf.setFirstPeriodInfo(mFirstPeriodInfo);
-            }
-            Iterator<BellInfo> biIterator = mBellInfos.iterator();
-            while (biIterator.hasNext()) {
-                BellInfo bi = biIterator.next();
-                sf.addBellInfo(bi);
-            }
-            return sf;
-        }
-
-        /**
          * @return <code>true</code> if a finish bell has been defined, <code>false</code> otherwise
          */
         public boolean hasFinishBell() {
             Iterator<BellInfo> biIterator = mBellInfos.iterator();
             while (biIterator.hasNext()) {
                 BellInfo checkBi = biIterator.next();
-                if (checkBi.getBellTime() == this.getSpeechLength())
+                if (checkBi.getBellTime() == this.getLength())
                     return true;
             }
             return false;
@@ -326,12 +300,70 @@ public class DebateFormatBuilder {
             long bellTime = bi.getBellTime();
 
             // Check that the bell isn't after the finish time
-            if (bellTime > mSpeechLength) {
+            if (bellTime > mLength) {
                 String timeStr = secsToText(bellTime);
-                throw new DebateFormatBuilderException(
-                        getString(R.string.DfbErrorBellAfterFinishTime, timeStr));
+                throw new DebateFormatBuilderException(R.string.DfbErrorBellAfterFinishTime, timeStr);
             }
 
+        }
+
+    }
+
+    private class SpeechFormatBuilder extends ControlledTimeBuilder {
+
+        protected SpeechFormat.CountDirection mCountDirection  = null;
+
+        public SpeechFormatBuilder(long speechLength) {
+            super(speechLength);
+        }
+
+        /**
+         * Sets the count direction of this speech.
+         * @param countDirection the new count direction
+         */
+        public void setCountDirection(SpeechFormat.CountDirection countDirection) {
+            this.mCountDirection = countDirection;
+        }
+
+        /**
+         * Returns the assembled {@link SpeechFormat}
+         * @return the assembled <code>SpeechFormat</code>
+         */
+        public SpeechFormat getSpeechFormat() {
+            SpeechFormat sf = new SpeechFormat(getLength());
+            if (mCountDirection != null) {
+                sf.setCountDirection(mCountDirection);
+            }
+            if (mFirstPeriodInfo != null) {
+                sf.setFirstPeriodInfo(mFirstPeriodInfo);
+            }
+            Iterator<BellInfo> biIterator = mBellInfos.iterator();
+            while (biIterator.hasNext()) {
+                BellInfo bi = biIterator.next();
+                sf.addBellInfo(bi);
+            }
+            return sf;
+        }
+
+    }
+
+    private class PrepTimeControlledBuilder extends ControlledTimeBuilder {
+
+        public PrepTimeControlledBuilder(long length) {
+            super(length);
+        }
+
+        public PrepTimeControlledFormat getPrepTimeControlledFormat() {
+            PrepTimeControlledFormat ptcf = new PrepTimeControlledFormat(getLength());
+            if (mFirstPeriodInfo != null) {
+                ptcf.setFirstPeriodInfo(mFirstPeriodInfo);
+            }
+            Iterator<BellInfo> biIterator = mBellInfos.iterator();
+            while (biIterator.hasNext()) {
+                BellInfo bi = biIterator.next();
+                ptcf.addBellInfo(bi);
+            }
+            return ptcf;
         }
 
     }
@@ -364,17 +396,15 @@ public class DebateFormatBuilder {
         assertFormatsAreAddable();
         if (ref.equalsIgnoreCase(getString(R.string.XmlAttrNameResourceRefCommon))) {
             if (mResourceForAll != null) {
-                throw new DebateFormatBuilderException(getString(
-                        R.string.DfbErrorResourceDuplicate,
-                        getString(R.string.XmlAttrNameResourceRefCommon)));
+                throw new DebateFormatBuilderException(R.string.DfbErrorResourceDuplicate,
+                        getString(R.string.XmlAttrNameResourceRefCommon));
             }
             mResourceForAll = new Resource();
         } else if (!mResources.containsKey(ref)) {
             Resource res = new Resource();
             mResources.put(ref, res);
         } else {
-            throw new DebateFormatBuilderException(
-                    getString(R.string.DfbErrorResourceDuplicate, ref));
+            throw new DebateFormatBuilderException(R.string.DfbErrorResourceDuplicate, ref);
         }
     }
 
@@ -402,9 +432,33 @@ public class DebateFormatBuilder {
 
             mSpeechFormatBuilders.put(ref, sfb);
         } else {
-            throw new DebateFormatBuilderException(
-                    getString(R.string.DfbErrorSpeechFormatDuplicate, ref));
+            throw new DebateFormatBuilderException(R.string.DfbErrorSpeechFormatDuplicate, ref);
         }
+    }
+
+    /**
+     * Adds simple prep time to the debate.  This can only be called once.
+     * @param length the length in seconds of the prep time
+     * @throws DebateFormatBuilderException if there is already prep time in this debate
+     * format
+     */
+    public void addPrepTimeSimple(long length) throws DebateFormatBuilderException {
+        if (mDebateFormatBeingBuilt.hasPrepFormat() || mPrepTimeControlledBuilder != null)
+            throw new DebateFormatBuilderException(R.string.DfbErrorMultiplePrepTimes);
+        PrepTimeSimpleFormat ptsf = new PrepTimeSimpleFormat(length);
+        mDebateFormatBeingBuilt.setPrepFormat(ptsf);
+    }
+
+    /**
+     * Adds controlled prep time to the debate.  This can only be called once.
+     * @param length the length in seconds of the prep time
+     * @throws DebateFormatBuilderException if there is already prep time in this debate
+     * format
+     */
+    public void addPrepTimeControlled(long length) throws DebateFormatBuilderException {
+        if (mDebateFormatBeingBuilt.hasPrepFormat() || mPrepTimeControlledBuilder != null)
+            throw new DebateFormatBuilderException(R.string.DfbErrorMultiplePrepTimes);
+        mPrepTimeControlledBuilder = new PrepTimeControlledBuilder(length);
     }
 
     /**
@@ -431,7 +485,7 @@ public class DebateFormatBuilder {
             mDebateFormatBeingBuilt.addSpeech(name, formatRef);
         } catch (NoSuchFormatException e) {
             throw new DebateFormatBuilderException(
-                    getString(R.string.DfbErrorAddSpeechSpeechFormatNotFound, formatRef, name));
+                    R.string.DfbErrorAddSpeechSpeechFormatNotFound, formatRef, name);
         }
 
     }
@@ -468,6 +522,21 @@ public class DebateFormatBuilder {
         assertFormatsAreAddable();
         SpeechFormatBuilder sfb = getSpeechFormatBuilder(speechRef);
         addPeriodInfo(sfb, periodInfoRef, pi);
+    }
+
+    /**
+     * Adds a new {@link PeriodInfo} to the prep time in this builder
+     * @param periodInfoRef the short reference for the period
+     * @param pi the <code>PeriodInfo</code> object
+     * @throws DebateFormatBuilderException if there is no controlled prep time or 'periodInfoRef'
+     * is a duplicate reference
+     * @throws IllegalStateException if the "adding speeches" state has already started
+     */
+    public void addPeriodInfoToPrepTime(String periodInfoRef, PeriodInfo pi)
+            throws DebateFormatBuilderException {
+
+        assertPrepTimeIsControlled();
+        addPeriodInfo(mPrepTimeControlledBuilder, periodInfoRef, pi);
     }
 
     /**
@@ -521,8 +590,38 @@ public class DebateFormatBuilder {
     public void addBellInfoToSpeechFormatAtFinish(String speechRef, BellInfo bi, String periodInfoRef)
             throws DebateFormatBuilderException {
         SpeechFormatBuilder sfb = getSpeechFormatBuilder(speechRef);
-        bi.setBellTime(sfb.getSpeechLength());
+        bi.setBellTime(sfb.getLength());
         addBellInfoToSpeechFormat(speechRef, bi, periodInfoRef);
+    }
+
+    /**
+     * Adds a new {@link BellInfo} to the controlled prep time in this builder
+     * @param bi the <code>BellInfo</code> object
+     * @param periodInfoRef the short reference for the next period associated with the bell, can
+     * be <code>null</code> to leave the existing next period in the 'bi' unchanged
+     * @throws DebateFormatBuilderException if there is no controlled prep time or no
+     * period with reference 'periodInfoRef' or if there is already a bell at the same time
+     * @throws IllegalStateException if the "adding speeches" state has already started
+     */
+    public void addBellInfoToPrepTime(BellInfo bi, String periodInfoRef)
+            throws DebateFormatBuilderException {
+        assertPrepTimeIsControlled();
+        addBellInfo(mPrepTimeControlledBuilder, bi, periodInfoRef);
+    }
+
+    /**
+     * Adds a new {@link BellInfo} to the controlled prep time in this builder, but replaces the bell
+     * time with the finish time of that controlled prep time.
+     * @param bi the <code>BellInfo</code> object. The bell time of this bell doesn't matter
+     * because it will be overwritten with the finish time of this prep time.
+     * @param periodInfoRef the short reference for the next period associated with the bell, can
+     * be <code>null</code> to leave the existing next period in the 'bi' unchanged
+     * @throws DebateFormatBuilderException if prep time is not controlled
+     */
+    public void addBellInfoToPrepTimeAtFinish(BellInfo bi, String periodInfoRef)
+            throws DebateFormatBuilderException {
+        bi.setBellTime(mPrepTimeControlledBuilder.getLength());
+        addBellInfoToPrepTime(bi, periodInfoRef);
     }
 
     /**
@@ -565,12 +664,23 @@ public class DebateFormatBuilder {
      * period with reference 'firstPeriodRef'
      * @throws IllegalStateException if the "adding speeches" state has already started
      */
-    public void setFirstPeriod(String speechRef, String firstPeriodRef)
+    public void setFirstPeriodOfSpeechFormat(String speechRef, String firstPeriodRef)
             throws DebateFormatBuilderException {
 
         assertFormatsAreAddable();
         SpeechFormatBuilder sfb = getSpeechFormatBuilder(speechRef);
         sfb.setFirstPeriod(firstPeriodRef);
+    }
+
+    /**
+     * Sets the first period of prep time.
+     * @param firstPeriodRef the short reference for the prep time
+     * @throws DebateFormatBuilderException if prep time is not controlled
+     */
+    public void setFirstPeriodOfPrepTime(String firstPeriodRef)
+            throws DebateFormatBuilderException {
+        assertPrepTimeIsControlled();
+        mPrepTimeControlledBuilder.setFirstPeriod(firstPeriodRef);
     }
 
     /**
@@ -621,6 +731,32 @@ public class DebateFormatBuilder {
     }
 
     /**
+     * Checks if the controlled prep time has a finish bell.
+     * @param speechRef the name of the {@link SpeechFormat} to check
+     * @return <code>true</code> if the prep time has a finish bell, <code>false</code> otherwise
+     * @throws DebateFormatBuilderException if prep time is not controlled
+     */
+    public boolean hasFinishBellInPrepTimeControlled() throws DebateFormatBuilderException {
+        if (mPrepTimeControlledBuilder == null)
+            throw new DebateFormatBuilderException(R.string.DfbErrorPrepTimeNotControlled);
+        return mPrepTimeControlledBuilder.hasFinishBell();
+    }
+
+    /**
+     * Checks if a {@link PeriodInfo} with a given reference has been added to the prep time
+     * @param periodInfoRef the name of the <code>PeriodInfo</code> to check
+     * @return <code>true</code> if a <code>PeriodInfo</code> with that name has been added,
+     * <code>false</code> otherwise
+     * @throws DebateFormatBuilderException if prep time is not controlled
+     */
+    public boolean hasPeriodInfoInPrepTimeControlled(String periodInfoRef)
+            throws DebateFormatBuilderException {
+        if (mPrepTimeControlledBuilder == null)
+            throw new DebateFormatBuilderException(R.string.DfbErrorPrepTimeNotControlled);
+        return mPrepTimeControlledBuilder.hasPeriodInfo(periodInfoRef);
+    }
+
+    /**
      * Gets the name of the debate format being built
      * @return the name of this debate format
      */
@@ -652,6 +788,15 @@ public class DebateFormatBuilder {
         }
     }
 
+    private void assertPrepTimeIsControlled() throws DebateFormatBuilderException {
+        assertFormatsAreAddable();
+        if (mState != State.ADDING_FORMATS) {
+            throw new IllegalStateException("You can't modify prep time after addSpeech() is called");
+        }
+        if (mPrepTimeControlledBuilder == null)
+            throw new DebateFormatBuilderException(R.string.DfbErrorPrepTimeNotControlled);
+    }
+
     /**
      * @param ref the short reference for the resource
      * @return the {@link Resource}
@@ -663,8 +808,7 @@ public class DebateFormatBuilder {
             res = mResourceForAll;
         else res = mResources.get(ref);
         if (res == null) {
-            throw new DebateFormatBuilderException(
-                    getString(R.string.DfbErrorResourceNotFound, ref));
+            throw new DebateFormatBuilderException(R.string.DfbErrorResourceNotFound, ref);
         }
         return res;
     }
@@ -679,8 +823,7 @@ public class DebateFormatBuilder {
 
         SpeechFormatBuilder sfb = mSpeechFormatBuilders.get(ref);
         if (sfb == null) {
-            throw new DebateFormatBuilderException(
-                    getString(R.string.DfbErrorSpeechFormatNotFound, ref));
+            throw new DebateFormatBuilderException(R.string.DfbErrorSpeechFormatNotFound, ref);
         }
         return sfb;
     }
@@ -743,6 +886,12 @@ public class DebateFormatBuilder {
             sf       = sfb.getSpeechFormat();
 
             mDebateFormatBeingBuilt.addSpeechFormat(name, sf);
+        }
+
+        // Also, build the prep time
+        if (mPrepTimeControlledBuilder != null) {
+            PrepTimeControlledFormat ptcf = mPrepTimeControlledBuilder.getPrepTimeControlledFormat();
+            mDebateFormatBeingBuilt.setPrepFormat(ptcf);
         }
     }
 

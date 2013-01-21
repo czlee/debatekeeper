@@ -25,9 +25,11 @@
     <string name="NextBellWithPauseText">The next bell pauses the timer at %1$s</string>
     <string name="NoMoreBellsText">There are no more bells in this speech</string>
     <string name="SpeechLengthText">The length of this speech is %1$s</string>
+    <string name="PrepTimeLengthText">The prep time allowed is %1$s</string>
     <string name="ResetDebateToastText">All speeches in debate reset</string>
     <string name="NoDebateLoadedText">No debate loaded</string>
     <string name="NoDebateLoadedButtonText">Choose style</string>
+    <string name="PrepTimeTitle">Preparation time</string>
 
     <color name="overtime">#ffff7878</color>
     <color name="overtimeDuringInvert">#33ff0000</color>

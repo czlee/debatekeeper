@@ -207,7 +207,7 @@ public class DebateFormatInfoExtractor {
                 if (mDfi.hasSpeechFormat(reference))
                     return;
 
-                String lengthStr = getValue(atts, R.string.XmlAttrNameSpeechFormatLength);
+                String lengthStr = getValue(atts, R.string.XmlAttrNameControlledTimeLength);
                 long length;
                 if (lengthStr == null)
                     return;

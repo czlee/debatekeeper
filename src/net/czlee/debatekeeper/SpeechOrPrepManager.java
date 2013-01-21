@@ -24,26 +24,26 @@ import android.os.Bundle;
 import android.util.Log;
 
 /**
- * SpeechManager manages the mechanics of a single speech.  Exactly one instance should exist
- * during a debate.  <code>SpeechManager</code> can switch between speeches dynamically&mdash;there
+ * SpeechOrPrepManager manages the mechanics of a single speech.  Exactly one instance should exist
+ * during a debate.  <code>SpeechOrPrepManager</code> can switch between speeches dynamically&mdash;there
  * is no need to destroy and/or re-create this instance in order to start a new speech.
  *
- * SpeechManager is responsible for:<br>
+ * SpeechOrPrepManager is responsible for:<br>
  *  <ul>
  *  <li> Keeping time
  *  <li> Keeping track of, and setting off, bells.
  *  <li> Keeping track of period information and providing it when asked.
  *  </ul>
  *
- *  SpeechManager doesn't remember anything about speeches that are no longer loaded.
+ *  SpeechOrPrepManager doesn't remember anything about speeches that are no longer loaded.
  *
  * @author Chuan-Zheng Lee
  * @since  2012-06-09
  *
  */
-public class SpeechManager extends DebateElementManager {
+public class SpeechOrPrepManager extends DebateElementManager {
 
-    private SpeechFormat             mSpeechFormat;
+    private SpeechOrPrepFormat       mFormat;
     private PeriodInfo               mCurrentPeriodInfo;
     private Timer                    mTimer;
     private DebatingTimerState       mState = DebatingTimerState.NOT_STARTED;
@@ -59,7 +59,7 @@ public class SpeechManager extends DebateElementManager {
      * Constructor.
      * @param am the AlertManager associated with this instance
      */
-    public SpeechManager(AlertManager am) {
+    public SpeechOrPrepManager(AlertManager am) {
         super(am);
     }
 
@@ -87,7 +87,7 @@ public class SpeechManager extends DebateElementManager {
             sendBroadcast();
 
             // If this is a bell time, raise the bell
-            BellInfo thisBell = mSpeechFormat.getBellAtTime(mCurrentTime);
+            BellInfo thisBell = mFormat.getBellAtTime(mCurrentTime);
             if (thisBell != null)
                 handleBell(thisBell);
 
@@ -107,7 +107,7 @@ public class SpeechManager extends DebateElementManager {
      * @param sf The speech format to load
      * @throws IllegalStateException if the timer is currently running
      */
-    public void loadSpeech(SpeechFormat sf) {
+    public void loadSpeech(SpeechOrPrepFormat sf) {
         loadSpeech(sf, 0);
     }
 
@@ -117,11 +117,11 @@ public class SpeechManager extends DebateElementManager {
      * @param seconds The time in seconds to load
      * @throws IllegalStateException if the timer is currently running
      */
-    public void loadSpeech(SpeechFormat sf, long seconds) {
+    public void loadSpeech(SpeechOrPrepFormat sf, long seconds) {
         if (mState == DebatingTimerState.RUNNING)
             throw new IllegalStateException("Can't load speech while timer running");
 
-        mSpeechFormat = sf;
+        mFormat = sf;
         mCurrentTime = seconds;
 
         if (seconds == 0) {
@@ -140,7 +140,7 @@ public class SpeechManager extends DebateElementManager {
      */
     @Override
     public void start() {
-        if (mSpeechFormat == null)
+        if (mFormat == null)
             return;
         if (mState == DebatingTimerState.RUNNING)
             return;
@@ -169,7 +169,7 @@ public class SpeechManager extends DebateElementManager {
     public void reset() {
         stop();
         mCurrentTime = 0;
-        mCurrentPeriodInfo = mSpeechFormat.getFirstPeriodInfo();
+        mCurrentPeriodInfo = mFormat.getFirstPeriodInfo();
         mState = DebatingTimerState.NOT_STARTED;
     }
 
@@ -200,7 +200,7 @@ public class SpeechManager extends DebateElementManager {
      * Note that this can be <code>null</code>.
      */
     public Long getNextBellTime() {
-        BellInfo nextBell = mSpeechFormat.getFirstBellFromTime(mCurrentTime);
+        BellInfo nextBell = mFormat.getFirstBellFromTime(mCurrentTime);
 
         if (nextBell != null)
             return nextBell.getBellTime();
@@ -209,7 +209,7 @@ public class SpeechManager extends DebateElementManager {
         if (mFirstOvertimeBellTime == 0)
             return null;
 
-        long speechLength   = mSpeechFormat.getSpeechLength();
+        long speechLength   = mFormat.getLength();
         long overtimeAmount = mCurrentTime - speechLength;
 
         if (overtimeAmount < mFirstOvertimeBellTime)
@@ -229,8 +229,8 @@ public class SpeechManager extends DebateElementManager {
     /**
      * @return the current {@link SpeechFormat}
      */
-    public SpeechFormat getSpeechFormat() {
-        return mSpeechFormat;
+    public SpeechOrPrepFormat getFormat() {
+        return mFormat;
     }
 
     /**
@@ -238,7 +238,7 @@ public class SpeechManager extends DebateElementManager {
      * Returns <code>false</code> if there are no more bells or if there are only overtime bells left.
      */
     public boolean isNextBellPause() {
-        BellInfo nextBell = mSpeechFormat.getFirstBellFromTime(mCurrentTime);
+        BellInfo nextBell = mFormat.getFirstBellFromTime(mCurrentTime);
         if (nextBell != null)
             return nextBell.isPauseOnBell();
         return false;
@@ -247,6 +247,7 @@ public class SpeechManager extends DebateElementManager {
     /**
      * @return <code>true</code> if the timer is running, <code>false</code> otherwise
      */
+    @Override
     public boolean isRunning() {
         return getStatus() == DebatingTimerState.RUNNING;
     }
@@ -258,7 +259,7 @@ public class SpeechManager extends DebateElementManager {
      * <code>false</code> if the current time and speech length are equal
      */
     public boolean isOvertime() {
-        return mCurrentTime > mSpeechFormat.getSpeechLength();
+        return mCurrentTime > mFormat.getLength();
     }
 
     /**
@@ -279,7 +280,7 @@ public class SpeechManager extends DebateElementManager {
             mState = (mCurrentTime == 0) ? DebatingTimerState.NOT_STARTED : DebatingTimerState.STOPPED_BY_USER;
 
         // restore the appropriate period info
-        mCurrentPeriodInfo = mSpeechFormat.getPeriodInfoForTime(seconds);
+        mCurrentPeriodInfo = mFormat.getPeriodInfoForTime(seconds);
     }
 
     /**
@@ -293,8 +294,8 @@ public class SpeechManager extends DebateElementManager {
     }
 
     /**
-     * Saves the state of this <code>SpeechManager</code> to a {@link Bundle}.
-     * @param key A String to uniquely distinguish this <code>SpeechManager</code> from any other
+     * Saves the state of this <code>SpeechOrPrepManager</code> to a {@link Bundle}.
+     * @param key A String to uniquely distinguish this <code>SpeechOrPrepManager</code> from any other
      *        objects that might be stored in the same Bundle.
      * @param bundle The Bundle to which to save this information.
      */
@@ -305,9 +306,9 @@ public class SpeechManager extends DebateElementManager {
     }
 
     /**
-     * Restores the state of this <code>SpeechManager</code> from a {@link Bundle}.
+     * Restores the state of this <code>SpeechOrPrepManager</code> from a {@link Bundle}.
      * <code>loadSpeech()</code> should be called <b>before</b> this is called.
-     * @param key A String to uniquely distinguish this <code>SpeechManager</code> from any other
+     * @param key A String to uniquely distinguish this <code>SpeechOrPrepManager</code> from any other
      *        objects that might be stored in the same Bundle.
      * @param bundle The Bundle from which to restore this information.
      */
@@ -359,7 +360,7 @@ public class SpeechManager extends DebateElementManager {
      * @return true if this time is an overtime bell
      */
     private boolean isOvertimeBellTime(long time) {
-        long overtimeAmount = time - mSpeechFormat.getSpeechLength();
+        long overtimeAmount = time - mFormat.getLength();
 
         // Don't bother checking if we haven't hit the first overtime bell
         if (overtimeAmount < mFirstOvertimeBellTime)

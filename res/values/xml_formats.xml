@@ -20,9 +20,15 @@
     <string name="XmlElemNameResource">resource</string>
         <string name="XmlAttrNameResourceRefCommon">#all</string>
 
+    <string name="XmlElemNamePrepTimeSimpleFormat">preptime</string>
+    
+    <!-- attributes common to preptime-controlled and speechtype -->
+        <string name="XmlAttrNameControlledTimeLength">length</string>
+        <string name="XmlAttrNameControlledTimeFirstPeriod">firstperiod</string>
+    
+    <string name="XmlElemNamePrepTimeControlledFormat">preptime-controlled</string>
+    
     <string name="XmlElemNameSpeechFormat">speechtype</string>
-        <string name="XmlAttrNameSpeechFormatLength">length</string>
-        <string name="XmlAttrNameSpeechFormatFirstPeriod">firstperiod</string>
         <string name="XmlAttrNameSpeechFormatCountDir">countdir</string>
             <string name="XmlAttrValueSpeechFormatCountDirUp">up</string>
             <string name="XmlAttrValueSpeechFormatCountDirDown">down</string>
@@ -66,6 +72,11 @@
     <string name="XmlErrorSpeechFormatPeriodInfoNotFound">"There is no period with reference '%1$s' in speech type '%2$s'"</string>
     <string name="XmlErrorSpeechFormatInvalidCountDir">"Invalid countdir for length of speech type '%1$s': '%2$s'"</string>
     <string name="XmlErrorSpeechFormatNoFinishBell">"The speech type '%1$s' has no finish bell defined, so I'll default to a double bell at the end of this speech type. To avoid this warning, please explicitly define a finish bell in the XML file. If you don't want a finish bell to sound, use &lt;bell time=\"finish\" number=\"0\"/&gt;"</string>
+    <string name="XmlErrorPrepTimeNoLength">"Prep time had no length"</string>
+    <string name="XmlErrorPrepTimeInvalidLength">"Invalid time for length of prep time: '%2$s'"</string>
+    <string name="XmlErrorPrepTimeInsideContext">"The prep time was inside a %1$s"</string>
+    <string name="XmlErrorPrepTimePeriodInfoNotFound">"There is no period with reference '%1$s' in the prep time"</string>
+    <string name="XmlErrorPrepTimeNoFinishBell">"The prep time has no finish bell defined, so I'll default to a double bell at the end of this speech type. To avoid this warning, please explicitly define a finish bell in the XML file. If you don't want a finish bell to sound, use &lt;bell time=\"finish\" number=\"0\"/&gt;"</string>
     <string name="XmlErrorBellNoTime">"A bell in %1$s did not specify a time."</string>
     <string name="XmlErrorBellInvalidTime">"Invalid time for bell in %1$s: '%2$s'"</string>
     <string name="XmlErrorBellInvalidNumber">"Invalid number of bells in %1$s: '%2$s'"</string>
@@ -92,4 +103,6 @@
     <string name="DfbErrorSpeechFormatNotFound">"There is no speech type with reference '%1$s'"</string>
     <string name="DfbErrorResourceNotFound">"There is no resource with reference '%1$s'"</string>
     <string name="DfbErrorAddSpeechSpeechFormatNotFound">"There is no speech type with reference '%1$s' (%2$s)"</string>
+    <string name="DfbErrorMultiplePrepTimes">"More than one prep time was found"</string>
+    <string name="DfbErrorPrepTimeNotControlled">"Either the prep time is not controlled or there is no prep time in this format, so can't add bells or periods to the prep time"</string>
 </resources>
