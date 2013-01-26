@@ -20,9 +20,6 @@
     <string name="PrefPrepTimerCountDirectionKey">prepTimerCountDirection</string>
     <string name="PrefPrepTimerKeepScreenOnKey">prepTimerKeepScreenOn</string>
     
-    <string name="PrefScreenPoiKey">poiPrefs</string>    
-    <string name="PrefScreenPrepTimeKey">prepTimePrefs</string>    
-    
     <!-- Keys for backwards-compatibility -->
     <string name="PrefFlashScreenBoolKey">flashScreen</string> <!-- replaced in version 0.6 -->
     
@@ -31,7 +28,7 @@
 	<string name="PrefCategoryPoisTitle">Points of information</string>
 	<string name="PrefCategoryPrepTimeTitle">Preparation timer</string>
 	<string name="PrefCategoryBellsTitle">Bells</string>
-	<string name="PrefCategoryGeneralTitle">General - speeches</string>
+	<string name="PrefCategoryGeneralTitle">General</string>
 		
 	<!-- Silent mode -->
     <string name="PrefSilentModeTitle">Silent mode</string>
@@ -107,26 +104,22 @@
     <bool   name="DefaultPrefKeepScreenOn">true</bool>
     
     <!-- *** Preparation time *** -->
-	<string name="PrefPrepTimeScreenTitle">Preparation time</string>
-	<string name="PrefPrepTimeScreenSummary">Change settings for the preparation timer</string>
-	<string name="PrefPrepTimeScreenSummaryWhenEnabled">Change settings for the preparation timer (enabled)</string>
-	<string name="PrefPrepTimeScreenSummaryWhenDisabled">Change settings for the preparation timer (disabled)</string>
-
     <string name="PrefPrepTimerEnableTitle">Enable prep timer</string>
     <string name="PrefPrepTimerEnableOnSummary">Use the preparation timer</string>
     <string name="PrefPrepTimerEnableOffSummary">"Don't use the preparation timer"</string>
     <bool   name="DefaultPrefPrepTimerEnable">true</bool>
 
-    <string name="DefaultPrefPrepTimerCountDirection">generallyDown</string>
+    <string-array name="PrefPrepTimerCountDirectionSummaries">
+        <item>Count up in the prep timer</item>
+    	<item>Count down in the prep timer</item>
+    </string-array>
+    <string name="DefaultPrefPrepTimerCountDirection">alwaysDown</string>
 
+    <string name="PrefPrepTimerKeepScreenOnOnSummary">Keep screen on (dimmed) while prep timer is running</string>
+    <string name="PrefPrepTimerKeepScreenOnOffSummary">Apply normal screen timeout during prep time</string>
     <bool   name="DefaultPrefPrepTimerKeepScreenOn">true</bool>
 
    	<!-- *** Points of information *** -->
-	<string name="PrefPoiScreenTitle">Points of information</string>
-	<string name="PrefPoiScreenSummary">Change settings for the POIs timer</string>
-	<string name="PrefPoiScreenSummaryWhenEnabled">Change settings for the POIs timer (enabled)</string>
-	<string name="PrefPoiScreenSummaryWhenDisabled">Change settings for the POIs timer (disabled)</string>
-
     <string name="PrefPoiTimerEnableTitle">Show POIs timer</string>
     <string name="PrefPoiTimerEnableOnSummary">Show the POIs timer when appropriate</string>
     <string name="PrefPoiTimerEnableOffSummary">Hide the POIs timer</string>

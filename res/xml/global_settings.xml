@@ -67,77 +67,66 @@
             android:title="@string/PrefKeepScreenOnTitle" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/PrefCategoryPrepTimeTitle" >
-        <PreferenceScreen
-            android:key="@string/PrefScreenPrepTimeKey"
-            android:summary="@string/PrefPrepTimeScreenSummary"
-            android:title="@string/PrefPrepTimeScreenTitle" >
-            <CheckBoxPreference
-                android:defaultValue="@bool/DefaultPrefPrepTimerEnable"
-                android:disableDependentsState="false"
-                android:key="@string/PrefPrepTimerEnableKey"
-                android:summaryOff="@string/PrefPrepTimerEnableOffSummary"
-                android:summaryOn="@string/PrefPrepTimerEnableOnSummary"
-                android:title="@string/PrefPrepTimerEnableTitle" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/DefaultPrefPrepTimerEnable"
+            android:disableDependentsState="false"
+            android:key="@string/PrefPrepTimerEnableKey"
+            android:summaryOff="@string/PrefPrepTimerEnableOffSummary"
+            android:summaryOn="@string/PrefPrepTimerEnableOnSummary"
+            android:title="@string/PrefPrepTimerEnableTitle" />
 
-            <ListPreference
-                android:defaultValue="@string/DefaultPrefPrepTimerCountDirection"
-                android:dependency="@string/PrefPrepTimerEnableKey"
-                android:entries="@array/PrefCountDirectionEntries"
-                android:entryValues="@array/PrefCountDirectionValues"
-                android:key="@string/PrefPrepTimerCountDirectionKey"
-                android:title="@string/PrefCountDirectionTitle" />
+        <ListPreference
+            android:defaultValue="@string/DefaultPrefPrepTimerCountDirection"
+            android:dependency="@string/PrefPrepTimerEnableKey"
+            android:entries="@array/PrefCountDirectionEntries"
+            android:entryValues="@array/PrefCountDirectionValues"
+            android:key="@string/PrefPrepTimerCountDirectionKey"
+            android:title="@string/PrefCountDirectionTitle" />
 
-            <CheckBoxPreference
-                android:defaultValue="@bool/DefaultPrefPrepTimerKeepScreenOn"
-                android:dependency="@string/PrefPrepTimerEnableKey"
-                android:key="@string/PrefPrepTimerKeepScreenOnKey"
-                android:summaryOff="@string/PrefKeepScreenOnOffSummary"
-                android:summaryOn="@string/PrefKeepScreenOnOnSummary"
-                android:title="@string/PrefKeepScreenOnTitle" />
-        </PreferenceScreen>
+        <CheckBoxPreference
+            android:defaultValue="@bool/DefaultPrefPrepTimerKeepScreenOn"
+            android:dependency="@string/PrefPrepTimerEnableKey"
+            android:key="@string/PrefPrepTimerKeepScreenOnKey"
+            android:summaryOff="@string/PrefPrepTimerKeepScreenOnOffSummary"
+            android:summaryOn="@string/PrefPrepTimerKeepScreenOnOnSummary"
+            android:title="@string/PrefKeepScreenOnTitle" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/PrefCategoryPoisTitle" >
-        <PreferenceScreen
-            android:key="@string/PrefScreenPoiKey"
-            android:summary="@string/PrefPoiScreenSummary"
-            android:title="@string/PrefPoiScreenTitle" >
-            <CheckBoxPreference
-                android:defaultValue="@bool/DefaultPrefPoiTimerEnable"
-                android:disableDependentsState="false"
-                android:key="@string/PrefPoiTimerEnableKey"
-                android:summaryOff="@string/PrefPoiTimerEnableOffSummary"
-                android:summaryOn="@string/PrefPoiTimerEnableOnSummary"
-                android:title="@string/PrefPoiTimerEnableTitle" />
-            <!--
+        <CheckBoxPreference
+            android:defaultValue="@bool/DefaultPrefPoiTimerEnable"
+            android:disableDependentsState="false"
+            android:key="@string/PrefPoiTimerEnableKey"
+            android:summaryOff="@string/PrefPoiTimerEnableOffSummary"
+            android:summaryOn="@string/PrefPoiTimerEnableOnSummary"
+            android:title="@string/PrefPoiTimerEnableTitle" />
+        <!--
 The POI buzzer option isn't used.  The only part that isn't implemented is the part that
 actually plays the buzzer using a MediaPlayer (and the sound file itself).  I'm not sure whether
 this is worth implementing - adjudicators would have to stop the timer for speakers who stay
 under the POI time limit, i.e. most of the time - it's easier to have it quiet all the time and
-to be alerted without sound at the 15 second mark?
-            -->
-            <!-- <CheckBoxPreference android:key="@string/PrefPoiBuzzerEnableKey" android:summaryOff="@string/PrefPoiBuzzerEnableOffSummary" android:title="@string/PrefPoiBuzzerEnableTitle" android:summaryOn="@string/PrefPoiBuzzerEnableOnSummary" android:dependency="@string/PrefPoiTimerEnableKey" android:defaultValue="@bool/DefaultPrefPoiBuzzerEnable" /> -->
-            <CheckBoxPreference
-                android:defaultValue="@bool/DefaultPrefPoiVibrateEnable"
-                android:dependency="@string/PrefPoiTimerEnableKey"
-                android:key="@string/PrefPoiVibrateEnableKey"
-                android:summaryOff="@string/PrefPoiVibrateEnableOffSummary"
-                android:summaryOn="@string/PrefPoiVibrateEnableOnSummary"
-                android:title="@string/PrefPoiVibrateEnableTitle" />
+to be alerted without sound at the 15 second mark?        -->
+        <!-- <CheckBoxPreference android:key="@string/PrefPoiBuzzerEnableKey" android:summaryOff="@string/PrefPoiBuzzerEnableOffSummary" android:title="@string/PrefPoiBuzzerEnableTitle" android:summaryOn="@string/PrefPoiBuzzerEnableOnSummary" android:dependency="@string/PrefPoiTimerEnableKey" android:defaultValue="@bool/DefaultPrefPoiBuzzerEnable" /> -->
+        <CheckBoxPreference
+            android:defaultValue="@bool/DefaultPrefPoiVibrateEnable"
+            android:dependency="@string/PrefPoiTimerEnableKey"
+            android:key="@string/PrefPoiVibrateEnableKey"
+            android:summaryOff="@string/PrefPoiVibrateEnableOffSummary"
+            android:summaryOn="@string/PrefPoiVibrateEnableOnSummary"
+            android:title="@string/PrefPoiVibrateEnableTitle" />
 
-            <ListPreference
-                android:defaultValue="@string/DefaultPrefPoiFlashScreenMode"
-                android:dependency="@string/PrefPoiTimerEnableKey"
-                android:dialogTitle="@string/PrefPoiFlashScreenModeDialogTitle"
-                android:entries="@array/PrefFlashScreenModeEntries"
-                android:entryValues="@array/PrefFlashScreenModeValues"
-                android:key="@string/PrefPoiFlashScreenModeKey"
-                android:title="@string/PrefFlashScreenModeTitle" />
+        <ListPreference
+            android:defaultValue="@string/DefaultPrefPoiFlashScreenMode"
+            android:dependency="@string/PrefPoiTimerEnableKey"
+            android:dialogTitle="@string/PrefPoiFlashScreenModeDialogTitle"
+            android:entries="@array/PrefFlashScreenModeEntries"
+            android:entryValues="@array/PrefFlashScreenModeValues"
+            android:key="@string/PrefPoiFlashScreenModeKey"
+            android:title="@string/PrefFlashScreenModeTitle" />
 
-            <Preference
-                android:key="@string/PrefPoiLearnMoreKey"
-                android:summary="@string/PrefPoiLearnMoreSummary"
-                android:title="@string/PrefPoiLearnMoreTitle" />
-        </PreferenceScreen>
+        <Preference
+            android:key="@string/PrefPoiLearnMoreKey"
+            android:summary="@string/PrefPoiLearnMoreSummary"
+            android:title="@string/PrefPoiLearnMoreTitle" />
     </PreferenceCategory>
 
 </PreferenceScreen>
