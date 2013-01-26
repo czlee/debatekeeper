@@ -42,7 +42,7 @@ import android.os.Bundle;
  *  <li> handling the GUI, but it sends a message to the DebatingActivity to update the GUI
  *  </ul>
  *
- * The internal mechanics of a single speech are handled by {@link SpeechOrPrepManager}.
+ * The internal mechanics of a single speech are handled by {@link MainTimerManager}.
  *
  * It does not handle the GUI.
  *
@@ -52,7 +52,7 @@ import android.os.Bundle;
 public class DebateManager {
 
     private final DebateFormat        mDebateFormat;
-    private final SpeechOrPrepManager mSpeechManager;
+    private final MainTimerManager    mSpeechManager;
     private final PoiManager          mPoiManager;
     private final Context             mContext;
 
@@ -77,7 +77,7 @@ public class DebateManager {
         super();
         this.mContext       = context;
         this.mDebateFormat  = df;
-        this.mSpeechManager = new SpeechOrPrepManager(am);
+        this.mSpeechManager = new MainTimerManager(am);
         // TODO un-hardcode this '15'
         this.mPoiManager    = new PoiManager(am, 15);
         this.mSpeechTimes   = new ArrayList<Long>();
@@ -199,7 +199,7 @@ public class DebateManager {
     /**
      * @return the current state
      */
-    public SpeechOrPrepManager.DebatingTimerState getStatus() {
+    public MainTimerManager.DebatingTimerState getStatus() {
         return mSpeechManager.getStatus();
     }
 

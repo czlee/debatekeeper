@@ -6,7 +6,7 @@ import net.czlee.debatekeeper.DebatingTimerService.GuiUpdateBroadcastSender;
  * DebateElementManager is an abstract base class for classes that manage elements that
  * are part of a debate.
  *
- * <p>Current known subclasses: {@link SpeechOrPrepManager}, {@link PoiManager}.</p>
+ * <p>Current known subclasses: {@link MainTimerManager}, {@link PoiManager}.</p>
  *
  * @author Chuan-Zheng Lee
  * @since 2012-09-09
@@ -36,7 +36,7 @@ public abstract class DebateElementManager {
 
     /**
      * Sets a broadcast sender for this speech manager.
-     * <code>SpeechOrPrepManager</code> will call <code>sendBroadcast()</code> on the broadcast sender
+     * <code>MainTimerManager</code> will call <code>sendBroadcast()</code> on the broadcast sender
      * when the timer counts up/down.
      * @param sender the {@link GuiUpdateBroadcastSender}
      */

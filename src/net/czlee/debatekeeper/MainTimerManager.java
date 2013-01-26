@@ -24,24 +24,24 @@ import android.os.Bundle;
 import android.util.Log;
 
 /**
- * SpeechOrPrepManager manages the mechanics of a single speech.  Exactly one instance should exist
- * during a debate.  <code>SpeechOrPrepManager</code> can switch between speeches dynamically&mdash;there
+ * MainTimerManager manages the mechanics of a single speech.  Exactly one instance should exist
+ * during a debate.  <code>MainTimerManager</code> can switch between speeches dynamically&mdash;there
  * is no need to destroy and/or re-create this instance in order to start a new speech.
  *
- * SpeechOrPrepManager is responsible for:<br>
+ * MainTimerManager is responsible for:<br>
  *  <ul>
  *  <li> Keeping time
  *  <li> Keeping track of, and setting off, bells.
  *  <li> Keeping track of period information and providing it when asked.
  *  </ul>
  *
- *  SpeechOrPrepManager doesn't remember anything about speeches that are no longer loaded.
+ *  MainTimerManager doesn't remember anything about speeches that are no longer loaded.
  *
  * @author Chuan-Zheng Lee
  * @since  2012-06-09
  *
  */
-public class SpeechOrPrepManager extends DebateElementManager {
+public class MainTimerManager extends DebateElementManager {
 
     private SpeechOrPrepFormat       mFormat;
     private PeriodInfo               mCurrentPeriodInfo;
@@ -59,7 +59,7 @@ public class SpeechOrPrepManager extends DebateElementManager {
      * Constructor.
      * @param am the AlertManager associated with this instance
      */
-    public SpeechOrPrepManager(AlertManager am) {
+    public MainTimerManager(AlertManager am) {
         super(am);
     }
 
@@ -294,8 +294,8 @@ public class SpeechOrPrepManager extends DebateElementManager {
     }
 
     /**
-     * Saves the state of this <code>SpeechOrPrepManager</code> to a {@link Bundle}.
-     * @param key A String to uniquely distinguish this <code>SpeechOrPrepManager</code> from any other
+     * Saves the state of this <code>MainTimerManager</code> to a {@link Bundle}.
+     * @param key A String to uniquely distinguish this <code>MainTimerManager</code> from any other
      *        objects that might be stored in the same Bundle.
      * @param bundle The Bundle to which to save this information.
      */
@@ -306,9 +306,9 @@ public class SpeechOrPrepManager extends DebateElementManager {
     }
 
     /**
-     * Restores the state of this <code>SpeechOrPrepManager</code> from a {@link Bundle}.
+     * Restores the state of this <code>MainTimerManager</code> from a {@link Bundle}.
      * <code>loadSpeech()</code> should be called <b>before</b> this is called.
-     * @param key A String to uniquely distinguish this <code>SpeechOrPrepManager</code> from any other
+     * @param key A String to uniquely distinguish this <code>MainTimerManager</code> from any other
      *        objects that might be stored in the same Bundle.
      * @param bundle The Bundle from which to restore this information.
      */

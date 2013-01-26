@@ -18,7 +18,7 @@
 package net.czlee.debatekeeper;
 
 /**
- * SpeechOrPrepFormat is an interface for SpeechOrPrepManager
+ * SpeechOrPrepFormat is an interface for MainTimerManager
  *
  * Known implementations: {@link SpeechFormat}, {@link PrepTimeSimpleFormat}
  *
