@@ -39,8 +39,14 @@ public class GlobalSettingsActivity extends PreferenceActivity {
     private final HashMap<String, Integer> mPreferenceToSummaryResidMap = new HashMap<String, Integer>();
     private final HashMap<String, Integer> mPreferenceToDefaultResidMap = new HashMap<String, Integer>();
 
-    private final HashSet<String> mIntegerPreferenceKeys = new HashSet<String>();
-    private final HashSet<String> mListPreferenceKeys    = new HashSet<String>();
+    private final HashMap<String, String>  mEnablePreferenceToScreenPreferenceMap
+        = new HashMap<String, String>();
+    private final HashMap<String, Integer[]> mScreenPreferenceToSummaryResidMap
+        = new HashMap<String, Integer[]>();
+
+    private final HashSet<String> mIntegerPreferenceKeys       = new HashSet<String>();
+    private final HashSet<String> mListPreferenceKeys          = new HashSet<String>();
+    private final HashSet<String> mScreenEnablePreferenceKeys  = new HashSet<String>();
 
     private final ChangeSummaryOnSharedPreferenceChangeListener listener = new ChangeSummaryOnSharedPreferenceChangeListener();
 
@@ -50,9 +56,12 @@ public class GlobalSettingsActivity extends PreferenceActivity {
     private static String KEY_FLASH_SCREEN_MODE;
     private static String KEY_POI_FLASH_SCREEN_MODE;
     private static String KEY_POI_TIMER_LEARN_MORE;
+    private static String KEY_PREP_TIMER_COUNT_DIRECTION;
 
     private static String KEY_POI_TIMER_ENABLE;
-    private static String KEY_POI_SCREEN;
+    private static String KEY_POI_TIMER_SCREEN;
+    private static String KEY_PREP_TIMER_ENABLE;
+    private static String KEY_PREP_TIMER_SCREEN;
 
     //******************************************************************************************
     // Private classes
@@ -66,8 +75,8 @@ public class GlobalSettingsActivity extends PreferenceActivity {
                 updateIntegerPreferenceSummary(key);
             else if (mListPreferenceKeys.contains(key))
                 updateListPreferenceSummary(key);
-            else if (key.equals(KEY_POI_TIMER_ENABLE))
-                updatePoiScreenSummary();
+            else if (mScreenEnablePreferenceKeys.contains(key))
+                updateScreenSummaryFromEnablePreference(key);
         }
 
     }
@@ -80,41 +89,61 @@ public class GlobalSettingsActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.global_settings);
 
-        KEY_FIRST_OVERTIME_BELL   = getString(R.string.PrefFirstOvertimeBellKey);
-        KEY_OVERTIME_BELL_PERIOD  = getString(R.string.PrefOvertimeBellPeriodKey);
-        KEY_COUNT_DIRECTION       = getString(R.string.PrefCountDirectionKey);
-        KEY_FLASH_SCREEN_MODE     = getString(R.string.PrefFlashScreenModeKey);
-        KEY_POI_FLASH_SCREEN_MODE = getString(R.string.PrefPoiFlashScreenModeKey);
-        KEY_POI_TIMER_LEARN_MORE  = getString(R.string.PrefPoiLearnMoreKey);
+        KEY_FIRST_OVERTIME_BELL        = getString(R.string.PrefFirstOvertimeBellKey);
+        KEY_OVERTIME_BELL_PERIOD       = getString(R.string.PrefOvertimeBellPeriodKey);
+        KEY_COUNT_DIRECTION            = getString(R.string.PrefCountDirectionKey);
+        KEY_FLASH_SCREEN_MODE          = getString(R.string.PrefFlashScreenModeKey);
+        KEY_POI_FLASH_SCREEN_MODE      = getString(R.string.PrefPoiFlashScreenModeKey);
+        KEY_POI_TIMER_LEARN_MORE       = getString(R.string.PrefPoiLearnMoreKey);
+        KEY_PREP_TIMER_COUNT_DIRECTION = getString(R.string.PrefPrepTimerCountDirectionKey);
 
-        KEY_POI_TIMER_ENABLE      = getString(R.string.PrefPoiTimerEnableKey);
-        KEY_POI_SCREEN            = getString(R.string.PrefScreenPoiKey);
-
+        KEY_POI_TIMER_ENABLE  = getString(R.string.PrefPoiTimerEnableKey);
+        KEY_POI_TIMER_SCREEN  = getString(R.string.PrefScreenPoiKey);
+        KEY_PREP_TIMER_ENABLE = getString(R.string.PrefPrepTimerEnableKey);
+        KEY_PREP_TIMER_SCREEN = getString(R.string.PrefScreenPrepTimeKey);
 
         mIntegerPreferenceKeys.add(KEY_FIRST_OVERTIME_BELL);
         mIntegerPreferenceKeys.add(KEY_OVERTIME_BELL_PERIOD);
         mListPreferenceKeys.add(KEY_COUNT_DIRECTION);
         mListPreferenceKeys.add(KEY_FLASH_SCREEN_MODE);
         mListPreferenceKeys.add(KEY_POI_FLASH_SCREEN_MODE);
+        mListPreferenceKeys.add(KEY_PREP_TIMER_COUNT_DIRECTION);
+        mScreenEnablePreferenceKeys.add(KEY_POI_TIMER_ENABLE);
+        mScreenEnablePreferenceKeys.add(KEY_PREP_TIMER_ENABLE);
 
-        mPreferenceToSummaryResidMap.put(KEY_FIRST_OVERTIME_BELL,   R.string.PrefFirstOvertimeBellSummary);
-        mPreferenceToSummaryResidMap.put(KEY_OVERTIME_BELL_PERIOD,  R.string.PrefOvertimeBellPeriodSummary);
-        mPreferenceToSummaryResidMap.put(KEY_COUNT_DIRECTION,       R.array.PrefCountDirectionSummaries);
-        mPreferenceToSummaryResidMap.put(KEY_FLASH_SCREEN_MODE,     R.array.PrefFlashScreenModeSummaries);
-        mPreferenceToSummaryResidMap.put(KEY_POI_FLASH_SCREEN_MODE, R.array.PrefPoiFlashScreenModeSummaries);
+        mPreferenceToSummaryResidMap.put(KEY_FIRST_OVERTIME_BELL,        R.string.PrefFirstOvertimeBellSummary);
+        mPreferenceToSummaryResidMap.put(KEY_OVERTIME_BELL_PERIOD,       R.string.PrefOvertimeBellPeriodSummary);
+        mPreferenceToSummaryResidMap.put(KEY_COUNT_DIRECTION,            R.array.PrefCountDirectionSummaries);
+        mPreferenceToSummaryResidMap.put(KEY_FLASH_SCREEN_MODE,          R.array.PrefFlashScreenModeSummaries);
+        mPreferenceToSummaryResidMap.put(KEY_POI_FLASH_SCREEN_MODE,      R.array.PrefPoiFlashScreenModeSummaries);
+        mPreferenceToSummaryResidMap.put(KEY_PREP_TIMER_COUNT_DIRECTION, R.array.PrefCountDirectionSummaries);
 
-        mPreferenceToDefaultResidMap.put(KEY_FIRST_OVERTIME_BELL,   R.integer.DefaultPrefFirstOvertimeBell);
-        mPreferenceToDefaultResidMap.put(KEY_OVERTIME_BELL_PERIOD,  R.integer.DefaultPrefOvertimeBellPeriod);
-        mPreferenceToDefaultResidMap.put(KEY_COUNT_DIRECTION,       R.string.DefaultPrefCountDirection);
-        mPreferenceToDefaultResidMap.put(KEY_FLASH_SCREEN_MODE,     R.string.DefaultPrefFlashScreenMode);
-        mPreferenceToDefaultResidMap.put(KEY_POI_FLASH_SCREEN_MODE, R.string.DefaultPrefPoiFlashScreenMode);
+        mPreferenceToDefaultResidMap.put(KEY_FIRST_OVERTIME_BELL,        R.integer.DefaultPrefFirstOvertimeBell);
+        mPreferenceToDefaultResidMap.put(KEY_OVERTIME_BELL_PERIOD,       R.integer.DefaultPrefOvertimeBellPeriod);
+        mPreferenceToDefaultResidMap.put(KEY_COUNT_DIRECTION,            R.string.DefaultPrefCountDirection);
+        mPreferenceToDefaultResidMap.put(KEY_FLASH_SCREEN_MODE,          R.string.DefaultPrefFlashScreenMode);
+        mPreferenceToDefaultResidMap.put(KEY_POI_FLASH_SCREEN_MODE,      R.string.DefaultPrefPoiFlashScreenMode);
+        mPreferenceToDefaultResidMap.put(KEY_PREP_TIMER_COUNT_DIRECTION, R.string.DefaultPrefPrepTimerCountDirection);
+        mPreferenceToDefaultResidMap.put(KEY_POI_TIMER_ENABLE,           R.bool.DefaultPrefPoiTimerEnable);
+        mPreferenceToDefaultResidMap.put(KEY_PREP_TIMER_ENABLE,          R.bool.DefaultPrefPrepTimerEnable);
+
+        mEnablePreferenceToScreenPreferenceMap.put(KEY_POI_TIMER_ENABLE,  KEY_POI_TIMER_SCREEN);
+        mEnablePreferenceToScreenPreferenceMap.put(KEY_PREP_TIMER_ENABLE, KEY_PREP_TIMER_SCREEN);
+
+        Integer[] prepTimerScreenSummaries = {R.string.PrefPrepTimeScreenSummaryWhenDisabled, R.string.PrefPrepTimeScreenSummaryWhenEnabled};
+        mScreenPreferenceToSummaryResidMap.put(KEY_PREP_TIMER_SCREEN, prepTimerScreenSummaries);
+
+        Integer[] poiTimerScreenSummaries = {R.string.PrefPoiScreenSummaryWhenDisabled, R.string.PrefPoiScreenSummaryWhenEnabled};
+        mScreenPreferenceToSummaryResidMap.put(KEY_POI_TIMER_SCREEN, poiTimerScreenSummaries);
 
         updateIntegerPreferenceSummary(KEY_FIRST_OVERTIME_BELL);
         updateIntegerPreferenceSummary(KEY_OVERTIME_BELL_PERIOD);
         updateListPreferenceSummary(KEY_COUNT_DIRECTION);
         updateListPreferenceSummary(KEY_FLASH_SCREEN_MODE);
         updateListPreferenceSummary(KEY_POI_FLASH_SCREEN_MODE);
-        updatePoiScreenSummary();
+        updateListPreferenceSummary(KEY_PREP_TIMER_COUNT_DIRECTION);
+        updateScreenSummaryFromEnablePreference(KEY_POI_TIMER_ENABLE);
+        updateScreenSummaryFromEnablePreference(KEY_PREP_TIMER_ENABLE);
 
         // Set what the "Learn More" option in POIs timer sub-screen does
         getPreferenceManager().findPreference(KEY_POI_TIMER_LEARN_MORE)
@@ -168,12 +197,14 @@ public class GlobalSettingsActivity extends PreferenceActivity {
         pref.setSummary(summaries[index]);
     }
 
-    private void updatePoiScreenSummary() {
-        SharedPreferences prefs              = PreferenceManager.getDefaultSharedPreferences(this);
-        int               defaultValueResId  = R.bool.DefaultPrefPoiTimerEnable;
-        boolean           enabled            = prefs.getBoolean(KEY_POI_TIMER_ENABLE, this.getResources().getBoolean(defaultValueResId));
-        final Preference        pref               = findPreference(KEY_POI_SCREEN);
-        final int               summaryTextResid   = (enabled) ? R.string.PrefPoiScreenSummaryWhenEnabled : R.string.PrefPoiScreenSummaryWhenDisabled;
+    private void updateScreenSummaryFromEnablePreference(String enablePreferenceKey) {
+        SharedPreferences prefs               = PreferenceManager.getDefaultSharedPreferences(this);
+        String            screenPreferenceKey = mEnablePreferenceToScreenPreferenceMap.get(enablePreferenceKey);
+        int               defaultValueResid   = mPreferenceToDefaultResidMap.get(enablePreferenceKey);
+        boolean           enabled             = prefs.getBoolean(enablePreferenceKey, this.getResources().getBoolean(defaultValueResid));
+        final Preference  pref                = findPreference(screenPreferenceKey);
+        final Integer[]   summaryTextResids   = mScreenPreferenceToSummaryResidMap.get(screenPreferenceKey);
+        final int         summaryTextResid    = summaryTextResids[(enabled) ? 1 : 0];
 
         pref.setSummary(getString(summaryTextResid));
         this.onContentChanged();

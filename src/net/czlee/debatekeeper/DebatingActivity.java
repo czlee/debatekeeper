@@ -612,7 +612,7 @@ public class DebatingActivity extends Activity {
     private void applyPreferences() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean silentMode, vibrateMode, overtimeBellsEnabled, keepScreenOn;
-        boolean poiBuzzerEnabled, poiVibrateEnabled;
+        boolean poiBuzzerEnabled, poiVibrateEnabled, prepTimerEnabled;
         int firstOvertimeBell, overtimeBellPeriod;
         String userCountDirectionValue, poiFlashScreenModeValue;
         FlashScreenMode flashScreenMode, poiFlashScreenMode;
@@ -637,6 +637,9 @@ public class DebatingActivity extends Activity {
                     res.getBoolean(R.bool.DefaultPrefPoiBuzzerEnable));
             poiVibrateEnabled = prefs.getBoolean(res.getString(R.string.PrefPoiVibrateEnableKey),
                     res.getBoolean(R.bool.DefaultPrefPoiVibrateEnable));
+
+            prepTimerEnabled = prefs.getBoolean(res.getString(R.string.PrefPrepTimerEnableKey),
+                    res.getBoolean(R.bool.DefaultPrefPrepTimerEnable));
 
             // Overtime bell integers
             if (overtimeBellsEnabled) {
@@ -702,6 +705,7 @@ public class DebatingActivity extends Activity {
 
         if (mDebateManager != null) {
             mDebateManager.setOvertimeBells(firstOvertimeBell, overtimeBellPeriod);
+            mDebateManager.setPrepTimeEnabled(prepTimerEnabled);
         } else {
             Log.w(this.getClass().getSimpleName(), "applyPreferences: Couldn't restore overtime bells, mDebateManager doesn't yet exist");
         }
