@@ -39,4 +39,9 @@ public interface PrepTimeFormat extends SpeechOrPrepFormat {
     @Override
     public abstract PeriodInfo getPeriodInfoForTime(long seconds);
 
+    /**
+     * @return <code>true</code> if this format is "controlled" prep time
+     */
+    public abstract boolean isControlled();
+
 }

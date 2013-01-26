@@ -13,7 +13,7 @@
     <string name="ResumeTimerAfterAlarmButtonText">Resume</string>
     <string name="ResumeTimerAfterUserStopButtonText">Resume</string>
     <string name="ResetTimerButtonText">Reset</string>
-    <string name="NextSpeakerButtonText">Next speech</string>
+    <string name="NextSpeakerButtonText">Next</string>
     <string name="NullButtonText">&lt;None></string>
     <string name="PlayBellButtonText">Bell</string>
     <string name="PoiButtonText">POI</string>
@@ -37,7 +37,7 @@
     <!-- Menu -->
     <string name="ResetDebateMenuItem">Reset debate</string>
     <string name="SettingsMenuItem">Settings</string>
-    <string name="PrevSpeakerMenuItem">Previous speech</string>
+    <string name="PrevSpeakerMenuItem">Previous</string>
     <string name="ChooseFormatMenuItem">Debate styles</string>
 
     <!-- Dialogs -->

@@ -94,4 +94,12 @@ public class PrepTimeSimpleFormat implements PrepTimeFormat {
         return this.getFirstPeriodInfo();
     }
 
+    /* (non-Javadoc)
+     * @see net.czlee.debatekeeper.PrepTimeFormat#isControlled()
+     */
+    @Override
+    public boolean isControlled() {
+        return false;
+    }
+
 }

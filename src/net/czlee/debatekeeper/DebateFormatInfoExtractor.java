@@ -95,13 +95,14 @@ public class DebateFormatInfoExtractor {
             }
 
             /**
-             * <info>, <resource>, <speechtype>, <speeches>
+             * <info>, <resource>, <speechtype>, <speeches>, <preptime-controlled>
              * End the second-level context.
              */
             if (areEqual(localName, R.string.XmlElemNameInfo) ||
                 areEqual(localName, R.string.XmlElemNameResource) ||
                 areEqual(localName, R.string.XmlElemNameSpeechFormat) ||
-                areEqual(localName, R.string.XmlElemNameSpeechesList))
+                areEqual(localName, R.string.XmlElemNameSpeechesList) ||
+                areEqual(localName, R.string.XmlElemNamePrepTimeControlledFormat))
                     mCurrentSecondLevelContext = DebateFormatXmlSecondLevelContext.NONE;
 
             if (getCurrentSecondLevelContext() == DebateFormatXmlSecondLevelContext.INFO) {
@@ -167,6 +168,49 @@ public class DebateFormatInfoExtractor {
             } else if (getCurrentSecondLevelContext() == DebateFormatXmlSecondLevelContext.INFO) {
                 mThirdLevelInfoContext = localName;
                 mCharactersBuffer = new String();
+
+            /**
+             * <preptime length="15:00" />
+             */
+            } else if (areEqual(localName, R.string.XmlElemNamePrepTimeSimpleFormat)) {
+
+                // Ignore if any of the following are true:
+                //  1. No length is given or the length is invalid.
+                String lengthStr = getValue(atts, R.string.XmlAttrNameControlledTimeLength);
+                long length = 0;
+                if (lengthStr == null)
+                    return;
+                try {
+                    length = timeStr2Secs(lengthStr);
+                } catch (NumberFormatException e) {
+                    return;
+                }
+
+                mDfi.addPrepTime(length);
+
+            /**
+             * <preptime-controlled length="15:00">
+             */
+            } else if (areEqual(localName, R.string.XmlElemNamePrepTimeControlledFormat)) {
+
+                // Ignore if any of the following are true:
+                //  1. We're already inside a second-level context
+                //  2. No length is given or the length is invalid
+                if (!assertNotInsideAnySecondLevelContextAndResetOtherwise())
+                    return;
+
+                String lengthStr = getValue(atts, R.string.XmlAttrNameControlledTimeLength);
+                long length;
+                if (lengthStr == null)
+                    return;
+                try {
+                    length = timeStr2Secs(lengthStr);
+                } catch (NumberFormatException e) {
+                    return;
+                }
+
+                mCurrentSecondLevelContext = DebateFormatXmlSecondLevelContext.PREP_TIME_CONTROLLED;
+                mDfi.addPrepTime(length);
 
             /**
              * <resource ref="string">
@@ -266,6 +310,12 @@ public class DebateFormatInfoExtractor {
                     if (mCurrentResourceRef == null)
                         return;
                     mDfi.addBellToResource(time, pause, mCurrentResourceRef);
+                    break;
+                case PREP_TIME_CONTROLLED:
+                    if (isFinish)
+                        mDfi.addFinishBellToPrepTime(pause);
+                    else
+                        mDfi.addBellToPrepTime(time, pause);
                 }
 
             /**

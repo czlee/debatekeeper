@@ -14,15 +14,18 @@
 	<string name="ViewFormatSpeechesLabel">Speeches</string>
 	<string name="ViewFormatFileNameLabel">File name</string>
 	<string name="ViewFormatFileLocationValueUserDefined">Custom user file</string>
-			
+	<string name="ViewFormatPrepTimeLabel">Prep time</string>
+				
 	<string name="ViewFormatShowDetailsButtonText">More</string>
 		
 	<string name="ToastNoSelection">No style selected</string>
 	<string name="ToastSelection">Style changed to %1$s</string>
 	<string name="ToastFormatUnchanged">Style not changed</string>
 	
-	<string name="SpeechTypeDescription">"%1$s long\nbells at %2$s"</string>
-	<string name="SpeechTypePauseIndicator">*</string>
+	<string name="TimeDescriptionLengthInMinutesSeconds">%s long</string>
+	<string name="TimeDescriptionLengthInMinutesOnly">%d minutes</string>
+	<string name="TimeDescriptionBellsList">bells at %s</string>
+	<string name="PauseOnBellIndicator">" (pause)"</string>
 	<string name="ViewFormatSpeechTypeDescription">"<i>%1$s</i>: %2$s"</string>
 	<string name="ViewFormatSpeechDescription">"%1$s (<i>%2$s</i>)"</string>
 	

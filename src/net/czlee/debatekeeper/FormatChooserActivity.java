@@ -453,6 +453,7 @@ public class FormatChooserActivity extends Activity {
 
         if (dfi != null) {
             populateBasicInfo(view, dfi);
+            populatePrepTimeInfo(view, dfi);
             populateTwoColumnTable(view, R.id.ViewFormatTableSpeechTypes, R.layout.speech_type_row,
                     dfi.getSpeechFormatDescriptions());
             populateTwoColumnTable(view, R.id.ViewFormatTableSpeeches, R.layout.speech_row,
@@ -545,6 +546,19 @@ public class FormatChooserActivity extends Activity {
             fileLocationText.setVisibility(View.VISIBLE);
         }
         ((TextView) view.findViewById(R.id.ViewFormatFileNameValue)).setText(filename);
+    }
+
+    private void populatePrepTimeInfo(View view, DebateFormatInfo dfi) {
+        String prepTimeDescription = dfi.getPrepTimeDescription();
+
+        // If there is prep time, populate the view.
+        if (prepTimeDescription != null)
+            ((TextView) view.findViewById(R.id.ViewFormatPrepTimeValue)).setText(
+                    prepTimeDescription);
+
+        // Otherwise, hide the whole row.
+        else
+            view.findViewById(R.id.ViewFormatPrepTimeRow).setVisibility(View.GONE);
     }
 
     /**

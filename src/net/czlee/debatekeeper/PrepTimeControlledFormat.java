@@ -42,4 +42,12 @@ public class PrepTimeControlledFormat extends ControlledSpeechOrPrepFormat
         return CountDirection.COUNT_DOWN;
     }
 
+    /* (non-Javadoc)
+     * @see net.czlee.debatekeeper.PrepTimeFormat#isControlled()
+     */
+    @Override
+    public boolean isControlled() {
+        return true;
+    }
+
 }

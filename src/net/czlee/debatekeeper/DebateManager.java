@@ -238,6 +238,14 @@ public class DebateManager {
     }
 
     /**
+     * @return <code>true</code> if the prep time is controlled (this does not depend on whether
+     * the current item is prep time).
+     */
+    public boolean isPrepTimeControlled() {
+        return mDebateFormat.getPrepFormat().isControlled();
+    }
+
+    /**
      * @return <code>true</code> if the next bell will pause the timer, <code>false</code> otherwise.
      * Returns <code>false</code> if there are no more bells or if there are only overtime bells left.
      */

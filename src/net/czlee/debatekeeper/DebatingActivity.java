@@ -1236,6 +1236,8 @@ public class DebatingActivity extends Activity {
                     nextTimeText.setText(String.format(
                             this.getString(R.string.NextBellWithPauseText),
                             secsToText(nextBellTime)));
+                } else if (mDebateManager.isPrepTime() && !mDebateManager.isPrepTimeControlled()) {
+                    nextTimeText.setText("");
                 } else {
                     nextTimeText.setText(String.format(this.getString(R.string.NextBellText),
                             secsToText(nextBellTime)));
