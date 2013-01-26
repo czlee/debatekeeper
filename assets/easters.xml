@@ -8,9 +8,9 @@
 	</info>
 
 	<resource ref="speeches">
-		<period ref="normal" desc="" bgcolor="#stay" />
-	    		<period ref="warning" desc="Warning bell rung" bgcolor="#77ffcc00" />
-		<period ref="overtime" desc="Overtime" bgcolor="#77ff0000" />
+		<period ref="normal" bgcolor="#stay" />
+	    <period ref="warning" bgcolor="#77ffcc00" />
+		<period ref="overtime" bgcolor="#77ff0000" />
 	</resource>
 	
 	<preptime-controlled length="7:00" firstperiod="easters.moot">

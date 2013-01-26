@@ -48,7 +48,7 @@ public abstract class ControlledSpeechOrPrepFormat implements SpeechOrPrepFormat
 
     @Override
     public PeriodInfo getFirstPeriodInfo() {
-        PeriodInfo pi = new PeriodInfo("Initial", 0, false);
+        PeriodInfo pi = new PeriodInfo("", 0, false);
         pi.update(mFirstPeriodInfo);
         return pi;
     }

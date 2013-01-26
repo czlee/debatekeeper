@@ -8,9 +8,9 @@
 	</info>
 
 	<resource ref="#all">
-		<period ref="initial" desc="First minute" bgcolor="#stay" />
-		<period ref="warning" desc="Warning bell rung" bgcolor="#77ffcc00" />
-		<period ref="overtime" desc="Overtime" bgcolor="#77ff0000" />
+		<period ref="initial" bgcolor="#stay" />
+		<period ref="warning" bgcolor="#77ffcc00" />
+		<period ref="overtime" bgcolor="#77ff0000" />
 	</resource>
 
 	<speechtype ref="all" length="8:00" firstperiod="initial">

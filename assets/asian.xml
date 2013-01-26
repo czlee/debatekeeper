@@ -7,14 +7,16 @@
 		<desc>3 vs 3, 7-minute speeches, 4-minute replies, POIs allowed</desc>
 	</info>
 
+	<preptime length="20:00" />
+	
 	<resource ref="#all">
-		<period ref="warning" desc="Warning bell rung" bgcolor="#77ffcc00" />
-		<period ref="overtime" desc="Overtime" bgcolor="#77ff0000" />
+		<period ref="warning" bgcolor="#77ffcc00" />
+		<period ref="overtime" bgcolor="#77ff0000" />
 	</resource>
 
 	<speechtype ref="substantive" length="7:00" firstperiod="firstmin">
-		<period ref="firstmin" desc="First minute" bgcolor="#stay" />
-		<period ref="pois-allowed" desc="POIs allowed" bgcolor="#7700ff00" poisallowed="true" />
+		<period ref="firstmin" bgcolor="#stay" />
+		<period ref="pois-allowed" bgcolor="#7700ff00" poisallowed="true" />
 		<bell time="1:00" number="1" nextperiod="pois-allowed" sound="#default" />
 		<bell time="6:00" number="1" nextperiod="warning" sound="#default" />
 		<bell time="finish" number="2" nextperiod="overtime" sound="#default" />
