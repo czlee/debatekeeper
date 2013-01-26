@@ -311,18 +311,8 @@ public class DebateFormatBuilder {
 
     private class SpeechFormatBuilder extends ControlledTimeBuilder {
 
-        protected SpeechFormat.CountDirection mCountDirection  = null;
-
         public SpeechFormatBuilder(long speechLength) {
             super(speechLength);
-        }
-
-        /**
-         * Sets the count direction of this speech.
-         * @param countDirection the new count direction
-         */
-        public void setCountDirection(SpeechFormat.CountDirection countDirection) {
-            this.mCountDirection = countDirection;
         }
 
         /**
@@ -331,9 +321,6 @@ public class DebateFormatBuilder {
          */
         public SpeechFormat getSpeechFormat() {
             SpeechFormat sf = new SpeechFormat(getLength());
-            if (mCountDirection != null) {
-                sf.setCountDirection(mCountDirection);
-            }
             if (mFirstPeriodInfo != null) {
                 sf.setFirstPeriodInfo(mFirstPeriodInfo);
             }
@@ -639,21 +626,6 @@ public class DebateFormatBuilder {
         SpeechFormatBuilder sfb = getSpeechFormatBuilder(speechRef);
         Resource res = getResource(resourceRef);
         sfb.addResource(res);
-    }
-
-    /**
-     * Sets the count direction of a speech format.
-     * @param speechRef the short reference for the speech
-     * @param countDir the new count direction
-     * @throws DebateFormatBuilderException if there is no speech with reference 'speechRef'
-     * @throws IllegalStateException if the "adding speeches" state has already started
-     */
-    public void setCountDirection(String speechRef, SpeechFormat.CountDirection countDir)
-            throws DebateFormatBuilderException {
-
-        assertFormatsAreAddable();
-        SpeechFormatBuilder sfb = getSpeechFormatBuilder(speechRef);
-        sfb.setCountDirection(countDir);
     }
 
     /**

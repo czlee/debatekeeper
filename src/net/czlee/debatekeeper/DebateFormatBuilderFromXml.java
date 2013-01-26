@@ -23,7 +23,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 
 import net.czlee.debatekeeper.DebateFormatBuilder.DebateFormatBuilderException;
-import net.czlee.debatekeeper.SpeechOrPrepFormat.CountDirection;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -400,25 +399,11 @@ public class DebateFormatBuilderFromXml {
 
                 // Now do the optional attributes...
 
-                // 6. Get the count direction, and set it if it's present
+                // The 'countdir' attribute is obsolete.  If we find it, use an appropriate
+                // warning message.
                 String countdir = getValue(atts, R.string.XmlAttrNameSpeechFormatCountDir);
                 if (countdir != null) {
-                    try {
-                        if (areEqualIgnoringCase(countdir,
-                                R.string.XmlAttrValueSpeechFormatCountDirUp)) {
-                            mDfb.setCountDirection(reference, CountDirection.COUNT_UP);
-                        } else if (areEqualIgnoringCase(countdir,
-                                R.string.XmlAttrValueSpeechFormatCountDirDown)) {
-                            mDfb.setCountDirection(reference, CountDirection.COUNT_DOWN);
-                        } else if (areEqualIgnoringCase(countdir,
-                                R.string.XmlAttrValueSpeechFormatCountDirUser)) {
-                            mDfb.setCountDirection(reference, CountDirection.COUNT_USER);
-                        } else {
-                            logXmlError(R.string.XmlErrorSpeechFormatInvalidCountDir, reference, countdir);
-                        }
-                    } catch (DebateFormatBuilderException e) {
-                        logXmlError(R.string.XmlErrorSpeechFormatUnexpectedlyNotFound, reference);
-                    }
+                    logXmlError(R.string.XmlErrorSpeechFormatFoundCountDir);
                 }
 
                 // 7. Get the first period, and take note for later.

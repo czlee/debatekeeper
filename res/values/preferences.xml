@@ -83,24 +83,22 @@
     <!-- Count direction -->
     <string name="PrefCountDirectionTitle">Count direction</string>
     <string-array name="PrefCountDirectionSummaries">
-        <item>Always count up</item>
-    	<item>Count up (unless the style suggests down)</item>
-    	<item>Count down (unless the style suggests up)</item>
-    	<item>Always count down</item>
+        <item>Count up</item>
+    	<item>Count down</item>
     </string-array>
     <string-array name="PrefCountDirectionEntries">
-        <item>Always up</item>
-    	<item>Generally up</item>
-    	<item>Generally down</item>
-    	<item>Always down</item>
+        <item>Count up</item>
+    	<item>Count down</item>
     </string-array>
+    <!-- In case you're wondering, the reason these are called alwaysUp and alwaysDown is because
+    there used to be options called generallyUp and generallyDown. These options were obsoleted
+    in version 0.9, but to retain compatibility we keep the values for the other two as they
+    were before. Since the user never sees these, it doesn't matter what they're called. -->
     <string-array name="PrefCountDirectionValues">
         <item>alwaysUp</item>
-    	<item>generallyUp</item>
-    	<item>generallyDown</item>
     	<item>alwaysDown</item>
     </string-array>
-    <string name="DefaultPrefCountDirection">generallyUp</string>
+    <string name="DefaultPrefCountDirection">alwaysUp</string>
     
     <!-- Keep screen on -->
     <string name="PrefKeepScreenOnTitle">Keep screen on</string>

@@ -80,9 +80,6 @@ public abstract class ControlledSpeechOrPrepFormat implements SpeechOrPrepFormat
     }
 
     @Override
-    public abstract CountDirection getCountDirection();
-
-    @Override
     public BellInfo getFirstBellFromTime(long seconds) {
         Iterator<BellInfo> bellIterator = mBells.iterator();
         BellInfo workingBell = null;

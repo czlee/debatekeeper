@@ -49,14 +49,6 @@ public class PrepTimeSimpleFormat implements PrepTimeFormat {
     }
 
     /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.PrepTimeFormat#getCountDirection()
-     */
-    @Override
-    public CountDirection getCountDirection() {
-        return CountDirection.COUNT_USER;
-    }
-
-    /* (non-Javadoc)
      * @see net.czlee.debatekeeper.PrepTimeFormat#getFirstPeriodInfo()
      */
     @Override

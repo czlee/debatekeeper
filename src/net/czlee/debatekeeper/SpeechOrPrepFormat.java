@@ -28,19 +28,11 @@ package net.czlee.debatekeeper;
 
 public interface SpeechOrPrepFormat {
 
-    public enum CountDirection {
-        COUNT_USER,
-        COUNT_UP,
-        COUNT_DOWN
-    }
-
     /**
      * Returns the length of the speech or prep format in seconds.
      * @return the length in seconds
      */
     public abstract long getLength();
-
-    public abstract CountDirection getCountDirection();
 
     /**
      * Returns the first {@link PeriodInfo} of the speech or prep format.

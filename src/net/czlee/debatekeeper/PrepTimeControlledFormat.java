@@ -37,11 +37,6 @@ public class PrepTimeControlledFormat extends ControlledSpeechOrPrepFormat
         super(length);
     }
 
-    @Override
-    public CountDirection getCountDirection() {
-        return CountDirection.COUNT_USER;
-    }
-
     /* (non-Javadoc)
      * @see net.czlee.debatekeeper.PrepTimeFormat#isControlled()
      */

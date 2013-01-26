@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import net.czlee.debatekeeper.AlertManager.FlashScreenMode;
-import net.czlee.debatekeeper.SpeechOrPrepFormat.CountDirection;
 
 import org.xml.sax.SAXException;
 
@@ -92,8 +91,8 @@ public class DebatingActivity extends Activity {
     private FormatXmlFilesManager mFilesManager;
 
     private String mFormatXmlFileName = null;
-    private UserPreferenceCountDirection mUserCountDirection         = UserPreferenceCountDirection.GENERALLY_UP;
-    private UserPreferenceCountDirection mUserPrepTimeCountDirection = UserPreferenceCountDirection.GENERALLY_DOWN;
+    private CountDirection mUserCountDirection         = CountDirection.COUNT_UP;
+    private CountDirection mUserPrepTimeCountDirection = CountDirection.COUNT_DOWN;
     private boolean mPoiTimerEnabled = true;
     private boolean mKeepScreenOn;
     private boolean mPrepTimeKeepScreenOn;
@@ -346,24 +345,22 @@ public class DebatingActivity extends Activity {
         COUNT_UP, COUNT_DOWN
     }
 
-    private enum UserPreferenceCountDirection {
+    private enum CountDirection {
 
         // These must match the values string array in the preference.xml file.
         // (We can pull strings from the resource automatically,
         // but we can't assign them to enums automatically.)
-        ALWAYS_UP      ("alwaysUp"),
-        GENERALLY_UP   ("generallyUp"),
-        GENERALLY_DOWN ("generallyDown"),
-        ALWAYS_DOWN    ("alwaysDown");
+        COUNT_UP   ("alwaysUp"),
+        COUNT_DOWN ("alwaysDown");
 
         private final String key;
 
-        private UserPreferenceCountDirection(String key) {
+        private CountDirection(String key) {
             this.key = key;
         }
 
-        public static UserPreferenceCountDirection toEnum(String key) {
-            UserPreferenceCountDirection[] values = UserPreferenceCountDirection.values();
+        public static CountDirection toEnum(String key) {
+            CountDirection[] values = CountDirection.values();
             for (int i = 0; i < values.length; i++)
                 if (key.equals(values[i].key))
                     return values[i];
@@ -658,22 +655,37 @@ public class DebatingActivity extends Activity {
                 overtimeBellPeriod = 0;
             }
 
-            // List preference: Count direction
-            userCountDirectionValue = prefs.getString(res.getString(R.string.PrefCountDirectionKey),
-                    res.getString(R.string.DefaultPrefCountDirection));
-            mUserCountDirection = UserPreferenceCountDirection.toEnum(userCountDirectionValue);
-
-            // List preference: Count direction for prep time
-            userPrepTimeCountDirectionValue = prefs.getString(res.getString(R.string.PrefPrepTimerCountDirectionKey),
-                    res.getString(R.string.DefaultPrefPrepTimerCountDirection));
-            mUserPrepTimeCountDirection = UserPreferenceCountDirection.toEnum(userPrepTimeCountDirectionValue);
-
             // List preference: POI flash screen mode
             poiFlashScreenModeValue = prefs.getString(res.getString(R.string.PrefPoiFlashScreenModeKey),
                     res.getString(R.string.DefaultPrefPoiFlashScreenMode));
             poiFlashScreenMode = FlashScreenMode.toEnum(poiFlashScreenModeValue);
 
+            // List preference: Count direction
+            //  - Backwards compatibility measure
+            // This changed in version 0.9, to remove the generallyUp and generallyDown options.
+            // Therefore, if we find either of those, we need to replace it with alwaysUp or
+            // alwaysDown, respectively.
+            userCountDirectionValue = prefs.getString(res.getString(R.string.PrefCountDirectionKey),
+                    res.getString(R.string.DefaultPrefCountDirection));
+            if (userCountDirectionValue.equals("generallyUp") || userCountDirectionValue.equals("generallyDown")) {
+                // Replace the preference with alwaysUp or alwaysDown, respectively.
+                SharedPreferences.Editor editor = prefs.edit();
+                String newValue = (userCountDirectionValue.equals("generallyUp")) ? "alwaysUp" : "alwaysDown";
+                editor.putString(res.getString(R.string.PrefCountDirectionKey), newValue);
+                editor.commit();
+                Log.w(this.getClass().getSimpleName(),
+                        String.format("countDirection: replaced %s with %s", userCountDirectionValue, newValue));
+                userCountDirectionValue = newValue;
+            }
+            mUserCountDirection = CountDirection.toEnum(userCountDirectionValue);
+
+            // List preference: Count direction for prep time
+            userPrepTimeCountDirectionValue = prefs.getString(res.getString(R.string.PrefPrepTimerCountDirectionKey),
+                    res.getString(R.string.DefaultPrefPrepTimerCountDirection));
+            mUserPrepTimeCountDirection = CountDirection.toEnum(userPrepTimeCountDirectionValue);
+
             // List preference: Flash screen mode
+            //  - Backwards compatibility measure
             // This changed from a boolean to a list preference in version 0.6, so there is
             // backwards compatibility to take care of.  Backwards compatibility applies if
             // (a) the list preference is NOT present AND (b) the boolean preference IS present.
@@ -852,14 +864,18 @@ public class DebatingActivity extends Activity {
     }
 
     /**
-     * Assembles the speech format and user count directions to find the count direction to use
-     * currently.
-     * @return OverallCountDirection.UP or OverallCountDirection.DOWN
+     * Returns the count direction that should currently be used.
+     * This method used to assemble the speech format and user count directions to find the
+     * count direction to use.  In version 0.9, the speech format count direction was made
+     * obsolete, so the only thing it has to take into account now is the user count direction.
+     * However, because of the addition of a separate prep time count direction, there is still
+     * some brain-work to do.
+     * @return CountDirection.COUNT_UP or CountDirection.COUNT_DOWN
      */
-    private OverallCountDirection getCountDirection() {
+    private CountDirection getCountDirection() {
 
         // Initialise as the user count direction by default
-        UserPreferenceCountDirection userCountDirection = mUserCountDirection;
+        CountDirection userCountDirection = mUserCountDirection;
 
         if (mDebateManager != null) {
             // If prep time, use the prep time count direction
@@ -870,32 +886,7 @@ public class DebatingActivity extends Activity {
                 userCountDirection = mUserCountDirection;
         }
 
-        // If the user has specified always up or always down, that takes priority.
-        if (userCountDirection == UserPreferenceCountDirection.ALWAYS_DOWN)
-            return OverallCountDirection.COUNT_DOWN;
-        if (userCountDirection == UserPreferenceCountDirection.ALWAYS_UP)
-            return OverallCountDirection.COUNT_UP;
-
-        // If the user hasn't specified, and the speech format has specified a count direction,
-        // use the speech format suggestion.
-        if (mDebateManager != null) {
-            SpeechOrPrepFormat currentSpeechFormat = mDebateManager.getCurrentSpeechFormat();
-            CountDirection sfCountDirection = currentSpeechFormat.getCountDirection();
-            if (sfCountDirection == CountDirection.COUNT_DOWN)
-                return OverallCountDirection.COUNT_DOWN;
-            if (sfCountDirection == CountDirection.COUNT_UP)
-                return OverallCountDirection.COUNT_UP;
-        }
-
-        // Otherwise, use the user setting.
-        if (userCountDirection == UserPreferenceCountDirection.GENERALLY_DOWN)
-            return OverallCountDirection.COUNT_DOWN;
-        if (userCountDirection == UserPreferenceCountDirection.GENERALLY_UP)
-            return OverallCountDirection.COUNT_UP;
-
-        // We've now covered all possibilities.  But just in case (and to satisfy the compiler)...
-        return OverallCountDirection.COUNT_UP;
-
+        return userCountDirection;
     }
 
     /**
@@ -1398,7 +1389,7 @@ public class DebatingActivity extends Activity {
      */
     private long subtractFromSpeechLengthIfCountingDown(long time) {
         if (mDebateManager != null)
-            if (getCountDirection() == OverallCountDirection.COUNT_DOWN)
+            if (getCountDirection() == CountDirection.COUNT_DOWN)
                 return mDebateManager.getCurrentSpeechFormat().getLength() - time;
         return time;
     }

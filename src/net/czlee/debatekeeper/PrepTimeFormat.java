@@ -10,12 +10,6 @@ public interface PrepTimeFormat extends SpeechOrPrepFormat {
     public abstract long getLength();
 
     /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.SpeechOrPrepFormat#getCountDirection()
-     */
-    @Override
-    public abstract CountDirection getCountDirection();
-
-    /* (non-Javadoc)
      * @see net.czlee.debatekeeper.SpeechOrPrepFormat#getFirstPeriodInfo()
      */
     @Override

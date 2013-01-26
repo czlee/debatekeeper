@@ -40,8 +40,6 @@ import java.util.Iterator;
  */
 public class SpeechFormat extends ControlledSpeechOrPrepFormat {
 
-    protected CountDirection mCountDirection = CountDirection.COUNT_USER;
-
     public SpeechFormat(long speechLength) {
         super(speechLength);
     }
@@ -49,15 +47,6 @@ public class SpeechFormat extends ControlledSpeechOrPrepFormat {
     //******************************************************************************************
     // Public methods
     //******************************************************************************************
-
-    @Override
-    public CountDirection getCountDirection() {
-        return mCountDirection;
-    }
-
-    public void setCountDirection(CountDirection countDirection) {
-        this.mCountDirection = countDirection;
-    }
 
     /**
      * Finds whether any period anywhere in the speech has POIs allowed.
