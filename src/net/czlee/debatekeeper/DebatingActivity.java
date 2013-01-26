@@ -1331,7 +1331,7 @@ public class DebatingActivity extends Activity {
         if (time >= 0) {
             return String.format("%02d:%02d", time / 60, time % 60);
         } else {
-            return String.format("%02d:%02d over", -time / 60, -time % 60);
+            return String.format("+%02d:%02d", -time / 60, -time % 60);
         }
     }
 
