@@ -19,7 +19,7 @@
 		<period ref="easters.side" desc="Choose side" />
 	    <bell time="1:00" number="1" nextperiod="easters.side" pauseonbell="true" />
 		<bell time="2:00" number="1" nextperiod="normal" pauseonbell="true" />
-		<bell time="finish" number="2" />
+		<bell time="finish" number="2" nextperiod="overtime" />
 	</preptime-controlled>
 
 	<speechtype ref="substantive" length="6:00" firstperiod="normal">

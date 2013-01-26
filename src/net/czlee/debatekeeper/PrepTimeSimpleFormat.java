@@ -53,7 +53,7 @@ public class PrepTimeSimpleFormat implements PrepTimeFormat {
      */
     @Override
     public CountDirection getCountDirection() {
-        return CountDirection.COUNT_DOWN;
+        return CountDirection.COUNT_USER;
     }
 
     /* (non-Javadoc)
@@ -91,6 +91,8 @@ public class PrepTimeSimpleFormat implements PrepTimeFormat {
      */
     @Override
     public PeriodInfo getPeriodInfoForTime(long seconds) {
+        if (seconds > getLength())
+            return new PeriodInfo("", 0x77ff0000, false);
         return this.getFirstPeriodInfo();
     }
 

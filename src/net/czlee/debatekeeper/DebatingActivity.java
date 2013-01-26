@@ -92,8 +92,11 @@ public class DebatingActivity extends Activity {
     private FormatXmlFilesManager mFilesManager;
 
     private String mFormatXmlFileName = null;
-    private UserPreferenceCountDirection mUserCountDirection = UserPreferenceCountDirection.GENERALLY_UP;
+    private UserPreferenceCountDirection mUserCountDirection         = UserPreferenceCountDirection.GENERALLY_UP;
+    private UserPreferenceCountDirection mUserPrepTimeCountDirection = UserPreferenceCountDirection.GENERALLY_DOWN;
     private boolean mPoiTimerEnabled = true;
+    private boolean mKeepScreenOn;
+    private boolean mPrepTimeKeepScreenOn;
 
     private static final String BUNDLE_SUFFIX_DEBATE_MANAGER = "dm";
     private static final String PREFERENCE_XML_FILE_NAME     = "xmlfn";
@@ -611,10 +614,10 @@ public class DebatingActivity extends Activity {
      */
     private void applyPreferences() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean silentMode, vibrateMode, overtimeBellsEnabled, keepScreenOn;
+        boolean silentMode, vibrateMode, overtimeBellsEnabled;
         boolean poiBuzzerEnabled, poiVibrateEnabled, prepTimerEnabled;
         int firstOvertimeBell, overtimeBellPeriod;
-        String userCountDirectionValue, poiFlashScreenModeValue;
+        String userCountDirectionValue, userPrepTimeCountDirectionValue, poiFlashScreenModeValue;
         FlashScreenMode flashScreenMode, poiFlashScreenMode;
 
         Resources res = getResources();
@@ -628,8 +631,11 @@ public class DebatingActivity extends Activity {
                     res.getBoolean(R.bool.DefaultPrefVibrateMode));
             overtimeBellsEnabled = prefs.getBoolean(res.getString(R.string.PrefOvertimeBellsEnableKey),
                     res.getBoolean(R.bool.DefaultPrefOvertimeBellsEnable));
-            keepScreenOn = prefs.getBoolean(res.getString(R.string.PrefKeepScreenOnKey),
+
+            mKeepScreenOn = prefs.getBoolean(res.getString(R.string.PrefKeepScreenOnKey),
                     res.getBoolean(R.bool.DefaultPrefKeepScreenOn));
+            mPrepTimeKeepScreenOn = prefs.getBoolean(res.getString(R.string.PrefPrepTimerKeepScreenOnKey),
+                    res.getBoolean(R.bool.DefaultPrefPrepTimerKeepScreenOn));
 
             mPoiTimerEnabled = prefs.getBoolean(res.getString(R.string.PrefPoiTimerEnableKey),
                     res.getBoolean(R.bool.DefaultPrefPoiTimerEnable));
@@ -656,6 +662,11 @@ public class DebatingActivity extends Activity {
             userCountDirectionValue = prefs.getString(res.getString(R.string.PrefCountDirectionKey),
                     res.getString(R.string.DefaultPrefCountDirection));
             mUserCountDirection = UserPreferenceCountDirection.toEnum(userCountDirectionValue);
+
+            // List preference: Count direction for prep time
+            userPrepTimeCountDirectionValue = prefs.getString(res.getString(R.string.PrefPrepTimerCountDirectionKey),
+                    res.getString(R.string.DefaultPrefPrepTimerCountDirection));
+            mUserPrepTimeCountDirection = UserPreferenceCountDirection.toEnum(userPrepTimeCountDirectionValue);
 
             // List preference: POI flash screen mode
             poiFlashScreenModeValue = prefs.getString(res.getString(R.string.PrefPoiFlashScreenModeKey),
@@ -718,12 +729,13 @@ public class DebatingActivity extends Activity {
             setVolumeControlStream((silentMode) ? AudioManager.STREAM_RING : AudioManager.STREAM_MUSIC);
 
             am.setVibrateMode(vibrateMode);
-            am.setKeepScreenOn(keepScreenOn);
             am.setFlashScreenMode(flashScreenMode);
 
             am.setPoiBuzzerEnabled(poiBuzzerEnabled);
             am.setPoiVibrateEnabled(poiVibrateEnabled);
             am.setPoiFlashScreenMode(poiFlashScreenMode);
+
+            this.updateKeepScreenOn();
 
             Log.v(this.getClass().getSimpleName(), "applyPreferences: successfully applied");
         } else {
@@ -846,10 +858,22 @@ public class DebatingActivity extends Activity {
      */
     private OverallCountDirection getCountDirection() {
 
+        // Initialise as the user count direction by default
+        UserPreferenceCountDirection userCountDirection = mUserCountDirection;
+
+        if (mDebateManager != null) {
+            // If prep time, use the prep time count direction
+            if (mDebateManager.isPrepTime())
+                userCountDirection = mUserPrepTimeCountDirection;
+            // Otherwise, use the normal count direction
+            else
+                userCountDirection = mUserCountDirection;
+        }
+
         // If the user has specified always up or always down, that takes priority.
-        if (mUserCountDirection == UserPreferenceCountDirection.ALWAYS_DOWN)
+        if (userCountDirection == UserPreferenceCountDirection.ALWAYS_DOWN)
             return OverallCountDirection.COUNT_DOWN;
-        if (mUserCountDirection == UserPreferenceCountDirection.ALWAYS_UP)
+        if (userCountDirection == UserPreferenceCountDirection.ALWAYS_UP)
             return OverallCountDirection.COUNT_UP;
 
         // If the user hasn't specified, and the speech format has specified a count direction,
@@ -864,9 +888,9 @@ public class DebatingActivity extends Activity {
         }
 
         // Otherwise, use the user setting.
-        if (mUserCountDirection == UserPreferenceCountDirection.GENERALLY_DOWN)
+        if (userCountDirection == UserPreferenceCountDirection.GENERALLY_DOWN)
             return OverallCountDirection.COUNT_DOWN;
-        if (mUserCountDirection == UserPreferenceCountDirection.GENERALLY_UP)
+        if (userCountDirection == UserPreferenceCountDirection.GENERALLY_UP)
             return OverallCountDirection.COUNT_UP;
 
         // We've now covered all possibilities.  But just in case (and to satisfy the compiler)...
@@ -998,6 +1022,7 @@ public class DebatingActivity extends Activity {
         mDebateTimerViewFlipper.setDisplayedChild(mCurrentDebateTimerDisplayIndex);
 
         updateGui();
+        updateKeepScreenOn();
 
     }
 
@@ -1025,6 +1050,7 @@ public class DebatingActivity extends Activity {
         mDebateTimerViewFlipper.setDisplayedChild(mCurrentDebateTimerDisplayIndex);
 
         updateGui();
+        updateKeepScreenOn();
 
     }
 
@@ -1097,14 +1123,21 @@ public class DebatingActivity extends Activity {
         }
     }
 
-    // Sets the text and visibility of a single button
+    /**
+     *  Sets the text and visibility of a single button
+     */
     private void setButton(Button button, int resid) {
         button.setText(resid);
         int visibility = (resid == R.string.NullButtonText) ? View.GONE : View.VISIBLE;
         button.setVisibility(visibility);
     }
 
-    // Sets the text, visibility and "weight" of all buttons
+    /**
+     *  Sets the text, visibility and "weight" of all buttons
+     * @param leftResid
+     * @param centreResid
+     * @param rightResid
+     */
     private void setButtons(int leftResid, int centreResid, int rightResid) {
         setButton(mLeftControlButton, leftResid);
         setButton(mCentreControlButton, centreResid);
@@ -1268,6 +1301,27 @@ public class DebatingActivity extends Activity {
         // Update the POI timer button
         updatePoiTimerButton(debateTimerDisplayIndex);
 
+    }
+
+    /**
+     * Sets the "keep screen on" setting according to whether it is prep time or a speech.
+     * This method should be called whenever (a) we switch between speeches and prep time,
+     * and (b) the user preference is applied again.
+     */
+    private void updateKeepScreenOn() {
+        if (mBinder == null)
+            return;
+
+        AlertManager am = mBinder.getAlertManager();
+
+        if (mDebateManager != null) {
+            if (mDebateManager.isPrepTime()) {
+                am.setKeepScreenOn(mPrepTimeKeepScreenOn);
+                return;
+            }
+        }
+
+        am.setKeepScreenOn(mKeepScreenOn);
     }
 
     /**

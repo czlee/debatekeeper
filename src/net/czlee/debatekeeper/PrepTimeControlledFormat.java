@@ -39,7 +39,7 @@ public class PrepTimeControlledFormat extends ControlledSpeechOrPrepFormat
 
     @Override
     public CountDirection getCountDirection() {
-        return CountDirection.COUNT_DOWN;
+        return CountDirection.COUNT_USER;
     }
 
     /* (non-Javadoc)
