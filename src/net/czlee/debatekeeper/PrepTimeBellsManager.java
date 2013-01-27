@@ -25,14 +25,84 @@ import java.util.ArrayList;
  */
 public class PrepTimeBellsManager {
 
-    public enum UserDefinedBellType {
-        FROM_START, FROM_END, PROPORTION_OF_TOTAL
+    private interface PrepTimeBellSpec {
+        /**
+         * @param length
+         * @return A {@link BellInfo} object, or <code>null</code> if this bell is
+         * incompatible with the length given (e.g. it would occur after the end
+         * of the prep time given).
+         */
+        public BellInfo getBell(long length);
     }
 
-    public ArrayList<BellInfo> getBellsList() {
+    private class PrepTimeBellFromStart implements PrepTimeBellSpec {
+
+        private final long time;
+
+        public PrepTimeBellFromStart(long time) {
+            this.time = time;
+        }
+
+        @Override
+        public BellInfo getBell(long length) {
+            // If the time is within the given length, return a bell at that time.
+            // Otherwise, return null.
+            if (length > time)
+                return new BellInfo(time, 1);
+            else
+                return null;
+        }
+
+    }
+
+    private class PrepTimeBellFromFinish implements PrepTimeBellSpec {
+
+        private final long time;
+
+        public PrepTimeBellFromFinish(long time) {
+            this.time = time;
+        }
+
+        @Override
+        public BellInfo getBell(long length) {
+            if (length > time)
+                return new BellInfo(length - time, 1);
+            else
+                return null;
+        }
+
+    }
+
+    private class PrepTimeBellProportional implements PrepTimeBellSpec {
+
+        private final float proportion;
+
+        public PrepTimeBellProportional (float proportion) {
+            this.proportion = proportion;
+        }
+
+        @Override
+        public BellInfo getBell(long length) {
+
+            // Calculate when the bell should ring
+            long time = (long) (length * proportion);
+            return new BellInfo(time, 1);
+        }
+
+    }
+
+    /**
+     * Returns a list of the bells that the current user-defined settings imply
+     * for prep time of a given length
+     * @param length total length of the prep time
+     * @return an {@link ArrayList} of {@link BellInfo} objects sorted by time
+     */
+    public ArrayList<BellInfo> getBellsList(long length) {
         // TODO write this method
         return null;
 
     }
+
+
 
 }

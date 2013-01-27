@@ -58,11 +58,11 @@ public abstract class ControlledSpeechOrPrepFormat implements SpeechOrPrepFormat
     }
 
     /**
-     * Adds a BellInfo to the speech.
+     * Adds a {@link BellInfo} to the speech.
      * This method avoids throwing exceptions.  The caller must be diligent enough not to do
      * anything weird.  If there are two bells at the same time, it replaces the existing one with
      * this one.  If this bell is after the finish time, it doesn't care, it just adds it anyway.
-     * @param bi the BellInfo to add
+     * @param bi the {@link BellInfo} to add
      */
     public void addBellInfo(BellInfo bi) {
 
