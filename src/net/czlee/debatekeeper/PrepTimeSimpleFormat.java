@@ -63,7 +63,7 @@ public class PrepTimeSimpleFormat implements PrepTimeFormat {
     public BellInfo getFirstBellFromTime(long seconds) {
         // TODO Add other bells from user preferences
         if (seconds < getLength())
-            return new BellInfo(getLength(), 2);
+            return getFinishBell();
         return null;
     }
 
@@ -74,7 +74,7 @@ public class PrepTimeSimpleFormat implements PrepTimeFormat {
     public BellInfo getBellAtTime(long seconds) {
         // TODO Add other bells from user preferences
         if (seconds == getLength())
-            return new BellInfo(getLength(), 2);
+            return getFinishBell();
         return null;
     }
 
@@ -84,7 +84,7 @@ public class PrepTimeSimpleFormat implements PrepTimeFormat {
     @Override
     public PeriodInfo getPeriodInfoForTime(long seconds) {
         if (seconds > getLength())
-            return new PeriodInfo("", 0x77ff0000, false);
+            return getOvertimePeriodInfo();
         return this.getFirstPeriodInfo();
     }
 
@@ -96,4 +96,17 @@ public class PrepTimeSimpleFormat implements PrepTimeFormat {
         return false;
     }
 
+    //******************************************************************************************
+    // Private methods
+    //******************************************************************************************
+
+    private BellInfo getFinishBell() {
+        BellInfo bi = new BellInfo(getLength(), 2);
+        bi.setNextPeriodInfo(getOvertimePeriodInfo());
+        return bi;
+    }
+
+    private PeriodInfo getOvertimePeriodInfo() {
+        return new PeriodInfo("", 0x77ff0000, false);
+    }
 }

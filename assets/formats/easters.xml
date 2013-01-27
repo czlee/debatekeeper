@@ -17,6 +17,7 @@
 		<period ref="normal" desc="" bgcolor="#stay" />
 	    <period ref="easters.moot" desc="Choose moot" />
 		<period ref="easters.side" desc="Choose side" />
+		<period ref="overtime" desc="" bgcolor="#77ff0000" />
 	    <bell time="1:00" number="1" nextperiod="easters.side" pauseonbell="true" />
 		<bell time="2:00" number="1" nextperiod="normal" pauseonbell="true" />
 		<bell time="finish" number="2" nextperiod="overtime" />

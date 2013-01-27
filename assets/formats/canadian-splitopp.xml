@@ -20,7 +20,7 @@
 		<bell time="finish" number="2" nextperiod="overtime" />
 	</speechtype>
 
-	<speechtype ref="pm-rebuttal" length="3:00" firstperiod="main">
+	<speechtype ref="rebuttal" length="3:00" firstperiod="main">
 		<period ref="main" bgcolor="#stay" />
 		<bell time="2:00" number="1" nextperiod="warning" />
 		<bell time="finish" number="2" nextperiod="overtime" />
