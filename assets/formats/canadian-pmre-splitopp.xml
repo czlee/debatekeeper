@@ -15,8 +15,8 @@
 	</resource>
 
 	<speechtype ref="pm-const" length="6:00" firstperiod="firstmin">
-		<bell time="1:00" number="1" nextperiod="pois-allowed" />
-		<bell time="5:00" number="1" nextperiod="warning" />
+		<bell time="0:30" number="1" nextperiod="pois-allowed" />
+		<bell time="5:30" number="1" nextperiod="warning" />
 		<bell time="finish" number="2" nextperiod="overtime" />
 	</speechtype>
 

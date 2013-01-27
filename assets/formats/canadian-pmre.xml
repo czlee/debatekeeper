@@ -15,8 +15,8 @@
 	</resource>
 
 	<speechtype ref="pm-const" length="6:00" firstperiod="firstmin">
-		<bell time="1:00" number="1" nextperiod="pois-allowed" />
-		<bell time="5:00" number="1" nextperiod="warning" />
+		<bell time="0:30" number="1" nextperiod="pois-allowed" />
+		<bell time="5:30" number="1" nextperiod="warning" />
 		<bell time="finish" number="2" nextperiod="overtime" />
 	</speechtype>
 
@@ -27,9 +27,12 @@
 	</speechtype>
 
 	<speechtype ref="leader-opp" length="10:00" firstperiod="firstmin">
-		<period ref="lastthree" desc="Rebuttal time" bgcolor="#77ffcc00" />
+		<period ref="normal" desc="" bgcolor="#77000000" />
+		<period ref="canadian.lo-rebuttal" desc="Rebuttal time" bgcolor="#770000ff" />
 		<bell time="1:00" number="1" nextperiod="pois-allowed" />
-		<bell time="7:00" number="1" nextperiod="lastthree" />
+		<bell time="6:00" number="1" nextperiod="normal" />
+		<bell time="7:00" number="0" nextperiod="canadian.lo-rebuttal" />
+		<bell time="9:00" number="0" nextperiod="warning" />
 		<bell time="finish" number="2" nextperiod="overtime" />
 	</speechtype>
 
