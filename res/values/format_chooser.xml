@@ -24,6 +24,7 @@
 	
 	<string name="TimeDescriptionLengthInMinutesSeconds">%s long</string>
 	<string name="TimeDescriptionLengthInMinutesOnly">%d minutes</string>
+	<string name="TimeDescriptionControlledPrepSuffix">", controlled"</string>
 	<string name="TimeDescriptionBellsList">bells at %s</string>
 	<string name="PauseOnBellIndicator">" (pause)"</string>
 	<string name="ViewFormatSpeechTypeDescription">"<i>%1$s</i>: %2$s"</string>

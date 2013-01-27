@@ -186,7 +186,7 @@ public class DebateFormatInfoExtractor {
                     return;
                 }
 
-                mDfi.addPrepTime(length);
+                mDfi.addPrepTime(length, false);
 
             /**
              * <preptime-controlled length="15:00">
@@ -210,7 +210,7 @@ public class DebateFormatInfoExtractor {
                 }
 
                 mCurrentSecondLevelContext = DebateFormatXmlSecondLevelContext.PREP_TIME_CONTROLLED;
-                mDfi.addPrepTime(length);
+                mDfi.addPrepTime(length, true);
 
             /**
              * <resource ref="string">
