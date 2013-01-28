@@ -1,17 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<debateformat name="Easters" schemaversion="1.0">
+<debate-format schema-version="2.0">
+	<name>Easters</name>
+
 	<info>
 		<region>New Zealand</region>
 		<level>University</level>
-		<usedat>New Zealand Impromptu Debating Championships (Officers' Cup)</usedat>
-		<desc>2 vs 2, 7 minutes prep, 6-minute substantive speeches, 3-minute replies</desc>
+		<used-at>New Zealand Impromptu Debating Championships (Officers' Cup)</used-at>
+		<description>2 vs 2, 7 minutes prep, 6-minute substantive speeches, 3-minute replies</description>
 	</info>
 
-	<resource ref="speeches">
-		<period ref="initial" desc="Initial" bgcolor="#stay" />
-		<period ref="warning" desc="Warning bell rung" bgcolor="#77ffcc00" />
-		<period ref="overtime" desc="Overtime" bgcolor="#77ff0000" />
-	</resource>
+	<period-types>
+		<period ref="easters.moot">
+			<name>Easters: moot</name>
+			<display>Choose moot</display>
+		</period>
+		<period ref="easters.side">
+			<name>Easters: side</name>
+			<display>Choose side</display>
+		</period>
+	</period-types>
+
+	<prep-time-controlled>
+		<length>7:00</length>
+		<bell>
+			<time>1:00</time>
+			<next-period ref="easters.moot"/>
+		</bell>
+		<bell>
+			<time>2:00</time>
+			<next-period ref="easters.moot"/>
+		</bell>
+		<bell>
+			<time from="finish">0</time>
+		</bell>
+	</prep-time-controlled>
+
+	<speech-types>
+		<speech-type ref="substantive">
+
+		</speech-type>
+	</speech-types>
 
 	<speechtype ref="prep" length="7:00" firstperiod="moot" countdir="down">
 		<period ref="moot" desc="Choose moot" />
@@ -43,4 +71,4 @@
 		<speech name="Negative Leader's Reply" type="reply" />
 		<speech name="Affirmative Leader's Reply" type="reply" />
 	</speeches>
-</debateformat>
+</debate-format>

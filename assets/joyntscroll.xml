@@ -19,12 +19,12 @@
 				<next-period ref="pois-allowed"/>
 			</bell>
 			<bell>
-				<time relative-to="finish">-1:00</time>
+				<time from="finish">-1:00</time>
 				<number>1</number>
 				<next-period ref="warning"/>
 			</bell>
 			<bell>
-				<time relative-to="finish">0</time>
+				<time from="finish">0</time>
 				<number>2</number>
 				<next-period ref="overtime"/>
 			</bell>
@@ -34,15 +34,15 @@
 			<length>5:00</length>
 			<first-period ref="normal"/>
 			<bell>
-				<time relative-to="finish">-1:00</time>
+				<time from="finish">-1:00</time>
 				<number>1</number>
 				<next-period ref="warning"/>
 			</bell>
 			<bell>
-				<time relative-to="finish">0</time>
+				<time from="finish">0</time>
 				<number>2</number>
 				<next-period ref="overtime"/>
-			</bell>			
+			</bell>
 		</speech-type>
 	</speech-types>
 
