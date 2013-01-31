@@ -4,7 +4,7 @@
 		<region>Canada</region>
 		<level>University</level>
 		<usedat>Canadian National Debating Championship</usedat>
-		<desc>Prime Minister's Rebuttal Extension and split opposition rebuttal.  2 vs 2, POIs allowed, PM 6 minutes, MO, MC, LO 7 minutes, MO 3 minutes, PM 4 minutes</desc>
+		<desc>Prime Minister's Rebuttal Extension and split opposition rebuttal.  2 vs 2, POIs allowed, PM 6 minutes, LO, MC, MO 7 minutes, LO 3 minutes, PM 4 minutes</desc>
 	</info>
 
 	<resource ref="#all">
