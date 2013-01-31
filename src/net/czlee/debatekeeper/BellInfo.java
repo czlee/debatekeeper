@@ -79,4 +79,8 @@ public class BellInfo {
         return mPauseOnBell;
     }
 
+    public boolean isSilent() {
+        return mSoundInfo.getTimesToPlay() == 0;
+    }
+
 }

@@ -254,6 +254,14 @@ public class DebateManager {
     }
 
     /**
+     * @return <code>true</code> if the next bell is silent, <code>false</code> otherwise.
+     * Returns <code>false</code> if there are no more bells or if there are only overtime bells left.
+     */
+    public boolean isNextBellSilent() {
+        return mSpeechManager.isNextBellSilent();
+    }
+
+    /**
      * Checks if the current speech is in overtime
      * @return <code>true</code> is the current speech is in overtime, <code>false</code> otherwise.
      */

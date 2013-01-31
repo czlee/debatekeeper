@@ -273,6 +273,7 @@ public class DebateFormatInfoExtractor {
                 // Ignore if any of the following are true:
                 //  1. No time is given or the time is invalid
                 //  2. We are not in an applicable second-level context
+                //  3. It is a (valid) silent bell
 
                 String timeStr = getValue(atts, R.string.XmlAttrNameBellTime);;
                 long time = 0;
@@ -288,6 +289,17 @@ public class DebateFormatInfoExtractor {
                         return;
                     }
                 }
+
+                String numberStr = getValue(atts, R.string.XmlAttrNameBellNumber);
+                int number = 1;
+                if (numberStr != null) {
+                    try {
+                        number = Integer.parseInt(numberStr);
+                    } catch (NumberFormatException e) {
+                        // Do nothing
+                    }
+                }
+                if (number == 0) return;
 
                 // (We also need to check if this is a pause-on-bell.)
                 boolean pause = false;

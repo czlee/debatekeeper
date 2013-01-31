@@ -23,6 +23,8 @@
     <string name="NotificationTickerText">Debatekeeper is timing</string>
     <string name="NextBellText">The next bell is at %1$s</string>
     <string name="NextBellWithPauseText">The next bell pauses the timer at %1$s</string>
+    <string name="NextBellWithSilentText">The next (silent) bell is at %1$s</string>
+    <string name="NextBellWithPauseAndSilentText">The next (silent) bell pauses the timer at %1$s</string>
     <string name="NoMoreBellsText">There are no more bells in this speech</string>
     <string name="SpeechLengthText">The length of this speech is %1$s</string>
     <string name="PrepTimeLengthText">The prep time allowed is %1$s</string>

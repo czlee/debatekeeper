@@ -1244,6 +1244,7 @@ public class DebatingActivity extends Activity {
             long currentSpeechTime = mDebateManager.getCurrentSpeechTime();
             Long nextBellTime = mDebateManager.getNextBellTime();
             boolean nextBellIsPause = mDebateManager.isNextBellPause();
+            boolean nextBellIsSilent = mDebateManager.isNextBellSilent();
 
             // Take count direction into account for display
             currentSpeechTime = subtractFromSpeechLengthIfCountingDown(currentSpeechTime);
@@ -1260,16 +1261,26 @@ public class DebatingActivity extends Activity {
             currentTimeText.setTextColor(currentTimeTextColor);
 
             if (nextBellTime != null) {
-                if (nextBellIsPause) {
-                    nextTimeText.setText(String.format(
-                            this.getString(R.string.NextBellWithPauseText),
-                            secsToText(nextBellTime)));
-                } else if (mDebateManager.isPrepTime() && !mDebateManager.isPrepTimeControlled()) {
+                if (mDebateManager.isPrepTime() && !mDebateManager.isPrepTimeControlled()) {
                     nextTimeText.setText("");
                 } else {
-                    nextTimeText.setText(String.format(this.getString(R.string.NextBellText),
+                    int nextBellTextResId;
+
+                    // Select the appropriate "next bell" text
+                    if (nextBellIsPause && nextBellIsSilent)
+                        nextBellTextResId = R.string.NextBellWithPauseAndSilentText;
+                    else if (nextBellIsPause)
+                        nextBellTextResId = R.string.NextBellWithPauseText;
+                    else if (nextBellIsSilent)
+                        nextBellTextResId = R.string.NextBellWithSilentText;
+                    else
+                        nextBellTextResId = R.string.NextBellText;
+
+                    // Now add the time and update the TextView
+                    nextTimeText.setText(String.format(this.getString(nextBellTextResId),
                             secsToText(nextBellTime)));
                 }
+
             } else {
                 nextTimeText.setText(this.getString(R.string.NoMoreBellsText));
             }

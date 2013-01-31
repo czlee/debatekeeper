@@ -245,6 +245,17 @@ public class MainTimerManager extends DebateElementManager {
     }
 
     /**
+     * @return <code>true</code> if the next bell will pause the timer, <code>false</code> otherwise.
+     * Returns <code>false</code> if there are no more bells or if there are only overtime bells left.
+     */
+    public boolean isNextBellSilent() {
+        BellInfo nextBell = mFormat.getFirstBellFromTime(mCurrentTime);
+        if (nextBell != null)
+            return nextBell.isSilent();
+        return false;
+    }
+
+    /**
      * @return <code>true</code> if the timer is running, <code>false</code> otherwise
      */
     @Override
