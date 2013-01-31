@@ -28,10 +28,10 @@
 
 	<speeches>
 		<speech name="Prime Minister's Constructive" type="constructive" />
-		<speech name="Member of the Opposition" type="constructive" />
-		<speech name="Minister of the Crown" type="constructive" />
 		<speech name="Leader of the Opposition" type="constructive" />
-		<speech name="Member of the Opposition's Rebuttal" type="rebuttal" />
+		<speech name="Minister of the Crown" type="constructive" />
+		<speech name="Member of the Opposition" type="constructive" />
+		<speech name="Leader of the Opposition's Rebuttal" type="rebuttal" />
 		<speech name="Prime Minister's Rebuttal" type="rebuttal" />
 	</speeches>
 </debateformat>
