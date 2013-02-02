@@ -123,7 +123,8 @@ public class DebateFormatInfo {
 
         protected String getBellsString() {
             String bellsList = concatenateBellTimes(getBells());
-            String bellsDesc = mContext.getString(R.string.TimeDescriptionBellsList, bellsList);
+            int bellsDescResid = (getBells().size() > 1) ? R.string.TimeDescriptionBellsList : R.string.TimeDescriptionBellsListSingular;
+            String bellsDesc = mContext.getString(bellsDescResid, bellsList);
             return bellsDesc;
         }
 
