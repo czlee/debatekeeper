@@ -44,6 +44,7 @@ import android.util.Log;
 public class MainTimerManager extends DebateElementManager {
 
     private SpeechOrPrepFormat       mFormat;
+    private String                   mSpeechName;
     private PeriodInfo               mCurrentPeriodInfo;
     private Timer                    mTimer;
     private DebatingTimerState       mState = DebatingTimerState.NOT_STARTED;
@@ -107,8 +108,8 @@ public class MainTimerManager extends DebateElementManager {
      * @param sf The speech format to load
      * @throws IllegalStateException if the timer is currently running
      */
-    public void loadSpeech(SpeechOrPrepFormat sf) {
-        loadSpeech(sf, 0);
+    public void loadSpeech(SpeechOrPrepFormat sf, String name) {
+        loadSpeech(sf, name, 0);
     }
 
     /**
@@ -117,11 +118,12 @@ public class MainTimerManager extends DebateElementManager {
      * @param seconds The time in seconds to load
      * @throws IllegalStateException if the timer is currently running
      */
-    public void loadSpeech(SpeechOrPrepFormat sf, long seconds) {
+    public void loadSpeech(SpeechOrPrepFormat sf, String name, long seconds) {
         if (mState == DebatingTimerState.RUNNING)
             throw new IllegalStateException("Can't load speech while timer running");
 
         mFormat = sf;
+        mSpeechName = name;
         mCurrentTime = seconds;
 
         if (seconds == 0) {
@@ -147,7 +149,7 @@ public class MainTimerManager extends DebateElementManager {
         mTimer = new Timer();
         mTimer.scheduleAtFixedRate(new IncrementTimeTask(), TIMER_DELAY, TIMER_PERIOD);
         mState = DebatingTimerState.RUNNING;
-        mAlertManager.makeActive(mCurrentPeriodInfo);
+        mAlertManager.makeActive(mSpeechName);
     }
 
     /**

@@ -165,14 +165,14 @@ public class AlertManager
      * Shows the notification.  Call this when the timer is started.
      * @param pi the {@link PeriodInfo} to use in the notification
      */
-    public void makeActive(PeriodInfo pi) {
+    public void makeActive(String speechName) {
 
         if(!mShowingNotification) {
             mNotification = new Notification(R.drawable.ic_stat_name,
                     mService.getText(R.string.NotificationTickerText),
                     System.currentTimeMillis());
 
-            updateNotification(pi.getDescription());
+            updateNotification(speechName);
             mService.startForeground(NOTIFICATION_ID, mNotification);
 
             mShowingNotification = true;

@@ -90,11 +90,11 @@ public class DebateManager {
         if (hasPrepTime()) {
             this.mCurrentItemType = DebateManagerItem.PREP_TIME;
             this.mCurrentSpeechIndex = 0;
-            this.mSpeechManager.loadSpeech(mDebateFormat.getPrepFormat());
+            this.mSpeechManager.loadSpeech(mDebateFormat.getPrepFormat(), getCurrentSpeechName());
         } else {
             this.mCurrentItemType = DebateManagerItem.SPEECH;
             this.mCurrentSpeechIndex = 0;
-            this.mSpeechManager.loadSpeech(mDebateFormat.getSpeechFormat(mCurrentSpeechIndex));
+            this.mSpeechManager.loadSpeech(mDebateFormat.getSpeechFormat(mCurrentSpeechIndex), getCurrentSpeechName());
         }
 
 
@@ -473,11 +473,12 @@ public class DebateManager {
     private void loadSpeech() {
         switch (mCurrentItemType) {
         case PREP_TIME:
-            mSpeechManager.loadSpeech(mDebateFormat.getPrepFormat(), mPrepTime);
+            mSpeechManager.loadSpeech(mDebateFormat.getPrepFormat(), getCurrentSpeechName(),
+                    mPrepTime);
             break;
         case SPEECH:
             mSpeechManager.loadSpeech(mDebateFormat.getSpeechFormat(mCurrentSpeechIndex),
-                    mSpeechTimes.get(mCurrentSpeechIndex));
+                    getCurrentSpeechName(), mSpeechTimes.get(mCurrentSpeechIndex));
         }
     }
 
