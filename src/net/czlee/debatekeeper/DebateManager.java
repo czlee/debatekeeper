@@ -246,22 +246,6 @@ public class DebateManager {
     }
 
     /**
-     * @return <code>true</code> if the next bell will pause the timer, <code>false</code> otherwise.
-     * Returns <code>false</code> if there are no more bells or if there are only overtime bells left.
-     */
-    public boolean isNextBellPause() {
-        return mSpeechManager.isNextBellPause();
-    }
-
-    /**
-     * @return <code>true</code> if the next bell is silent, <code>false</code> otherwise.
-     * Returns <code>false</code> if there are no more bells or if there are only overtime bells left.
-     */
-    public boolean isNextBellSilent() {
-        return mSpeechManager.isNextBellSilent();
-    }
-
-    /**
      * Checks if the current speech is in overtime
      * @return <code>true</code> is the current speech is in overtime, <code>false</code> otherwise.
      */
@@ -316,13 +300,6 @@ public class DebateManager {
     }
 
     /**
-     * @return the next bell time, or <code>null</code> if there are no more bells
-     */
-    public Long getNextBellTime() {
-        return mSpeechManager.getNextBellTime();
-    }
-
-    /**
      * @return the current period info to be displayed
      */
     public PeriodInfo getCurrentPeriodInfo() {
@@ -358,6 +335,13 @@ public class DebateManager {
      */
     public SpeechOrPrepFormat getCurrentSpeechFormat() {
         return mSpeechManager.getFormat();
+    }
+
+    /**
+     * @return the next overtime bell, or <code>null</code> if there are no more overtime bells
+     */
+    public Long getNextOvertimeBellTime() {
+        return mSpeechManager.getNextOvertimeBellTime();
     }
 
     /**

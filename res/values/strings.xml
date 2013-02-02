@@ -21,13 +21,13 @@
     <!-- Notices -->
     <string name="NotificationTitle">Debatekeeper</string>
     <string name="NotificationTickerText">Debatekeeper is timing</string>
-    <string name="NextBellText">The next bell is at %1$s</string>
-    <string name="NextBellWithPauseText">The next bell pauses the timer at %1$s</string>
-    <string name="NextBellWithSilentText">The next (silent) bell is at %1$s</string>
-    <string name="NextBellWithPauseAndSilentText">The next (silent) bell pauses the timer at %1$s</string>
-    <string name="NoMoreBellsText">There are no more bells in this speech</string>
-    <string name="SpeechLengthText">The length of this speech is %1$s</string>
-    <string name="PrepTimeLengthText">The prep time allowed is %1$s</string>
+    <string name="NoBellsText">", no bells"</string>
+    <string name="BellsListSingularText">", bell at %1$s"</string>
+    <string name="BellsListText">", bells at %1$s"</string>
+    <string name="NextOvertimeBellText">", next overtime bell at %1$s"</string>
+    <string name="TimeInMinutes">%d minutes</string>
+    <string name="SpeechLengthText">%s long</string>
+    <string name="PrepTimeLengthText">%s allowed</string>
     <string name="ResetDebateToastText">All speeches in debate reset</string>
     <string name="NoDebateLoadedText">No debate loaded</string>
     <string name="NoDebateLoadedButtonText">Choose style</string>
@@ -36,6 +36,9 @@
     <color name="overtime">#ffff7878</color>
     <color name="overtimeDuringInvert">#33ff0000</color>
 
+    <string name="PauseOnBellIndicator">" (pause)"</string>
+    <string name="SilentBellIndicator">" (silent)"</string>
+    
     <!-- Menu -->
     <string name="ResetDebateMenuItem">Reset debate</string>
     <string name="SettingsMenuItem">Settings</string>

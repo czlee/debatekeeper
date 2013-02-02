@@ -195,17 +195,13 @@ public class MainTimerManager extends DebateElementManager {
     }
 
     /**
-     * Returns the next bell time in seconds as a Long object.
-     * @return the next bell time in seconds, or <code>null</code> if there are no more bells.
+     * Returns the next overtime bell time in seconds as a Long object.
+     * @return the next overtime bell time in seconds, or <code>null</code> if there are no more bells.
+     * If it is not yet overtime, it still returns the time of the first overtime bell.
      * Note that this can be <code>null</code>.
      */
-    public Long getNextBellTime() {
-        BellInfo nextBell = mFormat.getFirstBellFromTime(mCurrentTime);
+    public Long getNextOvertimeBellTime() {
 
-        if (nextBell != null)
-            return nextBell.getBellTime();
-
-        // If no more bell times left, get the next overtime bell, if there is one
         if (mFirstOvertimeBellTime == 0)
             return null;
 
@@ -221,6 +217,7 @@ public class MainTimerManager extends DebateElementManager {
 
         long overtimeBellTime = mFirstOvertimeBellTime + mOvertimeBellPeriod;
 
+        // TODO make this more efficient
         while (overtimeAmount > overtimeBellTime)
             overtimeBellTime += mOvertimeBellPeriod;
         return speechLength + overtimeBellTime;
@@ -231,28 +228,6 @@ public class MainTimerManager extends DebateElementManager {
      */
     public SpeechOrPrepFormat getFormat() {
         return mFormat;
-    }
-
-    /**
-     * @return <code>true</code> if the next bell will pause the timer, <code>false</code> otherwise.
-     * Returns <code>false</code> if there are no more bells or if there are only overtime bells left.
-     */
-    public boolean isNextBellPause() {
-        BellInfo nextBell = mFormat.getFirstBellFromTime(mCurrentTime);
-        if (nextBell != null)
-            return nextBell.isPauseOnBell();
-        return false;
-    }
-
-    /**
-     * @return <code>true</code> if the next bell will pause the timer, <code>false</code> otherwise.
-     * Returns <code>false</code> if there are no more bells or if there are only overtime bells left.
-     */
-    public boolean isNextBellSilent() {
-        BellInfo nextBell = mFormat.getFirstBellFromTime(mCurrentTime);
-        if (nextBell != null)
-            return nextBell.isSilent();
-        return false;
     }
 
     /**

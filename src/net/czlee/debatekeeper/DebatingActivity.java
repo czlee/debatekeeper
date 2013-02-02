@@ -1228,8 +1228,7 @@ public class DebatingActivity extends Activity {
         TextView periodDescriptionText = (TextView) v.findViewById(R.id.periodDescriptionText);
         TextView speechNameText        = (TextView) v.findViewById(R.id.speechNameText);
         TextView currentTimeText       = (TextView) v.findViewById(R.id.currentTime);
-        TextView nextTimeText          = (TextView) v.findViewById(R.id.nextTime);
-        TextView finalTimeText         = (TextView) v.findViewById(R.id.finalTime);
+        TextView infoLineText          = (TextView) v.findViewById(R.id.informationLine);
 
         if (mDebateManager != null) {
 
@@ -1242,14 +1241,9 @@ public class DebatingActivity extends Activity {
             periodDescriptionText.setBackgroundColor(currentPeriodInfo.getBackgroundColor());
 
             long currentSpeechTime = mDebateManager.getCurrentSpeechTime();
-            Long nextBellTime = mDebateManager.getNextBellTime();
-            boolean nextBellIsPause = mDebateManager.isNextBellPause();
-            boolean nextBellIsSilent = mDebateManager.isNextBellSilent();
 
             // Take count direction into account for display
             currentSpeechTime = subtractFromSpeechLengthIfCountingDown(currentSpeechTime);
-            if (nextBellTime != null)
-                nextBellTime = subtractFromSpeechLengthIfCountingDown(nextBellTime);
 
             Resources resources = getResources();
             int currentTimeTextColor;
@@ -1260,34 +1254,54 @@ public class DebatingActivity extends Activity {
             currentTimeText.setText(secsToText(currentSpeechTime));
             currentTimeText.setTextColor(currentTimeTextColor);
 
-            if (nextBellTime != null) {
-                if (mDebateManager.isPrepTime() && !mDebateManager.isPrepTimeControlled()) {
-                    nextTimeText.setText("");
-                } else {
-                    int nextBellTextResId;
+            // Construct the line that goes at the bottom
+            StringBuilder infoLine = new StringBuilder();
 
-                    // Select the appropriate "next bell" text
-                    if (nextBellIsPause && nextBellIsSilent)
-                        nextBellTextResId = R.string.NextBellWithPauseAndSilentText;
-                    else if (nextBellIsPause)
-                        nextBellTextResId = R.string.NextBellWithPauseText;
-                    else if (nextBellIsSilent)
-                        nextBellTextResId = R.string.NextBellWithSilentText;
-                    else
-                        nextBellTextResId = R.string.NextBellText;
-
-                    // Now add the time and update the TextView
-                    nextTimeText.setText(String.format(this.getString(nextBellTextResId),
-                            secsToText(nextBellTime)));
-                }
-
-            } else {
-                nextTimeText.setText(this.getString(R.string.NoMoreBellsText));
-            }
+            // First, length...
+            long length = currentSpeechFormat.getLength();
+            String lengthStr;
+            if (length % 60 == 0)
+                lengthStr = String.format(getString(R.string.TimeInMinutes, length / 60));
+            else
+                lengthStr = secsToText(length);
 
             int finalTimeTextUnformattedResid = (mDebateManager.isPrepTime()) ? R.string.PrepTimeLengthText : R.string.SpeechLengthText;
-            finalTimeText.setText(String.format(this.getString(finalTimeTextUnformattedResid),
-                    secsToText(currentSpeechFormat.getLength())));
+            infoLine.append(String.format(this.getString(finalTimeTextUnformattedResid),
+                    lengthStr));
+
+            // ...then, if applicable, bells
+            Iterator<BellInfo> currentSpeechBells = currentSpeechFormat.getBellsIter();
+
+            if (mDebateManager.isOvertime()) {
+                // show next overtime bell (don't bother with list of bells anymore)
+                long bellTime = subtractFromSpeechLengthIfCountingDown(mDebateManager.getNextOvertimeBellTime());
+                infoLine.append(String.format(getString(R.string.NextOvertimeBellText,
+                        secsToText(bellTime))));
+
+            } else if (currentSpeechBells.hasNext()) {
+                // Convert the list of bells into a string.
+                StringBuilder bellsStr = new StringBuilder();
+                boolean plural = false;
+                while (currentSpeechBells.hasNext()) {
+                    BellInfo bi = currentSpeechBells.next();
+                    long bellTime = subtractFromSpeechLengthIfCountingDown(bi.getBellTime());
+                    bellsStr.append(secsToText(bellTime));
+                    if (bi.isPauseOnBell())
+                        bellsStr.append(getString(R.string.PauseOnBellIndicator));
+                    if (bi.isSilent())
+                        bellsStr.append(getString(R.string.SilentBellIndicator));
+                    if (currentSpeechBells.hasNext()) {
+                        bellsStr.append(", ");
+                        plural = true;
+                    }
+                }
+                int bellsTextResid = (plural) ? R.string.BellsListText : R.string.BellsListSingularText;
+                infoLine.append(String.format(getString(bellsTextResid, bellsStr)));
+            } else {
+                infoLine.append(getString(R.string.NoBellsText));
+            }
+
+            infoLineText.setText(infoLine.toString());
 
         } else {
             // Blank out all the fields
@@ -1296,8 +1310,7 @@ public class DebatingActivity extends Activity {
             periodDescriptionText.setBackgroundColor(0);
             speechNameText.setBackgroundColor(0);
             currentTimeText.setText("");
-            nextTimeText.setText("");
-            finalTimeText.setText("");
+            infoLineText.setText("");
         }
 
         // Update the POI timer button

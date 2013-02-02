@@ -18,6 +18,8 @@
 package net.czlee.debatekeeper;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 
 /**
@@ -80,34 +82,6 @@ public abstract class ControlledSpeechOrPrepFormat implements SpeechOrPrepFormat
     }
 
     @Override
-    public BellInfo getFirstBellFromTime(long seconds) {
-        Iterator<BellInfo> bellIterator = mBells.iterator();
-        BellInfo workingBell = null;
-        BellInfo thisBell    = null;
-
-        // We are looking for the *earliest* bell that is *after* the given time.
-        while (bellIterator.hasNext()) {
-            // To replace the current working bell, two conditions have to be met:
-            //  1. This bell is, in fact, after or at the given time.
-            //  2. This bell is before the current working bell, if there is one.
-            //     (If there isn't one, then condition 2 is deemed met.)
-            // We will test the opposite condition, and assign if it survives both.
-            thisBell = bellIterator.next();
-            if (thisBell.getBellTime() < seconds)
-                continue;
-            if (workingBell != null) {
-                if (workingBell.getBellTime() < thisBell.getBellTime()) {
-                    continue;
-                }
-            }
-            // If it survived both negative conditions, assign.
-            workingBell = thisBell;
-        }
-
-        return workingBell;
-    }
-
-    @Override
     public BellInfo getBellAtTime(long seconds) {
         Iterator<BellInfo> bellIterator = mBells.iterator();
         BellInfo thisBell    = null;
@@ -150,6 +124,23 @@ public abstract class ControlledSpeechOrPrepFormat implements SpeechOrPrepFormat
         }
 
         return workingPi;
+    }
+
+    @Override
+    public Iterator<BellInfo> getBellsIter() {
+
+        // A shallow copy is fine, we just want to sort the bells, not edit them.
+        ArrayList<BellInfo> bells = new ArrayList<BellInfo>(mBells);
+
+        Collections.sort(bells, new Comparator<BellInfo>() {
+            @Override
+            public int compare(BellInfo arg0, BellInfo arg1) {
+                Long diff = arg0.getBellTime() - arg1.getBellTime();
+                return diff.intValue();
+            }
+        });
+
+        return bells.iterator();
     }
 
 }

@@ -133,27 +133,20 @@ public class DebateFormatInfo {
          * @return the single string listing all the bell times
          */
         private String concatenateBellTimes(ArrayList<MiniBellInfo> list) {
-            String str = new String();
+            StringBuilder str = new StringBuilder();
             Iterator<MiniBellInfo> iterator = list.iterator();
-            MiniBellInfo bi;
 
-            // Start with the first item (if it exists)
-            if (iterator.hasNext()) {
-                bi = iterator.next();
-                str = secsToText(bi.getTime());
-                if (bi.isPause())
-                    str = str.concat(mContext.getString(R.string.PauseOnBellIndicator));
-            }
-
-            // Add the second and further items, putting a line break in between.
             while (iterator.hasNext()) {
-                str = str.concat(", ");
-                bi = iterator.next();
-                str = str.concat(secsToText(bi.getTime()));
+                MiniBellInfo bi = iterator.next();
+                str.append(secsToText(bi.getTime()));
                 if (bi.isPause())
-                    str = str.concat(mContext.getString(R.string.PauseOnBellIndicator));
+                    str.append(mContext.getString(R.string.PauseOnBellIndicator));
+
+                // If there's one after this, add a comma
+                if (iterator.hasNext()) str.append(", ");
             }
-            return str;
+
+            return str.toString();
         }
     }
 

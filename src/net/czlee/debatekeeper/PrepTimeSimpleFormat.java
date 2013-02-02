@@ -16,6 +16,9 @@
  */
 package net.czlee.debatekeeper;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 
 /**
  * PrepTimeSimpleFormat is a passive data class that holds information about a prep format.
@@ -54,17 +57,6 @@ public class PrepTimeSimpleFormat implements PrepTimeFormat {
     @Override
     public PeriodInfo getFirstPeriodInfo() {
         return new PeriodInfo("", 0, false);
-    }
-
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.PrepTimeFormat#getFirstBellFromTime(long)
-     */
-    @Override
-    public BellInfo getFirstBellFromTime(long seconds) {
-        // TODO Add other bells from user preferences
-        if (seconds < getLength())
-            return getFinishBell();
-        return null;
     }
 
     /* (non-Javadoc)
@@ -108,5 +100,12 @@ public class PrepTimeSimpleFormat implements PrepTimeFormat {
 
     private PeriodInfo getOvertimePeriodInfo() {
         return new PeriodInfo("", 0x77ff0000, false);
+    }
+
+    @Override
+    public Iterator<BellInfo> getBellsIter() {
+        ArrayList<BellInfo> bells = new ArrayList<BellInfo>(1);
+        bells.add(getFinishBell());
+        return bells.iterator();
     }
 }

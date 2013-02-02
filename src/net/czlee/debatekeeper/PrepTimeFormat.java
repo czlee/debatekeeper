@@ -16,12 +16,6 @@ public interface PrepTimeFormat extends SpeechOrPrepFormat {
     public abstract PeriodInfo getFirstPeriodInfo();
 
     /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.SpeechOrPrepFormat#getFirstBellFromTime(long)
-     */
-    @Override
-    public abstract BellInfo getFirstBellFromTime(long seconds);
-
-    /* (non-Javadoc)
      * @see net.czlee.debatekeeper.SpeechOrPrepFormat#getBellAtTime(long)
      */
     @Override
