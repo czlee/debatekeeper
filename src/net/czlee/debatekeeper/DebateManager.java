@@ -123,6 +123,21 @@ public class DebateManager {
     }
 
     /**
+     * Sets the {@link PrepTimeBellsManager} for the prep time format.
+     * If the prep time is controlled for the current format, or if there is no prep time, does nothing.
+     * @param ptbm
+     */
+    public void setPrepTimeBellsManager(PrepTimeBellsManager ptbm) {
+        if (mDebateFormat.getPrepFormat() != null)
+            try {
+                ((PrepTimeSimpleFormat) mDebateFormat.getPrepFormat()).setBellsManager(ptbm);
+            } catch (ClassCastException e) {
+                // Do nothing - this just means the bells manager isn't applicable to this
+                // case.
+            }
+    }
+
+    /**
      * Starts the timer.
      */
     public void startTimer() {
@@ -166,13 +181,15 @@ public class DebateManager {
     public void goToNextItem() {
         saveSpeech();
         mSpeechManager.stop();
-        switch (mCurrentItemType) {
-        case PREP_TIME:
-            mCurrentSpeechIndex = 0;
-            mCurrentItemType    = DebateManagerItem.SPEECH;
-            break;
-        case SPEECH:
-            if (!isLastItem()) mCurrentSpeechIndex++;
+        if (!isLastItem()) {
+            switch (mCurrentItemType) {
+            case PREP_TIME:
+                mCurrentSpeechIndex = 0;
+                mCurrentItemType    = DebateManagerItem.SPEECH;
+                break;
+            case SPEECH:
+                mCurrentSpeechIndex++;
+            }
         }
         loadSpeech();
     }
@@ -184,14 +201,16 @@ public class DebateManager {
     public void goToPreviousItem() {
         saveSpeech();
         mSpeechManager.stop();
-        switch (mCurrentItemType) {
-        case PREP_TIME:
-            break;
-        case SPEECH:
-            if (mCurrentSpeechIndex == 0)
-                mCurrentItemType = DebateManagerItem.PREP_TIME;
-            else
-                mCurrentSpeechIndex--;
+        if (!isFirstItem()) {
+            switch (mCurrentItemType) {
+            case PREP_TIME:
+                break;
+            case SPEECH:
+                if (mCurrentSpeechIndex == 0)
+                    mCurrentItemType = DebateManagerItem.PREP_TIME;
+                else
+                    mCurrentSpeechIndex--;
+            }
         }
         loadSpeech();
     }
@@ -239,9 +258,10 @@ public class DebateManager {
 
     /**
      * @return <code>true</code> if the prep time is controlled (this does not depend on whether
-     * the current item is prep time).
+     * the current item is prep time).  If there is no prep time, returns <code>false</code>.
      */
     public boolean isPrepTimeControlled() {
+        if (!hasPrepTime()) return false;
         return mDebateFormat.getPrepFormat().isControlled();
     }
 

@@ -720,7 +720,6 @@ public class DebatingActivity extends Activity {
                 flashScreenMode = FlashScreenMode.toEnum(flashScreenModeValue);
             }
 
-
         } catch (ClassCastException e) {
             Log.e(this.getClass().getSimpleName(), "applyPreferences: caught ClassCastException!");
             return;
@@ -729,6 +728,7 @@ public class DebatingActivity extends Activity {
         if (mDebateManager != null) {
             mDebateManager.setOvertimeBells(firstOvertimeBell, overtimeBellPeriod);
             mDebateManager.setPrepTimeEnabled(prepTimerEnabled);
+            applyPrepTimeBells();
         } else {
             Log.w(this.getClass().getSimpleName(), "applyPreferences: Couldn't restore overtime bells, mDebateManager doesn't yet exist");
         }
@@ -754,6 +754,14 @@ public class DebatingActivity extends Activity {
             Log.w(this.getClass().getSimpleName(), "applyPreferences: Couldn't restore AlertManager preferences; mBinder doesn't yet exist");
         }
 
+    }
+
+    private void applyPrepTimeBells() {
+        PrepTimeBellsManager ptbm = new PrepTimeBellsManager();
+        ptbm.addBellFromFinish(300);
+        ptbm.addBellFromStart(600);
+        ptbm.addBellProportional((float) 0.5);
+        mDebateManager.setPrepTimeBellsManager(ptbm);
     }
 
     /**
@@ -1282,6 +1290,7 @@ public class DebatingActivity extends Activity {
                 // Convert the list of bells into a string.
                 StringBuilder bellsStr = new StringBuilder();
                 boolean plural = false;
+
                 while (currentSpeechBells.hasNext()) {
                     BellInfo bi = currentSpeechBells.next();
                     long bellTime = subtractFromSpeechLengthIfCountingDown(bi.getBellTime());
@@ -1295,8 +1304,10 @@ public class DebatingActivity extends Activity {
                         plural = true;
                     }
                 }
+
                 int bellsTextResid = (plural) ? R.string.BellsListText : R.string.BellsListSingularText;
                 infoLine.append(String.format(getString(bellsTextResid, bellsStr)));
+
             } else {
                 infoLine.append(getString(R.string.NoBellsText));
             }
