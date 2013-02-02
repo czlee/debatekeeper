@@ -22,7 +22,10 @@ import java.util.Iterator;
 /**
  * SpeechOrPrepFormat is an interface for MainTimerManager
  *
- * Known implementations: {@link SpeechFormat}, {@link PrepTimeSimpleFormat}
+ * Known direct implementations: {@link GenericSpeechorPrepFormat}
+ *
+ * Known indirect implementation: {@link ControlledSpeechOrPrepFormat}, {@link PrepTimeSimpleFormat},
+ * {@link PrepTimeControlledFormat}, {@link SpeechFormat}
  *
  * @author Chuan-Zheng Lee
  * @since  2013-01-21

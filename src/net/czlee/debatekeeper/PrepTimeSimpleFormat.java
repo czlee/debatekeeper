@@ -17,7 +17,6 @@
 package net.czlee.debatekeeper;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 
 /**
@@ -30,9 +29,10 @@ import java.util.Iterator;
  * @since  2013-01-21
  *
  */
-public class PrepTimeSimpleFormat implements PrepTimeFormat {
+public class PrepTimeSimpleFormat extends GenericSpeechOrPrepFormat implements PrepTimeFormat {
 
     protected final long mPrepLength;
+    protected PrepTimeBellsManager mBellsManager;
 
     public PrepTimeSimpleFormat(long prepLength) {
         super();
@@ -42,6 +42,10 @@ public class PrepTimeSimpleFormat implements PrepTimeFormat {
     //******************************************************************************************
     // Public methods
     //******************************************************************************************
+
+    public void setBellsManager(PrepTimeBellsManager manager) {
+        this.mBellsManager = manager;
+    }
 
     /* (non-Javadoc)
      * @see net.czlee.debatekeeper.PrepTimeFormat#getLength()
@@ -60,27 +64,6 @@ public class PrepTimeSimpleFormat implements PrepTimeFormat {
     }
 
     /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.PrepTimeFormat#getBellAtTime(long)
-     */
-    @Override
-    public BellInfo getBellAtTime(long seconds) {
-        // TODO Add other bells from user preferences
-        if (seconds == getLength())
-            return getFinishBell();
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.PrepTimeFormat#getPeriodInfoForTime(long)
-     */
-    @Override
-    public PeriodInfo getPeriodInfoForTime(long seconds) {
-        if (seconds > getLength())
-            return getOvertimePeriodInfo();
-        return this.getFirstPeriodInfo();
-    }
-
-    /* (non-Javadoc)
      * @see net.czlee.debatekeeper.PrepTimeFormat#isControlled()
      */
     @Override
@@ -89,8 +72,22 @@ public class PrepTimeSimpleFormat implements PrepTimeFormat {
     }
 
     //******************************************************************************************
-    // Private methods
+    // Protected and private methods
     //******************************************************************************************
+
+    @Override
+    protected ArrayList<BellInfo> getBells() {
+
+        if (mBellsManager == null) {
+            ArrayList<BellInfo> bells = new ArrayList<BellInfo>(1);
+            bells.add(getFinishBell());
+            return bells;
+
+        } else {
+            return mBellsManager.getBellsList(getLength());
+
+        }
+    }
 
     private BellInfo getFinishBell() {
         BellInfo bi = new BellInfo(getLength(), 2);
@@ -102,10 +99,4 @@ public class PrepTimeSimpleFormat implements PrepTimeFormat {
         return new PeriodInfo("", 0x77ff0000, false);
     }
 
-    @Override
-    public Iterator<BellInfo> getBellsIter() {
-        ArrayList<BellInfo> bells = new ArrayList<BellInfo>(1);
-        bells.add(getFinishBell());
-        return bells.iterator();
-    }
 }
