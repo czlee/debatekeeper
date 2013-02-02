@@ -1277,6 +1277,9 @@ public class DebatingActivity extends Activity {
             infoLine.append(String.format(this.getString(finalTimeTextUnformattedResid),
                     lengthStr));
 
+            if (mDebateManager.isPrepTime() && mDebateManager.isPrepTimeControlled())
+                infoLine.append(getString(R.string.PrepTimeControlledText));
+
             // ...then, if applicable, bells
             Iterator<BellInfo> currentSpeechBells = currentSpeechFormat.getBellsIter();
 
