@@ -97,12 +97,11 @@ public class DebatingActivity extends Activity {
     private boolean mKeepScreenOn;
     private boolean mPrepTimeKeepScreenOn;
 
-    private static final String BUNDLE_SUFFIX_DEBATE_MANAGER = "dm";
-    private static final String PREFERENCE_XML_FILE_NAME     = "xmlfn";
-    private static final String DO_NOT_SHOW_POI_TIMER_DIALOG = "dnspoi";
-    private static final String DIALOG_BUNDLE_FATAL_MESSAGE  = "fm";
-    private static final String DIALOG_BUNDLE_XML_ERROR_LOG  = "xel";
-
+    private static final String BUNDLE_SUFFIX_DEBATE_MANAGER     = "dm";
+    private static final String PREFERENCE_XML_FILE_NAME         = "xmlfn";
+    private static final String DO_NOT_SHOW_POI_TIMER_DIALOG     = "dnspoi";
+    private static final String DIALOG_BUNDLE_FATAL_MESSAGE      = "fm";
+    private static final String DIALOG_BUNDLE_XML_ERROR_LOG      = "xel";
     private static final int    CHOOSE_STYLE_REQUEST   = 0;
     private static final int    DIALOG_XML_FILE_FATAL  = 0;
     private static final int    DIALOG_XML_FILE_ERRORS = 1;
@@ -472,7 +471,7 @@ public class DebatingActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.debate_activity);
+        setContentView(R.layout.activity_debate);
 
         mFilesManager = new FormatXmlFilesManager(this);
 
@@ -757,10 +756,9 @@ public class DebatingActivity extends Activity {
     }
 
     private void applyPrepTimeBells() {
-        PrepTimeBellsManager ptbm = new PrepTimeBellsManager();
-        ptbm.addBellFromFinish(300);
-        ptbm.addBellFromStart(600);
-        ptbm.addBellProportional((float) 0.5);
+        PrepTimeBellsManager ptbm = new PrepTimeBellsManager(this);
+        SharedPreferences prefs = getSharedPreferences(PrepTimeBellsManager.PREP_TIME_BELLS_PREFERENCES_NAME, MODE_PRIVATE);
+        ptbm.loadFromPreferences(prefs);
         mDebateManager.setPrepTimeBellsManager(ptbm);
     }
 

@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="FormatChooserOKButtonText">OK</string>
-    <string name="FormatChooserCancelButtonText">Cancel</string>
-    
 	<string name="IOErrorDialogTitle">Oh no!</string>
 	<string name="IOErrorDialogMessage">I couldn\'t find the debate style files.</string>    
 	<string name="IOErrorDialogButton">Go back</string>
@@ -32,7 +29,6 @@
 	
 	<string name="BlankDetailsDialogTitle">"Sorry!"</string>
 	<string name="BlankDetailsDialogText">"There's a problem with this debate format's XML file (%1$s).\n\nIn more detail:\n%2$s"</string>
-	<string name="BlankDetailsDialogButtonText">OK</string>
 		
 	<style name="ViewFormatTableLabelStyle">
 	    <item name="android:paddingLeft">7dip</item>

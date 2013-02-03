@@ -19,6 +19,7 @@
     <string name="PrefPrepTimerEnableKey">prepTimerEnable</string>
     <string name="PrefPrepTimerCountDirectionKey">prepTimerCountDirection</string>
     <string name="PrefPrepTimerKeepScreenOnKey">prepTimerKeepScreenOn</string>
+    <string name="PrefPrepTimerBellsKey">prepTimerBells</string>
     
     <!-- Keys for backwards-compatibility -->
     <string name="PrefFlashScreenBoolKey">flashScreen</string> <!-- replaced in version 0.6 -->
@@ -119,6 +120,15 @@
     <string name="PrefPrepTimerKeepScreenOnOffSummary">Apply normal screen timeout during prep time</string>
     <bool   name="DefaultPrefPrepTimerKeepScreenOn">true</bool>
 
+    <string name="PrefPrepTimerBellsTitle">Prep timer bells</string>
+    <string name="PrefPrepTimerBellsSummary">Edit bells used during preparation time</string>
+    
+    <string name="PrepTimeBellAtStartDescription">At start</string>
+    <string name="PrepTimeBellStartDescription">%1$s after start</string>
+    <string name="PrepTimeBellAtFinishDescription">At finish</string>
+    <string name="PrepTimeBellFinishDescription">%1$s before finish</string>
+    <string name="PrepTimeBellProportionalDescription">%1$d%% through prep time</string>
+    
    	<!-- *** Points of information *** -->
     <string name="PrefPoiTimerEnableTitle">Show POIs timer</string>
     <string name="PrefPoiTimerEnableOnSummary">Show the POIs timer when appropriate</string>
@@ -146,5 +156,7 @@
 
 	<string name="PrefPoiLearnMoreTitle">Learn more</string>
 	<string name="PrefPoiLearnMoreSummary">Learn more about the POIs timer (launches web browser)</string>
+	<string name="PrepTimeAddBellText">Add</string>
+	<string name="PrepTimeClearAllText">Clear</string>
 
 </resources>

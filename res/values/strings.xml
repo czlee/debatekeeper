@@ -6,6 +6,7 @@
     <string name="DebatingActivityTitleBarWithFormatName">%1$s - Debatekeeper</string>
     <string name="GlobalSettingsActivityName">Settings</string>
     <string name="FormatChooserActivityName">Choose style</string>
+    <string name="PrepTimeBellsEditActivityName">Prep timer bells</string>
 
     <!-- Buttons -->
     <string name="StartTimerButtonText">Start</string>

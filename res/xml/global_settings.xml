@@ -75,6 +75,12 @@
             android:summaryOn="@string/PrefPrepTimerEnableOnSummary"
             android:title="@string/PrefPrepTimerEnableTitle" />
 
+        <PreferenceScreen
+            android:key="@string/PrefPrepTimerBellsKey"
+            android:dependency="@string/PrefPrepTimerEnableKey"
+            android:summary="@string/PrefPrepTimerBellsSummary"
+            android:title="@string/PrefPrepTimerBellsTitle" />
+
         <ListPreference
             android:defaultValue="@string/DefaultPrefPrepTimerCountDirection"
             android:dependency="@string/PrefPrepTimerEnableKey"
@@ -104,7 +110,8 @@ The POI buzzer option isn't used.  The only part that isn't implemented is the p
 actually plays the buzzer using a MediaPlayer (and the sound file itself).  I'm not sure whether
 this is worth implementing - adjudicators would have to stop the timer for speakers who stay
 under the POI time limit, i.e. most of the time - it's easier to have it quiet all the time and
-to be alerted without sound at the 15 second mark?        -->
+to be alerted without sound at the 15 second mark?
+        -->
         <!-- <CheckBoxPreference android:key="@string/PrefPoiBuzzerEnableKey" android:summaryOff="@string/PrefPoiBuzzerEnableOffSummary" android:title="@string/PrefPoiBuzzerEnableTitle" android:summaryOn="@string/PrefPoiBuzzerEnableOnSummary" android:dependency="@string/PrefPoiTimerEnableKey" android:defaultValue="@bool/DefaultPrefPoiBuzzerEnable" /> -->
         <CheckBoxPreference
             android:defaultValue="@bool/DefaultPrefPoiVibrateEnable"

@@ -261,7 +261,7 @@ public class FormatChooserActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.format_chooser);
+        setContentView(R.layout.activity_format_chooser);
         DEBATING_TIMER_URI = getString(R.string.XmlUri);
 
         mFilesManager = new FormatXmlFilesManager(this);
@@ -484,7 +484,7 @@ public class FormatChooserActivity extends Activity {
         builder.setTitle(R.string.BlankDetailsDialogTitle)
                .setCancelable(true)
                .setMessage(getString(R.string.BlankDetailsDialogText, filename, e.getMessage()))
-               .setPositiveButton(R.string.BlankDetailsDialogButtonText, new DialogInterface.OnClickListener() {
+               .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();

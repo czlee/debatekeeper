@@ -26,12 +26,13 @@
         </activity>
         <activity
             android:name=".GlobalSettingsActivity"
-            android:label="@string/GlobalSettingsActivityName" >
-        </activity>
+            android:label="@string/GlobalSettingsActivityName" />
         <activity
             android:name=".FormatChooserActivity"
-            android:label="@string/FormatChooserActivityName" >
-        </activity>
+            android:label="@string/FormatChooserActivityName" />
+        <activity
+            android:name=".PrepTimeBellsEditActivity"
+            android:label="@string/PrepTimeBellsEditActivityName" />
 
         <service android:name=".DebatingTimerService" />
     </application>

@@ -51,6 +51,7 @@ public class GlobalSettingsActivity extends PreferenceActivity {
     private static String KEY_POI_FLASH_SCREEN_MODE;
     private static String KEY_POI_TIMER_LEARN_MORE;
     private static String KEY_PREP_TIMER_COUNT_DIRECTION;
+    private static String KEY_PREP_TIMER_BELLS;
 
     //******************************************************************************************
     // Private classes
@@ -83,6 +84,7 @@ public class GlobalSettingsActivity extends PreferenceActivity {
         KEY_POI_FLASH_SCREEN_MODE      = getString(R.string.PrefPoiFlashScreenModeKey);
         KEY_POI_TIMER_LEARN_MORE       = getString(R.string.PrefPoiLearnMoreKey);
         KEY_PREP_TIMER_COUNT_DIRECTION = getString(R.string.PrefPrepTimerCountDirectionKey);
+        KEY_PREP_TIMER_BELLS           = getString(R.string.PrefPrepTimerBellsKey);
 
         mIntegerPreferenceKeys.add(KEY_FIRST_OVERTIME_BELL);
         mIntegerPreferenceKeys.add(KEY_OVERTIME_BELL_PERIOD);
@@ -112,7 +114,7 @@ public class GlobalSettingsActivity extends PreferenceActivity {
         updateListPreferenceSummary(KEY_POI_FLASH_SCREEN_MODE);
         updateListPreferenceSummary(KEY_PREP_TIMER_COUNT_DIRECTION);
 
-        // Set what the "Learn More" option in POIs timer sub-screen does
+        // Set what the "Learn More" option in POIs timer category does
         getPreferenceManager().findPreference(KEY_POI_TIMER_LEARN_MORE)
             .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
@@ -124,6 +126,16 @@ public class GlobalSettingsActivity extends PreferenceActivity {
                 }
             });
 
+        // Set what the "Prep timer bells" option does
+        Preference prefPrepTimerBells = getPreferenceManager().findPreference(KEY_PREP_TIMER_BELLS);
+        prefPrepTimerBells.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent(GlobalSettingsActivity.this, PrepTimeBellsEditActivity.class);
+                startActivity(intent);
+                return true;
+            }
+        });
     }
 
     @Override
