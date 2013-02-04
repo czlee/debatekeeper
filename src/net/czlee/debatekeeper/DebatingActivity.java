@@ -340,10 +340,6 @@ public class DebatingActivity extends Activity {
         }
     }
 
-    private enum OverallCountDirection {
-        COUNT_UP, COUNT_DOWN
-    }
-
     private enum CountDirection {
 
         // These must match the values string array in the preference.xml file.
@@ -538,16 +534,16 @@ public class DebatingActivity extends Activity {
     }
 
     @Override
-    protected Dialog onCreateDialog(int id, Bundle bundle) {
+    protected Dialog onCreateDialog(int id, Bundle args) {
         switch (id) {
         case DIALOG_XML_FILE_FATAL:
-            return getFatalProblemWithXmlFileDialog(bundle);
+            return getFatalProblemWithXmlFileDialog(args);
         case DIALOG_XML_FILE_ERRORS:
-            return getErrorsWithXmlFileDialog(bundle);
+            return getErrorsWithXmlFileDialog(args);
         case DIALOG_POI_TIMERS_INFO:
             return getPoiTimerInfoDialog();
         }
-        return super.onCreateDialog(id);
+        return super.onCreateDialog(id, args);
     }
 
     @Override
