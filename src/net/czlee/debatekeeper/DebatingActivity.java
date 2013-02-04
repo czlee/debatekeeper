@@ -901,14 +901,14 @@ public class DebatingActivity extends Activity {
     private Dialog getErrorsWithXmlFileDialog(Bundle bundle) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        String errorMessage = getString(R.string.ErrorsInXmlFileDialogMessagePrefix);
+        StringBuilder errorMessage = new StringBuilder(getString(R.string.ErrorsInXmlFileDialogMessagePrefix));
 
         ArrayList<String> errorLog = bundle.getStringArrayList(DIALOG_BUNDLE_XML_ERROR_LOG);
         Iterator<String> errorIterator = errorLog.iterator();
 
         while (errorIterator.hasNext()) {
-            errorMessage = errorMessage.concat("\n");
-            errorMessage = errorMessage.concat(errorIterator.next());
+            errorMessage.append("\n");
+            errorMessage.append(errorIterator.next());
         }
 
         builder.setTitle(R.string.ErrorsInXmlFileDialogTitle)
@@ -927,8 +927,8 @@ public class DebatingActivity extends Activity {
     private Dialog getFatalProblemWithXmlFileDialog(Bundle bundle) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        String errorMessage = bundle.getString(DIALOG_BUNDLE_FATAL_MESSAGE);
-        errorMessage = errorMessage.concat(getString(R.string.FatalProblemWithXmlFileMessageSuffix));
+        StringBuilder errorMessage = new StringBuilder(bundle.getString(DIALOG_BUNDLE_FATAL_MESSAGE));
+        errorMessage.append(getString(R.string.FatalProblemWithXmlFileMessageSuffix));
 
         builder.setTitle(R.string.FatalProblemWithXmlFileDialogTitle)
                .setMessage(errorMessage)
