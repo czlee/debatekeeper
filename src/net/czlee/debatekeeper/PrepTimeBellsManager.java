@@ -89,6 +89,9 @@ public class PrepTimeBellsManager {
      * contents of the {@link SharedPreferences} file
      */
     private class PrepTimeBellConstructorException extends Exception {
+
+        private static final long serialVersionUID = -3348760736240420667L;
+
         public PrepTimeBellConstructorException(int index, String detailMessage) {
             super(String.valueOf(index) + ": " + detailMessage);
         }
@@ -99,6 +102,9 @@ public class PrepTimeBellsManager {
      * {@link SharedPreferences} file does not match the class of the constructor.
      */
     private class PrepTimeBellWrongTypeException extends PrepTimeBellConstructorException {
+
+        private static final long serialVersionUID = 7237927620650297337L;
+
         public PrepTimeBellWrongTypeException(int index, String expected, String actual) {
             super(index, "Expected " + expected + ", found " + actual);
         }

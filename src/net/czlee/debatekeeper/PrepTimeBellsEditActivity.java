@@ -21,9 +21,13 @@ import java.util.ArrayList;
 
 import net.czlee.debatekeeper.PrepTimeBellsManager.PrepTimeBellSpec;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 /**
@@ -41,6 +45,28 @@ public class PrepTimeBellsEditActivity extends Activity {
 
     private PrepTimeBellsManager mPtbm;
 
+    private static final int DIALOG_ADD_BELL        = 0;
+    private static final int DIALOG_CLEAR_ALL_BELLS = 1;
+
+    //******************************************************************************************
+    // Private classes
+    //******************************************************************************************
+    private class AddButtonOnClickListener implements OnClickListener {
+        @Override
+        public void onClick(View v) {
+            // Generate the "add bell" dialog
+            showDialog(DIALOG_ADD_BELL);
+        }
+    }
+
+    private class ClearButtonOnClickListener implements OnClickListener {
+        @Override
+        public void onClick(View v) {
+            // Generate the "are you sure?" dialog
+            showDialog(DIALOG_CLEAR_ALL_BELLS);
+        }
+    }
+
     //******************************************************************************************
     // Protected methods
     //******************************************************************************************
@@ -56,20 +82,47 @@ public class PrepTimeBellsEditActivity extends Activity {
         mPtbm.loadFromPreferences(prefs);
 
         // Populate the list
-        populateList();
+        populateBellsList();
+
+        // Set the OnClickListeners
+        ((Button) findViewById(R.id.prepTimeAddBellButton))
+                .setOnClickListener(new AddButtonOnClickListener());
+        ((Button) findViewById(R.id.prepTimeClearAllButton))
+                .setOnClickListener(new ClearButtonOnClickListener());
+
     }
 
+    @Override
+    protected Dialog onCreateDialog(int id, Bundle args) {
+        switch (id) {
+        case DIALOG_ADD_BELL:
+            return getAddBellDialog();
+        case DIALOG_CLEAR_ALL_BELLS:
+            return getClearBellsDialog();
+        }
+        return super.onCreateDialog(id, args);
+    }
 
     //******************************************************************************************
     // Private methods
     //******************************************************************************************
-    private void populateList() {
+    private void populateBellsList() {
 
         ArrayList<PrepTimeBellSpec> bellSpecs = mPtbm.getBellSpecs();
         ListView view = (ListView) findViewById(R.id.prepTimeBellsList);
         ArrayAdapter<PrepTimeBellSpec> adapter = new ArrayAdapter<PrepTimeBellSpec>(this, android.R.layout.simple_list_item_1, bellSpecs);
         view.setAdapter(adapter);
 
+    }
+
+    private Dialog getAddBellDialog() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    private Dialog getClearBellsDialog() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

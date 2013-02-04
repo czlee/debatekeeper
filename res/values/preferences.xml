@@ -123,12 +123,6 @@
     <string name="PrefPrepTimerBellsTitle">Prep timer bells</string>
     <string name="PrefPrepTimerBellsSummary">Edit bells used during preparation time</string>
     
-    <string name="PrepTimeBellAtStartDescription">At start</string>
-    <string name="PrepTimeBellStartDescription">%1$s after start</string>
-    <string name="PrepTimeBellAtFinishDescription">At finish</string>
-    <string name="PrepTimeBellFinishDescription">%1$s before finish</string>
-    <string name="PrepTimeBellProportionalDescription">%1$d%% through prep time</string>
-    
    	<!-- *** Points of information *** -->
     <string name="PrefPoiTimerEnableTitle">Show POIs timer</string>
     <string name="PrefPoiTimerEnableOnSummary">Show the POIs timer when appropriate</string>

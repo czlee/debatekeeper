@@ -64,8 +64,6 @@ public class FormatChooserActivity extends Activity {
     private FormatXmlFilesManager mFilesManager;
 
     private ListView mStylesListView;
-    private Button   mOKButton;
-    private Button   mCancelButton;
     private String   mCurrentStyleName = null;
 
     private DebateFormatEntryArrayAdapter mStylesArrayAdapter;
@@ -266,13 +264,13 @@ public class FormatChooserActivity extends Activity {
 
         mFilesManager = new FormatXmlFilesManager(this);
 
-        mStylesListView = (ListView) findViewById(R.id.StylesListView);
-        mOKButton       = (Button)   findViewById(R.id.FormatChooserOKButton);
-        mCancelButton   = (Button)   findViewById(R.id.FormatChooserCancelButton);
+        // Set OnClickListeners
+        ((Button) findViewById(R.id.FormatChooserOKButton))
+                .setOnClickListener(new OKButtonOnClickListener());
+        ((Button) findViewById(R.id.FormatChooserCancelButton))
+                .setOnClickListener(new CancelButtonOnClickListener());
 
-        mOKButton.setOnClickListener(new OKButtonOnClickListener());
-        mCancelButton.setOnClickListener(new CancelButtonOnClickListener());
-
+        // Populate mStylesList
         try {
             populateStylesLists();
         } catch (IOException e) {
@@ -286,8 +284,9 @@ public class FormatChooserActivity extends Activity {
         // Sort alphabetically by style name
         mStylesArrayAdapter.sort(new StyleEntryComparatorByStyleName());
 
+        // Configure the ListView
+        mStylesListView = (ListView) findViewById(R.id.StylesListView);
         mStylesListView.setAdapter(mStylesArrayAdapter);
-
         mStylesListView.setOnItemClickListener(new StylesListViewOnItemClickListener());
 
         // Select and scroll to the incoming selection (if existent)

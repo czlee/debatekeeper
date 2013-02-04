@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <!-- Bell descriptions -->
+    <string name="PrepTimeBellAtStartDescription">At start</string>
+    <string name="PrepTimeBellStartDescription">%1$s after start</string>
+    <string name="PrepTimeBellAtFinishDescription">At finish</string>
+    <string name="PrepTimeBellFinishDescription">%1$s before finish</string>
+    <string name="PrepTimeBellProportionalDescription">%1$d%% through prep time</string>
+    
+    
+</resources>
