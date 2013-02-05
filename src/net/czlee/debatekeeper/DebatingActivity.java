@@ -959,16 +959,14 @@ public class DebatingActivity extends Activity {
         builder.setTitle(R.string.PoiTimerInfoDialogTitle)
                .setView(content)
                .setCancelable(true)
-               .setPositiveButton(R.string.PoiTimerInfoDialogButtonOK, new DialogInterface.OnClickListener() {
+               .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
                         // Take note of "do not show again" setting
                         SharedPreferences prefs = getPreferences(MODE_PRIVATE);
                         Editor editor = prefs.edit();
                         editor.putBoolean(DO_NOT_SHOW_POI_TIMER_DIALOG, doNotShowAgain.isChecked());
                         editor.commit();
-
                         dialog.dismiss();
                     }
                 })

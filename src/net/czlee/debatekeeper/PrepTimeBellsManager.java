@@ -22,6 +22,7 @@ import java.util.Iterator;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.util.Log;
 
 /**
@@ -47,9 +48,14 @@ import android.util.Log;
  */
 public class PrepTimeBellsManager {
 
-    private static final String KEY_TYPE                         = "-type";
-    private static final String KEY_TOTAL_NUMBER_OF_BELLS        = "totalBells";
+    public  static final String KEY_TYPE                         = "type";
+    public  static final String KEY_TIME                         = "time";
+    public  static final String KEY_PROPORTION                   = "proportion";
+    public  static final String VALUE_TYPE_START                 = "start";
+    public  static final String VALUE_TYPE_FINISH                = "finish";
+    public  static final String VALUE_TYPE_PROPORTIONAL          = "proportional";
     public  static final String PREP_TIME_BELLS_PREFERENCES_NAME = "prep_time_bells";
+    private static final String KEY_TOTAL_NUMBER_OF_BELLS        = "totalBells";
 
     private final ArrayList<PrepTimeBellSpec> mBellSpecs = new ArrayList<PrepTimeBellSpec>();
 
@@ -60,10 +66,11 @@ public class PrepTimeBellsManager {
     }
 
     //******************************************************************************************
-    // Public interface
+    // Private classes
     //******************************************************************************************
 
-    public interface PrepTimeBellSpec {
+    private interface PrepTimeBellSpec {
+
         /**
          * @param length
          * @return A {@link BellInfo} object, or <code>null</code> if this bell is
@@ -73,6 +80,12 @@ public class PrepTimeBellsManager {
         public BellInfo getBell(long length);
 
         /**
+         * Saves this bell specification to a bundle.
+         * @param bundle the Bundle to save to
+         */
+        public void saveToBundle(Bundle bundle);
+
+        /**
          * Saves this bell specification to a shared preferences file.
          * @param index the index of this PrepTimeBellSpec in the list
          */
@@ -80,9 +93,63 @@ public class PrepTimeBellsManager {
 
     }
 
-    //******************************************************************************************
-    // Private classes
-    //******************************************************************************************
+    private abstract class PrepTimeBellByTime implements PrepTimeBellSpec {
+
+        protected final long time;
+
+        /**
+         * Constructor from a {@link Bundle}.
+         * @param bundle the Bundle.
+         * @throws PrepTimeBellWrongTypeException if the type specified for the given index in
+         * the given {@link SharedPreferences} file does not match the expected type.
+         * @throws PrepTimeBellConstructorException if there is some other problem with the preferences
+         */
+        public PrepTimeBellByTime(Bundle bundle) throws PrepTimeBellConstructorException {
+            String type = bundle.getString(KEY_TYPE);
+            if (type == null)
+                throw new PrepTimeBellConstructorException("No type found");
+            if (!type.equals(getValueType()))
+                throw new PrepTimeBellWrongTypeException(getValueType(), type);
+            if (!bundle.containsKey(KEY_TIME))
+                throw new PrepTimeBellConstructorException("No time found");
+            this.time = bundle.getLong(KEY_TIME, 0);
+        }
+
+        public PrepTimeBellByTime(long time) {
+            this.time = time;
+        }
+        /**
+         * Constructor from a {@link SharedPreferences} file.
+         * @param prefs the {@link SharedPreferences} object
+         * @param index the index of the desired bell specification in <code>prefs</code>.
+         * @throws PrepTimeBellWrongTypeException if the type specified for the given index in
+         * the given {@link SharedPreferences} file does not match the expected type.
+         * @throws PrepTimeBellConstructorException if there is some other problem with the preferences
+         */
+        public PrepTimeBellByTime(SharedPreferences prefs, int index) throws PrepTimeBellConstructorException {
+            String type = prefs.getString(String.valueOf(index) + KEY_TYPE, "");
+            if (!type.equals(getValueType()))
+                throw new PrepTimeBellWrongTypeException(index, getValueType(), type);
+            if (!prefs.contains(String.valueOf(index) + KEY_TIME))
+                throw new PrepTimeBellConstructorException(index, "No time found");
+            this.time = prefs.getLong(String.valueOf(index) + KEY_TIME, 0);
+        }
+
+        @Override
+        public void saveToBundle(Bundle bundle) {
+            bundle.putString(KEY_TYPE, getValueType());
+            bundle.putLong(KEY_TIME, time);
+        }
+
+        @Override
+        public void saveToPreferences(SharedPreferences.Editor editor, int index) {
+            editor.putString(String.valueOf(index) + KEY_TYPE, getValueType());
+            editor.putLong(String.valueOf(index) + KEY_TIME, time);
+        }
+
+        protected abstract String getValueType();
+
+    }
 
     /**
      * Thrown from {@link PrepTimeBellSpec} constructors if there is a problem with the
@@ -95,46 +162,59 @@ public class PrepTimeBellsManager {
         public PrepTimeBellConstructorException(int index, String detailMessage) {
             super(String.valueOf(index) + ": " + detailMessage);
         }
-    }
 
-    /**
-     * Thrown from {@link PrepTimeBellSpec} constructors if the type stored in the
-     * {@link SharedPreferences} file does not match the class of the constructor.
-     */
-    private class PrepTimeBellWrongTypeException extends PrepTimeBellConstructorException {
-
-        private static final long serialVersionUID = 7237927620650297337L;
-
-        public PrepTimeBellWrongTypeException(int index, String expected, String actual) {
-            super(index, "Expected " + expected + ", found " + actual);
+        public PrepTimeBellConstructorException(String detailMessage) {
+            super(detailMessage);
         }
     }
 
-    private class PrepTimeBellFromStart implements PrepTimeBellSpec {
+    private class PrepTimeBellFromFinish extends PrepTimeBellByTime {
 
-        private final long time;
+        public PrepTimeBellFromFinish(Bundle bundle) throws PrepTimeBellConstructorException {
+            super(bundle);
+        }
 
-        public  static final String VALUE_TYPE = "start";
-        private static final String KEY_TIME   = "-time";
+        public PrepTimeBellFromFinish(long time) {
+            super(time);
+        }
+
+        public PrepTimeBellFromFinish(SharedPreferences prefs, int index) throws PrepTimeBellConstructorException {
+            super(prefs, index);
+        }
+
+        @Override
+        public BellInfo getBell(long length) {
+            if (length > time)
+                return new BellInfo(length - time, 1);
+            else
+                return null;
+        }
+
+        @Override
+        public String toString() {
+            if (time == 0) return mContext.getString(R.string.PrepTimeBellAtFinishDescription);
+            return mContext.getString(R.string.PrepTimeBellFinishDescription, secsToText(time));
+        }
+
+        @Override
+        protected String getValueType() {
+            return VALUE_TYPE_FINISH;
+        }
+
+    }
+
+    private class PrepTimeBellFromStart extends PrepTimeBellByTime {
+
+        public PrepTimeBellFromStart(Bundle bundle) throws PrepTimeBellConstructorException {
+            super(bundle);
+        }
 
         public PrepTimeBellFromStart(long time) {
-            this.time = time;
+            super(time);
         }
 
-        /**
-         * Constructor from a {@link SharedPreferences} file.
-         * @param prefs the {@link SharedPreferences} object
-         * @param index the index of the desired bell specification in <code>prefs</code>.
-         * @throws PrepTimeBellWrongTypeException if the type specified for the given index in
-         * the given {@link SharedPreferences} file does not match "start".
-         */
         public PrepTimeBellFromStart(SharedPreferences prefs, int index) throws PrepTimeBellConstructorException {
-            String type = prefs.getString(String.valueOf(index) + KEY_TYPE, "");
-            if (!type.equals(VALUE_TYPE))
-                throw new PrepTimeBellWrongTypeException(index, VALUE_TYPE, type);
-            if (!prefs.contains(String.valueOf(index) + KEY_TIME))
-                throw new PrepTimeBellConstructorException(index, "No time found");
-            this.time = prefs.getLong(String.valueOf(index) + KEY_TIME, 0);
+            super(prefs, index);
         }
 
         @Override
@@ -148,77 +228,38 @@ public class PrepTimeBellsManager {
         }
 
         @Override
-        public void saveToPreferences(SharedPreferences.Editor editor, int index) {
-            editor.putString(String.valueOf(index) + KEY_TYPE, VALUE_TYPE);
-            editor.putLong(String.valueOf(index) + KEY_TIME, time);
-        }
-
-        @Override
         public String toString() {
             if (time == 0) return mContext.getString(R.string.PrepTimeBellAtStartDescription);
             return mContext.getString(R.string.PrepTimeBellStartDescription, secsToText(time));
         }
 
-    }
-
-    private class PrepTimeBellFromFinish implements PrepTimeBellSpec {
-
-        private final long time;
-
-        public  static final String VALUE_TYPE = "finish";
-        private static final String KEY_TIME   = "-time";
-
-        public PrepTimeBellFromFinish(long time) {
-            this.time = time;
-        }
-
-        /**
-         * Constructor from a {@link SharedPreferences} file.
-         * @param prefs the {@link SharedPreferences} object
-         * @param index the index of the desired bell specification in <code>prefs</code>.
-         * @throws PrepTimeBellWrongTypeException if the type specified for the given index in
-         * the given {@link SharedPreferences} file does not match "finish".
-         */
-        public PrepTimeBellFromFinish(SharedPreferences prefs, int index) throws PrepTimeBellConstructorException {
-            String type = prefs.getString(String.valueOf(index) + KEY_TYPE, "");
-            if (!type.equals(VALUE_TYPE))
-                throw new PrepTimeBellWrongTypeException(index, VALUE_TYPE, type);
-            if (!prefs.contains(String.valueOf(index) + KEY_TIME))
-                throw new PrepTimeBellConstructorException(index, "No time found");
-            this.time = prefs.getLong(String.valueOf(index) + KEY_TIME, 0);
-        }
-
         @Override
-        public BellInfo getBell(long length) {
-            if (length > time)
-                return new BellInfo(length - time, 1);
-            else
-                return null;
-        }
-
-        @Override
-        public void saveToPreferences(SharedPreferences.Editor editor, int index) {
-            editor.putString(String.valueOf(index) + KEY_TYPE, VALUE_TYPE);
-            editor.putLong(String.valueOf(index) + KEY_TIME, time);
-        }
-
-        @Override
-        public String toString() {
-            if (time == 0) return mContext.getString(R.string.PrepTimeBellAtFinishDescription);
-            return mContext.getString(R.string.PrepTimeBellFinishDescription, secsToText(time));
+        protected String getValueType() {
+            return VALUE_TYPE_START;
         }
 
     }
 
     private class PrepTimeBellProportional implements PrepTimeBellSpec {
 
-        private final float proportion;
+        private final double proportion;
 
-        public  static final String VALUE_TYPE     = "proportional";
-        private static final String KEY_PROPORTION = "-proportion";
-
-        public PrepTimeBellProportional (float proportion) {
-            this.proportion = proportion;
+        /**
+         * Constructor from a {@link Bundle}.
+         * @param bundle the Bundle.
+         * @throws PrepTimeBellWrongTypeException if the type specified for the given index in
+         * the given {@link SharedPreferences} file does not match "proportional".
+         * @throws PrepTimeBellConstructorException if there is some other problem with the preferences
+         */
+        public PrepTimeBellProportional(Bundle bundle) throws PrepTimeBellConstructorException {
+            String type = bundle.getString(KEY_TYPE);
+            if (type == null)
+                throw new PrepTimeBellConstructorException("No type found");
+            if (!type.equals(getValueType()))
+                throw new PrepTimeBellWrongTypeException(getValueType(), type);
+            if (!bundle.containsKey(KEY_PROPORTION))
+                throw new PrepTimeBellConstructorException("No proportion found");
+            this.proportion = bundle.getDouble(KEY_PROPORTION, 0);
         }
 
         /**
@@ -227,35 +268,68 @@ public class PrepTimeBellsManager {
          * @param index the index of the desired bell specification in <code>prefs</code>.
          * @throws PrepTimeBellWrongTypeException if the type specified for the given index in
          * the given {@link SharedPreferences} file does not match "proportional".
+         * @throws PrepTimeBellConstructorException if there is some other problem with the preferences
          */
         public PrepTimeBellProportional(SharedPreferences prefs, int index) throws PrepTimeBellConstructorException {
             String type = prefs.getString(String.valueOf(index) + KEY_TYPE, "");
-            if (!type.equals(VALUE_TYPE))
-                throw new PrepTimeBellWrongTypeException(index, VALUE_TYPE, type);
+            if (!type.equals(getValueType()))
+                throw new PrepTimeBellWrongTypeException(index, getValueType(), type);
             if (!prefs.contains(String.valueOf(index) + KEY_PROPORTION))
                 throw new PrepTimeBellConstructorException(index, "No proportion found");
-            this.proportion = prefs.getFloat(String.valueOf(index) + KEY_PROPORTION, 0);
+            this.proportion = Double.parseDouble(prefs.getString(String.valueOf(index) + KEY_PROPORTION, "0"));
         }
 
         @Override
         public BellInfo getBell(long length) {
             // Calculate when the bell should ring
-            long time = (long) (length * proportion);
+            long time = Math.round(length * proportion);
             return new BellInfo(time, 1);
         }
 
         @Override
+        public void saveToBundle(Bundle bundle) {
+            bundle.putString(KEY_TYPE, getValueType());
+            bundle.putDouble(KEY_PROPORTION, proportion);
+        }
+
+        @Override
         public void saveToPreferences(SharedPreferences.Editor editor, int index) {
-            editor.putString(String.valueOf(index) + KEY_TYPE, VALUE_TYPE);
-            editor.putFloat(String.valueOf(index) + KEY_PROPORTION, proportion);
+            editor.putString(String.valueOf(index) + KEY_TYPE, getValueType());
+            editor.putString(String.valueOf(index) + KEY_PROPORTION, String.valueOf(proportion));
         }
 
         @Override
         public String toString() {
             if (proportion == 0) return mContext.getString(R.string.PrepTimeBellAtStartDescription);
             if (proportion == 1) return mContext.getString(R.string.PrepTimeBellAtFinishDescription);
+            Double percentage = proportion * 100;
+            String percentageStr;
+            if (percentage == Math.round(percentage)) percentageStr = String.format("%d", Math.round(percentage));
+            else percentageStr = String.format("%.1f", percentage);
             return mContext.getString(R.string.PrepTimeBellProportionalDescription,
-                    Math.round(proportion * 100));
+                    percentageStr);
+        }
+
+        private String getValueType() {
+            return VALUE_TYPE_PROPORTIONAL;
+        }
+
+    }
+
+    /**
+     * Thrown from {@link PrepTimeBellSpec} constructors if the type stored in the
+     * {@link SharedPreferences} file does not match the class of the constructor.
+     */
+    private class PrepTimeBellWrongTypeException extends PrepTimeBellConstructorException {
+
+        private static final long serialVersionUID = 7237927620650297337L;
+
+        public PrepTimeBellWrongTypeException(int index, String expected, String actual) {
+            super(index, "Expected " + expected + ", found " + actual);
+        }
+
+        public PrepTimeBellWrongTypeException(String expected, String actual) {
+            super("Expected " + expected + ", found " + actual);
         }
 
     }
@@ -264,118 +338,32 @@ public class PrepTimeBellsManager {
     // Public methods
     //******************************************************************************************
 
-    /**
-     * Adds a bell specification, specified relative to the start of prep time.
-     * @param time the time from the start of prep time
-     */
-    public void addBellFromStart(long time) {
-        PrepTimeBellSpec bell = new PrepTimeBellFromStart(time);
+    public void addFromBundle(Bundle bundle) {
+        PrepTimeBellSpec bell = createFromBundle(bundle);
         mBellSpecs.add(bell);
     }
 
-    public void addBellFromFinish(long time) {
-        PrepTimeBellSpec bell = new PrepTimeBellFromFinish(time);
-        mBellSpecs.add(bell);
-    }
-
-    public void addBellProportional(float proportion) {
-        PrepTimeBellSpec bell = new PrepTimeBellProportional(proportion);
-        mBellSpecs.add(bell);
+    public void deleteBell(int position) {
+        mBellSpecs.remove(position);
     }
 
     /**
-     * Loads bell specifications from a {@link SharedPreferences} file
-     * @param prefs a {@link SharedPreferences} instance
+     * @param index
+     * @return a {@link Bundle} representing the bell at <code>index</code>
      */
-    public void loadFromPreferences(SharedPreferences prefs) {
-        // Clear the bells list.
-        mBellSpecs.clear();
-
-        // Check if there's anything in the file.  We just do this by checking the "total
-        // number of bells" field, and assume that if we can't find it, the file is empty
-        // (since the file is useless to us without this field anyway).
-        if (!prefs.contains(KEY_TOTAL_NUMBER_OF_BELLS)) {
-            // If the file was empty, then load the default: a single bell at the end.
-            addBellFromFinish(0);
-            addBellFromStart(600);
-            addBellProportional((float) 0.5);
-            addBellFromFinish(300);
-            Log.w(this.getClass().getSimpleName(), "No file found, loaded default");
-            return;
-        }
-
-        // If we get to this point, that means there's something in the preferences file.
-        // Proceed to load it.
-
-        // Get the total number of bells
-        int numberOfBells = prefs.getInt(KEY_TOTAL_NUMBER_OF_BELLS, 0);
-
-        // For each bell, pass preferences to the appropriate constructor.
-        for (int index = 0; index < numberOfBells; index++) {
-
-            String indexStr = String.valueOf(index);
-
-            String type = prefs.getString(indexStr + KEY_TYPE, "");
-
-            // If no type found, that's an error.  Skip.
-            if (type.equals("")) {
-                Log.e(this.getClass().getSimpleName(), indexStr + ": No type found");
-                continue;
-            }
-
-            PrepTimeBellSpec bell;
-
-            try {
-                if (type.equals(PrepTimeBellFromStart.VALUE_TYPE)) {
-                    bell = new PrepTimeBellFromStart(prefs, index);
-                } else if (type.equals(PrepTimeBellFromFinish.VALUE_TYPE)) {
-                    bell = new PrepTimeBellFromFinish(prefs, index);
-                } else if (type.equals(PrepTimeBellProportional.VALUE_TYPE)) {
-                    bell = new PrepTimeBellProportional(prefs, index);
-                } else {
-                    Log.e(this.getClass().getSimpleName(), indexStr + ": Unrecognised type: " + type);
-                    continue;
-                }
-                Log.v(this.getClass().getSimpleName(), indexStr + ": Found a " + type);
-            } catch (PrepTimeBellConstructorException e) {
-                Log.e(this.getClass().getSimpleName(), e.getLocalizedMessage());
-                continue;
-            }
-
-            mBellSpecs.add(bell);
-
-        }
+    public Bundle getBellBundle(int index) {
+        Bundle bundle = new Bundle();
+        PrepTimeBellSpec bellSpec = mBellSpecs.get(index);
+        bellSpec.saveToBundle(bundle);
+        return bundle;
     }
 
-    /**
-     * Saves bell specifications to a {@link SharedPreferences} file
-     * @param prefs a {@link SharedPreferences} instance
-     */
-    public void saveToPreferences(SharedPreferences prefs) {
-        // Convention:
-        //  The keys are always numbers, followed by a hyphen, followed by a parameter.
-        //  For example: "0-type", "0-time", "1-type", "1-time", etc.
-        //  The numbers in the keys denote the order in which the bells are listed in the
-        //  edit screen.  The saving and loading is handled by individual PrepTimeBellSpec
-        //  subclasses.
-        // Also, a separate field denotes the total number of bell specifications.
-
-        Iterator<PrepTimeBellSpec> specIterator = mBellSpecs.iterator();
-        SharedPreferences.Editor editor = prefs.edit();
-        int index = 0;
-
-        // Save all the bell specifications
-        while (specIterator.hasNext()) {
-            PrepTimeBellSpec spec = specIterator.next();
-            spec.saveToPreferences(editor, index);
-            index++;
-        }
-
-        // Save the total number of bells
-        editor.putInt(KEY_TOTAL_NUMBER_OF_BELLS, index);
-
-        // Commit the changes
-        editor.commit();
+    public ArrayList<String> getBellDescriptions() {
+        ArrayList<String> descriptions = new ArrayList<String>(mBellSpecs.size());
+        Iterator<PrepTimeBellSpec> iterator = mBellSpecs.iterator();
+        while (iterator.hasNext())
+            descriptions.add(iterator.next().toString());
+        return descriptions;
     }
 
     /**
@@ -417,22 +405,152 @@ public class PrepTimeBellsManager {
             }
         }
 
-        // TODO write this method
         return bells;
 
     }
 
-    public ArrayList<PrepTimeBellSpec> getBellSpecs() {
-        return mBellSpecs;
+    /**
+     * Loads bell specifications from a {@link SharedPreferences} file
+     * @param prefs a {@link SharedPreferences} instance
+     */
+    public void loadFromPreferences(SharedPreferences prefs) {
+        // Clear the bells list.
+        mBellSpecs.clear();
+
+        // Check if there's anything in the file.  We just do this by checking the "total
+        // number of bells" field, and assume that if we can't find it, the file is empty
+        // (since the file is useless to us without this field anyway).
+        if (!prefs.contains(KEY_TOTAL_NUMBER_OF_BELLS)) {
+            // If the file was empty, then load the default: a single bell at the end.
+            PrepTimeBellFromFinish bell = new PrepTimeBellFromFinish(0);
+            mBellSpecs.add(bell);
+            Log.w(this.getClass().getSimpleName(), "No file found, loaded default");
+            return;
+        }
+
+        // If we get to this point, that means there's something in the preferences file.
+        // Proceed to load it.
+
+        // Get the total number of bells
+        int numberOfBells = prefs.getInt(KEY_TOTAL_NUMBER_OF_BELLS, 0);
+
+        // For each bell, pass preferences to the appropriate constructor.
+        for (int index = 0; index < numberOfBells; index++) {
+
+            String indexStr = String.valueOf(index);
+
+            String type = prefs.getString(indexStr + KEY_TYPE, "");
+
+            // If no type found, that's an error.  Skip.
+            if (type.equals("")) {
+                Log.e(this.getClass().getSimpleName(), indexStr + ": No type found");
+                continue;
+            }
+
+            PrepTimeBellSpec bell;
+
+            try {
+                if (type.equals(VALUE_TYPE_START)) {
+                    bell = new PrepTimeBellFromStart(prefs, index);
+                } else if (type.equals(VALUE_TYPE_FINISH)) {
+                    bell = new PrepTimeBellFromFinish(prefs, index);
+                } else if (type.equals(VALUE_TYPE_PROPORTIONAL)) {
+                    bell = new PrepTimeBellProportional(prefs, index);
+                } else {
+                    Log.e(this.getClass().getSimpleName(), indexStr + ": Unrecognised type: " + type);
+                    continue;
+                }
+                Log.v(this.getClass().getSimpleName(), indexStr + ": Found a " + type);
+            } catch (PrepTimeBellConstructorException e) {
+                Log.e(this.getClass().getSimpleName(), e.getLocalizedMessage());
+                continue;
+            }
+
+            mBellSpecs.add(bell);
+
+        }
+    }
+
+    public void replaceFromBundle(int index, Bundle bundle) {
+        PrepTimeBellSpec bell = createFromBundle(bundle);
+        mBellSpecs.remove(index);
+        mBellSpecs.add(index, bell);
+    }
+
+    /**
+     * Saves bell specifications to a {@link SharedPreferences} file
+     * @param prefs a {@link SharedPreferences} instance
+     */
+    public void saveToPreferences(SharedPreferences prefs) {
+        // Convention:
+        //  The keys are always numbers, followed by a hyphen, followed by a parameter.
+        //  For example: "0-type", "0-time", "1-type", "1-time", etc.
+        //  The numbers in the keys denote the order in which the bells are listed in the
+        //  edit screen.  The saving and loading is handled by individual PrepTimeBellSpec
+        //  subclasses.
+        // Also, a separate field denotes the total number of bell specifications.
+
+        Iterator<PrepTimeBellSpec> specIterator = mBellSpecs.iterator();
+        SharedPreferences.Editor editor = prefs.edit();
+        int index = 0;
+
+        // Save all the bell specifications
+        while (specIterator.hasNext()) {
+            PrepTimeBellSpec spec = specIterator.next();
+            spec.saveToPreferences(editor, index);
+            index++;
+        }
+
+        // Save the total number of bells
+        editor.putInt(KEY_TOTAL_NUMBER_OF_BELLS, index);
+
+        // Commit the changes
+        editor.commit();
     }
 
     //******************************************************************************************
     // Private methods
     //******************************************************************************************
 
+    /**
+     * Creates a {@link PrepTimeBellSpec} from a {@link Bundle}.
+     * @param bundle the {@link Bundle} containing the information from which the {@link PrepTimeBellSpec}
+     * is to be created
+     * @return the assembled {@link PrepTimeBellSpec}, or <code>null</code> if there was an error.
+     */
+    private PrepTimeBellSpec createFromBundle(Bundle bundle) {
+        String type = bundle.getString(KEY_TYPE);
+
+        // If no type found, that's an error.  Skip.
+        if (type == null) {
+            Log.e(this.getClass().getSimpleName(), "Create from bundle: No type found");
+            return null;
+        }
+
+        PrepTimeBellSpec bell;
+
+        try {
+            if (type.equals(VALUE_TYPE_START)) {
+                bell = new PrepTimeBellFromStart(bundle);
+            } else if (type.equals(VALUE_TYPE_FINISH)) {
+                bell = new PrepTimeBellFromFinish(bundle);
+            } else if (type.equals(VALUE_TYPE_PROPORTIONAL)) {
+                bell = new PrepTimeBellProportional(bundle);
+            } else {
+                Log.e(this.getClass().getSimpleName(), "Create from bundle: Unrecognised type: " + type);
+                return null;
+            }
+            Log.v(this.getClass().getSimpleName(), "Create from bundle: Found a " + type);
+        } catch (PrepTimeBellConstructorException e) {
+            Log.e(this.getClass().getSimpleName(), e.getLocalizedMessage());
+            return null;
+        }
+
+        return bell;
+    }
+
     private static String secsToText(long time) {
         return String.format("%02d:%02d", time / 60, time % 60);
     }
-
 
 }

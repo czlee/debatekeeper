@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/prepTimeBellDelete"
+        android:title="@string/PrepTimeBellListDeleteText">
+    </item>
+    <item
+        android:id="@+id/prepTimeBellEdit"
+        android:title="@string/PrepTimeBellListEditText">
+    </item>
+
+</menu>

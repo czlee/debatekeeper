@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <Spinner
+        android:id="@+id/addBellTypeSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="50dip" />
+
+    <!-- The time picker is for "time from start" and "time from finish" -->
+
+    <TimePicker
+        android:id="@+id/addBellTimePicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    
+    <!-- The text box is for percentage through prep time.
+    We use a text box, not a number picker, so that the user can enter decimals. -->
+
+    <EditText
+        android:id="@+id/addBellEditText"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:ems="10"
+        android:gravity="center"
+        android:inputType="numberDecimal" />
+
+</LinearLayout>

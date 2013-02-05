@@ -19,16 +19,30 @@ package net.czlee.debatekeeper;
 
 import java.util.ArrayList;
 
-import net.czlee.debatekeeper.PrepTimeBellsManager.PrepTimeBellSpec;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 /**
  * This activity allows the user to edit the preparation time bells.
@@ -48,14 +62,22 @@ public class PrepTimeBellsEditActivity extends Activity {
     private static final int DIALOG_ADD_BELL        = 0;
     private static final int DIALOG_CLEAR_ALL_BELLS = 1;
 
+    private static final String KEY_INDEX = "index";
+
+    // These must match the strings in R.string.AddPrepTimeBellTypes (in prep_time_bells_edit.xml)
+    private static final int ADD_PREP_TIME_BELL_TYPE_START      = 0;
+    private static final int ADD_PREP_TIME_BELL_TYPE_FINISH     = 1;
+    private static final int ADD_PREP_TIME_BELL_TYPE_PERCENTAGE = 2;
+
     //******************************************************************************************
     // Private classes
     //******************************************************************************************
+
     private class AddButtonOnClickListener implements OnClickListener {
         @Override
         public void onClick(View v) {
             // Generate the "add bell" dialog
-            showDialog(DIALOG_ADD_BELL);
+            showDialog(DIALOG_ADD_BELL, null);
         }
     }
 
@@ -82,7 +104,7 @@ public class PrepTimeBellsEditActivity extends Activity {
         mPtbm.loadFromPreferences(prefs);
 
         // Populate the list
-        populateBellsList();
+        refreshBellsList();
 
         // Set the OnClickListeners
         ((Button) findViewById(R.id.prepTimeAddBellButton))
@@ -90,6 +112,29 @@ public class PrepTimeBellsEditActivity extends Activity {
         ((Button) findViewById(R.id.prepTimeClearAllButton))
                 .setOnClickListener(new ClearButtonOnClickListener());
 
+        // Register a context menu for the bells list items
+        registerForContextMenu(findViewById(R.id.prepTimeBellsList));
+
+        // Register for the list to show a toast on non-long click
+        ((ListView) findViewById(R.id.prepTimeBellsList)).setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+                Toast.makeText(PrepTimeBellsEditActivity.this,
+                        R.string.PrepTimeBellsContextMenuTip, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+        String title = getString(R.string.PrepTimeBellListContextMenuHeader,
+                mPtbm.getBellDescriptions().get(info.position).toLowerCase());
+        menu.setHeaderTitle(title);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.prep_time_bells_list_context, menu);
     }
 
     @Override
@@ -103,26 +148,173 @@ public class PrepTimeBellsEditActivity extends Activity {
         return super.onCreateDialog(id, args);
     }
 
-    //******************************************************************************************
-    // Private methods
-    //******************************************************************************************
-    private void populateBellsList() {
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()) {
+        case R.id.prepTimeBellEdit:
+            Bundle args = mPtbm.getBellBundle(info.position);
+            args.putInt(KEY_INDEX, info.position);
+            showDialog(DIALOG_ADD_BELL, args);
+            return true;
+        case R.id.prepTimeBellDelete:
+            mPtbm.deleteBell(info.position);
+            refreshBellsList();
+            return true;
+        default:
+            return super.onContextItemSelected(item);
+        }
+    }
 
-        ArrayList<PrepTimeBellSpec> bellSpecs = mPtbm.getBellSpecs();
-        ListView view = (ListView) findViewById(R.id.prepTimeBellsList);
-        ArrayAdapter<PrepTimeBellSpec> adapter = new ArrayAdapter<PrepTimeBellSpec>(this, android.R.layout.simple_list_item_1, bellSpecs);
-        view.setAdapter(adapter);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SharedPreferences prefs = getSharedPreferences(PrepTimeBellsManager.PREP_TIME_BELLS_PREFERENCES_NAME, MODE_PRIVATE);
+        mPtbm.saveToPreferences(prefs);
+    }
+
+    @Override
+    protected void onPrepareDialog(int id, Dialog dialog, final Bundle args) {
+        super.onPrepareDialog(id, dialog, args);
+
+        final Spinner    typeSpinner = (Spinner)    dialog.findViewById(R.id.addBellTypeSpinner);
+        final TimePicker timePicker  = (TimePicker) dialog.findViewById(R.id.addBellTimePicker);
+        final EditText   editText    = (EditText)   dialog.findViewById(R.id.addBellEditText);
+
+        // Defaults
+        timePicker.setCurrentHour(5);
+        timePicker.setCurrentMinute(0);
+        editText.setText("50");
+
+        // If there's a bundle, override
+        if (args != null) {
+            String type = args.getString(PrepTimeBellsManager.KEY_TYPE);
+            if (type == PrepTimeBellsManager.VALUE_TYPE_START) {
+                typeSpinner.setSelection(ADD_PREP_TIME_BELL_TYPE_START);
+                long time = args.getLong(PrepTimeBellsManager.KEY_TIME);
+                timePicker.setCurrentHour((int) (time / 60));
+                timePicker.setCurrentMinute((int) (time % 60));
+            } else if (type == PrepTimeBellsManager.VALUE_TYPE_FINISH) {
+                typeSpinner.setSelection(ADD_PREP_TIME_BELL_TYPE_FINISH);
+                long time = args.getLong(PrepTimeBellsManager.KEY_TIME);
+                timePicker.setCurrentHour((int) (time / 60));
+                timePicker.setCurrentMinute((int) (time % 60));
+            } else if (type == PrepTimeBellsManager.VALUE_TYPE_PROPORTIONAL) {
+                typeSpinner.setSelection(ADD_PREP_TIME_BELL_TYPE_PERCENTAGE);
+                double proportion = args.getDouble(PrepTimeBellsManager.KEY_PROPORTION);
+                editText.setText(String.valueOf(proportion * 100));
+            }
+        }
+
+        // Set the positive button function
+        // TODO only one line is actually context-dependent, so clean this up
+        ((AlertDialog) dialog).setButton(AlertDialog.BUTTON_POSITIVE, getString(android.R.string.ok),
+                new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                int typeSelected = typeSpinner.getSelectedItemPosition();
+                Bundle newBundle = new Bundle();
+                switch (typeSelected) {
+                case ADD_PREP_TIME_BELL_TYPE_START:
+                case ADD_PREP_TIME_BELL_TYPE_FINISH:
+                    // We're using this in hours and minutes, not minutes and seconds
+                    int minutes = timePicker.getCurrentHour();
+                    int seconds = timePicker.getCurrentMinute();
+                    long time = minutes * 60 + seconds;
+                    if (typeSelected == ADD_PREP_TIME_BELL_TYPE_START)
+                        newBundle.putString(PrepTimeBellsManager.KEY_TYPE, PrepTimeBellsManager.VALUE_TYPE_START);
+                    else
+                        newBundle.putString(PrepTimeBellsManager.KEY_TYPE, PrepTimeBellsManager.VALUE_TYPE_FINISH);
+                    newBundle.putLong(PrepTimeBellsManager.KEY_TIME, time);
+                    break;
+                case ADD_PREP_TIME_BELL_TYPE_PERCENTAGE:
+                    Editable text = editText.getText();
+                    newBundle.putString(PrepTimeBellsManager.KEY_TYPE, PrepTimeBellsManager.VALUE_TYPE_PROPORTIONAL);
+                    Double percentage = Double.parseDouble(text.toString());
+                    double value = percentage / 100;
+                    newBundle.putDouble(PrepTimeBellsManager.KEY_PROPORTION, value);
+                    break;
+                }
+                if (args == null)
+                    mPtbm.addFromBundle(newBundle);
+                else
+                    mPtbm.replaceFromBundle(args.getInt(KEY_INDEX), newBundle);
+                refreshBellsList();
+            }
+        });
 
     }
 
+    //******************************************************************************************
+    // Private methods
+    //******************************************************************************************
+
     private Dialog getAddBellDialog() {
-        // TODO Auto-generated method stub
-        return null;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        View content = getLayoutInflater().inflate(R.layout.add_prep_time_bell, null);
+
+        // Take note of the form elements
+        final Spinner    typeSpinner = (Spinner)    content.findViewById(R.id.addBellTypeSpinner);
+        final TimePicker timePicker  = (TimePicker) content.findViewById(R.id.addBellTimePicker);
+        final EditText   editText    = (EditText)   content.findViewById(R.id.addBellEditText);
+
+        // Format the form elements
+        timePicker.setIs24HourView(true);
+        ArrayAdapter<CharSequence> typesAdapter = ArrayAdapter.createFromResource(this,
+                R.array.AddPrepTimeBellTypes, android.R.layout.simple_spinner_item);
+        typesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        typeSpinner.setAdapter(typesAdapter);
+
+        typeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                // Show either the EditText or TimePicker, whichever is appropriate
+                if (pos == ADD_PREP_TIME_BELL_TYPE_PERCENTAGE) { // This is "percentage through prep time"
+                    editText.setVisibility(View.VISIBLE);
+                    timePicker.setVisibility(View.GONE);
+                } else {
+                    editText.setVisibility(View.GONE);
+                    timePicker.setVisibility(View.VISIBLE);
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing.
+            }
+        });
+
+        // When the text field gains focus, select all
+        builder.setTitle(R.string.AddPrepTimeBellDialogTitle)
+               .setView(content)
+               .setCancelable(true)
+               .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.e(this.getClass().getSimpleName(), "Positive button not overridden");
+                        dialog.cancel();
+                    }
+                })
+               .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+        return builder.create();
     }
 
     private Dialog getClearBellsDialog() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    private void refreshBellsList() {
+        ArrayList<String> bellSpecs = mPtbm.getBellDescriptions();
+        ListView view = (ListView) findViewById(R.id.prepTimeBellsList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, bellSpecs);
+        view.setAdapter(adapter);
     }
 
 }

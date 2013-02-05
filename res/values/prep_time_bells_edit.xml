@@ -6,7 +6,20 @@
     <string name="PrepTimeBellStartDescription">%1$s after start</string>
     <string name="PrepTimeBellAtFinishDescription">At finish</string>
     <string name="PrepTimeBellFinishDescription">%1$s before finish</string>
-    <string name="PrepTimeBellProportionalDescription">%1$d%% through prep time</string>
+    <string name="PrepTimeBellProportionalDescription">%1$s%% through prep time</string>
     
+    <!-- Add bell dialog -->
+    <string name="AddPrepTimeBellDialogTitle">Add bell</string>
+    <string-array name="AddPrepTimeBellTypes">
+        <item>Time from start</item>
+        <item>Time from finish</item>
+        <item>Percentage through prep time</item>
+    </string-array>
     
+    <!-- Context menu -->
+    <string name="PrepTimeBellListContextMenuHeader">Bell %1$s</string>
+    <string name="PrepTimeBellListDeleteText">Delete</string>
+    <string name="PrepTimeBellListEditText">Edit</string>
+    
+    <string name="PrepTimeBellsContextMenuTip">Long-press to edit or delete</string>
 </resources>
