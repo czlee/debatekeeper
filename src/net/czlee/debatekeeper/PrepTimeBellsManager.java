@@ -18,6 +18,8 @@
 package net.czlee.debatekeeper;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 
 import android.content.Context;
@@ -184,7 +186,10 @@ public class PrepTimeBellsManager {
 
         @Override
         public BellInfo getBell(long length) {
-            if (length > time)
+            // If the bell is at the finish, make it two bells
+            if (time == 0)
+                return new BellInfo(length, 2);
+            else if (length > time)
                 return new BellInfo(length - time, 1);
             else
                 return null;
@@ -281,6 +286,9 @@ public class PrepTimeBellsManager {
 
         @Override
         public BellInfo getBell(long length) {
+            // If the bell is at the finish, make it two bells
+            if (proportion == 1.0)
+                return new BellInfo(length, 2);
             // Calculate when the bell should ring
             long time = Math.round(length * proportion);
             return new BellInfo(time, 1);
@@ -375,34 +383,50 @@ public class PrepTimeBellsManager {
     public ArrayList<BellInfo> getBellsList(long length) {
 
         Iterator<PrepTimeBellSpec> specIterator = mBellSpecs.iterator();
-        ArrayList<BellInfo> bells = new ArrayList<BellInfo>();
+        ArrayList<BellInfo> allBells = new ArrayList<BellInfo>();
 
-        // First, generate all the bells.
-        // But don't add bells that are at the same time as some other bell in the list.
+        // First, generate all the bells and put them in a list.
+        // Don't bother adding null bells.
         while (specIterator.hasNext()) {
             PrepTimeBellSpec spec = specIterator.next();
             BellInfo bell = spec.getBell(length);
-            if (bell != null) {
+            if (bell != null)
+                allBells.add(bell);
+        }
 
-                boolean duplicate = false;
-
-                // Treat as a "duplicate" if the bell is within fifteen seconds of another bell.
-                // (The bell added first always gets priority.)
-                Iterator<BellInfo> bellIterator = bells.iterator();
-                while (bellIterator.hasNext()) {
-                    BellInfo checkBell = bellIterator.next();
-                    if (Math.abs(checkBell.getBellTime() - bell.getBellTime()) < 15) {
-                        duplicate = true;
-                        break;
-                    }
-                }
-
-                // If duplicate, skip the rest
-                if (duplicate) continue;
-
-                // Otherwise, add the bell.
-                bells.add(bell);
+        // Then, sort the bells in order of priority.
+        // Currently, this sorts them in descending order of number of bells to play.
+        Collections.sort(allBells, new Comparator<BellInfo>() {
+            @Override
+            public int compare(BellInfo lhs, BellInfo rhs) {
+                return rhs.getBellSoundInfo().getTimesToPlay() - lhs.getBellSoundInfo().getTimesToPlay();
             }
+        });
+
+        // Then, run through the bells, adding only non-duplicates.
+        Iterator<BellInfo> allBellsIterator = allBells.iterator();
+        ArrayList<BellInfo> bells = new ArrayList<BellInfo>();
+        while (allBellsIterator.hasNext()) {
+            BellInfo bell = allBellsIterator.next();
+
+            boolean duplicate = false;
+
+            // Treat as a "duplicate" if the bell is within fifteen seconds of another bell.
+            // (The bells are already in prioritised order.)
+            Iterator<BellInfo> bellIterator = bells.iterator();
+            while (bellIterator.hasNext()) {
+                BellInfo checkBell = bellIterator.next();
+                if (Math.abs(checkBell.getBellTime() - bell.getBellTime()) < 15) {
+                    duplicate = true;
+                    break;
+                }
+            }
+
+            // If duplicate, skip the rest
+            if (duplicate) continue;
+
+            // Otherwise, add the bell.
+            bells.add(bell);
         }
 
         return bells;

@@ -97,8 +97,8 @@ public abstract class GenericSpeechOrPrepFormat implements SpeechOrPrepFormat {
 
         Collections.sort(bells, new Comparator<BellInfo>() {
             @Override
-            public int compare(BellInfo arg0, BellInfo arg1) {
-                Long diff = arg0.getBellTime() - arg1.getBellTime();
+            public int compare(BellInfo lhs, BellInfo rhs) {
+                Long diff = lhs.getBellTime() - rhs.getBellTime();
                 return diff.intValue();
             }
         });

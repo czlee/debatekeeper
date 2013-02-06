@@ -75,7 +75,8 @@ public class PeriodInfo {
 
     /**
      * Updates this <code>PeriodInfo</code> using the information in another PeriodInfo.
-     * It replaces members if they are not null, and leaves them as they are if they are null.
+     * It replaces members if the new information is not null, and leaves them as they are if
+     * the new information is null.
      * @param pi The new PeriodInfo object from which to take the updated information.
      */
     public void update(PeriodInfo pi) {
@@ -93,8 +94,8 @@ public class PeriodInfo {
      * @param pi The new PeriodInfo object from which to take the information.
      */
     public void addInfo(PeriodInfo pi) {
-        if (this.mDescription != null)     mDescription     = pi.mDescription;
-        if (this.mBackgroundColor != null) mBackgroundColor = pi.mBackgroundColor;
+        if (this.mDescription == null)     mDescription     = pi.mDescription;
+        if (this.mBackgroundColor == null) mBackgroundColor = pi.mBackgroundColor;
 
         // There is no "do not change" option for POIs allowed
         mPoisAllowed = pi.mPoisAllowed;
