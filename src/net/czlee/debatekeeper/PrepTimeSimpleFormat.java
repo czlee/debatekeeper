@@ -91,12 +91,7 @@ public class PrepTimeSimpleFormat extends GenericSpeechOrPrepFormat implements P
 
     private BellInfo getFinishBell() {
         BellInfo bi = new BellInfo(getLength(), 2);
-        bi.setNextPeriodInfo(getOvertimePeriodInfo());
         return bi;
-    }
-
-    private PeriodInfo getOvertimePeriodInfo() {
-        return new PeriodInfo("", 0x77ff0000, false);
     }
 
 }
