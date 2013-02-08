@@ -16,7 +16,6 @@
 	<string name="ViewFormatShowDetailsButtonText">More</string>
 		
 	<string name="ToastNoSelection">No style selected</string>
-	<string name="ToastSelection">Style changed to %1$s</string>
 	<string name="ToastFormatUnchanged">Style not changed</string>
 	
 	<string name="TimeDescriptionLengthInMinutesSeconds">%s long</string>

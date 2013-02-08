@@ -211,9 +211,6 @@ public class FormatChooserActivity extends Activity {
                         .show();
                 FormatChooserActivity.this.finish();
             } else if (selectedPosition != ListView.INVALID_POSITION) {
-                Toast.makeText(FormatChooserActivity.this, getString(R.string.ToastSelection,
-                        mStylesList.get(selectedPosition).getStyleName()), Toast.LENGTH_SHORT)
-                        .show();
                 returnSelectionByPosition(selectedPosition);
             } else {
                 Toast.makeText(FormatChooserActivity.this, R.string.ToastNoSelection,
