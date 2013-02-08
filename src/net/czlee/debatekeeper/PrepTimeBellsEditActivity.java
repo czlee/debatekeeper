@@ -265,6 +265,8 @@ public class PrepTimeBellsEditActivity extends Activity {
         AlertDialog alert = (AlertDialog) dialog;
 
         alert.setTitle(R.string.AddPrepTimeBellDialogTitle);
+        // The text argument of setButton doesn't seem to work, so use setText on the button itself.
+        alert.getButton(AlertDialog.BUTTON_POSITIVE).setText(R.string.AddPrepTimeBellDialogConfirm);
         alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.AddPrepTimeBellDialogConfirm),
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -316,6 +318,8 @@ public class PrepTimeBellsEditActivity extends Activity {
         AlertDialog alert = (AlertDialog) dialog;
 
         alert.setTitle(getString(R.string.EditPrepTimeBellDialogTitle, mPtbm.getBellDescription(index)));
+        // The text argument of setButton doesn't seem to work, so use setText on the button itself.
+        alert.getButton(AlertDialog.BUTTON_POSITIVE).setText(R.string.EditPrepTimeBellDialogConfirm);
         alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.EditPrepTimeBellDialogConfirm),
                 new DialogInterface.OnClickListener() {
                     @Override

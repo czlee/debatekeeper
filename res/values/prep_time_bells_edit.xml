@@ -17,7 +17,7 @@
         <item>Percentage through prep time</item>
     </string-array>
     <string name="AddPrepTimeBellDialogConfirm">Add</string>
-    <string name="EditPrepTimeBellDialogConfirm">Replace</string>
+    <string name="EditPrepTimeBellDialogConfirm">Done</string>
     
     <!-- Clear bells dialog -->
     <string name="ClearPrepTimeBellsConfirmDialogTitle">Clear all bells</string>
