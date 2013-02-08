@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.ListIterator;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -74,7 +75,7 @@ public class PrepTimeBellsManager {
     private interface PrepTimeBellSpec {
 
         /**
-         * @param length
+         * @param length the length of the prep time
          * @return A {@link BellInfo} object, or <code>null</code> if this bell is
          * incompatible with the length given (e.g. it would occur after the end
          * of the prep time given).
@@ -92,6 +93,13 @@ public class PrepTimeBellsManager {
          * @param index the index of this PrepTimeBellSpec in the list
          */
         public void saveToPreferences(SharedPreferences.Editor editor, int index);
+
+        /**
+         * @return <code>true</code> if the bell is <i>always</i> at the finish; <code>false</code>
+         * otherwise. Note that a bell that <i>can</i> be, but is not <i>always</i> at the finish
+         * (<i>e.g.</i> a start bell whose time coincides with the prep time length) returns <code>false</code>.
+         */
+        public boolean isAtFinish();
 
     }
 
@@ -186,10 +194,7 @@ public class PrepTimeBellsManager {
 
         @Override
         public BellInfo getBell(long length) {
-            // If the bell is at the finish, make it two bells
-            if (time == 0)
-                return new BellInfo(length, 2);
-            else if (length > time)
+            if (length > time)
                 return new BellInfo(length - time, 1);
             else
                 return null;
@@ -204,6 +209,11 @@ public class PrepTimeBellsManager {
         @Override
         protected String getValueType() {
             return VALUE_TYPE_FINISH;
+        }
+
+        @Override
+        public boolean isAtFinish() {
+            return (time == 0);
         }
 
     }
@@ -241,6 +251,11 @@ public class PrepTimeBellsManager {
         @Override
         protected String getValueType() {
             return VALUE_TYPE_START;
+        }
+
+        @Override
+        public boolean isAtFinish() {
+            return false; // always false
         }
 
     }
@@ -286,9 +301,6 @@ public class PrepTimeBellsManager {
 
         @Override
         public BellInfo getBell(long length) {
-            // If the bell is at the finish, make it two bells
-            if (proportion == 1.0)
-                return new BellInfo(length, 2);
             // Calculate when the bell should ring
             long time = Math.round(length * proportion);
             return new BellInfo(time, 1);
@@ -322,6 +334,11 @@ public class PrepTimeBellsManager {
             return VALUE_TYPE_PROPORTIONAL;
         }
 
+        @Override
+        public boolean isAtFinish() {
+            return (proportion == 1);
+        }
+
     }
 
     /**
@@ -346,13 +363,82 @@ public class PrepTimeBellsManager {
     // Public methods
     //******************************************************************************************
 
+    /**
+     * Adds a bell based on the information in a given {@link Bundle}.
+     * The <code>Bundle</code> must have the following entries:
+     * <ul><li>A "type", a String that is either "start", "finish" or "proportional"</li>
+     * <li>If "type" is "start" or "finish", then a "time", an int in seconds</li>
+     * <li>If "type" is "proportional", then a "proportion", a double between 0 and 1</li>
+     * </ul>
+     * @param bundle the {@link Bundle}
+     */
     public void addFromBundle(Bundle bundle) {
         PrepTimeBellSpec bell = createFromBundle(bundle);
         mBellSpecs.add(bell);
     }
 
-    public void deleteBell(int position) {
-        mBellSpecs.remove(position);
+    /**
+     * Deletes the bell at the given index.
+     * @param index
+     */
+    public void deleteBell(int index) {
+        mBellSpecs.remove(index);
+    }
+
+    /**
+     * Deletes all bells, but if there is an existing bell that is at the finish, it leaves the
+     * first such bell there.
+     */
+    public void deleteAllBells(boolean spareFinish) {
+        ListIterator<PrepTimeBellSpec> iterator = mBellSpecs.listIterator();
+        boolean finishBellFound = false;
+        while (iterator.hasNext()) {
+            PrepTimeBellSpec spec = iterator.next();
+
+            // If it's the first finish bell and we're sparing finish bells, don't delete it
+            if (!finishBellFound && spareFinish && spec.isAtFinish()) {
+                finishBellFound = true;
+                continue;
+            }
+
+            iterator.remove();
+        }
+    }
+
+    /**
+     * @return <code>true</code> if there is at least one bell that is always at the finish,
+     * <code>false</code> otherwise
+     */
+    public boolean hasFinishBell() {
+        Iterator<PrepTimeBellSpec> iterator = mBellSpecs.iterator();
+        while (iterator.hasNext())
+            if (iterator.next().isAtFinish())
+                return true;
+        return false;
+    }
+
+    /**
+     * @return <code>true</code> if there is at least one bell spec.
+     */
+    public boolean hasBells() {
+        return mBellSpecs.size() > 0;
+    }
+
+    /**
+     * @return <code>true</code> if there is at least one bell that is not always at the finish,
+     * or if there is more than one finish bell, <code>false</code> otherwise.  The effect of this
+     * is that it will return <code>false</code> only if there is either a single finish bell only,
+     * or no bells at all.
+     */
+    public boolean hasBellsOtherThanFinish() {
+        switch (mBellSpecs.size()) {
+        case 0:
+            return false;
+        case 1:
+            return !mBellSpecs.get(0).isAtFinish();
+        default:
+            return true;
+        }
     }
 
     /**
@@ -366,12 +452,23 @@ public class PrepTimeBellsManager {
         return bundle;
     }
 
+    /**
+     * @return An {@link ArrayList} of Strings being descriptions of the bell specs
+     */
     public ArrayList<String> getBellDescriptions() {
         ArrayList<String> descriptions = new ArrayList<String>(mBellSpecs.size());
         Iterator<PrepTimeBellSpec> iterator = mBellSpecs.iterator();
         while (iterator.hasNext())
             descriptions.add(iterator.next().toString());
         return descriptions;
+    }
+
+    /**
+     * @param index the index of the bell spec whose description to retrieve
+     * @return a description of the bell
+     */
+    public String getBellDescription(int index) {
+        return mBellSpecs.get(index).toString();
     }
 
     /**
@@ -390,8 +487,12 @@ public class PrepTimeBellsManager {
         while (specIterator.hasNext()) {
             PrepTimeBellSpec spec = specIterator.next();
             BellInfo bell = spec.getBell(length);
-            if (bell != null)
-                allBells.add(bell);
+            if (bell == null) continue;
+
+            // If it's a finish bell, make it a double bell
+            if (spec.isAtFinish()) bell.getBellSoundInfo().setTimesToPlay(2);
+
+            allBells.add(bell);
         }
 
         // Then, sort the bells in order of priority.
@@ -497,8 +598,7 @@ public class PrepTimeBellsManager {
 
     public void replaceFromBundle(int index, Bundle bundle) {
         PrepTimeBellSpec bell = createFromBundle(bundle);
-        mBellSpecs.remove(index);
-        mBellSpecs.add(index, bell);
+        mBellSpecs.set(index, bell);
     }
 
     /**

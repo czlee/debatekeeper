@@ -2,19 +2,28 @@
 <resources>
     
     <!-- Bell descriptions -->
-    <string name="PrepTimeBellAtStartDescription">At start</string>
+    <string name="PrepTimeBellAtStartDescription">at start</string>
     <string name="PrepTimeBellStartDescription">%1$s after start</string>
-    <string name="PrepTimeBellAtFinishDescription">At finish</string>
+    <string name="PrepTimeBellAtFinishDescription">at finish</string>
     <string name="PrepTimeBellFinishDescription">%1$s before finish</string>
     <string name="PrepTimeBellProportionalDescription">%1$s%% through prep time</string>
     
     <!-- Add bell dialog -->
     <string name="AddPrepTimeBellDialogTitle">Add bell</string>
+    <string name="EditPrepTimeBellDialogTitle">Edit bell %1$s</string>
     <string-array name="AddPrepTimeBellTypes">
         <item>Time from start</item>
         <item>Time from finish</item>
         <item>Percentage through prep time</item>
     </string-array>
+    <string name="AddPrepTimeBellDialogConfirm">Add</string>
+    <string name="EditPrepTimeBellDialogConfirm">Replace</string>
+    
+    <!-- Clear bells dialog -->
+    <string name="ClearPrepTimeBellsConfirmDialogTitle">Clear all bells</string>
+    <string name="ClearPrepTimeBellsConfirmDialogMessageWithoutFinishBell">Delete all prep timer bells?</string>
+    <string name="ClearPrepTimeBellsConfirmDialogMessageWithFinishBell">Delete all prep time bells except for the bell at finish?</string>
+    <string name="ClearPrepTimeBellsConfirmDialogPositiveButton">Delete all</string>
     
     <!-- Context menu -->
     <string name="PrepTimeBellListContextMenuHeader">Bell %1$s</string>
