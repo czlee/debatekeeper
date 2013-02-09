@@ -44,10 +44,6 @@
     
     <string name="prepTime_title">Preparation time</string>
 
-    <color name="overtime">#ffff7878</color>
-    <color name="overtimeDuringInvert">#33ff0000</color>
-
-    
     <!-- Menu -->
     <string name="mainScreen_menuItem_resetDebate">Reset debate</string>
     <string name="mainScreen_menuItem_settings">Settings</string>

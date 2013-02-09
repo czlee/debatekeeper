@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="overtime">#ffff7878</color>
+    <color name="overtimeDuringInvert">#33ff0000</color>
+
+</resources>
