@@ -207,13 +207,13 @@ public class FormatChooserActivity extends Activity {
             int selectedPosition = mStylesListView.getCheckedItemPosition();
             if (selectedPosition == getIncomingSelection()) {
                 Toast.makeText(FormatChooserActivity.this,
-                        R.string.ToastFormatUnchanged, Toast.LENGTH_SHORT)
+                        R.string.FormatChooser_Toast_FormatUnchanged, Toast.LENGTH_SHORT)
                         .show();
                 FormatChooserActivity.this.finish();
             } else if (selectedPosition != ListView.INVALID_POSITION) {
                 returnSelectionByPosition(selectedPosition);
             } else {
-                Toast.makeText(FormatChooserActivity.this, R.string.ToastNoSelection,
+                Toast.makeText(FormatChooserActivity.this, R.string.FormatChooser_Toast_NoSelection,
                         Toast.LENGTH_SHORT).show();
                 FormatChooserActivity.this.finish();
             }
@@ -412,10 +412,10 @@ public class FormatChooserActivity extends Activity {
      */
     private AlertDialog getIOErrorAlert() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.IOErrorDialogTitle)
-                .setMessage(R.string.IOErrorDialogMessage)
+        builder.setTitle(R.string.IOErrorDialog_Title)
+                .setMessage(R.string.IOErrorDialog_Message)
                 .setCancelable(false)
-                .setPositiveButton(R.string.IOErrorDialogButton,
+                .setPositiveButton(R.string.IOErrorDialog_Button,
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -450,9 +450,9 @@ public class FormatChooserActivity extends Activity {
         if (dfi != null) {
             populateBasicInfo(view, dfi);
             populatePrepTimeInfo(view, dfi);
-            populateTwoColumnTable(view, R.id.ViewFormatTableSpeechTypes, R.layout.speech_type_row,
+            populateTwoColumnTable(view, R.id.viewFormat_table_speechTypes, R.layout.speech_type_row,
                     dfi.getSpeechFormatDescriptions());
-            populateTwoColumnTable(view, R.id.ViewFormatTableSpeeches, R.layout.speech_row,
+            populateTwoColumnTable(view, R.id.viewFormat_table_speeches, R.layout.speech_row,
                     dfi.getSpeeches());
             builder.setTitle(dfi.getName());
         } else {
@@ -477,9 +477,9 @@ public class FormatChooserActivity extends Activity {
      */
     private AlertDialog getBlankDetailsDialog(String filename, Exception e) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.BlankDetailsDialogTitle)
+        builder.setTitle(R.string.BlankDetailsDialog_Title)
                .setCancelable(true)
-               .setMessage(getString(R.string.BlankDetailsDialogText, filename, e.getMessage()))
+               .setMessage(getString(R.string.BlankDetailsDialog_Text, filename, e.getMessage()))
                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -520,13 +520,13 @@ public class FormatChooserActivity extends Activity {
      * @param is an <code>InputStream> for the XML file from which data is to be taken
      */
     private void populateBasicInfo(View view, DebateFormatInfo dfi) {
-        ((TextView) view.findViewById(R.id.ViewFormatTableCellRegionValue)).setText(
+        ((TextView) view.findViewById(R.id.viewFormat_tableCell_regionValue)).setText(
                 concatenate(dfi.getRegions()));
-        ((TextView) view.findViewById(R.id.ViewFormatTableCellLevelValue)).setText(
+        ((TextView) view.findViewById(R.id.viewFormat_tableCell_levelValue)).setText(
                 concatenate(dfi.getLevels()));
-        ((TextView) view.findViewById(R.id.ViewFormatTableCellUsedAtValue)).setText(
+        ((TextView) view.findViewById(R.id.viewFormat_tableCell_usedAtValue)).setText(
                 concatenate(dfi.getUsedAts()));
-        ((TextView) view.findViewById(R.id.ViewFormatTableCellDescValue)).setText(
+        ((TextView) view.findViewById(R.id.viewFormat_tableCell_descValue)).setText(
                 dfi.getDescription());
     }
 
@@ -537,11 +537,11 @@ public class FormatChooserActivity extends Activity {
      */
     private void populateFileInfo(View view, String filename) {
         if (mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_USER_DEFINED) {
-            TextView fileLocationText = (TextView) view.findViewById(R.id.ViewFormatFileLocationValue);
-            fileLocationText.setText(getString(R.string.ViewFormatFileLocationValueUserDefined));
+            TextView fileLocationText = (TextView) view.findViewById(R.id.viewFormat_fileLocationValue);
+            fileLocationText.setText(getString(R.string.ViewFormat_FileLocationValue_userDefined));
             fileLocationText.setVisibility(View.VISIBLE);
         }
-        ((TextView) view.findViewById(R.id.ViewFormatFileNameValue)).setText(filename);
+        ((TextView) view.findViewById(R.id.viewFormat_fileNameValue)).setText(filename);
     }
 
     private void populatePrepTimeInfo(View view, DebateFormatInfo dfi) {
@@ -549,12 +549,12 @@ public class FormatChooserActivity extends Activity {
 
         // If there is prep time, populate the view.
         if (prepTimeDescription != null)
-            ((TextView) view.findViewById(R.id.ViewFormatPrepTimeValue)).setText(
+            ((TextView) view.findViewById(R.id.viewFormat_prepTimeValue)).setText(
                     prepTimeDescription);
 
         // Otherwise, hide the whole row.
         else
-            view.findViewById(R.id.ViewFormatPrepTimeRow).setVisibility(View.GONE);
+            view.findViewById(R.id.viewFormat_prepTimeRow).setVisibility(View.GONE);
     }
 
     /**

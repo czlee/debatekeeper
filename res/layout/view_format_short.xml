@@ -10,14 +10,14 @@
         android:layout_height="wrap_content" >
 
         <Button
-            android:id="@+id/ViewFormatShowDetailsButton"
+            android:id="@+id/viewFormat_showDetailsButton"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_marginRight="10dip"
-            android:text="@string/ViewFormatShowDetailsButtonText"
+            android:text="@string/ViewFormat_ShowDetailsButton_Text"
             android:visibility="gone" />
 
         <TableLayout
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@id/ViewFormatShowDetailsButton"
+            android:layout_toLeftOf="@id/viewFormat_showDetailsButton"
             android:shrinkColumns="1" >
 
             <TableRow
@@ -33,12 +33,12 @@
                 android:layout_height="wrap_content" >
 
                 <TextView
-                    style="@style/ViewFormatTableLabelStyle"
-                    android:text="@string/ViewFormatRegionLabel" />
+                    style="@style/ViewFormat_TableLabel"
+                    android:text="@string/ViewFormat_RegionLabel" />
 
                 <TextView
-                    android:id="@+id/ViewFormatTableCellRegionValue"
-                    style="@style/ViewFormatTableValueStyle" />
+                    android:id="@+id/viewFormat_tableCell_regionValue"
+                    style="@style/ViewFormat_TableValue" />
             </TableRow>
 
             <TableRow
@@ -46,12 +46,12 @@
                 android:layout_height="wrap_content" >
 
                 <TextView
-                    style="@style/ViewFormatTableLabelStyle"
-                    android:text="@string/ViewFormatLevelLabel" />
+                    style="@style/ViewFormat_TableLabel"
+                    android:text="@string/ViewFormat_LevelLabel" />
 
                 <TextView
-                    android:id="@+id/ViewFormatTableCellLevelValue"
-                    style="@style/ViewFormatTableValueStyle" />
+                    android:id="@+id/viewFormat_tableCell_levelValue"
+                    style="@style/ViewFormat_TableValue" />
             </TableRow>
         </TableLayout>
     </RelativeLayout>
@@ -66,12 +66,12 @@
             android:layout_height="wrap_content" >
 
             <TextView
-                style="@style/ViewFormatTableLabelStyle"
-                android:text="@string/ViewFormatUsedAtLabel" />
+                style="@style/ViewFormat_TableLabel"
+                android:text="@string/ViewFormat_UsedAtLabel" />
 
             <TextView
-                android:id="@+id/ViewFormatTableCellUsedAtValue"
-                style="@style/ViewFormatTableValueStyle" />
+                android:id="@+id/viewFormat_tableCell_usedAtValue"
+                style="@style/ViewFormat_TableValue" />
         </TableRow>
 
         <TableRow
@@ -79,12 +79,12 @@
             android:layout_height="wrap_content" >
 
             <TextView
-                style="@style/ViewFormatTableLabelStyle"
-                android:text="@string/ViewFormatDescLabel" />
+                style="@style/ViewFormat_TableLabel"
+                android:text="@string/ViewFormat_DescLabel" />
 
             <TextView
-                android:id="@+id/ViewFormatTableCellDescValue"
-                style="@style/ViewFormatTableValueStyle" />
+                android:id="@+id/viewFormat_tableCell_descValue"
+                style="@style/ViewFormat_TableValue" />
         </TableRow>
     </TableLayout>
 </LinearLayout>

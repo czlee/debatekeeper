@@ -1278,7 +1278,7 @@ public class DebatingActivity extends Activity {
             if (mDebateManager.isOvertime()) {
                 // show next overtime bell (don't bother with list of bells anymore)
                 long bellTime = subtractFromSpeechLengthIfCountingDown(mDebateManager.getNextOvertimeBellTime());
-                infoLine.append(String.format(getString(R.string.NextOvertimeBellText,
+                infoLine.append(String.format(getString(R.string.BellsListNextOvertimeBellText,
                         secsToText(bellTime))));
 
             } else if (currentSpeechBells.hasNext()) {
@@ -1304,7 +1304,7 @@ public class DebatingActivity extends Activity {
                 infoLine.append(String.format(getString(bellsTextResid, bellsStr)));
 
             } else {
-                infoLine.append(getString(R.string.NoBellsText));
+                infoLine.append(getString(R.string.BellsListNoBellsText));
             }
 
             infoLineText.setText(infoLine.toString());

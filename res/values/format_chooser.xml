@@ -1,52 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="IOErrorDialogTitle">Oh no!</string>
-	<string name="IOErrorDialogMessage">I couldn\'t find the debate style files.</string>    
-	<string name="IOErrorDialogButton">Go back</string>
-		
-	<string name="ViewFormatRegionLabel">Region</string>
-	<string name="ViewFormatLevelLabel">Level</string>
-	<string name="ViewFormatUsedAtLabel">Used at</string>
-	<string name="ViewFormatDescLabel">Description</string>
-	<string name="ViewFormatSpeechesLabel">Speeches</string>
-	<string name="ViewFormatFileNameLabel">File name</string>
-	<string name="ViewFormatFileLocationValueUserDefined">Custom user file</string>
-	<string name="ViewFormatPrepTimeLabel">Prep time</string>
-				
-	<string name="ViewFormatShowDetailsButtonText">More</string>
-		
-	<string name="ToastNoSelection">No style selected</string>
-	<string name="ToastFormatUnchanged">Style not changed</string>
-	
-	<string name="TimeDescriptionLengthInMinutesSeconds">%s long</string>
-	<string name="TimeDescriptionLengthInMinutesOnly">%d minutes</string>
-	<string name="TimeDescriptionControlledPrepSuffix">", controlled"</string>
-	<string name="TimeDescriptionBellsList">bells at %s</string>
-	<string name="TimeDescriptionBellsListSingular">bell at %s</string>
-	<string name="ViewFormatSpeechTypeDescription">"<i>%1$s</i>: %2$s"</string>
-	<string name="ViewFormatSpeechDescription">"%1$s (<i>%2$s</i>)"</string>
-	
-	<string name="BlankDetailsDialogTitle">"Sorry!"</string>
-	<string name="BlankDetailsDialogText">"There's a problem with this debate format's XML file (%1$s).\n\nIn more detail:\n%2$s"</string>
-		
-	<style name="ViewFormatTableLabelStyle">
-	    <item name="android:paddingLeft">7dip</item>
-	    <item name="android:layout_width">100dip</item>
-	    <item name="android:layout_height">wrap_content</item>
-	    <item name="android:textStyle">bold</item>
-   	</style>
-   	
-	<style name="ViewFormatTableValueStyle">
-	    <item name="android:layout_width">match_parent</item>
-	    <item name="android:layout_height">wrap_content</item>
-	    <item name="android:text">-</item>
-   	</style>
-		
-	<style name="ViewFormatTableSpeechesStyle">
-	    <item name="android:layout_marginLeft">20dip</item>
-	    <item name="android:layout_width">match_parent</item>
-	    <item name="android:layout_height">wrap_content</item>
-   	</style>
-   	
-	<dimen name="view_format_list_item_padding">3dip</dimen>
+
+    <string name="IOErrorDialog_Title">Oh no!</string>
+    <string name="IOErrorDialog_Message">I couldn\'t find the debate style files.</string>
+    <string name="IOErrorDialog_Button">Go back</string>
+
+    <string name="BlankDetailsDialog_Title">"Sorry!"</string>
+    <string name="BlankDetailsDialog_Text">"There's a problem with this debate format's XML file (%1$s).\n\nIn more detail:\n%2$s"</string>
+
+    <string name="FormatChooser_Toast_NoSelection">No style selected</string>
+    <string name="FormatChooser_Toast_FormatUnchanged">Style not changed</string>
+
+    <string name="ViewFormat_RegionLabel">Region</string>
+    <string name="ViewFormat_LevelLabel">Level</string>
+    <string name="ViewFormat_UsedAtLabel">Used at</string>
+    <string name="ViewFormat_DescLabel">Description</string>
+    <string name="ViewFormat_SpeechesLabel">Speeches</string>
+    <string name="ViewFormat_FileNameLabel">File name</string>
+    <string name="ViewFormat_FileLocationValue_userDefined">Custom user file</string>
+    <string name="ViewFormat_PrepTimeLabel">Prep time</string>
+    <string name="ViewFormat_ShowDetailsButton_Text">More</string>
+
+    <string name="ViewFormat_TimeDescription_LengthInMinutesSeconds">%s long</string>
+
+    <plurals name="ViewFormat_TimeDescription_LengthInMinutesOnly">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+
+    <string name="ViewFormat_TimeDescription_ControlledPrepSuffix">", controlled"</string>
+
+    <plurals name="ViewFormat_TimeDescription_BellsList">
+        <item quantity="one">bell at %s</item>
+        <item quantity="other">bells at %s</item>
+    </plurals>
+
+    <string name="ViewFormat_SpeechTypeDescription">"<i>%1$s</i>: %2$s"</string>
+    <string name="ViewFormat_SpeechDescription">"%1$s (<i>%2$s</i>)"</string>
+
+    <style name="ViewFormat_TableLabel">
+        <item name="android:paddingLeft">7dip</item>
+        <item name="android:layout_width">100dip</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ViewFormat_TableValue">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">-</item>
+    </style>
+
+    <style name="ViewFormat_TableSpeeches">
+        <item name="android:layout_marginLeft">20dip</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <dimen name="view_format_list_item_padding">3dip</dimen>
+
 </resources>

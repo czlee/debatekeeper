@@ -22,10 +22,12 @@
     <!-- Notices -->
     <string name="NotificationTitle">Debatekeeper</string>
     <string name="NotificationTickerText">Debatekeeper is timing</string>
-    <string name="NoBellsText">", no bells"</string>
+
+    <string name="BellsListNoBellsText">", no bells"</string>
     <string name="BellsListSingularText">", bell at %1$s"</string>
     <string name="BellsListText">"; bells at %1$s"</string>
-    <string name="NextOvertimeBellText">"; next overtime bell at %1$s"</string>
+    <string name="BellsListNextOvertimeBellText">"; next overtime bell at %1$s"</string>
+
     <string name="TimeInMinutes">%d minutes</string>
     <string name="SpeechLengthText">%s long</string>
     <string name="PrepTimeLengthText">%s allowed</string>

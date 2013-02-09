@@ -14,17 +14,17 @@
 
         <Button
             android:id="@+id/leftControlButton"
-            style="@style/controlButton"
+            style="@style/ControlButton"
             android:text="@string/StartTimerButtonText" />
 
         <Button
             android:id="@+id/centreControlButton"
-            style="@style/controlButton"
+            style="@style/ControlButton"
             android:text="@string/ResetTimerButtonText" />
 
         <Button
             android:id="@+id/rightControlButton"
-            style="@style/controlButton"
+            style="@style/ControlButton"
             android:text="@string/NextSpeakerButtonText" />
 
         <Button

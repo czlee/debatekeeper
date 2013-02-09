@@ -93,7 +93,7 @@ public class DebateFormatEntryArrayAdapter extends
             }
 
             // Set the OnClickListener of the "More" details button
-            Button showDetailsButton = (Button) view.findViewById(R.id.ViewFormatShowDetailsButton);
+            Button showDetailsButton = (Button) view.findViewById(R.id.viewFormat_showDetailsButton);
             showDetailsButton.setVisibility(View.VISIBLE);
             showDetailsButton.setOnClickListener(mBinder.getDetailsButtonOnClickListener(filename));
 

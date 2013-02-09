@@ -108,10 +108,11 @@ public class DebateFormatInfo {
         public String getDescription() {
             // Length line
             String description;
-            if (length % 60 == 0)
-                description = mContext.getString(R.string.TimeDescriptionLengthInMinutesOnly, length / 60);
-            else
-                description = mContext.getString(R.string.TimeDescriptionLengthInMinutesSeconds, secsToText(length));
+            if (length % 60 == 0) {
+                long minutes = length / 60;
+                description = mContext.getResources().getQuantityString(R.plurals.ViewFormat_TimeDescription_LengthInMinutesOnly, (int) minutes, minutes);
+            } else
+                description = mContext.getString(R.string.ViewFormat_TimeDescription_LengthInMinutesSeconds, secsToText(length));
 
             if (getBells().size() > 0) {
                 String bellsDesc = getBellsString();
@@ -123,8 +124,7 @@ public class DebateFormatInfo {
 
         protected String getBellsString() {
             String bellsList = concatenateBellTimes(getBells());
-            int bellsDescResid = (getBells().size() > 1) ? R.string.TimeDescriptionBellsList : R.string.TimeDescriptionBellsListSingular;
-            String bellsDesc = mContext.getString(bellsDescResid, bellsList);
+            String bellsDesc = mContext.getResources().getQuantityString(R.plurals.ViewFormat_TimeDescription_BellsList, getBells().size(), bellsList);
             return bellsDesc;
         }
 
@@ -184,13 +184,14 @@ public class DebateFormatInfo {
         public String getDescription() {
             // Length line
             String description;
-            if (length % 60 == 0)
-                description = mContext.getString(R.string.TimeDescriptionLengthInMinutesOnly, length / 60);
-            else
-                description = mContext.getString(R.string.TimeDescriptionLengthInMinutesSeconds, secsToText(length));
+            if (length % 60 == 0){
+                long minutes = length / 60;
+                description = mContext.getResources().getQuantityString(R.plurals.ViewFormat_TimeDescription_LengthInMinutesOnly, (int) minutes, minutes);
+            } else
+                description = mContext.getString(R.string.ViewFormat_TimeDescription_LengthInMinutesSeconds, secsToText(length));
 
             if (controlled)
-                description += mContext.getString(R.string.TimeDescriptionControlledPrepSuffix);
+                description += mContext.getString(R.string.ViewFormat_TimeDescription_ControlledPrepSuffix);
 
             if (getBells().size() > 0) {
                 String bellsDesc = getBellsString();

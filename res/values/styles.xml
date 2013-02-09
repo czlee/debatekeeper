@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     
-    <style name="controlButton">
+    <style name="ControlButton">
         <item name="android:layout_width">0dip</item>
         <item name="android:layout_height">fill_parent</item>
         <item name="android:layout_gravity">center</item>

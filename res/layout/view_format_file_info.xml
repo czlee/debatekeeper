@@ -4,25 +4,25 @@
     android:layout_height="wrap_content" >
 
     <TextView
-        android:id="@+id/ViewFormatFileNameLabel"
-        style="@style/ViewFormatTableLabelStyle"
-        android:text="@string/ViewFormatFileNameLabel"
+        android:id="@+id/viewFormat_fileNameLabel"
+        style="@style/ViewFormat_TableLabel"
+        android:text="@string/ViewFormat_FileNameLabel"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
          />
 
     <TextView
-        android:id="@+id/ViewFormatFileNameValue"
-        style="@style/ViewFormatTableValueStyle"
-        android:layout_toRightOf="@id/ViewFormatFileNameLabel"
+        android:id="@+id/viewFormat_fileNameValue"
+        style="@style/ViewFormat_TableValue"
+        android:layout_toRightOf="@id/viewFormat_fileNameLabel"
         android:layout_alignParentTop="true" />
 
     <TextView
-        android:id="@+id/ViewFormatFileLocationValue"
+        android:id="@+id/viewFormat_fileLocationValue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/ViewFormatFileNameValue"
-        android:layout_below="@id/ViewFormatFileNameValue"
+        android:layout_alignLeft="@id/viewFormat_fileNameValue"
+        android:layout_below="@id/viewFormat_fileNameValue"
         android:visibility="gone"
         android:textStyle="italic" />
     

@@ -150,7 +150,5 @@
 
 	<string name="PrefPoiLearnMoreTitle">Learn more</string>
 	<string name="PrefPoiLearnMoreSummary">Learn more about the POIs timer (launches web browser)</string>
-	<string name="PrepTimeAddBellText">Add</string>
-	<string name="PrepTimeClearAllText">Clear</string>
 
 </resources>
