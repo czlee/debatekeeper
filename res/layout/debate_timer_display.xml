@@ -45,12 +45,11 @@
 
     <Button
         android:id="@+id/debateTimer_poiTimerButton"
-        android:layout_width="75dp"
-        android:layout_height="wrap_content"
+        android:layout_width="75dip"
+        android:layout_height="70dip"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="52dip"
-        android:padding="16dip"
         android:text="@string/mainScreen_poiTimer_buttonText"
         android:textSize="24dip" />
 
