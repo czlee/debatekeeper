@@ -39,6 +39,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
+import android.graphics.PorterDuff;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -1181,8 +1182,25 @@ public class DebatingActivity extends Activity {
      */
     private void setButton(Button button, int resid) {
         button.setText(resid);
+
+        // Hide the button if it's not being used
         int visibility = (resid == R.string.mainScreen_null_buttonText) ? View.GONE : View.VISIBLE;
         button.setVisibility(visibility);
+
+        // Colour the button green if it's start or resume, red if it's stop, otherwise the default
+        switch (resid) {
+        case R.string.mainScreen_startTimer_buttonText:
+        case R.string.mainScreen_resumeTimerAfterAlarm_buttonText:
+        case R.string.mainScreen_resumeTimerAfterUserStop_buttonText:
+            button.getBackground().setColorFilter(getResources().getColor(R.color.startButton), PorterDuff.Mode.MULTIPLY);
+            break;
+        case R.string.mainScreen_stopTimer_buttonText:
+            button.getBackground().setColorFilter(getResources().getColor(R.color.stopButton), PorterDuff.Mode.MULTIPLY);
+            break;
+        default:
+            button.getBackground().setColorFilter(null);
+
+        }
     }
 
     /**
