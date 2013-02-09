@@ -202,8 +202,8 @@ public class PrepTimeBellsManager {
 
         @Override
         public String toString() {
-            if (time == 0) return mContext.getString(R.string.PrepTimeBellAtFinishDescription);
-            return mContext.getString(R.string.PrepTimeBellFinishDescription, secsToText(time));
+            if (time == 0) return mContext.getString(R.string.prepTimeBellDescription_atFinish);
+            return mContext.getString(R.string.prepTimeBellDescription_beforeFinish, secsToText(time));
         }
 
         @Override
@@ -244,8 +244,8 @@ public class PrepTimeBellsManager {
 
         @Override
         public String toString() {
-            if (time == 0) return mContext.getString(R.string.PrepTimeBellAtStartDescription);
-            return mContext.getString(R.string.PrepTimeBellStartDescription, secsToText(time));
+            if (time == 0) return mContext.getString(R.string.prepTimeBellDescription_atStart);
+            return mContext.getString(R.string.prepTimeBellDescription_afterStart, secsToText(time));
         }
 
         @Override
@@ -320,13 +320,13 @@ public class PrepTimeBellsManager {
 
         @Override
         public String toString() {
-            if (proportion == 0) return mContext.getString(R.string.PrepTimeBellAtStartDescription);
-            if (proportion == 1) return mContext.getString(R.string.PrepTimeBellAtFinishDescription);
+            if (proportion == 0) return mContext.getString(R.string.prepTimeBellDescription_atStart);
+            if (proportion == 1) return mContext.getString(R.string.prepTimeBellDescription_atFinish);
             Double percentage = proportion * 100;
             String percentageStr;
             if (percentage == Math.round(percentage)) percentageStr = String.format("%d", Math.round(percentage));
             else percentageStr = String.format("%.1f", percentage);
-            return mContext.getString(R.string.PrepTimeBellProportionalDescription,
+            return mContext.getString(R.string.prepTimeBellDescription_proportional,
                     percentageStr);
         }
 

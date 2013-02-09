@@ -109,20 +109,20 @@ public class PrepTimeBellsEditActivity extends Activity {
         refreshBellsList();
 
         // Set the OnClickListeners
-        ((Button) findViewById(R.id.prepTimeAddBellButton))
+        ((Button) findViewById(R.id.prepTimeBellsEditor_addBellButton))
                 .setOnClickListener(new AddButtonOnClickListener());
-        ((Button) findViewById(R.id.prepTimeClearAllButton))
+        ((Button) findViewById(R.id.prepTimeBellsEditor_clearAllButton))
                 .setOnClickListener(new ClearButtonOnClickListener());
 
         // Register a context menu for the bells list items
-        registerForContextMenu(findViewById(R.id.prepTimeBellsList));
+        registerForContextMenu(findViewById(R.id.prepTimeBellsEditor_bellsList));
 
         // Register for the list to show a toast on non-long click
-        ((ListView) findViewById(R.id.prepTimeBellsList)).setOnItemClickListener(new OnItemClickListener() {
+        ((ListView) findViewById(R.id.prepTimeBellsEditor_bellsList)).setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
                 Toast.makeText(PrepTimeBellsEditActivity.this,
-                        R.string.PrepTimeBellsContextMenuTip, Toast.LENGTH_SHORT).show();
+                        R.string.prepTimeBellsEditor_contextMenu_tip, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -132,7 +132,7 @@ public class PrepTimeBellsEditActivity extends Activity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-        String title = getString(R.string.PrepTimeBellListContextMenuHeader,
+        String title = getString(R.string.prepTimeBellsEditor_contextMenu_header,
                 mPtbm.getBellDescription(info.position));
         menu.setHeaderTitle(title);
         MenuInflater inflater = getMenuInflater();
@@ -155,12 +155,12 @@ public class PrepTimeBellsEditActivity extends Activity {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
-        case R.id.prepTimeBellEdit:
+        case R.id.prepTimeBellsEditor_contextMenu_edit:
             Bundle args = mPtbm.getBellBundle(info.position);
             args.putInt(KEY_INDEX, info.position);
             showDialog(DIALOG_EDIT_BELL, args);
             return true;
-        case R.id.prepTimeBellDelete:
+        case R.id.prepTimeBellsEditor_contextMenu_delete:
             mPtbm.deleteBell(info.position);
             refreshBellsList();
             return true;
@@ -209,7 +209,7 @@ public class PrepTimeBellsEditActivity extends Activity {
         // Format the form elements
         timePicker.setIs24HourView(true);
         ArrayAdapter<CharSequence> typesAdapter = ArrayAdapter.createFromResource(this,
-                R.array.AddPrepTimeBellTypes, android.R.layout.simple_spinner_item);
+                R.array.prepTimeBellsEditor_editBellDialog_types, android.R.layout.simple_spinner_item);
         typesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         typeSpinner.setAdapter(typesAdapter);
 
@@ -232,7 +232,7 @@ public class PrepTimeBellsEditActivity extends Activity {
         });
 
         // When the text field gains focus, select all
-        builder.setTitle(R.string.AddPrepTimeBellDialogTitle)
+        builder.setTitle(R.string.prepTimeBellsEditor_addBellDialog_title)
                .setView(content)
                .setCancelable(true)
                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -264,10 +264,10 @@ public class PrepTimeBellsEditActivity extends Activity {
 
         AlertDialog alert = (AlertDialog) dialog;
 
-        alert.setTitle(R.string.AddPrepTimeBellDialogTitle);
+        alert.setTitle(R.string.prepTimeBellsEditor_addBellDialog_title);
         // The text argument of setButton doesn't seem to work, so use setText on the button itself.
-        alert.getButton(AlertDialog.BUTTON_POSITIVE).setText(R.string.AddPrepTimeBellDialogConfirm);
-        alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.AddPrepTimeBellDialogConfirm),
+        alert.getButton(AlertDialog.BUTTON_POSITIVE).setText(R.string.prepTimeBellsEditor_addBellDialog_confirmButton);
+        alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.prepTimeBellsEditor_addBellDialog_confirmButton),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int which) {
@@ -317,10 +317,10 @@ public class PrepTimeBellsEditActivity extends Activity {
 
         AlertDialog alert = (AlertDialog) dialog;
 
-        alert.setTitle(getString(R.string.EditPrepTimeBellDialogTitle, mPtbm.getBellDescription(index)));
+        alert.setTitle(getString(R.string.prepTimeBellsEditor_editBellDialog_title, mPtbm.getBellDescription(index)));
         // The text argument of setButton doesn't seem to work, so use setText on the button itself.
-        alert.getButton(AlertDialog.BUTTON_POSITIVE).setText(R.string.EditPrepTimeBellDialogConfirm);
-        alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.EditPrepTimeBellDialogConfirm),
+        alert.getButton(AlertDialog.BUTTON_POSITIVE).setText(R.string.prepTimeBellsEditor_editBellDialog_confirmButton);
+        alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.prepTimeBellsEditor_editBellDialog_confirmButton),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int which) {
@@ -368,10 +368,10 @@ public class PrepTimeBellsEditActivity extends Activity {
     private Dialog getClearBellsDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        builder.setTitle(R.string.ClearPrepTimeBellsConfirmDialogTitle)
+        builder.setTitle(R.string.prepTimeBellsEditor_clearAllDialog_title)
                .setMessage("")
                .setCancelable(true)
-               .setPositiveButton(R.string.ClearPrepTimeBellsConfirmDialogPositiveButton, new DialogInterface.OnClickListener() {
+               .setPositiveButton(R.string.prepTimeBellsEditor_clearAllDialog_confirmButton, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         boolean spareFinish = mPtbm.hasBellsOtherThanFinish();
@@ -390,7 +390,7 @@ public class PrepTimeBellsEditActivity extends Activity {
     }
 
     private void prepareClearBellsDialog(final Dialog dialog) {
-        int messageResId = (mPtbm.hasFinishBell() && mPtbm.hasBellsOtherThanFinish()) ? R.string.ClearPrepTimeBellsConfirmDialogMessageWithFinishBell : R.string.ClearPrepTimeBellsConfirmDialogMessageWithoutFinishBell;
+        int messageResId = (mPtbm.hasFinishBell() && mPtbm.hasBellsOtherThanFinish()) ? R.string.prepTimeBellsEditor_clearAllDialog_message_withFinishBell : R.string.prepTimeBellsEditor_clearAllDialog_message_noFinishBell;
         AlertDialog alert = (AlertDialog) dialog;
         alert.setMessage(getString(messageResId));
     }
@@ -405,12 +405,12 @@ public class PrepTimeBellsEditActivity extends Activity {
             descriptionsIterator.set(description.substring(0, 1).toUpperCase() + description.substring(1));
         }
 
-        ListView view = (ListView) findViewById(R.id.prepTimeBellsList);
+        ListView view = (ListView) findViewById(R.id.prepTimeBellsEditor_bellsList);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, descriptions);
         view.setAdapter(adapter);
 
         // Disable the "clear" button if there is nothing to clear
-        ((Button) findViewById(R.id.prepTimeClearAllButton)).setEnabled(mPtbm.hasBells());
+        ((Button) findViewById(R.id.prepTimeBellsEditor_clearAllButton)).setEnabled(mPtbm.hasBells());
     }
 
 }

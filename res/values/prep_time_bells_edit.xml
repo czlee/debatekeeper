@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-   	<string name="PrepTimeAddBellText">Add</string>
-	<string name="PrepTimeClearAllText">Clear</string>
+   	<string name="prepTimeBellsEditor_addBell_text">Add</string>
+	<string name="prepTimeBellsEditor_clearAll_text">Clear</string>
     
     <!-- Bell descriptions -->
-    <string name="PrepTimeBellAtStartDescription">at start</string>
-    <string name="PrepTimeBellStartDescription">%1$s after start</string>
-    <string name="PrepTimeBellAtFinishDescription">at finish</string>
-    <string name="PrepTimeBellFinishDescription">%1$s before finish</string>
-    <string name="PrepTimeBellProportionalDescription">%1$s%% through prep time</string>
+    <string name="prepTimeBellDescription_atStart">at start</string>
+    <string name="prepTimeBellDescription_afterStart">%1$s after start</string>
+    <string name="prepTimeBellDescription_atFinish">at finish</string>
+    <string name="prepTimeBellDescription_beforeFinish">%1$s before finish</string>
+    <string name="prepTimeBellDescription_proportional">%1$s%% through prep time</string>
     
     <!-- Add bell dialog -->
-    <string name="AddPrepTimeBellDialogTitle">Add bell</string>
-    <string name="EditPrepTimeBellDialogTitle">Edit bell %1$s</string>
-    <string-array name="AddPrepTimeBellTypes">
+    <string name="prepTimeBellsEditor_addBellDialog_title">Add bell</string>
+    <string name="prepTimeBellsEditor_editBellDialog_title">Edit bell %1$s</string>
+    <string-array name="prepTimeBellsEditor_editBellDialog_types">
         <item>Time from start</item>
         <item>Time from finish</item>
         <item>Percentage through prep time</item>
     </string-array>
-    <string name="AddPrepTimeBellDialogConfirm">Add</string>
-    <string name="EditPrepTimeBellDialogConfirm">Done</string>
+    <string name="prepTimeBellsEditor_addBellDialog_confirmButton">Add</string>
+    <string name="prepTimeBellsEditor_editBellDialog_confirmButton">Done</string>
     
     <!-- Clear bells dialog -->
-    <string name="ClearPrepTimeBellsConfirmDialogTitle">Clear all bells</string>
-    <string name="ClearPrepTimeBellsConfirmDialogMessageWithoutFinishBell">Delete all prep timer bells?</string>
-    <string name="ClearPrepTimeBellsConfirmDialogMessageWithFinishBell">Delete all prep time bells except for the bell at finish?</string>
-    <string name="ClearPrepTimeBellsConfirmDialogPositiveButton">Delete all</string>
+    <string name="prepTimeBellsEditor_clearAllDialog_title">Clear all bells</string>
+    <string name="prepTimeBellsEditor_clearAllDialog_message_noFinishBell">Delete all prep timer bells?</string>
+    <string name="prepTimeBellsEditor_clearAllDialog_message_withFinishBell">Delete all prep time bells except for the bell at finish?</string>
+    <string name="prepTimeBellsEditor_clearAllDialog_confirmButton">Delete all</string>
     
     <!-- Context menu -->
-    <string name="PrepTimeBellListContextMenuHeader">Bell %1$s</string>
-    <string name="PrepTimeBellListDeleteText">Delete</string>
-    <string name="PrepTimeBellListEditText">Edit</string>
+    <string name="prepTimeBellsEditor_contextMenu_header">Bell %1$s</string>
+    <string name="prepTimeBellsEditor_contextMenu_delete">Delete</string>
+    <string name="prepTimeBellsEditor_contextMenu_edit">Edit</string>
     
-    <string name="PrepTimeBellsContextMenuTip">Long-press to edit or delete</string>
+    <string name="prepTimeBellsEditor_contextMenu_tip">Long-press to edit or delete</string>
 </resources>

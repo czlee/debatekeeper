@@ -4,31 +4,31 @@
     android:layout_height="wrap_content" >
 
     <LinearLayout
-        android:id="@+id/prepTimeButtons"
+        android:id="@+id/prepTimeBellsEditor_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" >
 
         <Button
-            android:id="@+id/prepTimeAddBellButton"
+            android:id="@+id/prepTimeBellsEditor_addBellButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/PrepTimeAddBellText" />
+            android:text="@string/prepTimeBellsEditor_addBell_text" />
         <Button
-            android:id="@+id/prepTimeClearAllButton"
+            android:id="@+id/prepTimeBellsEditor_clearAllButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/PrepTimeClearAllText" />
+            android:text="@string/prepTimeBellsEditor_clearAll_text" />
     </LinearLayout>
 
     <ListView
-        android:id="@+id/prepTimeBellsList"
+        android:id="@+id/prepTimeBellsEditor_bellsList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/prepTimeButtons" >
+        android:layout_below="@id/prepTimeBellsEditor_buttons" >
     </ListView>
 
 </RelativeLayout>
