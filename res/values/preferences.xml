@@ -35,7 +35,7 @@
     <!-- Silent mode -->
     <string name="pref_silentMode_title">Silent mode</string>
     <string name="pref_silentMode_onSummary">Bell will not sound (this doesn\'t affect other sounds from your phone)</string>
-    <string name="pref_silentMode_offSummary">Bell will sound</string>
+    <string name="pref_silentMode_offSummary">Bell will sound\n(Everyone except the timekeeper should enable silent mode)</string>
     <bool   name="prefDefault_silentMode">false</bool>
 
     <!-- Vibrate mode -->
