@@ -76,32 +76,34 @@ import android.widget.ViewFlipper;
  */
 public class DebatingActivity extends Activity {
 
-    private ViewFlipper mDebateTimerViewFlipper;
+    private ViewFlipper      mDebateTimerViewFlipper;
     private RelativeLayout[] mDebateTimerDisplays;
-    private int mCurrentDebateTimerDisplayIndex = 0;
-    private boolean mIsEditingTime = false;
+    private int              mCurrentDebateTimerDisplayIndex = 0;
+    private boolean          mIsEditingTime = false;
 
     private Button mLeftControlButton;
     private Button mCentreControlButton;
     private Button mRightControlButton;
     private Button mPlayBellButton;
 
-    private DebateManager mDebateManager;
-    private Bundle mLastStateBundle;
+    private DebateManager         mDebateManager;
+    private Bundle                mLastStateBundle;
     private FormatXmlFilesManager mFilesManager;
 
-    private String mFormatXmlFileName = null;
-    private CountDirection mUserCountDirection         = CountDirection.COUNT_UP;
-    private CountDirection mUserPrepTimeCountDirection = CountDirection.COUNT_DOWN;
-    private boolean mPoiTimerEnabled = true;
-    private boolean mKeepScreenOn;
-    private boolean mPrepTimeKeepScreenOn;
+    private String               mFormatXmlFileName          = null;
+    private CountDirection       mUserCountDirection         = CountDirection.COUNT_UP;
+    private CountDirection       mUserPrepTimeCountDirection = CountDirection.COUNT_DOWN;
+    private BackgroundColourArea mBackgroundColourArea   = BackgroundColourArea.WHOLE_SCREEN;
+    private boolean              mPoiTimerEnabled            = true;
+    private boolean              mKeepScreenOn;
+    private boolean              mPrepTimeKeepScreenOn;
 
     private static final String BUNDLE_SUFFIX_DEBATE_MANAGER     = "dm";
     private static final String PREFERENCE_XML_FILE_NAME         = "xmlfn";
     private static final String DO_NOT_SHOW_POI_TIMER_DIALOG     = "dnspoi";
     private static final String DIALOG_BUNDLE_FATAL_MESSAGE      = "fm";
     private static final String DIALOG_BUNDLE_XML_ERROR_LOG      = "xel";
+
     private static final int    CHOOSE_STYLE_REQUEST   = 0;
     private static final int    DIALOG_XML_FILE_FATAL  = 0;
     private static final int    DIALOG_XML_FILE_ERRORS = 1;
@@ -337,6 +339,29 @@ public class DebatingActivity extends Activity {
                 break;
             }
             updateGui();
+        }
+    }
+
+    private enum BackgroundColourArea {
+        // These must match the values string array in the preference.xml file.
+        // (We can pull strings from the resource automatically,
+        // but we can't assign them to enums automatically.)
+        DISABLED     ("disabled"),
+        TOP_BAR_ONLY ("topBarOnly"),
+        WHOLE_SCREEN ("wholeScreen");
+
+        private final String key;
+
+        private BackgroundColourArea(String key) {
+            this.key = key;
+        }
+
+        public static BackgroundColourArea toEnum(String key) {
+            BackgroundColourArea[] values = BackgroundColourArea.values();
+            for (int i = 0; i < values.length; i++)
+                if (key.equals(values[i].key))
+                    return values[i];
+            throw new IllegalArgumentException(String.format("There is no enumerated constant '%s'", key));
         }
     }
 
@@ -609,7 +634,7 @@ public class DebatingActivity extends Activity {
         boolean silentMode, vibrateMode, overtimeBellsEnabled;
         boolean poiBuzzerEnabled, poiVibrateEnabled, prepTimerEnabled;
         int firstOvertimeBell, overtimeBellPeriod;
-        String userCountDirectionValue, userPrepTimeCountDirectionValue, poiFlashScreenModeValue;
+        String userCountDirectionValue, userPrepTimeCountDirectionValue, poiFlashScreenModeValue, backgroundColourAreaValue;
         FlashScreenMode flashScreenMode, poiFlashScreenMode;
 
         Resources res = getResources();
@@ -678,6 +703,11 @@ public class DebatingActivity extends Activity {
             userPrepTimeCountDirectionValue = prefs.getString(res.getString(R.string.pref_prepTimer_countDirection_key),
                     res.getString(R.string.prefDefault_prepTimer_countDirection));
             mUserPrepTimeCountDirection = CountDirection.toEnum(userPrepTimeCountDirectionValue);
+
+            // List preference: Background colour area
+            backgroundColourAreaValue = prefs.getString(res.getString(R.string.pref_backgroundColourArea_key),
+                    res.getString(R.string.prefDefault_backgroundColourArea));
+            mBackgroundColourArea = BackgroundColourArea.toEnum(backgroundColourAreaValue);
 
             // List preference: Flash screen mode
             //  - Backwards compatibility measure

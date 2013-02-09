@@ -59,12 +59,13 @@
             android:key="@string/pref_countDirection_key"
             android:title="@string/pref_countDirection_title" />
 
-        <CheckBoxPreference
+        <ListPreference android:entryValues="@array/pref_backgroundColourArea_values" android:title="@string/pref_backgroundColourArea_title" android:key="@string/pref_backgroundColourArea_key" android:entries="@array/pref_backgroundColourArea_entries" android:defaultValue="@string/prefDefault_backgroundColourArea" /><CheckBoxPreference
             android:defaultValue="@bool/prefDefault_keepScreenOn"
             android:key="@string/pref_keepScreenOn_key"
             android:summaryOff="@string/pref_keepScreenOn_offSummary"
             android:summaryOn="@string/pref_keepScreenOn_onSummary"
             android:title="@string/pref_keepScreenOn_title" />
+        
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/prefCategory_prepTime_title" >
         <CheckBoxPreference

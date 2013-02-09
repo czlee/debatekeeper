@@ -10,6 +10,7 @@
     <string name="pref_firstOvertimeBell_key">firstOvertimeBell</string>
     <string name="pref_overtimeBellPeriod_key">overtimeBellPeriod</string>
     <string name="pref_countDirection_key">countDirection</string>
+    <string name="pref_backgroundColourArea_key">backgroundColourArea</string>
     <string name="pref_keepScreenOn_key">keepScreenOn</string>
     <string name="pref_poiTimer_enable_key">poiTimerEnable</string>
     <string name="pref_poiTimer_buzzerEnable_key">poiTimer_buzzerEnable</string>
@@ -97,6 +98,25 @@
         <item>alwaysDown</item>
     </string-array>
     <string name="prefDefault_countDirection">alwaysUp</string>
+    
+    <!-- Background colour -->
+    <string name="pref_backgroundColourArea_title">Background colour area</string>
+    <string-array name="pref_backgroundColourArea_summaries">
+        <item>Don\'t use colour to indicate periods within speeches</item>
+        <item>Colour top bar only to indicate periods within speeches</item>
+        <item>Colour whole screen to indicate periods within speeches</item>
+    </string-array>
+    <string-array name="pref_backgroundColourArea_entries">
+        <item>Disabled</item>
+        <item>Top bar only</item>
+        <item>Whole screen</item>
+    </string-array>
+    <string-array name="pref_backgroundColourArea_values">
+        <item>disabled</item>
+        <item>topBarOnly</item>
+        <item>wholeScreen</item>
+    </string-array>
+    <string name="prefDefault_backgroundColourArea">wholeScreen</string>
 
     <!-- Keep screen on -->
     <string name="pref_keepScreenOn_title">Keep screen on</string>
