@@ -90,11 +90,11 @@ public class DebatingActivity extends Activity {
     private Bundle                mLastStateBundle;
     private FormatXmlFilesManager mFilesManager;
 
-    private String               mFormatXmlFileName          = null;
-    private CountDirection       mUserCountDirection         = CountDirection.COUNT_UP;
-    private CountDirection       mUserPrepTimeCountDirection = CountDirection.COUNT_DOWN;
+    private String               mFormatXmlFileName      = null;
+    private CountDirection       mCountDirection         = CountDirection.COUNT_UP;
+    private CountDirection       mPrepTimeCountDirection = CountDirection.COUNT_DOWN;
     private BackgroundColourArea mBackgroundColourArea   = BackgroundColourArea.WHOLE_SCREEN;
-    private boolean              mPoiTimerEnabled            = true;
+    private boolean              mPoiTimerEnabled        = true;
     private boolean              mKeepScreenOn;
     private boolean              mPrepTimeKeepScreenOn;
 
@@ -697,12 +697,12 @@ public class DebatingActivity extends Activity {
                         String.format("countDirection: replaced %s with %s", userCountDirectionValue, newValue));
                 userCountDirectionValue = newValue;
             }
-            mUserCountDirection = CountDirection.toEnum(userCountDirectionValue);
+            mCountDirection = CountDirection.toEnum(userCountDirectionValue);
 
             // List preference: Count direction for prep time
             userPrepTimeCountDirectionValue = prefs.getString(res.getString(R.string.pref_prepTimer_countDirection_key),
                     res.getString(R.string.prefDefault_prepTimer_countDirection));
-            mUserPrepTimeCountDirection = CountDirection.toEnum(userPrepTimeCountDirectionValue);
+            mPrepTimeCountDirection = CountDirection.toEnum(userPrepTimeCountDirectionValue);
 
             // List preference: Background colour area
             backgroundColourAreaValue = prefs.getString(res.getString(R.string.pref_backgroundColourArea_key),
@@ -907,15 +907,15 @@ public class DebatingActivity extends Activity {
     private CountDirection getCountDirection() {
 
         // Initialise as the user count direction by default
-        CountDirection userCountDirection = mUserCountDirection;
+        CountDirection userCountDirection = mCountDirection;
 
         if (mDebateManager != null) {
             // If prep time, use the prep time count direction
             if (mDebateManager.isPrepTime())
-                userCountDirection = mUserPrepTimeCountDirection;
+                userCountDirection = mPrepTimeCountDirection;
             // Otherwise, use the normal count direction
             else
-                userCountDirection = mUserCountDirection;
+                userCountDirection = mCountDirection;
         }
 
         return userCountDirection;
