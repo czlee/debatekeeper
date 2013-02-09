@@ -80,6 +80,7 @@ public class DebatingActivity extends Activity {
     private RelativeLayout[] mDebateTimerDisplays;
     private int              mCurrentDebateTimerDisplayIndex = 0;
     private boolean          mIsEditingTime = false;
+    private final int        mNormalBackgroundColour = 0;
 
     private Button mLeftControlButton;
     private Button mCentreControlButton;
@@ -147,6 +148,7 @@ public class DebatingActivity extends Activity {
     }
 
     private class DebatingTimerFlashScreenListener implements FlashScreenListener {
+
         private void flashScreen(final int colour) {
             runOnUiThread(new Runnable() {
                 @Override
@@ -158,12 +160,24 @@ public class DebatingActivity extends Activity {
 
         @Override
         public void flashScreenOn(int colour) {
+
+            // First, if the whole screen is coloured, remove the colouring.
+            // It will be restored by updateGui() in done().
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mBackgroundColourArea == BackgroundColourArea.WHOLE_SCREEN)
+                        mDebateTimerDisplays[mCurrentDebateTimerDisplayIndex].setBackgroundColor(0);
+
+                }
+            });
+
             flashScreen(colour);
         }
 
         @Override
         public void flashScreenOff() {
-            flashScreen(0x00000000);
+            flashScreen(mNormalBackgroundColour);
         }
 
         @Override
@@ -708,6 +722,7 @@ public class DebatingActivity extends Activity {
             backgroundColourAreaValue = prefs.getString(res.getString(R.string.pref_backgroundColourArea_key),
                     res.getString(R.string.prefDefault_backgroundColourArea));
             mBackgroundColourArea = BackgroundColourArea.toEnum(backgroundColourAreaValue);
+            resetBackgroundColour();
 
             // List preference: Flash screen mode
             //  - Backwards compatibility measure
@@ -1123,6 +1138,23 @@ public class DebatingActivity extends Activity {
         return filename;
     }
 
+    /**
+     * Resets all background colours to the default.
+     * This should be called whenever the background colour preference is changed, as <code>updateGui()</code>
+     * doesn't automatically do this (for efficiency). You should call <code>updateGui()</code> as immediately as
+     * practicable after calling this.
+     */
+    private void resetBackgroundColour() {
+        for (int i = 0; i < mDebateTimerDisplays.length; i++) {
+            View v = mDebateTimerDisplays[i];
+            v.setBackgroundColor(mNormalBackgroundColour);
+            View speechNameText = v.findViewById(R.id.debateTimer_speechNameText);
+            View periodDescriptionText = v.findViewById(R.id.debateTimer_periodDescriptionText);
+            speechNameText.setBackgroundColor(mNormalBackgroundColour);
+            periodDescriptionText.setBackgroundColor(mNormalBackgroundColour);
+        }
+    }
+
     private void resetDebate() {
         resetDebateWithoutToast();
         Toast.makeText(this, R.string.mainScreen_toast_resetDebate, Toast.LENGTH_SHORT).show();
@@ -1265,10 +1297,20 @@ public class DebatingActivity extends Activity {
             SpeechOrPrepFormat currentSpeechFormat = mDebateManager.getCurrentSpeechFormat();
             PeriodInfo         currentPeriodInfo   = mDebateManager.getCurrentPeriodInfo();
 
+            // The information at the top of the screen
             speechNameText.setText(mDebateManager.getCurrentSpeechName());
-            speechNameText.setBackgroundColor(currentPeriodInfo.getBackgroundColor());
             periodDescriptionText.setText(currentPeriodInfo.getDescription());
-            periodDescriptionText.setBackgroundColor(currentPeriodInfo.getBackgroundColor());
+
+            // Background colour, this is user-preference dependent
+            Integer backgroundColour = currentPeriodInfo.getBackgroundColor();
+            switch (mBackgroundColourArea) {
+            case TOP_BAR_ONLY:
+                speechNameText.setBackgroundColor(backgroundColour);
+                periodDescriptionText.setBackgroundColor(backgroundColour);
+                break;
+            case WHOLE_SCREEN:
+                v.setBackgroundColor(backgroundColour);
+            }
 
             long currentSpeechTime = mDebateManager.getCurrentSpeechTime();
 
