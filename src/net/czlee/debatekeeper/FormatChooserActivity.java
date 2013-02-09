@@ -207,13 +207,13 @@ public class FormatChooserActivity extends Activity {
             int selectedPosition = mStylesListView.getCheckedItemPosition();
             if (selectedPosition == getIncomingSelection()) {
                 Toast.makeText(FormatChooserActivity.this,
-                        R.string.FormatChooser_Toast_FormatUnchanged, Toast.LENGTH_SHORT)
+                        R.string.formatChooser_toast_formatUnchanged, Toast.LENGTH_SHORT)
                         .show();
                 FormatChooserActivity.this.finish();
             } else if (selectedPosition != ListView.INVALID_POSITION) {
                 returnSelectionByPosition(selectedPosition);
             } else {
-                Toast.makeText(FormatChooserActivity.this, R.string.FormatChooser_Toast_NoSelection,
+                Toast.makeText(FormatChooserActivity.this, R.string.formatChooser_toast_noSelection,
                         Toast.LENGTH_SHORT).show();
                 FormatChooserActivity.this.finish();
             }
@@ -412,10 +412,10 @@ public class FormatChooserActivity extends Activity {
      */
     private AlertDialog getIOErrorAlert() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.IOErrorDialog_Title)
-                .setMessage(R.string.IOErrorDialog_Message)
+        builder.setTitle(R.string.ioErrorDialog_title)
+                .setMessage(R.string.ioErrorDialog_message)
                 .setCancelable(false)
-                .setPositiveButton(R.string.IOErrorDialog_Button,
+                .setPositiveButton(R.string.ioErrorDialog_button,
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -477,9 +477,9 @@ public class FormatChooserActivity extends Activity {
      */
     private AlertDialog getBlankDetailsDialog(String filename, Exception e) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.BlankDetailsDialog_Title)
+        builder.setTitle(R.string.blankDetailsDialog_title)
                .setCancelable(true)
-               .setMessage(getString(R.string.BlankDetailsDialog_Text, filename, e.getMessage()))
+               .setMessage(getString(R.string.blankDetailsDialog_text, filename, e.getMessage()))
                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -538,7 +538,7 @@ public class FormatChooserActivity extends Activity {
     private void populateFileInfo(View view, String filename) {
         if (mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_USER_DEFINED) {
             TextView fileLocationText = (TextView) view.findViewById(R.id.viewFormat_fileLocationValue);
-            fileLocationText.setText(getString(R.string.ViewFormat_FileLocationValue_userDefined));
+            fileLocationText.setText(getString(R.string.viewFormat_fileLocationValue_userDefined));
             fileLocationText.setVisibility(View.VISIBLE);
         }
         ((TextView) view.findViewById(R.id.viewFormat_fileNameValue)).setText(filename);

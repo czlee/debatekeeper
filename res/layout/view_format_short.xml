@@ -17,7 +17,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_marginRight="10dip"
-            android:text="@string/ViewFormat_ShowDetailsButton_Text"
+            android:text="@string/viewFormat_showDetailsButton_text"
             android:visibility="gone" />
 
         <TableLayout
@@ -34,7 +34,7 @@
 
                 <TextView
                     style="@style/ViewFormat_TableLabel"
-                    android:text="@string/ViewFormat_RegionLabel" />
+                    android:text="@string/viewFormat_regionLabel" />
 
                 <TextView
                     android:id="@+id/viewFormat_tableCell_regionValue"
@@ -47,7 +47,7 @@
 
                 <TextView
                     style="@style/ViewFormat_TableLabel"
-                    android:text="@string/ViewFormat_LevelLabel" />
+                    android:text="@string/viewFormat_levelLabel" />
 
                 <TextView
                     android:id="@+id/viewFormat_tableCell_levelValue"
@@ -67,7 +67,7 @@
 
             <TextView
                 style="@style/ViewFormat_TableLabel"
-                android:text="@string/ViewFormat_UsedAtLabel" />
+                android:text="@string/viewFormat_usedAtLabel" />
 
             <TextView
                 android:id="@+id/viewFormat_tableCell_usedAtValue"
@@ -80,7 +80,7 @@
 
             <TextView
                 style="@style/ViewFormat_TableLabel"
-                android:text="@string/ViewFormat_DescLabel" />
+                android:text="@string/viewFormat_descLabel" />
 
             <TextView
                 android:id="@+id/viewFormat_tableCell_descValue"

@@ -30,7 +30,7 @@
 	   	    <TextView
 		        android:id="@+id/viewFormat_prepTimeLabel"
 		        style="@style/ViewFormat_TableLabel"
-		        android:text="@string/ViewFormat_PrepTimeLabel"
+		        android:text="@string/viewFormat_prepTimeLabel"
 		         />
 		
 		    <TextView
@@ -45,7 +45,7 @@
         <TextView
             android:id="@+id/viewFormat_speechesLabel"
             style="@style/ViewFormat_TableLabel"
-            android:text="@string/ViewFormat_SpeechesLabel" />
+            android:text="@string/viewFormat_speechesLabel" />
 
         <TableLayout
             xmlns:android="http://schemas.android.com/apk/res/android"

@@ -6,7 +6,7 @@
     <TextView
         android:id="@+id/viewFormat_fileNameLabel"
         style="@style/ViewFormat_TableLabel"
-        android:text="@string/ViewFormat_FileNameLabel"
+        android:text="@string/viewFormat_fileNameLabel"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
          />

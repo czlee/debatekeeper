@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="IOErrorDialog_Title">Oh no!</string>
-    <string name="IOErrorDialog_Message">I couldn\'t find the debate style files.</string>
-    <string name="IOErrorDialog_Button">Go back</string>
+    <string name="ioErrorDialog_title">Oh no!</string>
+    <string name="ioErrorDialog_message">I couldn\'t find the debate style files.</string>
+    <string name="ioErrorDialog_button">Go back</string>
 
-    <string name="BlankDetailsDialog_Title">"Sorry!"</string>
-    <string name="BlankDetailsDialog_Text">"There's a problem with this debate format's XML file (%1$s).\n\nIn more detail:\n%2$s"</string>
+    <string name="blankDetailsDialog_title">"Sorry!"</string>
+    <string name="blankDetailsDialog_text">"There's a problem with this debate format's XML file (%1$s).\n\nIn more detail:\n%2$s"</string>
 
-    <string name="FormatChooser_Toast_NoSelection">No style selected</string>
-    <string name="FormatChooser_Toast_FormatUnchanged">Style not changed</string>
+    <string name="formatChooser_toast_noSelection">No style selected</string>
+    <string name="formatChooser_toast_formatUnchanged">Style not changed</string>
 
-    <string name="ViewFormat_RegionLabel">Region</string>
-    <string name="ViewFormat_LevelLabel">Level</string>
-    <string name="ViewFormat_UsedAtLabel">Used at</string>
-    <string name="ViewFormat_DescLabel">Description</string>
-    <string name="ViewFormat_SpeechesLabel">Speeches</string>
-    <string name="ViewFormat_FileNameLabel">File name</string>
-    <string name="ViewFormat_FileLocationValue_userDefined">Custom user file</string>
-    <string name="ViewFormat_PrepTimeLabel">Prep time</string>
-    <string name="ViewFormat_ShowDetailsButton_Text">More</string>
+    <string name="viewFormat_regionLabel">Region</string>
+    <string name="viewFormat_levelLabel">Level</string>
+    <string name="viewFormat_usedAtLabel">Used at</string>
+    <string name="viewFormat_descLabel">Description</string>
+    <string name="viewFormat_speechesLabel">Speeches</string>
+    <string name="viewFormat_fileNameLabel">File name</string>
+    <string name="viewFormat_fileLocationValue_userDefined">Custom user file</string>
+    <string name="viewFormat_prepTimeLabel">Prep time</string>
+    <string name="viewFormat_showDetailsButton_text">More</string>
 
-    <string name="ViewFormat_TimeDescription_LengthInMinutesSeconds">%s long</string>
+    <string name="viewFormat_timeDescription_lengthInMinutesSeconds">%s long</string>
 
-    <plurals name="ViewFormat_TimeDescription_LengthInMinutesOnly">
+    <plurals name="viewFormat_timeDescription_lengthInMinutesOnly">
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>
     </plurals>
 
-    <string name="ViewFormat_TimeDescription_ControlledPrepSuffix">", controlled"</string>
+    <string name="viewFormat_timeDescription_controlledPrepSuffix">", controlled"</string>
 
-    <plurals name="ViewFormat_TimeDescription_BellsList">
+    <plurals name="viewFormat_timeDescription_bellsList">
         <item quantity="one">bell at %s</item>
         <item quantity="other">bells at %s</item>
     </plurals>
 
-    <string name="ViewFormat_SpeechTypeDescription">"<i>%1$s</i>: %2$s"</string>
-    <string name="ViewFormat_SpeechDescription">"%1$s (<i>%2$s</i>)"</string>
+    <string name="viewFormat_speechTypeDescription">"<i>%1$s</i>: %2$s"</string>
+    <string name="viewFormat_speechDescription">"%1$s (<i>%2$s</i>)"</string>
 
     <style name="ViewFormat_TableLabel">
         <item name="android:paddingLeft">7dip</item>
