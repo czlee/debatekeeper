@@ -77,14 +77,14 @@ public class GlobalSettingsActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.global_settings);
 
-        KEY_FIRST_OVERTIME_BELL        = getString(R.string.PrefFirstOvertimeBellKey);
-        KEY_OVERTIME_BELL_PERIOD       = getString(R.string.PrefOvertimeBellPeriodKey);
-        KEY_COUNT_DIRECTION            = getString(R.string.PrefCountDirectionKey);
-        KEY_FLASH_SCREEN_MODE          = getString(R.string.PrefFlashScreenModeKey);
-        KEY_POI_FLASH_SCREEN_MODE      = getString(R.string.PrefPoiFlashScreenModeKey);
-        KEY_POI_TIMER_LEARN_MORE       = getString(R.string.PrefPoiLearnMoreKey);
-        KEY_PREP_TIMER_COUNT_DIRECTION = getString(R.string.PrefPrepTimerCountDirectionKey);
-        KEY_PREP_TIMER_BELLS           = getString(R.string.PrefPrepTimerBellsKey);
+        KEY_FIRST_OVERTIME_BELL        = getString(R.string.pref_firstOvertimeBell_key);
+        KEY_OVERTIME_BELL_PERIOD       = getString(R.string.pref_overtimeBellPeriod_key);
+        KEY_COUNT_DIRECTION            = getString(R.string.pref_countDirection_key);
+        KEY_FLASH_SCREEN_MODE          = getString(R.string.pref_flashScreenMode_key);
+        KEY_POI_FLASH_SCREEN_MODE      = getString(R.string.pref_poiTimer_flashScreenMode_key);
+        KEY_POI_TIMER_LEARN_MORE       = getString(R.string.pref_poiTimer_learnMore_key);
+        KEY_PREP_TIMER_COUNT_DIRECTION = getString(R.string.pref_prepTimer_countDirection_key);
+        KEY_PREP_TIMER_BELLS           = getString(R.string.pref_prepTimer_bells_key);
 
         mIntegerPreferenceKeys.add(KEY_FIRST_OVERTIME_BELL);
         mIntegerPreferenceKeys.add(KEY_OVERTIME_BELL_PERIOD);
@@ -93,19 +93,19 @@ public class GlobalSettingsActivity extends PreferenceActivity {
         mListPreferenceKeys.add(KEY_POI_FLASH_SCREEN_MODE);
         mListPreferenceKeys.add(KEY_PREP_TIMER_COUNT_DIRECTION);
 
-        mPreferenceToSummaryResidMap.put(KEY_FIRST_OVERTIME_BELL,        R.string.PrefFirstOvertimeBellSummary);
-        mPreferenceToSummaryResidMap.put(KEY_OVERTIME_BELL_PERIOD,       R.string.PrefOvertimeBellPeriodSummary);
-        mPreferenceToSummaryResidMap.put(KEY_COUNT_DIRECTION,            R.array.PrefCountDirectionSummaries);
-        mPreferenceToSummaryResidMap.put(KEY_FLASH_SCREEN_MODE,          R.array.PrefFlashScreenModeSummaries);
-        mPreferenceToSummaryResidMap.put(KEY_POI_FLASH_SCREEN_MODE,      R.array.PrefPoiFlashScreenModeSummaries);
-        mPreferenceToSummaryResidMap.put(KEY_PREP_TIMER_COUNT_DIRECTION, R.array.PrefPrepTimerCountDirectionSummaries);
+        mPreferenceToSummaryResidMap.put(KEY_FIRST_OVERTIME_BELL,        R.string.pref_firstOvertimeBell_summary);
+        mPreferenceToSummaryResidMap.put(KEY_OVERTIME_BELL_PERIOD,       R.string.pref_overtimeBellPeriod_summary);
+        mPreferenceToSummaryResidMap.put(KEY_COUNT_DIRECTION,            R.array.pref_countDirection_summaries);
+        mPreferenceToSummaryResidMap.put(KEY_FLASH_SCREEN_MODE,          R.array.pref_flashScreenMode_summaries);
+        mPreferenceToSummaryResidMap.put(KEY_POI_FLASH_SCREEN_MODE,      R.array.pref_poiTimer_flashScreenMode_summaries);
+        mPreferenceToSummaryResidMap.put(KEY_PREP_TIMER_COUNT_DIRECTION, R.array.pref_prepTimer_countDirection_summaries);
 
-        mPreferenceToDefaultResidMap.put(KEY_FIRST_OVERTIME_BELL,        R.integer.DefaultPrefFirstOvertimeBell);
-        mPreferenceToDefaultResidMap.put(KEY_OVERTIME_BELL_PERIOD,       R.integer.DefaultPrefOvertimeBellPeriod);
-        mPreferenceToDefaultResidMap.put(KEY_COUNT_DIRECTION,            R.string.DefaultPrefCountDirection);
-        mPreferenceToDefaultResidMap.put(KEY_FLASH_SCREEN_MODE,          R.string.DefaultPrefFlashScreenMode);
-        mPreferenceToDefaultResidMap.put(KEY_POI_FLASH_SCREEN_MODE,      R.string.DefaultPrefPoiFlashScreenMode);
-        mPreferenceToDefaultResidMap.put(KEY_PREP_TIMER_COUNT_DIRECTION, R.string.DefaultPrefPrepTimerCountDirection);
+        mPreferenceToDefaultResidMap.put(KEY_FIRST_OVERTIME_BELL,        R.integer.prefDefault_firstOvertimeBell);
+        mPreferenceToDefaultResidMap.put(KEY_OVERTIME_BELL_PERIOD,       R.integer.prefDefault_overtimeBellPeriod);
+        mPreferenceToDefaultResidMap.put(KEY_COUNT_DIRECTION,            R.string.prefDefault_countDirection);
+        mPreferenceToDefaultResidMap.put(KEY_FLASH_SCREEN_MODE,          R.string.prefDefault_flashScreenMode);
+        mPreferenceToDefaultResidMap.put(KEY_POI_FLASH_SCREEN_MODE,      R.string.prefDefault_poiTimer_flashScreenMode);
+        mPreferenceToDefaultResidMap.put(KEY_PREP_TIMER_COUNT_DIRECTION, R.string.prefDefault_prepTimer_countDirection);
 
         updateIntegerPreferenceSummary(KEY_FIRST_OVERTIME_BELL);
         updateIntegerPreferenceSummary(KEY_OVERTIME_BELL_PERIOD);

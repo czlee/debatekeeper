@@ -97,9 +97,9 @@ public class AlertManager
 
         // Set up defaults
         Resources res = mService.getResources();
-        mSilentMode   = res.getBoolean(R.bool.DefaultPrefSilentMode);
-        mVibrateMode  = res.getBoolean(R.bool.DefaultPrefVibrateMode);
-        mKeepScreenOn = res.getBoolean(R.bool.DefaultPrefKeepScreenOn);
+        mSilentMode   = res.getBoolean(R.bool.prefDefault_silentMode);
+        mVibrateMode  = res.getBoolean(R.bool.prefDefault_vibrateMode);
+        mKeepScreenOn = res.getBoolean(R.bool.prefDefault_keepScreenOn);
 
         createWakeLock();
     }

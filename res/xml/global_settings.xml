@@ -2,109 +2,109 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:picker="http://schemas.android.com/apk/res/net.czlee.debatekeeper" >
 
-    <PreferenceCategory android:title="@string/PrefCategoryBellsTitle" >
+    <PreferenceCategory android:title="@string/prefCategory_bells_title" >
         <CheckBoxPreference
-            android:defaultValue="@bool/DefaultPrefSilentMode"
-            android:key="@string/PrefSilentModeKey"
-            android:summaryOff="@string/PrefSilentModeOffSummary"
-            android:summaryOn="@string/PrefSilentModeOnSummary"
-            android:title="@string/PrefSilentModeTitle" />
+            android:defaultValue="@bool/prefDefault_silentMode"
+            android:key="@string/pref_silentMode_key"
+            android:summaryOff="@string/pref_silentMode_offSummary"
+            android:summaryOn="@string/pref_silentMode_onSummary"
+            android:title="@string/pref_silentMode_title" />
         <CheckBoxPreference
-            android:defaultValue="@bool/DefaultPrefVibrateMode"
-            android:key="@string/PrefVibrateModeKey"
-            android:summaryOff="@string/PrefVibrateModeOffSummary"
-            android:summaryOn="@string/PrefVibrateModeOnSummary"
-            android:title="@string/PrefVibrateModeTitle" />
+            android:defaultValue="@bool/prefDefault_vibrateMode"
+            android:key="@string/pref_vibrateMode_key"
+            android:summaryOff="@string/pref_vibrateMode_offSummary"
+            android:summaryOn="@string/pref_vibrateMode_onSummary"
+            android:title="@string/pref_vibrateMode_title" />
 
         <ListPreference
-            android:defaultValue="@string/DefaultPrefFlashScreenMode"
-            android:entries="@array/PrefFlashScreenModeEntries"
-            android:entryValues="@array/PrefFlashScreenModeValues"
-            android:key="@string/PrefFlashScreenModeKey"
-            android:title="@string/PrefFlashScreenModeTitle" />
+            android:defaultValue="@string/prefDefault_flashScreenMode"
+            android:entries="@array/pref_flashScreenMode_entries"
+            android:entryValues="@array/pref_flashScreenMode_values"
+            android:key="@string/pref_flashScreenMode_key"
+            android:title="@string/pref_flashScreenMode_title" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/PrefCategoryOvertimeBellsTitle" >
+    <PreferenceCategory android:title="@string/prefCategory_overtimeBells_title" >
         <CheckBoxPreference
-            android:defaultValue="@bool/DefaultPrefOvertimeBellsEnable"
+            android:defaultValue="@bool/prefDefault_overtimeBellsEnable"
             android:disableDependentsState="false"
-            android:key="@string/PrefOvertimeBellsEnableKey"
-            android:summaryOff="@string/PrefOvertimeBellsEnableOffSummary"
-            android:summaryOn="@string/PrefOvertimeBellsEnableOnSummary"
-            android:title="@string/PrefOvertimeBellsEnableTitle" />
+            android:key="@string/pref_overtimeBellsEnable_key"
+            android:summaryOff="@string/pref_overtimeBellsEnable_offSummary"
+            android:summaryOn="@string/pref_overtimeBellsEnable_onSummary"
+            android:title="@string/pref_overtimeBellsEnable_title" />
 
         <com.michaelnovakjr.numberpicker.NumberPickerPreference
-            android:dependency="@string/PrefOvertimeBellsEnableKey"
-            android:dialogMessage="@string/PrefFirstOvertimeBellDialogMessage"
-            android:key="@string/PrefFirstOvertimeBellKey"
-            android:summary="@string/PrefFirstOvertimeBellSummary"
-            android:title="@string/PrefFirstOvertimeBellTitle"
-            picker:defaultValue="@integer/DefaultPrefFirstOvertimeBell"
+            android:dependency="@string/pref_overtimeBellsEnable_key"
+            android:dialogMessage="@string/pref_firstOvertimeBell_dialogMessage"
+            android:key="@string/pref_firstOvertimeBell_key"
+            android:summary="@string/pref_firstOvertimeBell_summary"
+            android:title="@string/pref_firstOvertimeBell_title"
+            picker:defaultValue="@integer/prefDefault_firstOvertimeBell"
             picker:endRange="120"
             picker:startRange="3" />
         <com.michaelnovakjr.numberpicker.NumberPickerPreference
-            android:dependency="@string/PrefOvertimeBellsEnableKey"
-            android:dialogMessage="@string/PrefOvertimeBellPeriodDialogMessage"
-            android:key="@string/PrefOvertimeBellPeriodKey"
-            android:summary="@string/PrefOvertimeBellPeriodSummary"
-            android:title="@string/PrefOvertimeBellPeriodTitle"
-            picker:defaultValue="@integer/DefaultPrefOvertimeBellPeriod"
+            android:dependency="@string/pref_overtimeBellsEnable_key"
+            android:dialogMessage="@string/pref_overtimeBellPeriod_dialogMessage"
+            android:key="@string/pref_overtimeBellPeriod_key"
+            android:summary="@string/pref_overtimeBellPeriod_summary"
+            android:title="@string/pref_overtimeBellPeriod_title"
+            picker:defaultValue="@integer/prefDefault_overtimeBellPeriod"
             picker:endRange="120"
             picker:startRange="3" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/PrefCategoryGeneralTitle" >
+    <PreferenceCategory android:title="@string/prefCategory_general_title" >
         <ListPreference
-            android:defaultValue="@string/DefaultPrefCountDirection"
-            android:entries="@array/PrefCountDirectionEntries"
-            android:entryValues="@array/PrefCountDirectionValues"
-            android:key="@string/PrefCountDirectionKey"
-            android:title="@string/PrefCountDirectionTitle" />
+            android:defaultValue="@string/prefDefault_countDirection"
+            android:entries="@array/pref_countDirection_entries"
+            android:entryValues="@array/pref_countDirection_values"
+            android:key="@string/pref_countDirection_key"
+            android:title="@string/pref_countDirection_title" />
 
         <CheckBoxPreference
-            android:defaultValue="@bool/DefaultPrefKeepScreenOn"
-            android:key="@string/PrefKeepScreenOnKey"
-            android:summaryOff="@string/PrefKeepScreenOnOffSummary"
-            android:summaryOn="@string/PrefKeepScreenOnOnSummary"
-            android:title="@string/PrefKeepScreenOnTitle" />
+            android:defaultValue="@bool/prefDefault_keepScreenOn"
+            android:key="@string/pref_keepScreenOn_key"
+            android:summaryOff="@string/pref_keepScreenOn_offSummary"
+            android:summaryOn="@string/pref_keepScreenOn_onSummary"
+            android:title="@string/pref_keepScreenOn_title" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/PrefCategoryPrepTimeTitle" >
+    <PreferenceCategory android:title="@string/prefCategory_prepTime_title" >
         <CheckBoxPreference
-            android:defaultValue="@bool/DefaultPrefPrepTimerEnable"
+            android:defaultValue="@bool/prefDefault_prepTimer_enable"
             android:disableDependentsState="false"
-            android:key="@string/PrefPrepTimerEnableKey"
-            android:summaryOff="@string/PrefPrepTimerEnableOffSummary"
-            android:summaryOn="@string/PrefPrepTimerEnableOnSummary"
-            android:title="@string/PrefPrepTimerEnableTitle" />
+            android:key="@string/pref_prepTimer_enable_key"
+            android:summaryOff="@string/pref_prepTimer_enable_offSummary"
+            android:summaryOn="@string/pref_prepTimer_enable_onSummary"
+            android:title="@string/pref_prepTimer_enable_title" />
 
         <PreferenceScreen
-            android:key="@string/PrefPrepTimerBellsKey"
-            android:dependency="@string/PrefPrepTimerEnableKey"
-            android:summary="@string/PrefPrepTimerBellsSummary"
-            android:title="@string/PrefPrepTimerBellsTitle" />
+            android:key="@string/pref_prepTimer_bells_key"
+            android:dependency="@string/pref_prepTimer_enable_key"
+            android:summary="@string/pref_prepTimer_bells_summary"
+            android:title="@string/pref_prepTimer_bells_title" />
 
         <ListPreference
-            android:defaultValue="@string/DefaultPrefPrepTimerCountDirection"
-            android:dependency="@string/PrefPrepTimerEnableKey"
-            android:entries="@array/PrefCountDirectionEntries"
-            android:entryValues="@array/PrefCountDirectionValues"
-            android:key="@string/PrefPrepTimerCountDirectionKey"
-            android:title="@string/PrefCountDirectionTitle" />
+            android:defaultValue="@string/prefDefault_prepTimer_countDirection"
+            android:dependency="@string/pref_prepTimer_enable_key"
+            android:entries="@array/pref_countDirection_entries"
+            android:entryValues="@array/pref_countDirection_values"
+            android:key="@string/pref_prepTimer_countDirection_key"
+            android:title="@string/pref_countDirection_title" />
 
         <CheckBoxPreference
-            android:defaultValue="@bool/DefaultPrefPrepTimerKeepScreenOn"
-            android:dependency="@string/PrefPrepTimerEnableKey"
-            android:key="@string/PrefPrepTimerKeepScreenOnKey"
-            android:summaryOff="@string/PrefPrepTimerKeepScreenOnOffSummary"
-            android:summaryOn="@string/PrefPrepTimerKeepScreenOnOnSummary"
-            android:title="@string/PrefKeepScreenOnTitle" />
+            android:defaultValue="@bool/prefDefault_prepTimer_keepScreenOn"
+            android:dependency="@string/pref_prepTimer_enable_key"
+            android:key="@string/pref_prepTimer_keepScreenOn_key"
+            android:summaryOff="@string/pref_prepTimer_keepScreenOn_offSummary"
+            android:summaryOn="@string/pref_prepTimer_keepScreenOn_onSummary"
+            android:title="@string/pref_keepScreenOn_title" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/PrefCategoryPoisTitle" >
+    <PreferenceCategory android:title="@string/prefCategory_pois_title" >
         <CheckBoxPreference
-            android:defaultValue="@bool/DefaultPrefPoiTimerEnable"
+            android:defaultValue="@bool/prefDefault_poiTimer_enable"
             android:disableDependentsState="false"
-            android:key="@string/PrefPoiTimerEnableKey"
-            android:summaryOff="@string/PrefPoiTimerEnableOffSummary"
-            android:summaryOn="@string/PrefPoiTimerEnableOnSummary"
-            android:title="@string/PrefPoiTimerEnableTitle" />
+            android:key="@string/pref_poiTimer_enable_key"
+            android:summaryOff="@string/pref_poiTimer_enable_offSummary"
+            android:summaryOn="@string/pref_poiTimer_enable_onSummary"
+            android:title="@string/pref_poiTimer_enable_title" />
         <!--
 The POI buzzer option isn't used.  The only part that isn't implemented is the part that
 actually plays the buzzer using a MediaPlayer (and the sound file itself).  I'm not sure whether
@@ -112,28 +112,28 @@ this is worth implementing - adjudicators would have to stop the timer for speak
 under the POI time limit, i.e. most of the time - it's easier to have it quiet all the time and
 to be alerted without sound at the 15 second mark?
         -->
-        <!-- <CheckBoxPreference android:key="@string/PrefPoiBuzzerEnableKey" android:summaryOff="@string/PrefPoiBuzzerEnableOffSummary" android:title="@string/PrefPoiBuzzerEnableTitle" android:summaryOn="@string/PrefPoiBuzzerEnableOnSummary" android:dependency="@string/PrefPoiTimerEnableKey" android:defaultValue="@bool/DefaultPrefPoiBuzzerEnable" /> -->
+        <!-- <CheckBoxPreference android:key="@string/pref_poiTimer_buzzerEnable_key" android:summaryOff="@string/pref_poiTimer_buzzerEnable_offSummary" android:title="@string/pref_poiTimer_buzzerEnable_title" android:summaryOn="@string/pref_poiTimer_buzzerEnable_onSummary" android:dependency="@string/pref_poiTimer_enable_key" android:defaultValue="@bool/prefDefault_poiTimer_buzzerEnable" /> -->
         <CheckBoxPreference
-            android:defaultValue="@bool/DefaultPrefPoiVibrateEnable"
-            android:dependency="@string/PrefPoiTimerEnableKey"
-            android:key="@string/PrefPoiVibrateEnableKey"
-            android:summaryOff="@string/PrefPoiVibrateEnableOffSummary"
-            android:summaryOn="@string/PrefPoiVibrateEnableOnSummary"
-            android:title="@string/PrefPoiVibrateEnableTitle" />
+            android:defaultValue="@bool/prefDefault_poiTimer_vibrateEnable"
+            android:dependency="@string/pref_poiTimer_enable_key"
+            android:key="@string/pref_poiTimer_vibrateEnable_key"
+            android:summaryOff="@string/pref_poiTimer_vibrateEnable_offSummary"
+            android:summaryOn="@string/pref_poiTimer_vibrateEnable_onSummary"
+            android:title="@string/pref_poiTimer_vibrateEnable_title" />
 
         <ListPreference
-            android:defaultValue="@string/DefaultPrefPoiFlashScreenMode"
-            android:dependency="@string/PrefPoiTimerEnableKey"
-            android:dialogTitle="@string/PrefPoiFlashScreenModeDialogTitle"
-            android:entries="@array/PrefFlashScreenModeEntries"
-            android:entryValues="@array/PrefFlashScreenModeValues"
-            android:key="@string/PrefPoiFlashScreenModeKey"
-            android:title="@string/PrefFlashScreenModeTitle" />
+            android:defaultValue="@string/prefDefault_poiTimer_flashScreenMode"
+            android:dependency="@string/pref_poiTimer_enable_key"
+            android:dialogTitle="@string/pref_poiTimer_flashScreenMode_dialogTitle"
+            android:entries="@array/pref_flashScreenMode_entries"
+            android:entryValues="@array/pref_flashScreenMode_values"
+            android:key="@string/pref_poiTimer_flashScreenMode_key"
+            android:title="@string/pref_flashScreenMode_title" />
 
         <Preference
-            android:key="@string/PrefPoiLearnMoreKey"
-            android:summary="@string/PrefPoiLearnMoreSummary"
-            android:title="@string/PrefPoiLearnMoreTitle" />
+            android:key="@string/pref_poiTimer_learnMore_key"
+            android:summary="@string/pref_poiTimer_learnMore_summary"
+            android:title="@string/pref_poiTimer_learnMore_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

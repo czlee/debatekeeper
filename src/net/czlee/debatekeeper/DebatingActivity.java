@@ -617,42 +617,42 @@ public class DebatingActivity extends Activity {
         try {
 
             // The boolean preferences
-            silentMode = prefs.getBoolean(res.getString(R.string.PrefSilentModeKey),
-                    res.getBoolean(R.bool.DefaultPrefSilentMode));
-            vibrateMode = prefs.getBoolean(res.getString(R.string.PrefVibrateModeKey),
-                    res.getBoolean(R.bool.DefaultPrefVibrateMode));
-            overtimeBellsEnabled = prefs.getBoolean(res.getString(R.string.PrefOvertimeBellsEnableKey),
-                    res.getBoolean(R.bool.DefaultPrefOvertimeBellsEnable));
+            silentMode = prefs.getBoolean(res.getString(R.string.pref_silentMode_key),
+                    res.getBoolean(R.bool.prefDefault_silentMode));
+            vibrateMode = prefs.getBoolean(res.getString(R.string.pref_vibrateMode_key),
+                    res.getBoolean(R.bool.prefDefault_vibrateMode));
+            overtimeBellsEnabled = prefs.getBoolean(res.getString(R.string.pref_overtimeBellPeriod_key),
+                    res.getBoolean(R.bool.prefDefault_overtimeBellsEnable));
 
-            mKeepScreenOn = prefs.getBoolean(res.getString(R.string.PrefKeepScreenOnKey),
-                    res.getBoolean(R.bool.DefaultPrefKeepScreenOn));
-            mPrepTimeKeepScreenOn = prefs.getBoolean(res.getString(R.string.PrefPrepTimerKeepScreenOnKey),
-                    res.getBoolean(R.bool.DefaultPrefPrepTimerKeepScreenOn));
+            mKeepScreenOn = prefs.getBoolean(res.getString(R.string.pref_keepScreenOn_key),
+                    res.getBoolean(R.bool.prefDefault_keepScreenOn));
+            mPrepTimeKeepScreenOn = prefs.getBoolean(res.getString(R.string.pref_prepTimer_keepScreenOn_key),
+                    res.getBoolean(R.bool.prefDefault_prepTimer_keepScreenOn));
 
-            mPoiTimerEnabled = prefs.getBoolean(res.getString(R.string.PrefPoiTimerEnableKey),
-                    res.getBoolean(R.bool.DefaultPrefPoiTimerEnable));
-            poiBuzzerEnabled = prefs.getBoolean(res.getString(R.string.PrefPoiBuzzerEnableKey),
-                    res.getBoolean(R.bool.DefaultPrefPoiBuzzerEnable));
-            poiVibrateEnabled = prefs.getBoolean(res.getString(R.string.PrefPoiVibrateEnableKey),
-                    res.getBoolean(R.bool.DefaultPrefPoiVibrateEnable));
+            mPoiTimerEnabled = prefs.getBoolean(res.getString(R.string.pref_poiTimer_enable_key),
+                    res.getBoolean(R.bool.prefDefault_poiTimer_enable));
+            poiBuzzerEnabled = prefs.getBoolean(res.getString(R.string.pref_poiTimer_buzzerEnable_key),
+                    res.getBoolean(R.bool.prefDefault_poiTimer_buzzerEnable));
+            poiVibrateEnabled = prefs.getBoolean(res.getString(R.string.pref_poiTimer_vibrateEnable_key),
+                    res.getBoolean(R.bool.prefDefault_poiTimer_vibrateEnable));
 
-            prepTimerEnabled = prefs.getBoolean(res.getString(R.string.PrefPrepTimerEnableKey),
-                    res.getBoolean(R.bool.DefaultPrefPrepTimerEnable));
+            prepTimerEnabled = prefs.getBoolean(res.getString(R.string.pref_poiTimer_enable_key),
+                    res.getBoolean(R.bool.prefDefault_prepTimer_enable));
 
             // Overtime bell integers
             if (overtimeBellsEnabled) {
-                firstOvertimeBell  = prefs.getInt(res.getString(R.string.PrefFirstOvertimeBellKey),
-                        res.getInteger(R.integer.DefaultPrefFirstOvertimeBell));
-                overtimeBellPeriod = prefs.getInt(res.getString(R.string.PrefOvertimeBellPeriodKey),
-                        res.getInteger(R.integer.DefaultPrefOvertimeBellPeriod));
+                firstOvertimeBell  = prefs.getInt(res.getString(R.string.pref_firstOvertimeBell_key),
+                        res.getInteger(R.integer.prefDefault_firstOvertimeBell));
+                overtimeBellPeriod = prefs.getInt(res.getString(R.string.pref_overtimeBellPeriod_key),
+                        res.getInteger(R.integer.prefDefault_overtimeBellPeriod));
             } else {
                 firstOvertimeBell = 0;
                 overtimeBellPeriod = 0;
             }
 
             // List preference: POI flash screen mode
-            poiFlashScreenModeValue = prefs.getString(res.getString(R.string.PrefPoiFlashScreenModeKey),
-                    res.getString(R.string.DefaultPrefPoiFlashScreenMode));
+            poiFlashScreenModeValue = prefs.getString(res.getString(R.string.pref_poiTimer_flashScreenMode_key),
+                    res.getString(R.string.prefDefault_poiTimer_flashScreenMode));
             poiFlashScreenMode = FlashScreenMode.toEnum(poiFlashScreenModeValue);
 
             // List preference: Count direction
@@ -660,13 +660,13 @@ public class DebatingActivity extends Activity {
             // This changed in version 0.9, to remove the generallyUp and generallyDown options.
             // Therefore, if we find either of those, we need to replace it with alwaysUp or
             // alwaysDown, respectively.
-            userCountDirectionValue = prefs.getString(res.getString(R.string.PrefCountDirectionKey),
-                    res.getString(R.string.DefaultPrefCountDirection));
+            userCountDirectionValue = prefs.getString(res.getString(R.string.pref_countDirection_key),
+                    res.getString(R.string.prefDefault_countDirection));
             if (userCountDirectionValue.equals("generallyUp") || userCountDirectionValue.equals("generallyDown")) {
                 // Replace the preference with alwaysUp or alwaysDown, respectively.
                 SharedPreferences.Editor editor = prefs.edit();
                 String newValue = (userCountDirectionValue.equals("generallyUp")) ? "alwaysUp" : "alwaysDown";
-                editor.putString(res.getString(R.string.PrefCountDirectionKey), newValue);
+                editor.putString(res.getString(R.string.pref_countDirection_key), newValue);
                 editor.commit();
                 Log.w(this.getClass().getSimpleName(),
                         String.format("countDirection: replaced %s with %s", userCountDirectionValue, newValue));
@@ -675,8 +675,8 @@ public class DebatingActivity extends Activity {
             mUserCountDirection = CountDirection.toEnum(userCountDirectionValue);
 
             // List preference: Count direction for prep time
-            userPrepTimeCountDirectionValue = prefs.getString(res.getString(R.string.PrefPrepTimerCountDirectionKey),
-                    res.getString(R.string.DefaultPrefPrepTimerCountDirection));
+            userPrepTimeCountDirectionValue = prefs.getString(res.getString(R.string.pref_prepTimer_countDirection_key),
+                    res.getString(R.string.prefDefault_prepTimer_countDirection));
             mUserPrepTimeCountDirection = CountDirection.toEnum(userPrepTimeCountDirectionValue);
 
             // List preference: Flash screen mode
@@ -688,20 +688,20 @@ public class DebatingActivity extends Activity {
             // list preference.  In all other cases, just take the list preference (using the
             // normal default mechanism if it isn't present, i.e. neither are present).
 
-            if (!prefs.contains(res.getString(R.string.PrefFlashScreenModeKey)) &&
-                    prefs.contains(res.getString(R.string.PrefFlashScreenBoolKey))) {
+            if (!prefs.contains(res.getString(R.string.pref_flashScreenMode_key)) &&
+                    prefs.contains(res.getString(R.string.pref_flashScreenBool_key))) {
                 // Boolean preference.
                 // First, get the string and convert it to an enum.
                 boolean flashScreenModeBool = prefs.getBoolean(
-                        res.getString(R.string.PrefFlashScreenBoolKey), false);
+                        res.getString(R.string.pref_flashScreenBool_key), false);
                 flashScreenMode = (flashScreenModeBool) ? FlashScreenMode.SOLID_FLASH : FlashScreenMode.OFF;
 
                 // Then, convert that enum to the list preference value (a string) and write that
                 // back to the preferences.  Also, remove the old boolean preference.
                 String flashStringModePrefValue = flashScreenMode.toPrefValue();
                 SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(res.getString(R.string.PrefFlashScreenModeKey), flashStringModePrefValue);
-                editor.remove(res.getString(R.string.PrefFlashScreenBoolKey));
+                editor.putString(res.getString(R.string.pref_flashScreenMode_key), flashStringModePrefValue);
+                editor.remove(res.getString(R.string.pref_flashScreenBool_key));
                 editor.commit();
                 Log.w(this.getClass().getSimpleName(),
                         String.format("flashScreenMode: replaced boolean preference with list preference: %s", flashStringModePrefValue));
@@ -710,8 +710,8 @@ public class DebatingActivity extends Activity {
                 // List preference.
                 // Get the string and convert it to an enum.
                 String flashScreenModeValue;
-                flashScreenModeValue = prefs.getString(res.getString(R.string.PrefFlashScreenModeKey),
-                        res.getString(R.string.DefaultPrefFlashScreenMode));
+                flashScreenModeValue = prefs.getString(res.getString(R.string.pref_flashScreenMode_key),
+                        res.getString(R.string.prefDefault_flashScreenMode));
                 flashScreenMode = FlashScreenMode.toEnum(flashScreenModeValue);
             }
 
