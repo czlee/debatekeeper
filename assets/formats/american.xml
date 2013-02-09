@@ -8,23 +8,23 @@
 	</info>
 
 	<resource ref="#all">
-		<period ref="firstmin" desc="First minute" bgcolor="#stay" />
-		<period ref="main" desc="Main part" bgcolor="#stay" />
-		<period ref="pois-allowed" desc="POIs allowed" bgcolor="#7700ff00" poisallowed="true" />
-		<period ref="warning" desc="Warning bell rung" bgcolor="#77ffcc00" />
-		<period ref="overtime" desc="Overtime" bgcolor="#77ff0000" />
+		<period ref="firstmin" bgcolor="#stay" />
+		<period ref="main" bgcolor="#stay" />
+		<period ref="pois-allowed" bgcolor="#7700ff00" poisallowed="true" />
+		<period ref="warning" bgcolor="#77ffcc00" />
+		<period ref="overtime" bgcolor="#77ff0000" />
 	</resource>
 
 	<speechtype ref="pm-const" length="7:00" firstperiod="firstmin">
-		<bell time="1:00" number="1" nextperiod="pois-allowed" sound="#default" />
-		<bell time="6:00" number="1" nextperiod="warning" sound="#default" />
-		<bell time="finish" number="2" nextperiod="overtime" sound="#default" />
+		<bell time="1:00" number="1" nextperiod="pois-allowed" />
+		<bell time="6:00" number="1" nextperiod="warning" />
+		<bell time="finish" number="2" nextperiod="overtime" />
 	</speechtype>
 
 	<speechtype ref="constructive" length="8:00" firstperiod="firstmin">
-		<bell time="1:00" number="1" nextperiod="pois-allowed" sound="#default" />
-		<bell time="7:00" number="1" nextperiod="warning" sound="#default" />
-		<bell time="finish" number="2" nextperiod="overtime" sound="#default" />
+		<bell time="1:00" number="1" nextperiod="pois-allowed" />
+		<bell time="7:00" number="1" nextperiod="warning" />
+		<bell time="finish" number="2" nextperiod="overtime" />
 	</speechtype>
 
 	<speechtype ref="lo-rebuttal" length="4:00" firstperiod="main">

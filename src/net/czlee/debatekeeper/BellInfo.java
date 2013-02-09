@@ -46,15 +46,6 @@ public class BellInfo {
         mPauseOnBell = pauseOnBell;
     }
 
-    public void setSound(int soundResid) {
-        mSoundInfo.setSoundResid(soundResid);
-    }
-
-    public void setSound(int soundResid, int timesToPlay) {
-        mSoundInfo.setSoundResid(soundResid);
-        mSoundInfo.setTimesToPlay(timesToPlay);
-    }
-
     public void setNextPeriodInfo(PeriodInfo pi) {
         mNextPeriodInfo = pi;
     }

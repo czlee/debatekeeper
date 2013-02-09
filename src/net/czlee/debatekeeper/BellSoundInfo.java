@@ -39,22 +39,13 @@ public class BellSoundInfo {
 
     public BellSoundInfo() {}
 
-    public BellSoundInfo(int soundResid, int timesToPlay) {
+    public BellSoundInfo(int timesToPlay) {
         super();
-        mSoundResid  = soundResid;
         mTimesToPlay = timesToPlay;
-    }
-
-    public void setSoundResid(int soundResid) {
-        mSoundResid = soundResid;
     }
 
     public void setTimesToPlay(int timesToPlay) {
         mTimesToPlay = timesToPlay;
-    }
-
-    public void setRepeatPeriod(int repeatPeriod) {
-        mRepeatPeriod = repeatPeriod;
     }
 
     public int getSoundResid() {

@@ -378,7 +378,7 @@ public class MainTimerManager extends DebateElementManager {
      */
     private void doOvertimeBell() {
         Log.v(this.getClass().getSimpleName(), String.format("overtime bell at %s", mCurrentTime));
-        mAlertManager.playBell(new BellSoundInfo(R.raw.desk_bell, 3));
+        mAlertManager.playBell(new BellSoundInfo(3));
     }
 
 }

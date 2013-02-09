@@ -199,8 +199,7 @@ public class AlertManager
      * Intended for use directly with a user button.
      */
     public void playSingleBell() {
-        // TODO un-hardcode this R.raw.desk_bell
-        BellSoundInfo bellInfo = new BellSoundInfo(R.raw.desk_bell, 1);
+        BellSoundInfo bellInfo = new BellSoundInfo(1);
         playBell(bellInfo);
     }
 

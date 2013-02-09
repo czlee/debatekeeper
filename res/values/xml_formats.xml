@@ -39,8 +39,6 @@
             <string name="XmlAttrValueBellTimeFinish">finish</string>
         <string name="XmlAttrNameBellNumber">number</string>
         <string name="XmlAttrNameBellNextPeriod">nextperiod</string>
-        <string name="XmlAttrNameBellSound">sound</string>
-            <string name="XmlAttrValueBellNextPeriodSilent">#silent</string>
         <string name="XmlAttrNameBellPauseOnBell">pauseonbell</string>
 
     <string name="XmlElemNamePeriod">period</string>

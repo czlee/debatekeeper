@@ -164,7 +164,7 @@ public class DebateFormatBuilderFromXml {
                 mCurrentSecondLevelContext = DebateFormatXmlSecondLevelContext.NONE;
             }
 
-            /** <bell time="1:00" number="1" nextperiod="#stay" sound="#default" pauseonbell="true">
+            /** <bell time="1:00" number="1" nextperiod="#stay" pauseonbell="true">
              * Do nothing
              */
 
@@ -460,20 +460,7 @@ public class DebateFormatBuilderFromXml {
                     if (areEqualIgnoringCase(periodInfoRef, R.string.XmlAttrValueCommonStay))
                         periodInfoRef = null;
 
-                // 5. Get the sound to play, or default to the default
-                String bellSound = getValue(atts, R.string.XmlAttrNameBellSound);
-                if (bellSound != null) {
-                    if (areEqualIgnoringCase(bellSound, R.string.XmlAttrValueCommonStay))
-                        bellSound = null;
-                    else if (areEqualIgnoringCase(bellSound, R.string.XmlAttrValueBellNextPeriodSilent))
-                        bi.setSound(0);
-                    else if (areEqualIgnoringCase(bellSound, R.string.XmlAttrValueCommonDefault));
-                        // Do nothing
-                    else
-                        logXmlError(R.string.XmlErrorBellInvalidSound, getCurrentContextAndReferenceStr(), bellSound);
-                }
-
-                // 6. Determine whether to pause on this bell
+                // 5. Determine whether to pause on this bell
                 String pauseOnBellStr = getValue(atts, R.string.XmlAttrNameBellPauseOnBell);
                 if (pauseOnBellStr != null) {
                     if (areEqualIgnoringCase(pauseOnBellStr, R.string.XmlAttrValueCommonTrue))
