@@ -44,7 +44,7 @@ public class DebateFormatInfoExtractor {
 
     public DebateFormatInfoExtractor(Context context) {
         mContext           = context;
-        DEBATING_TIMER_URI = context.getString(R.string.XmlUri);
+        DEBATING_TIMER_URI = context.getString(R.string.xml_uri);
     }
 
     // ******************************************************************************************

@@ -10,14 +10,14 @@
         android:layout_height="wrap_content" >
 
         <Button
-            android:id="@+id/viewFormat_showDetailsButton"
+            android:id="@+id/viewFormat_showDetails_button"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_marginRight="10dip"
-            android:text="@string/viewFormat_showDetailsButton_text"
+            android:text="@string/viewFormat_showDetails_buttonText"
             android:visibility="gone" />
 
         <TableLayout
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@id/viewFormat_showDetailsButton"
+            android:layout_toLeftOf="@id/viewFormat_showDetails_button"
             android:shrinkColumns="1" >
 
             <TableRow

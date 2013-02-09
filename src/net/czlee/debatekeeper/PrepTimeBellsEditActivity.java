@@ -202,9 +202,9 @@ public class PrepTimeBellsEditActivity extends Activity {
         View content = getLayoutInflater().inflate(R.layout.add_prep_time_bell, null);
 
         // Take note of the form elements
-        final Spinner    typeSpinner = (Spinner)    content.findViewById(R.id.addBellTypeSpinner);
-        final TimePicker timePicker  = (TimePicker) content.findViewById(R.id.addBellTimePicker);
-        final EditText   editText    = (EditText)   content.findViewById(R.id.addBellEditText);
+        final Spinner    typeSpinner = (Spinner)    content.findViewById(R.id.addPrepTimeBellDialog_typeSpinner);
+        final TimePicker timePicker  = (TimePicker) content.findViewById(R.id.addPrepTimeBellDialog_timePicker);
+        final EditText   editText    = (EditText)   content.findViewById(R.id.addPrepTimeBellDialog_editText);
 
         // Format the form elements
         timePicker.setIs24HourView(true);
@@ -254,8 +254,8 @@ public class PrepTimeBellsEditActivity extends Activity {
 
     private void prepareAddBellDialog(final Dialog dialog) {
 
-        final TimePicker timePicker  = (TimePicker) dialog.findViewById(R.id.addBellTimePicker);
-        final EditText   editText    = (EditText)   dialog.findViewById(R.id.addBellEditText);
+        final TimePicker timePicker  = (TimePicker) dialog.findViewById(R.id.addPrepTimeBellDialog_timePicker);
+        final EditText   editText    = (EditText)   dialog.findViewById(R.id.addPrepTimeBellDialog_editText);
 
         // Defaults
         timePicker.setCurrentHour(5);
@@ -286,9 +286,9 @@ public class PrepTimeBellsEditActivity extends Activity {
      */
     private void prepareEditBellDialog(final Dialog dialog, final Bundle args) {
 
-        final Spinner    typeSpinner = (Spinner)    dialog.findViewById(R.id.addBellTypeSpinner);
-        final TimePicker timePicker  = (TimePicker) dialog.findViewById(R.id.addBellTimePicker);
-        final EditText   editText    = (EditText)   dialog.findViewById(R.id.addBellEditText);
+        final Spinner    typeSpinner = (Spinner)    dialog.findViewById(R.id.addPrepTimeBellDialog_typeSpinner);
+        final TimePicker timePicker  = (TimePicker) dialog.findViewById(R.id.addPrepTimeBellDialog_timePicker);
+        final EditText   editText    = (EditText)   dialog.findViewById(R.id.addPrepTimeBellDialog_editText);
 
         // Defaults
         timePicker.setCurrentHour(5);
@@ -334,9 +334,9 @@ public class PrepTimeBellsEditActivity extends Activity {
     }
 
     private Bundle createBellBundleFromAddOrEditDialog(final Dialog dialog) {
-        final Spinner    typeSpinner = (Spinner)    dialog.findViewById(R.id.addBellTypeSpinner);
-        final TimePicker timePicker  = (TimePicker) dialog.findViewById(R.id.addBellTimePicker);
-        final EditText   editText    = (EditText)   dialog.findViewById(R.id.addBellEditText);
+        final Spinner    typeSpinner = (Spinner)    dialog.findViewById(R.id.addPrepTimeBellDialog_typeSpinner);
+        final TimePicker timePicker  = (TimePicker) dialog.findViewById(R.id.addPrepTimeBellDialog_timePicker);
+        final EditText   editText    = (EditText)   dialog.findViewById(R.id.addPrepTimeBellDialog_editText);
 
         int typeSelected = typeSpinner.getSelectedItemPosition();
         Bundle bundle = new Bundle();

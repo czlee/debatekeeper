@@ -17,7 +17,7 @@
 
 package net.czlee.debatekeeper;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 
 /**
  * SpeechOrPrepFormat is an interface for MainTimerManager
@@ -60,10 +60,8 @@ public interface SpeechOrPrepFormat {
     public abstract PeriodInfo getPeriodInfoForTime(long seconds);
 
     /**
-     * @return an {@link Iterator} that iterates through the bells in chronological order.
-     * Must not return <code>null</code> - if there are no bells, it should return an empty
-     * iterator.
+     * @return an {@link ArrayList} of {@link BellInfo} objects that are sorted by time.
      */
-    public abstract Iterator<BellInfo> getBellsIter();
+    public abstract ArrayList<BellInfo> getBellsSorted();
 
 }

@@ -2,20 +2,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/resetDebate"
+        android:id="@+id/mainScreen_menuItem_resetDebate"
         android:orderInCategory="0"
-        android:title="@string/ResetDebateMenuItem"/>
+        android:title="@string/mainScreen_menuItem_resetDebate"/>
     <item
-        android:id="@+id/chooseFormat"
+        android:id="@+id/mainScreen_menuItem_chooseFormat"
         android:orderInCategory="1"
-        android:title="@string/ChooseFormatMenuItem"/>
+        android:title="@string/mainScreen_menuItem_chooseFormat"/>
     <item
-        android:id="@+id/settings"
+        android:id="@+id/mainScreen_menuItem_settings"
         android:orderInCategory="3"
-        android:title="@string/SettingsMenuItem"/>
+        android:title="@string/mainScreen_menuItem_settings"/>
     <item
-        android:id="@+id/prevSpeaker"
+        android:id="@+id/mainScreen_menuItem_prevSpeaker"
         android:orderInCategory="2"
-        android:title="@string/PrevSpeakerMenuItem"/>
+        android:title="@string/mainScreen_menuItem_prevSpeaker"/>
 
 </menu>

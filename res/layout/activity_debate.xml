@@ -1,45 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/debateActivityRootView"
+    android:id="@+id/mainScreen_rootView"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
     <LinearLayout
-        android:id="@+id/controlButtons"
+        android:id="@+id/mainScreen_controlButtons"
         android:layout_width="fill_parent"
         android:layout_height="60dip"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal" >
 
         <Button
-            android:id="@+id/leftControlButton"
+            android:id="@+id/mainScreen_leftControlButton"
             style="@style/ControlButton"
-            android:text="@string/StartTimerButtonText" />
+            android:text="@string/mainScreen_startTimer_buttonText" />
 
         <Button
-            android:id="@+id/centreControlButton"
+            android:id="@+id/mainScreen_centreControlButton"
             style="@style/ControlButton"
-            android:text="@string/ResetTimerButtonText" />
+            android:text="@string/mainScreen_resetTimer_buttonText" />
 
         <Button
-            android:id="@+id/rightControlButton"
+            android:id="@+id/mainScreen_rightControlButton"
             style="@style/ControlButton"
-            android:text="@string/NextSpeakerButtonText" />
+            android:text="@string/mainScreen_nextSpeaker_buttonText" />
 
         <Button
-            android:id="@+id/playBellButton"
+            android:id="@+id/mainScreen_playBellButton"
             android:layout_width="wrap_content"
             android:layout_gravity="center"
             android:layout_height="fill_parent"
-            android:text="@string/PlayBellButtonText" />
+            android:text="@string/mainScreen_playBell_buttonText" />
     </LinearLayout>
 
     <ViewFlipper
         android:id="@+id/debateTimerDisplayFlipper"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@id/controlButtons"
+        android:layout_above="@id/mainScreen_controlButtons"
         android:layout_alignParentTop="true"
         android:orientation="vertical" >
 

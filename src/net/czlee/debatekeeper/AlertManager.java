@@ -169,7 +169,7 @@ public class AlertManager
 
         if(!mShowingNotification) {
             mNotification = new Notification(R.drawable.ic_stat_name,
-                    mService.getText(R.string.NotificationTickerText),
+                    mService.getText(R.string.notification_tickerText),
                     System.currentTimeMillis());
 
             updateNotification(speechName);
@@ -347,7 +347,7 @@ public class AlertManager
 
     private void updateNotification(String notificationText) {
             mNotification.setLatestEventInfo(mService,
-                    mService.getText(R.string.NotificationTitle),
+                    mService.getText(R.string.notification_title),
                     notificationText, mIntentStartingHostActivity);
     }
 

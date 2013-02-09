@@ -345,7 +345,7 @@ public class DebateManager {
      */
     public String getCurrentSpeechName() {
         if (mCurrentItemType == DebateManagerItem.PREP_TIME)
-            return mContext.getString(R.string.PrepTimeTitle);
+            return mContext.getString(R.string.prepTime_title);
         else
             return mDebateFormat.getSpeechName(mCurrentSpeechIndex);
     }

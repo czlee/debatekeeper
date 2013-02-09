@@ -119,7 +119,7 @@ public class GlobalSettingsActivity extends PreferenceActivity {
             .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    Uri uri = Uri.parse(getString(R.string.PoiTimerMoreInfoUrl));
+                    Uri uri = Uri.parse(getString(R.string.poiTimer_moreInfoUrl));
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                     startActivity(intent);
                     return true;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-   	<string name="prepTimeBellsEditor_addBell_text">Add</string>
-	<string name="prepTimeBellsEditor_clearAll_text">Clear</string>
+   	<string name="prepTimeBellsEditor_addBell_buttonText">Add</string>
+	<string name="prepTimeBellsEditor_clearAll_buttonText">Clear</string>
     
     <!-- Bell descriptions -->
     <string name="prepTimeBellDescription_atStart">at start</string>

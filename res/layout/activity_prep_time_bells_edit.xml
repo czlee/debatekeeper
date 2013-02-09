@@ -15,13 +15,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/prepTimeBellsEditor_addBell_text" />
+            android:text="@string/prepTimeBellsEditor_addBell_buttonText" />
         <Button
             android:id="@+id/prepTimeBellsEditor_clearAllButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/prepTimeBellsEditor_clearAll_text" />
+            android:text="@string/prepTimeBellsEditor_clearAll_buttonText" />
     </LinearLayout>
 
     <ListView

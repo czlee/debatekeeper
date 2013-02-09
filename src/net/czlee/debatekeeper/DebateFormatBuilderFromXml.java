@@ -54,7 +54,7 @@ public class DebateFormatBuilderFromXml {
         mContext = context;
         mDfb     = new DebateFormatBuilder(context);
 
-        DEBATING_TIMER_URI = context.getString(R.string.XmlUri);
+        DEBATING_TIMER_URI = context.getString(R.string.xml_uri);
     }
 
     //******************************************************************************************

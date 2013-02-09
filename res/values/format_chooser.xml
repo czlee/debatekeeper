@@ -19,7 +19,7 @@
     <string name="viewFormat_fileNameLabel">File name</string>
     <string name="viewFormat_fileLocationValue_userDefined">Custom user file</string>
     <string name="viewFormat_prepTimeLabel">Prep time</string>
-    <string name="viewFormat_showDetailsButton_text">More</string>
+    <string name="viewFormat_showDetails_buttonText">More</string>
 
     <string name="viewFormat_timeDescription_lengthInMinutesSeconds">%s long</string>
 

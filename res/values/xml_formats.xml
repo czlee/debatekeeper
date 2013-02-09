@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="XmlUri"></string>
+    <string name="xml_uri"></string>
 
     <string name="xmlElemName_root">debateformat</string>
         <string name="xmlAttrName_root_name">name</string>

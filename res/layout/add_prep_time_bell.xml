@@ -4,14 +4,14 @@
     android:orientation="vertical" >
 
     <Spinner
-        android:id="@+id/addBellTypeSpinner"
+        android:id="@+id/addPrepTimeBellDialog_typeSpinner"
         android:layout_width="match_parent"
         android:layout_height="50dip" />
 
     <!-- The time picker is for "time from start" and "time from finish" -->
 
     <TimePicker
-        android:id="@+id/addBellTimePicker"
+        android:id="@+id/addPrepTimeBellDialog_timePicker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     
@@ -19,7 +19,7 @@
     We use a text box, not a number picker, so that the user can enter decimals. -->
 
     <EditText
-        android:id="@+id/addBellEditText"
+        android:id="@+id/addPrepTimeBellDialog_editText"
         android:layout_width="match_parent"
         android:layout_height="50dip"
         android:ems="10"

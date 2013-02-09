@@ -257,14 +257,14 @@ public class FormatChooserActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_format_chooser);
-        DEBATING_TIMER_URI = getString(R.string.XmlUri);
+        DEBATING_TIMER_URI = getString(R.string.xml_uri);
 
         mFilesManager = new FormatXmlFilesManager(this);
 
         // Set OnClickListeners
-        ((Button) findViewById(R.id.FormatChooserOKButton))
+        ((Button) findViewById(R.id.formatChooser_okButton))
                 .setOnClickListener(new OKButtonOnClickListener());
-        ((Button) findViewById(R.id.FormatChooserCancelButton))
+        ((Button) findViewById(R.id.formatChooser_cancelButton))
                 .setOnClickListener(new CancelButtonOnClickListener());
 
         // Populate mStylesList
@@ -282,7 +282,7 @@ public class FormatChooserActivity extends Activity {
         mStylesArrayAdapter.sort(new StyleEntryComparatorByStyleName());
 
         // Configure the ListView
-        mStylesListView = (ListView) findViewById(R.id.StylesListView);
+        mStylesListView = (ListView) findViewById(R.id.formatChooser_stylesList);
         mStylesListView.setAdapter(mStylesArrayAdapter);
         mStylesListView.setOnItemClickListener(new StylesListViewOnItemClickListener());
 

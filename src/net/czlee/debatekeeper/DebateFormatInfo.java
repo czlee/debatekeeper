@@ -141,7 +141,7 @@ public class DebateFormatInfo {
                 MiniBellInfo bi = iterator.next();
                 str.append(secsToText(bi.getTime()));
                 if (bi.isPause())
-                    str.append(mContext.getString(R.string.PauseOnBellIndicator));
+                    str.append(mContext.getString(R.string.pauseOnBellIndicator));
 
                 // If there's one after this, add a comma
                 if (iterator.hasNext()) str.append(", ");
