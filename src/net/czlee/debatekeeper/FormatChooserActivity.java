@@ -191,9 +191,9 @@ public class FormatChooserActivity extends Activity {
             if (!uri.equals(DEBATING_TIMER_URI))
                 return;
 
-            if (localName.equals(getString(R.string.XmlElemNameRoot))) {
+            if (localName.equals(getString(R.string.xmlElemName_root))) {
                 mCurrentStyleName = atts.getValue(DEBATING_TIMER_URI,
-                        getString(R.string.XmlAttrNameRootName));
+                        getString(R.string.xmlAttrName_root_name));
                 throw new AllInformationFoundException();
                 // We don't need to parse any more once we find the style name
             }
