@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Background colour -->
+    <string name="pref_backgroundColourArea_title">Background color area</string>
+    <string-array name="pref_backgroundColourArea_summaries">
+        <item>Don\'t use color to indicate periods within speeches</item>
+        <item>Color top bar only to indicate periods within speeches</item>
+        <item>Color whole screen to indicate periods within speeches</item>
+    </string-array>
+
+</resources>
