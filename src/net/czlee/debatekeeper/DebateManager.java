@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import net.czlee.debatekeeper.DebatingTimerService.GuiUpdateBroadcastSender;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 
 
 /**
@@ -63,6 +64,7 @@ public class DebateManager {
     private int               mCurrentSpeechIndex;
     private DebateManagerItem mCurrentItemType;
 
+    private static final String BUNDLE_SUFFIX_ITEM_TYPE    = ".cit";
     private static final String BUNDLE_SUFFIX_INDEX        = ".csi";
     private static final String BUNDLE_SUFFIX_SPEECH       = ".sm";
     private static final String BUNDLE_SUFFIX_SPEECH_TIMES = ".st";
@@ -104,7 +106,29 @@ public class DebateManager {
     // Public classes
     //******************************************************************************************
     public enum DebateManagerItem {
-        PREP_TIME, SPEECH
+
+        // Strings are used in the bundle in saveState() and restoreState().
+        PREP_TIME ("prepTime"),
+        SPEECH ("speech");
+
+        private final String key;
+
+        private DebateManagerItem(String key) {
+            this.key = key;
+        }
+
+        @Override
+        public String toString() {
+            return key;
+        }
+
+        public static DebateManagerItem toEnum(String key) {
+            DebateManagerItem[] values = DebateManagerItem.values();
+            for (int i = 0; i < values.length; i++)
+                if (key.equals(values[i].key))
+                    return values[i];
+            throw new IllegalArgumentException(String.format("There is no enumerated constant '%s'", key));
+        }
     }
 
     //******************************************************************************************
@@ -406,6 +430,9 @@ public class DebateManager {
      */
     public void saveState(String key, Bundle bundle) {
 
+        // Take note of which item type we're in
+        bundle.putString(key + BUNDLE_SUFFIX_ITEM_TYPE, mCurrentItemType.toString());
+
         // Take note of which speech we're on
         bundle.putInt(key + BUNDLE_SUFFIX_INDEX, mCurrentSpeechIndex);
 
@@ -428,6 +455,16 @@ public class DebateManager {
      * @param bundle The Bundle from which to restore this information.
      */
     public void restoreState(String key, Bundle bundle) {
+
+        // Restore the current item type
+        String itemTypeValue = bundle.getString(key + BUNDLE_SUFFIX_ITEM_TYPE);
+        if (itemTypeValue == null)
+            Log.e(this.getClass().getSimpleName(), "No item type found");
+        else try {
+            mCurrentItemType = DebateManagerItem.toEnum(itemTypeValue);
+        } catch (IllegalArgumentException e) {
+            Log.e(this.getClass().getSimpleName(), "Invalid item type: " + itemTypeValue);
+        }
 
         // Restore the current speech
         mCurrentSpeechIndex = bundle.getInt(key + BUNDLE_SUFFIX_INDEX, 0);
