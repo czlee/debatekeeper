@@ -23,7 +23,9 @@ import android.content.res.TypedArray;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.NumberPicker;
+import android.widget.NumberPicker.OnValueChangeListener;
 
 import com.michaelnovakjr.numberpicker.R;
 
@@ -41,6 +43,7 @@ import com.michaelnovakjr.numberpicker.R;
 public class NumberPreference extends DialogPreference {
 
     private NumberPicker mPicker;
+    private Context mContext;
 
     private int minValue;
     private int maxValue;
@@ -48,6 +51,8 @@ public class NumberPreference extends DialogPreference {
 
     public NumberPreference(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+
+        mContext = context;
 
         if (attrs == null) return;
 
@@ -74,6 +79,17 @@ public class NumberPreference extends DialogPreference {
         mPicker.setMinValue(minValue);
         mPicker.setMaxValue(maxValue);
         mPicker.setValue(getValue());
+
+        final InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        mPicker.setOnValueChangedListener(new OnValueChangeListener() {
+            // This helps hide the keyboard when the user clicks the +/- buttons
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                imm.hideSoftInputFromWindow(picker.getWindowToken(), 0);
+            }
+        });
+
 
     }
 
