@@ -76,7 +76,11 @@ public class GlobalSettingsActivity extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.global_settings);
+        addPreferencesFromResource(R.xml.overtime_bell_number_settings);
+        addPreferencesFromResource(R.xml.general_settings);
+
+        // *************************************************************************************
+        // Set up key-to-parameter maps
 
         KEY_FIRST_OVERTIME_BELL        = getString(R.string.pref_firstOvertimeBell_key);
         KEY_OVERTIME_BELL_PERIOD       = getString(R.string.pref_overtimeBellPeriod_key);
@@ -119,6 +123,9 @@ public class GlobalSettingsActivity extends PreferenceActivity {
         updateListPreferenceSummary(KEY_FLASH_SCREEN_MODE);
         updateListPreferenceSummary(KEY_POI_FLASH_SCREEN_MODE);
         updateListPreferenceSummary(KEY_PREP_TIMER_COUNT_DIRECTION);
+
+        // *************************************************************************************
+        // Customise a few preferences
 
         // Set what the "Learn More" option in POIs timer category does
         getPreferenceManager().findPreference(KEY_POI_TIMER_LEARN_MORE)
