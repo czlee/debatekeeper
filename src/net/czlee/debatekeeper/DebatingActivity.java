@@ -418,7 +418,7 @@ public class DebatingActivity extends Activity {
     }
 
     //******************************************************************************************
-    // Public and protected methods
+    // Public methods
     //******************************************************************************************
 
     @Override
@@ -500,6 +500,10 @@ public class DebatingActivity extends Activity {
 
         return super.onPrepareOptionsMenu(menu);
     }
+
+    //******************************************************************************************
+    // Protected methods
+    //******************************************************************************************
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
