@@ -180,7 +180,7 @@ public class DebatingActivity extends Activity {
                 @Override
                 public void run() {
                     if (mBackgroundColourArea == BackgroundColourArea.WHOLE_SCREEN) {
-                        Log.v(this.getClass().getSimpleName(), "removing background colour on " + Thread.currentThread().toString());
+                        // Log.v(this.getClass().getSimpleName(), "removing background colour on " + Thread.currentThread().toString());
                         mDebateTimerDisplays[mCurrentDebateTimerDisplayIndex].setBackgroundColor(0);
                     }
                 }
