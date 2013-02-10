@@ -249,17 +249,11 @@ public class FormatChooserActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // We only show these buttons if there is an action bar.  In that case, we also
-        // hide the original OK/Cancel buttons.  In Gingerbread and earlier, we show
-        // dedicated OK/Cancel buttons.
+        // We only show these buttons if there is an action bar.  In Gingerbread and earlier,
+        // we show dedicated OK/Cancel buttons.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.format_chooser_action_bar, menu);
-
-            // Hide the original OK/Cancel buttons
-            findViewById(R.id.formatChooser_okButton).setVisibility(View.GONE);
-            findViewById(R.id.formatChooser_cancelButton).setVisibility(View.GONE);
-
             return true;
         }
         return super.onCreateOptionsMenu(menu);
@@ -298,10 +292,11 @@ public class FormatChooserActivity extends Activity {
         }
 
         // Set OnClickListeners
-        ((Button) findViewById(R.id.formatChooser_okButton))
-                .setOnClickListener(new OKButtonOnClickListener());
-        ((Button) findViewById(R.id.formatChooser_cancelButton))
-                .setOnClickListener(new CancelButtonOnClickListener());
+        // These buttons only exist in layouts for versions Gingerbread and older
+        Button okButton = (Button) findViewById(R.id.formatChooser_okButton);
+        if (okButton != null) okButton.setOnClickListener(new OKButtonOnClickListener());
+        Button cancelButton = (Button) findViewById(R.id.formatChooser_cancelButton);
+        if (cancelButton != null) cancelButton.setOnClickListener(new CancelButtonOnClickListener());
 
         // Populate mStylesList
         try {
