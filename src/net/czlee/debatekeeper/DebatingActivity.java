@@ -21,7 +21,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
+import net.czlee.debatekeeper.AlertManager.FlashScreenListener;
 import net.czlee.debatekeeper.AlertManager.FlashScreenMode;
 
 import org.xml.sax.SAXException;
@@ -80,6 +83,7 @@ public class DebatingActivity extends Activity {
     private RelativeLayout[] mDebateTimerDisplays;
     private int              mCurrentDebateTimerDisplayIndex = 0;
     private boolean          mIsEditingTime = false;
+    private final Semaphore  mFlashScreenSemaphore = new Semaphore(1, true);
     private final int        mNormalBackgroundColour = 0;
 
     private Button mLeftControlButton;
@@ -159,6 +163,15 @@ public class DebatingActivity extends Activity {
         }
 
         @Override
+        public boolean begin() {
+            try {
+                return mFlashScreenSemaphore.tryAcquire(2, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                return false; // Don't bother with the flash screen any more
+            }
+        }
+
+        @Override
         public void flashScreenOn(int colour) {
 
             // First, if the whole screen is coloured, remove the colouring.
@@ -166,12 +179,12 @@ public class DebatingActivity extends Activity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (mBackgroundColourArea == BackgroundColourArea.WHOLE_SCREEN)
+                    if (mBackgroundColourArea == BackgroundColourArea.WHOLE_SCREEN) {
+                        Log.v(this.getClass().getSimpleName(), "removing background colour on " + Thread.currentThread().toString());
                         mDebateTimerDisplays[mCurrentDebateTimerDisplayIndex].setBackgroundColor(0);
-
+                    }
                 }
             });
-
             flashScreen(colour);
         }
 
@@ -182,6 +195,7 @@ public class DebatingActivity extends Activity {
 
         @Override
         public void done() {
+            mFlashScreenSemaphore.release();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -1309,7 +1323,11 @@ public class DebatingActivity extends Activity {
                 periodDescriptionText.setBackgroundColor(backgroundColour);
                 break;
             case WHOLE_SCREEN:
-                v.setBackgroundColor(backgroundColour);
+                // Don't do the whole screen if there is a flash screen in progress
+                if (mFlashScreenSemaphore.tryAcquire()) {
+                    v.setBackgroundColor(backgroundColour);
+                    mFlashScreenSemaphore.release();
+                }
             }
 
             long currentSpeechTime = mDebateManager.getCurrentSpeechTime();

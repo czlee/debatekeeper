@@ -107,6 +107,56 @@ public class AlertManager
     //******************************************************************************************
     // Public classes
     //******************************************************************************************
+    /**
+     * A user of {@link AlertManager} wishing to use the "flash screen" functions of it must
+     * pass a class implementing this interface to <code>setFlashScreenListener()</code>.
+     * The class must do two things:
+     * <ol><li>Implement the graphics side of flashing the screen</li>
+     * <li>If necessary, implement a semaphore for shared access to the screen colour</li>
+     * </ol>
+     * @author Chuan-Zheng Lee
+     *
+     */
+    public interface FlashScreenListener {
+        /**
+         * This is called by {@link AlertManager} at the beginning of a screen-flash.  (In the
+         * case of a strobe flash, it is called just once before the first strobe.)  It should
+         * execute any preparation necessary before a screen-flash starts.  This will likely
+         * involve a semaphore, as {@link AlertManager} supports screen flashes in multiple
+         * situations, which are not guaranteed not to coincide.
+         *
+         * <p>If this method returns <code>false</code>, then {@link AlertManager} will not continue
+         * with the screen-flash.  If it returns <code>true</code>, then it will.  It is acceptable
+         * for this method to block until a semaphore permit becomes available.</p>
+         *
+         * @return <code>true</code> if the flash screen is allowed to continue, <code>false</code>
+         * if the flash screen is disallowed
+         */
+        public boolean begin();
+
+        /**
+         * This is called by {@link AlertManager} to turn on a screen-flash.  In strobe flashes,
+         * it is called once for each strobe (<i>i.e.</i> lots of times).
+         * @param colour the colour of the screen-flash
+         */
+
+        public void flashScreenOn(int colour);
+
+        /**
+         * This is called by {@link AlertManager} to turn off a screen flash.  In strobe flashes,
+         * it is called once for each strobe (<i>i.e.</i> lots of times).
+         */
+        public void flashScreenOff();
+
+        /**
+         * This is called by {@link AlertManager} at the end of a screen-flash.  (In the case of
+         * a strobe flash, it is called just once after all the strobes are completed.)  It should
+         * execute any clean-up necessary.  This will likely involve releasing a semaphore
+         * acquired in <code>begin()</code>.  It might also involve updating the parent GUI.
+         */
+        public void done();
+    }
+
     public enum FlashScreenMode {
 
         // These must match the values string array in the preference.xml file.
@@ -295,10 +345,12 @@ public class AlertManager
 
         switch (mPoiFlashScreenMode) {
         case SOLID_FLASH:
-            startSingleFlashScreen(MAX_BELL_SCREEN_FLASH_TIME, POI_FLASH_COLOUR);
+            if (mFlashScreenListener.begin())
+                startSingleFlashScreen(MAX_BELL_SCREEN_FLASH_TIME, POI_FLASH_COLOUR);
             break;
         case STROBE_FLASH:
-            startSingleStrobeFlashScreen(MAX_BELL_SCREEN_FLASH_TIME, POI_FLASH_COLOUR);
+            if (mFlashScreenListener.begin())
+                startSingleStrobeFlashScreen(MAX_BELL_SCREEN_FLASH_TIME, POI_FLASH_COLOUR);
             break;
         case OFF:
             // Do nothing
@@ -362,6 +414,11 @@ public class AlertManager
         final int   timesToPlay  = bsi.getTimesToPlay();
         if (timesToPlay == 0) return; // Do nothing if the number of bells is zero
 
+        // Try to acquire a semaphore; if we can't, return immediately and don't bother
+        // with the flash screen
+        if (!mFlashScreenListener.begin())
+            return;
+
         wakeUpScreenForBell(repeatPeriod * timesToPlay);
 
         /* Note: To avoid race conditions, we do NOT have a single TimerTask to toggle the
@@ -416,7 +473,7 @@ public class AlertManager
      * Flashes the screen once.
      * @param flashTime how long in milliseconds to flash the screen for
      * @param colour colour to flash screen
-     * @param lastFlash true if the GUI should be reset after this
+     * @param lastFlash <code>true</code> if the GUI should be reset after this
      */
     private void startSingleFlashScreen(long flashTime, final int colour, final boolean lastFlash) {
         if (mFlashScreenListener == null) return;
@@ -440,7 +497,7 @@ public class AlertManager
      * @param numberOfStrobes The number of strobes to do.
      */
     private void startSingleStrobeFlashScreen(long flashTime, final int colour) {
-        Timer     strobeTimer = new Timer();
+        Timer strobeTimer = new Timer();
 
         int numberOfStrobes = (int) (flashTime / STROBE_PERIOD);
         if (flashTime % STROBE_PERIOD > STROBE_PERIOD / 2) numberOfStrobes++;
