@@ -13,10 +13,10 @@
     <string name="pref_backgroundColourArea_key">backgroundColourArea</string>
     <string name="pref_keepScreenOn_key">keepScreenOn</string>
     <string name="pref_poiTimer_enable_key">poiTimerEnable</string>
-    <string name="pref_poiTimer_buzzerEnable_key">poiTimer_buzzerEnable</string>
-    <string name="pref_poiTimer_vibrateEnable_key">poiTimer_vibrateEnable</string>
-    <string name="pref_poiTimer_flashScreenMode_key">poiTimer_flashScreenMode</string>
-    <string name="pref_poiTimer_learnMore_key">poiTimer_learnMore</string>
+    <string name="pref_poiTimer_buzzerEnable_key">poiBuzzerEnable</string>
+    <string name="pref_poiTimer_vibrateEnable_key">poiVibrateEnable</string>
+    <string name="pref_poiTimer_flashScreenMode_key">poiFlashScreenMode</string>
+    <string name="pref_poiTimer_learnMore_key">poiLearnMore</string>
     <string name="pref_prepTimer_enable_key">prepTimerEnable</string>
     <string name="pref_prepTimer_countDirection_key">prepTimerCountDirection</string>
     <string name="pref_prepTimer_keepScreenOn_key">prepTimerKeepScreenOn</string>
