@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.NumberPicker;
@@ -72,7 +73,7 @@ public class NumberPreference extends DialogPreference {
     }
 
     @Override
-    protected void onBindDialogView(View view) {
+    protected void onBindDialogView(final View view) {
         super.onBindDialogView(view);
 
         mPicker = (NumberPicker) view.findViewById(R.id.numberPreference_picker);
@@ -80,16 +81,34 @@ public class NumberPreference extends DialogPreference {
         mPicker.setMaxValue(maxValue);
         mPicker.setValue(getValue());
 
+        // For some reason, the keyboard seems to show both (a) after the user presses the increment
+        // or decrement buttons, even if he leaves the EditText alone, and (b) after pressing
+        // "enter" in the EditText.  The purpose of this block of code is to counter-act that.
+        // It does this by moving the focus to a button that is invisible to the user, and then
+        // hiding the keyboard via InputMethodManager.
+        //
+        // It's really one big hack at the moment.  It kind of works most of the time, but sometimes
+        // glitches.  If there's a better way, we should use it instead.  For now, it's the best
+        // way I can find.  It's based on the answer marked "not recommended solution" here:
+        // http://stackoverflow.com/questions/10996880/numberpicker-in-alertdialog-always-activates-keyboard-how-to-disable-this
         final InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-
         mPicker.setOnValueChangedListener(new OnValueChangeListener() {
-            // This helps hide the keyboard when the user clicks the +/- buttons
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                imm.hideSoftInputFromWindow(picker.getWindowToken(), 0);
+                View invisibleButton = view.findViewById(R.id.numberPreference_invisibleButton);
+                boolean result = invisibleButton.requestFocusFromTouch();
+                if (!result) Log.d(this.getClass().getSimpleName(), "Couldn't pull focus to invisible button");
+                try {
+                    View focus = getDialog().getWindow().getCurrentFocus();
+                    if (focus != null)
+                        imm.hideSoftInputFromWindow(focus.getWindowToken(), 0);
+                    else
+                        Log.d(this.getClass().getSimpleName(), "Nothing had focus");
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
             }
         });
-
 
     }
 

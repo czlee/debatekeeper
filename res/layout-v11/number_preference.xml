@@ -10,4 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <Button
+        android:id="@+id/numberPreference_invisibleButton"
+        android:layout_width="0dip"
+        android:layout_height="0dip"
+        android:focusable="true" />
+    
 </LinearLayout>
