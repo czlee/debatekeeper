@@ -38,7 +38,7 @@
     <string name="pauseOnBellIndicator">" (pause)"</string>
     <string name="silentBellIndicator">" (silent)"</string>
     
-    <string name="mainScreen_toast_resetDebate">All speeches in debate reset</string>
+    <string name="mainScreen_toast_resetDebate">All timers in debate reset</string>
     <string name="mainScreen_noDebateLoaded_text">No debate loaded</string>
     <string name="mainScreen_noDebateLoaded_buttonText">Choose style</string>
     
@@ -53,21 +53,21 @@
     <!-- Dialogs -->
     <string name="fatalProblemWithXmlFileDialog_title">Oh no!</string>
     <string name="fatalProblemWithXmlFileDialog_button">Choose style</string>
-    <string name="fatalProblemWithXmlFileDialog_message_noSpeeches">"I can't work with this debate format XML file (%1$s) because there are no speeches in it."</string>
-    <string name="fatalProblemWithXmlFileDialog_message_cannotRead">"I've hit a problem opening this debate format XML file (%1$s)."</string>
-    <string name="fatalProblemWithXmlFileDialog_message_cannotFind">"I've hit a problem opening this debate format XML file (%1$s)."</string>
-    <string name="fatalProblemWithXmlFileDialog_message_badXml">"I can't work with this debate format XML file (%1$s) because the XML isn't well-formed. The XML error was:\n\n%2$s\n"</string>
+    <string name="fatalProblemWithXmlFileDialog_message_noSpeeches">"There are no speeches in this debate format (%1$s)."</string>
+    <string name="fatalProblemWithXmlFileDialog_message_cannotRead">"I've hit a problem opening this debate format file (%1$s)."</string>
+    <string name="fatalProblemWithXmlFileDialog_message_cannotFind">"I've hit a problem opening this debate format file (%1$s)."</string>
+    <string name="fatalProblemWithXmlFileDialog_message_badXml">"There's a problem with the XML in this debate format file (%1$s). The error was:\n\n%2$s\n"</string>
     <string name="fatalProblemWithXmlFileDialog_message_suffix">"\nPlease choose another style."</string>
     <string name="fatalProblemWithXmlFileDialog_noSchemaVersion_suffix">"\n\nNo schema version was specified; please ask the author of this XML file to specify one.\n"</string>
     <string name="fatalProblemWithXmlFileDialog_schemaTooNew_suffix">"\n\nThis schema version (%1$s) isn't supported.  You might need to update this app.\n"</string>
 
     <string name="errorsinXmlFileDialog_title">Warning</string>
     <string name="errorsinXmlFileDialog_button">OK</string>
-    <string name="errorsinXmlFileDialog_message_prefix">"There are a few problems with this debate format XML file. I'll try to work with it, but it probably won't work properly. The problems are:\n"</string>
+    <string name="errorsinXmlFileDialog_message_prefix">"There are a few problems with this debate format file. I'll try to work with it, but it probably won't work properly. The problems are:\n"</string>
 
 	<!-- POI timer -->
 	<string name="poiTimerInfoDialog_title">About the POI timer</string>
-	<string name="poiTimerInfoDialog_message">Pressing the <b>POI</b> button starts a 15-second countdown for POIs.\n\nIf you don\'t want to use it, you can hide it under <b>Settings &gt; Show POIs timer</b>.</string>
+	<string name="poiTimerInfoDialog_message">The <b>POI</b> button starts a 15-second countdown.\n\nIf you don\'t want to use it, you can hide it under <b>Settings &gt; Show POIs timer</b>.</string>
 	<string name="poiTimerInfoDialog_dontShow">Do not show this again</string>
 	<string name="poiTimerInfoDialog_button_learnMore">Learn more</string>
 	<string name="poiTimer_moreInfoUrl">http://tryingtoreason.wordpress.com/debatekeeper/points-of-information/</string>

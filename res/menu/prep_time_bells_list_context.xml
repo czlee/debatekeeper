@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/prepTimeBellsEditor_contextMenu_delete"
-        android:title="@string/prepTimeBellsEditor_contextMenu_delete">
-    </item>
-    <item
         android:id="@+id/prepTimeBellsEditor_contextMenu_edit"
         android:title="@string/prepTimeBellsEditor_contextMenu_edit">
+    </item>
+    <item
+        android:id="@+id/prepTimeBellsEditor_contextMenu_delete"
+        android:title="@string/prepTimeBellsEditor_contextMenu_delete">
     </item>
 
 </menu>

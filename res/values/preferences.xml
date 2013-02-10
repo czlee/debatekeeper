@@ -102,7 +102,7 @@
     <!-- Background colour -->
     <string name="pref_backgroundColourArea_title">Background colour area</string>
     <string-array name="pref_backgroundColourArea_summaries">
-        <item>Don\'t use colour to indicate periods within speeches</item>
+        <item>Leave background black for whole debate</item>
         <item>Colour top bar only to indicate periods within speeches</item>
         <item>Colour whole screen to indicate periods within speeches</item>
     </string-array>
