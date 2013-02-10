@@ -20,11 +20,14 @@ package net.czlee.debatekeeper;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
+import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.util.Log;
@@ -92,9 +95,31 @@ public class PrepTimeBellsEditActivity extends Activity {
     }
 
     //******************************************************************************************
+    // Public methods
+    //******************************************************************************************
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+        String title = getString(R.string.prepTimeBellsEditor_contextMenu_header,
+                mPtbm.getBellDescription(info.position));
+        menu.setHeaderTitle(title);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.prep_time_bells_list_context, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home)
+            finish();
+        return super.onOptionsItemSelected(item);
+    }
+
+    //******************************************************************************************
     // Protected methods
     //******************************************************************************************
 
+    @TargetApi(11)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -126,17 +151,12 @@ public class PrepTimeBellsEditActivity extends Activity {
             }
         });
 
-    }
+        // Set the action bar
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            ActionBar bar = getActionBar();
+            bar.setDisplayHomeAsUpEnabled(true);
+        }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-        String title = getString(R.string.prepTimeBellsEditor_contextMenu_header,
-                mPtbm.getBellDescription(info.position));
-        menu.setHeaderTitle(title);
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.prep_time_bells_list_context, menu);
     }
 
     @Override

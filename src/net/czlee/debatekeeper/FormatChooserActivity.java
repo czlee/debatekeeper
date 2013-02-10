@@ -28,15 +28,21 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
+import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Xml;
 import android.util.Xml.Encoding;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -204,19 +210,7 @@ public class FormatChooserActivity extends Activity {
     private class OKButtonOnClickListener implements OnClickListener {
         @Override
         public void onClick(View v) {
-            int selectedPosition = mStylesListView.getCheckedItemPosition();
-            if (selectedPosition == getIncomingSelection()) {
-                Toast.makeText(FormatChooserActivity.this,
-                        R.string.formatChooser_toast_formatUnchanged, Toast.LENGTH_SHORT)
-                        .show();
-                FormatChooserActivity.this.finish();
-            } else if (selectedPosition != ListView.INVALID_POSITION) {
-                returnSelectionByPosition(selectedPosition);
-            } else {
-                Toast.makeText(FormatChooserActivity.this, R.string.formatChooser_toast_noSelection,
-                        Toast.LENGTH_SHORT).show();
-                FormatChooserActivity.this.finish();
-            }
+            confirmSelectionAndReturn();
         }
     }
 
@@ -250,9 +244,45 @@ public class FormatChooserActivity extends Activity {
     }
 
     //******************************************************************************************
+    // Public methods
+    //******************************************************************************************
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // We only show these buttons if there is an action bar.  In that case, we also
+        // hide the original OK/Cancel buttons.  In Gingerbread and earlier, we show
+        // dedicated OK/Cancel buttons.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.format_chooser_action_bar, menu);
+
+            // Hide the original OK/Cancel buttons
+            findViewById(R.id.formatChooser_okButton).setVisibility(View.GONE);
+            findViewById(R.id.formatChooser_cancelButton).setVisibility(View.GONE);
+
+            return true;
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case android.R.id.home:
+        case R.id.formatChooser_actionBar_cancel:
+            finish();
+            break;
+        case R.id.formatChooser_actionBar_ok:
+            confirmSelectionAndReturn();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    //******************************************************************************************
     // Protected methods
     //******************************************************************************************
 
+    @TargetApi(11)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -260,6 +290,12 @@ public class FormatChooserActivity extends Activity {
         DEBATING_TIMER_URI = getString(R.string.xml_uri);
 
         mFilesManager = new FormatXmlFilesManager(this);
+
+        // Set the action bar
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            ActionBar bar = getActionBar();
+            bar.setDisplayHomeAsUpEnabled(true);
+        }
 
         // Set OnClickListeners
         ((Button) findViewById(R.id.formatChooser_okButton))
@@ -361,6 +397,25 @@ public class FormatChooserActivity extends Activity {
      */
     private void addStyleToList(String filename, String styleName) {
         mStylesList.add(new DebateFormatListEntry(filename, styleName));
+    }
+
+    /**
+     * Confirms and handles the selection appropriately, and ends the Activity.
+     */
+    private void confirmSelectionAndReturn() {
+        int selectedPosition = mStylesListView.getCheckedItemPosition();
+        if (selectedPosition == getIncomingSelection()) {
+            Toast.makeText(FormatChooserActivity.this,
+                    R.string.formatChooser_toast_formatUnchanged, Toast.LENGTH_SHORT)
+                    .show();
+            FormatChooserActivity.this.finish();
+        } else if (selectedPosition != ListView.INVALID_POSITION) {
+            returnSelectionByPosition(selectedPosition);
+        } else {
+            Toast.makeText(FormatChooserActivity.this, R.string.formatChooser_toast_noSelection,
+                    Toast.LENGTH_SHORT).show();
+            FormatChooserActivity.this.finish();
+        }
     }
 
     /**
