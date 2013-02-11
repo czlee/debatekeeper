@@ -138,7 +138,7 @@
 
     <string name="pref_prepTimer_keepScreenOn_onSummary">Keep screen on (dimmed) while prep timer is running</string>
     <string name="pref_prepTimer_keepScreenOn_offSummary">Apply normal screen timeout during prep time</string>
-    <bool   name="prefDefault_prepTimer_keepScreenOn">true</bool>
+    <bool   name="prefDefault_prepTimer_keepScreenOn">false</bool>
 
     <string name="pref_prepTimer_bells_title">Prep timer bells</string>
     <string name="pref_prepTimer_bells_summary">Edit bells used during preparation time</string>
