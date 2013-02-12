@@ -1,4 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2013 Chuan-Zheng Lee
+ *
+ * This file is part of the Debatekeeper app, which is licensed under the
+ * GNU General Public Licence version 3 (GPLv3).  You can redistribute
+ * and/or modify it under the terms of the GPLv3, and you must not use
+ * this file except in compliance with the GPLv3.
+ *
+ * This app is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public Licence for more details.
+ *
+ * You should have received a copy of the GNU General Public Licence
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -14,9 +31,11 @@
         android:id="@+id/addPrepTimeBellDialog_timePicker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-    
-    <!-- The text box is for percentage through prep time.
-    We use a text box, not a number picker, so that the user can enter decimals. -->
+
+    <!--
+    The text box is for percentage through prep time.
+    We use a text box, not a number picker, so that the user can enter decimals.
+    -->
 
     <EditText
         android:id="@+id/addPrepTimeBellDialog_editText"

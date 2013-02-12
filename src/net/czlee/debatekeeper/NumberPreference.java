@@ -1,18 +1,22 @@
 /*
  * Copyright (C) 2013 Chuan-Zheng Lee
+ * Copyright (C) 2010-2012 Mike Novak <michael.novakjr@gmail.com>
  *
- * This file is part of the Debatekeeper app, which is licensed under the
- * GNU General Public Licence version 3 (GPLv3).  You can redistribute
- * and/or modify it under the terms of the GPLv3, and you must not use
- * this file except in compliance with the GPLv3.
+ * Licensed under the Apache Licence, Version 2.0 (the "Licence");
+ * you may not use this file except in compliance with the Licence.
+ * You may obtain a copy of the Licence at
  *
- * This app is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public Licence for more details.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public Licence
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the Licence is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing permissions and
+ * limitations under the Licence.
+ *
+ * NOTE: THE GNU GENERAL PUBLIC LICENCE DOES NOT APPLY TO THIS FILE, BUT
+ * IT STILL APPLIES TO THE REST OF THE DEBATEKEEPER APP (except where
+ * noted). To this file, the Apache Licence applies instead.
  */
 
 package net.czlee.debatekeeper;
