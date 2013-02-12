@@ -47,7 +47,10 @@
     <string name="mainScreen_bellsList_nextOvertimeBell">"; next overtime bell at %1$s"</string>
     <string name="mainScreen_bellsList_noOvertimeBells">"; no overtime bells"</string>
 
-    <string name="timeInMinutes">%d minutes</string>
+    <plurals name="timeInMinutes">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
     <string name="speechLength">%s long</string>
     <string name="prepTimeLength">%s allowed</string>
     <string name="prepTimeControlledIndicator">", controlled"</string>

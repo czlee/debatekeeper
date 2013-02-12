@@ -1365,7 +1365,8 @@ public class DebatingActivity extends Activity {
             long length = currentSpeechFormat.getLength();
             String lengthStr;
             if (length % 60 == 0)
-                lengthStr = String.format(getString(R.string.timeInMinutes, length / 60));
+                lengthStr = String.format(getResources().
+                        getQuantityString(R.plurals.timeInMinutes, (int) (length / 60), length / 60));
             else
                 lengthStr = secsToText(length);
 
