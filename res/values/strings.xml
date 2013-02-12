@@ -59,6 +59,9 @@
     <string name="mainScreen_noDebateLoaded_buttonText">Choose style</string>
     
     <string name="prepTime_title">Preparation time</string>
+    
+    <string name="mainScreen_toast_editTextDiscardChangesInfo_limitedBelow">Press the back button to discard changes. (You can\'t set the time to an overtime value.)</string>
+    <string name="mainScreen_toast_editTextDiscardChangesInfo_limitedAbove">Press the back button to discard changes. (You can\'t set the time to greater than 23:59.)</string>
 
     <!-- Menu -->
     <string name="mainScreen_menuItem_resetDebate">Reset debate</string>

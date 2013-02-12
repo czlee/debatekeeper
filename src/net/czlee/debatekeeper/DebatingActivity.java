@@ -887,14 +887,24 @@ public class DebatingActivity extends Activity {
         currentTime = subtractFromSpeechLengthIfCountingDown(currentTime);
 
         // Limit to the allowable time range
-        if (currentTime < 0) currentTime = 0;
-        if (currentTime >= 24 * 60) currentTime = 24 * 60 - 1;
+        if (currentTime < 0) {
+            currentTime = 0;
+            Toast.makeText(this, R.string.mainScreen_toast_editTextDiscardChangesInfo_limitedBelow, Toast.LENGTH_LONG).show();
+        }
+        if (currentTime >= 24 * 60) {
+            currentTime = 24 * 60 - 1;
+            Toast.makeText(this, R.string.mainScreen_toast_editTextDiscardChangesInfo_limitedAbove, Toast.LENGTH_LONG).show();
+        }
 
         // We're using this in hours and minutes, not minutes and seconds
         currentTimePicker.setCurrentHour((int) (currentTime / 60));
         currentTimePicker.setCurrentMinute((int) (currentTime % 60));
 
         updateGui();
+
+        // If we had to limit the time, display a helpful/apologetic message informing the user
+        // of how to discard their changes, since they can't recover the time.
+
     }
 
     /**
