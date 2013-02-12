@@ -60,8 +60,8 @@
     
     <string name="prepTime_title">Preparation time</string>
     
-    <string name="mainScreen_toast_editTextDiscardChangesInfo_limitedBelow">Press the back button to discard changes. (You can\'t set the time to an overtime value.)</string>
-    <string name="mainScreen_toast_editTextDiscardChangesInfo_limitedAbove">Press the back button to discard changes. (You can\'t set the time to greater than 23:59.)</string>
+    <string name="mainScreen_toast_editTextDiscardChangesInfo_limitedBelow">To discard changes, press the back button. (You can\'t set the time to an overtime value.)</string>
+    <string name="mainScreen_toast_editTextDiscardChangesInfo_limitedAbove">To discard changes, press the back button. (You can\'t set the time to greater than 23:59.)</string>
 
     <!-- Menu -->
     <string name="mainScreen_menuItem_resetDebate">Reset debate</string>
