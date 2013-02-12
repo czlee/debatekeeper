@@ -4,7 +4,7 @@
     <item
         android:id="@+id/formatChooser_actionBar_ok"
         android:icon="@drawable/ic_action_confirm"
-        android:showAsAction="always" android:title="@android:string/ok">
+        android:showAsAction="always" android:title="@string/formatChooser_actionBar_confirmName">
     </item>
     <item
         android:id="@+id/formatChooser_actionBar_cancel"

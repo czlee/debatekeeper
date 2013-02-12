@@ -10,6 +10,8 @@
 
     <string name="formatChooser_toast_noSelection">No style selected</string>
     <string name="formatChooser_toast_formatUnchanged">Style not changed</string>
+    
+    <string name="formatChooser_actionBar_confirmName">Confirm</string>
 
     <string name="viewFormat_regionLabel">Region</string>
     <string name="viewFormat_levelLabel">Level</string>
