@@ -17,4 +17,14 @@
 -->
 <resources>
     <string name="time_picker_separator">:</string>
+    
+    <string name="time_picker_increment_minute_button">Increase minute</string>
+    <string name="time_picker_decrement_minute_button">Decrease minute</string>
+    <string name="time_picker_increment_second_button">Increase second</string>
+    <string name="time_picker_decrement_second_button">Decrease second</string>
+    
+    <declare-styleable name="MinutesSecondsPicker">
+        <!-- @hide The layout of the time picker. -->
+        <attr name="internalLayout" format="reference" />
+    </declare-styleable>
 </resources>

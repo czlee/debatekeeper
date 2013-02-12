@@ -19,20 +19,17 @@ package net.czlee.debatekeeper;
 import java.util.Calendar;
 import java.util.Locale;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
-import android.view.accessibility.AccessibilityNodeInfo;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
@@ -51,6 +48,7 @@ import android.widget.TextView;
  * guide.
  * </p>
  */
+@TargetApi(11)
 public class MinutesSecondsPicker extends FrameLayout {
 
     /**
@@ -90,6 +88,7 @@ public class MinutesSecondsPicker extends FrameLayout {
         }
 
         private static char getZeroDigit(Locale locale) {
+            // TODO get this right
             return '0';
         }
 
@@ -97,6 +96,10 @@ public class MinutesSecondsPicker extends FrameLayout {
             return new java.util.Formatter(mBuilder, locale);
         }
     }
+
+    private final TwoDigitFormatter mTwoDigitFormatter = new TwoDigitFormatter();
+
+    private final Context mContext;
 
     private static final boolean DEFAULT_ENABLED_STATE = true;
 
@@ -115,9 +118,9 @@ public class MinutesSecondsPicker extends FrameLayout {
 
     private final NumberPicker mMinuteSpinner;
 
-    private final EditText mHourSpinnerInput;
+    // private final EditText mHourSpinnerInput;
 
-    private final EditText mMinuteSpinnerInput;
+    // private final EditText mMinuteSpinnerInput;
 
     private final TextView mDivider;
 
@@ -148,20 +151,22 @@ public class MinutesSecondsPicker extends FrameLayout {
     }
 
     public MinutesSecondsPicker(Context context, AttributeSet attrs) {
-        this(context, attrs, R.attr.timePickerStyle);
+        this(context, attrs, 0);
     }
 
     public MinutesSecondsPicker(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+
+        mContext = context;
 
         // initialization based on locale
         setCurrentLocale(Locale.getDefault());
 
         // process style attributes
         TypedArray attributesArray = context.obtainStyledAttributes(
-                attrs, R.styleable.TimePicker, defStyle, 0);
+                attrs, R.styleable.MinutesSecondsPicker, defStyle, 0);
         int layoutResourceId = attributesArray.getResourceId(
-                R.styleable.TimePicker_internalLayout, R.layout.time_picker);
+                R.styleable.MinutesSecondsPicker_internalLayout, R.layout.minutes_seconds_picker);
         attributesArray.recycle();
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(
@@ -177,8 +182,8 @@ public class MinutesSecondsPicker extends FrameLayout {
                 onTimeChanged();
             }
         });
-        mHourSpinnerInput = (EditText) mHourSpinner.findViewById(android.R.id.numberpicker_input);
-        mHourSpinnerInput.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+        // mHourSpinnerInput = (EditText) mHourSpinner.findViewById(android.R.id.numberpicker_input);
+        // mHourSpinnerInput.setImeOptions(EditorInfo.IME_ACTION_NEXT);
 
         // divider (only for the new widget style)
         mDivider = (TextView) findViewById(R.id.divider);
@@ -191,7 +196,7 @@ public class MinutesSecondsPicker extends FrameLayout {
         mMinuteSpinner.setMinValue(0);
         mMinuteSpinner.setMaxValue(59);
         mMinuteSpinner.setOnLongPressUpdateInterval(100);
-        mMinuteSpinner.setFormatter(NumberPicker.getTwoDigitFormatter());
+        mMinuteSpinner.setFormatter(mTwoDigitFormatter);
         mMinuteSpinner.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker spinner, int oldVal, int newVal) {
@@ -208,8 +213,8 @@ public class MinutesSecondsPicker extends FrameLayout {
                 onTimeChanged();
             }
         });
-        mMinuteSpinnerInput = (EditText) mMinuteSpinner.findViewById(R.id.numberpicker_input);
-        mMinuteSpinnerInput.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+        // mMinuteSpinnerInput = (EditText) mMinuteSpinner.findViewById(R.id.numberpicker_input);
+        // mMinuteSpinnerInput.setImeOptions(EditorInfo.IME_ACTION_NEXT);
 
         // update controls to initial state
         updateHourControl();
@@ -302,7 +307,7 @@ public class MinutesSecondsPicker extends FrameLayout {
             dest.writeInt(mMinute);
         }
 
-        @SuppressWarnings({"unused", "hiding"})
+        @SuppressWarnings({"unused"})
         public static final Parcelable.Creator<SavedState> CREATOR = new Creator<SavedState>() {
             @Override
             public SavedState createFromParcel(Parcel in) {
@@ -382,41 +387,10 @@ public class MinutesSecondsPicker extends FrameLayout {
         return mHourSpinner.getBaseline();
     }
 
-    @Override
-    public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
-        onPopulateAccessibilityEvent(event);
-        return true;
-    }
-
-    @Override
-    public void onPopulateAccessibilityEvent(AccessibilityEvent event) {
-        super.onPopulateAccessibilityEvent(event);
-
-        int flags = DateUtils.FORMAT_SHOW_TIME;
-        flags |= DateUtils.FORMAT_24HOUR;
-        mTempCalendar.set(Calendar.HOUR_OF_DAY, getCurrentHour());
-        mTempCalendar.set(Calendar.MINUTE, getCurrentMinute());
-        String selectedDateUtterance = DateUtils.formatDateTime(mContext,
-                mTempCalendar.getTimeInMillis(), flags);
-        event.getText().add(selectedDateUtterance);
-    }
-
-    @Override
-    public void onInitializeAccessibilityEvent(AccessibilityEvent event) {
-        super.onInitializeAccessibilityEvent(event);
-        event.setClassName(MinutesSecondsPicker.class.getName());
-    }
-
-    @Override
-    public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
-        super.onInitializeAccessibilityNodeInfo(info);
-        info.setClassName(MinutesSecondsPicker.class.getName());
-    }
-
     private void updateHourControl() {
         mHourSpinner.setMinValue(0);
-        mHourSpinner.setMaxValue(23);
-        mHourSpinner.setFormatter(NumberPicker.getTwoDigitFormatter());
+        mHourSpinner.setMaxValue(99);
+        mHourSpinner.setFormatter(mTwoDigitFormatter);
     }
 
     private void onTimeChanged() {
@@ -429,14 +403,14 @@ public class MinutesSecondsPicker extends FrameLayout {
     private void setContentDescriptions() {
         // Minute
         trySetContentDescription(mMinuteSpinner, R.id.increment,
-                R.string.time_picker_increment_minute_button);
+                R.string.time_picker_increment_second_button);
         trySetContentDescription(mMinuteSpinner, R.id.decrement,
-                R.string.time_picker_decrement_minute_button);
+                R.string.time_picker_decrement_second_button);
         // Hour
         trySetContentDescription(mHourSpinner, R.id.increment,
-                R.string.time_picker_increment_hour_button);
+                R.string.time_picker_increment_minute_button);
         trySetContentDescription(mHourSpinner, R.id.decrement,
-                R.string.time_picker_decrement_hour_button);
+                R.string.time_picker_decrement_minute_button);
     }
 
     private void trySetContentDescription(View root, int viewId, int contDescResId) {
@@ -452,15 +426,15 @@ public class MinutesSecondsPicker extends FrameLayout {
         // changed the value via the IME and there is a next input the IME will
         // be shown, otherwise the user chose another means of changing the
         // value and having the IME up makes no sense.
-        InputMethodManager inputMethodManager = InputMethodManager.peekInstance();
+        InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (inputMethodManager != null) {
-            if (inputMethodManager.isActive(mHourSpinnerInput)) {
+/*            if (inputMethodManager.isActive(mHourSpinnerInput)) {
                 mHourSpinnerInput.clearFocus();
                 inputMethodManager.hideSoftInputFromWindow(getWindowToken(), 0);
             } else if (inputMethodManager.isActive(mMinuteSpinnerInput)) {
                 mMinuteSpinnerInput.clearFocus();
                 inputMethodManager.hideSoftInputFromWindow(getWindowToken(), 0);
-            }
+            }*/
         }
     }
 }
