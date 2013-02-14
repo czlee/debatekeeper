@@ -549,7 +549,7 @@ public class PrepTimeBellsManager {
             // If the file was empty, then load the default: a single bell at the end.
             PrepTimeBellFromFinish bell = new PrepTimeBellFromFinish(0);
             mBellSpecs.add(bell);
-            Log.w(this.getClass().getSimpleName(), "No file found, loaded default");
+            Log.i(this.getClass().getSimpleName(), "No file found, loaded default");
             return;
         }
 

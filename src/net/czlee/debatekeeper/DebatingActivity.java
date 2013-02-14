@@ -789,7 +789,7 @@ public class DebatingActivity extends Activity {
             mDebateManager.setPrepTimeEnabled(prepTimerEnabled);
             applyPrepTimeBells();
         } else {
-            Log.w(this.getClass().getSimpleName(), "applyPreferences: Couldn't restore overtime bells, mDebateManager doesn't yet exist");
+            Log.i(this.getClass().getSimpleName(), "applyPreferences: Couldn't restore overtime bells, mDebateManager doesn't yet exist");
         }
 
         if (mBinder != null) {
@@ -810,7 +810,7 @@ public class DebatingActivity extends Activity {
 
             Log.v(this.getClass().getSimpleName(), "applyPreferences: successfully applied");
         } else {
-            Log.w(this.getClass().getSimpleName(), "applyPreferences: Couldn't restore AlertManager preferences; mBinder doesn't yet exist");
+            Log.i(this.getClass().getSimpleName(), "applyPreferences: Couldn't restore AlertManager preferences; mBinder doesn't yet exist");
         }
 
     }
