@@ -22,7 +22,8 @@
     <TextView
         android:id="@+id/text1"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        style="@style/ViewFormat_WrapText" />
 
     <TextView
         android:id="@+id/text2"
