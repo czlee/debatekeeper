@@ -20,13 +20,15 @@ You can install the app on the Google Play Store:
 Licence
 -------
 This app (and all source code, with exceptions noted below) is licensed under
-the GNU General Public License version 3.  You can find a copy of this licence
+the GNU General Public Licence version 3.  You can find a copy of this licence
 in the "license.txt" file, or go to http://www.gnu.org/licenses/gpl-3.0.html.
 
 This app makes use of Mike Novak's
 [NumberPicker for Android](https://github.com/mrn/numberpicker) library.
-The NumberPicker library is licensed under the Apache 2.0 License (not
-the GPLv3).
+The NumberPicker library is licensed under the Apache 2.0 Licence (not
+the GPLv3).  A handful of related files that I've written, but put in the
+main repository, are also licensed under the Apache 2.0 Licence; those exceptions
+are noted in the files in question.
 
 The other exclusion in this repository is the bell sound.  I bought the bell
 sound from [SFXsource](http://www.sfxsource.com/), so I can't make it freely
@@ -78,7 +80,7 @@ of positions, _etc._) at the contact details below and I'll write
 the XML file and add it to the repository.
 
 I've written a page on [how to write a debate format XML file](http://tryingtoreason.wordpress.com/debatekeeper/writing-your-own-debate-format-xml-file/).
-But it is probably easiest in the first instance to look in the **assets**
+But it is probably easiest in the first instance to look in the **assets/formats**
 directory for the XML files there, and follow those.
 
 This app doesn't (yet) do the public forum, Lincoln-Douglas or policy
