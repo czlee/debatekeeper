@@ -111,11 +111,6 @@ public class DebateFormatEntryArrayAdapter extends
         titleView.setText(this.getItem(position).getStyleName());
         titleView.setChecked(selected);
 
-        // Workaround for text wrapping issues on some phones
-        // NOTE: These values should match the style "ViewFormat_WrapText" in format_chooser.xml.
-        titleView.setHorizontallyScrolling(false);
-        titleView.setMaxLines(8);
-
         return view;
     }
 
