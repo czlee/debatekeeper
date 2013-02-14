@@ -32,7 +32,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.NumberPicker;
 import android.widget.NumberPicker.OnValueChangeListener;
 
-import com.michaelnovakjr.numberpicker.R;
+import net.czlee.debatekeeper.R;
 
 /**
  * NumberPreference implements a preference using a number picker.
