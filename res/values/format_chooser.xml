@@ -58,7 +58,9 @@
 
     <style name="ViewFormat_WrapText">
         <!-- On some phones, it doesn't seem to wrap text automatically. This style is
-        a workaround for those phones, to force certain TextViews to wrap text. -->
+        a workaround for those phones, to force certain TextViews to wrap text.
+        NOTE: See also DebateFormatEntryArrayAdapter.java lines 115-116 - the
+        CheckedTextView in the styles list is wrapped using executable code. -->
         <item name="android:maxLines">8</item> <!-- We really want this to be unlimited, but it seems to restrict to 1 on some phones if you omit this item. Eight should be enough. -->
         <item name="android:scrollHorizontally">false</item>
     </style>
