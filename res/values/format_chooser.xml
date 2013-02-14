@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public Licence
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources>
 
     <string name="ioErrorDialog_title">Oh no!</string>
     <string name="ioErrorDialog_message">I couldn\'t find the debate style files.</string>
@@ -56,13 +56,6 @@
     <string name="viewFormat_speechTypeDescription">"<i>%1$s</i>: %2$s"</string>
     <string name="viewFormat_speechDescription">"%1$s (<i>%2$s</i>)"</string>
 
-    <style name="ViewFormat_WrapText">
-        <!-- On some phones, it doesn't seem to wrap text automatically. This style is
-        a workaround for those phones, to force certain TextViews to wrap text. -->
-        <item name="android:maxLines">8</item> <!-- We really want this to be unlimited, but it seems to restrict to 1 on some phones if you omit this item. Eight should be enough. -->
-        <item name="android:scrollHorizontally">false</item>
-    </style>
-    
     <style name="ViewFormat_TableLabel">
         <item name="android:paddingLeft">7dip</item>
         <item name="android:layout_width">100dip</item>
@@ -70,7 +63,7 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="ViewFormat_TableValue" parent="@style/ViewFormat_WrapText">
+    <style name="ViewFormat_TableValue">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:text">-</item>
