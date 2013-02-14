@@ -44,7 +44,6 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -888,36 +887,13 @@ public class DebatingActivity extends Activity {
         currentTime = subtractFromSpeechLengthIfCountingDown(currentTime);
 
         // Limit to the allowable time range
-        int toastTextResId = -1;
         if (currentTime < 0) {
             currentTime = 0;
-            toastTextResId = R.string.mainScreen_toast_editTextDiscardChangesInfo_limitedBelow;
+            Toast.makeText(this, R.string.mainScreen_toast_editTextDiscardChangesInfo_limitedBelow, Toast.LENGTH_LONG).show();
         }
         if (currentTime >= 24 * 60) {
             currentTime = 24 * 60 - 1;
-            toastTextResId = R.string.mainScreen_toast_editTextDiscardChangesInfo_limitedAbove;
-       }
-        if (toastTextResId != -1) {
-            Toast toast = Toast.makeText(this, toastTextResId, Toast.LENGTH_LONG);
-
-            // This is a workaround for Froyo/Gingerbread where the Toast doesn't wrap text
-            // properly (it just keeps it on one line).
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-                View view = toast.getView();
-                try {
-                    TextView text = (TextView) view.findViewById(android.R.id.message);
-                    if (text != null) {
-                        text.setHorizontallyScrolling(false);
-                        text.setMaxLines(8);
-                    } else {
-                        Log.w(this.getClass().getSimpleName(), "Couldn't make Toast wrap text (null)");
-                    }
-                } catch (ClassCastException e) {
-                    Log.w(this.getClass().getSimpleName(), "Couldn't make Toast wrap text (class)");
-                }
-            } // workaround ends here
-
-            toast.show();
+            Toast.makeText(this, R.string.mainScreen_toast_editTextDiscardChangesInfo_limitedAbove, Toast.LENGTH_LONG).show();
         }
 
         // We're using this in hours and minutes, not minutes and seconds
