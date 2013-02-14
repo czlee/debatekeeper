@@ -24,8 +24,10 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:gravity="center_horizontal"
+        android:gravity="top|center_horizontal"
+        android:maxLines="2"
         android:paddingTop="4dip"
+        android:scrollHorizontally="false"
         android:textSize="20dip" />
 
     <TextView
@@ -33,7 +35,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/debateTimer_speechNameText"
-        android:gravity="center_horizontal"
+        android:gravity="top|center_horizontal"
         android:textSize="14dip" />
 
     <TextView
@@ -50,7 +52,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="4dip"
-        android:gravity="center_horizontal" />
+        android:gravity="bottom|center_horizontal"
+        android:maxLines="5"
+        android:scrollHorizontally="false" />
 
     <TimePicker
         android:id="@+id/debateTimer_currentTimePicker"
