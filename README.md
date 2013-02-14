@@ -19,7 +19,7 @@ You can install the app on the Google Play Store:
 
 Licence
 -------
-This app (and all source code, with exceptions noted below) is licensed under 
+This app (and all source code, with exceptions noted below) is licensed under
 the GNU General Public License version 3.  You can find a copy of this licence
 in the "license.txt" file, or go to http://www.gnu.org/licenses/gpl-3.0.html.
 
@@ -46,9 +46,9 @@ repository is checked out on your computer).
 
 	If you're using Eclipse with ADT, you'll then need to open the project in
 	**../numberpicker/lib** (so you	now have two new projects in your workspace).
-	Then add that library as an *Android Classpath Container* to the Java Build 
-	Path (via *Add Library…*) in the Debatekeeper project's properties.
-	
+	Then add that library as an *Android Classpath Container* to the Java Build
+	Path (via *Add Library&hellip;*) in the Debatekeeper project's properties.
+
 	If you're using another environment, I can't help you,
 	sorry.  I spent ages trying to figure out how to include this library, so
 	if you have a better way, I'm really keen to hear from you.
