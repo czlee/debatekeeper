@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center"
-        android:textSize="72dip" />
+        android:textSize="@dimen/currentTime_textSize" />
 
     <TextView
         android:id="@+id/debateTimer_informationLine"
