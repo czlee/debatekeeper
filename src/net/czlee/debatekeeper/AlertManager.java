@@ -29,6 +29,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.PowerManager;
 import android.os.Vibrator;
+import android.support.v4.app.NotificationCompat;
 
 /**
  * AlertManager manages all alerts for the Debatekeeper application.
@@ -218,16 +219,16 @@ public class AlertManager
     public void makeActive(String speechName) {
 
         if(!mShowingNotification) {
-            mNotification = new Notification(R.drawable.ic_stat_name,
-                    mService.getText(R.string.notification_tickerText),
-                    System.currentTimeMillis());
 
-            mNotification.setLatestEventInfo(mService,
-                    mService.getText(R.string.notification_title), speechName,
-                    mIntentStartingHostActivity);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(mService);
+            builder.setSmallIcon(R.drawable.ic_stat_name)
+                   .setTicker(mService.getText(R.string.notification_tickerText))
+                   .setContentTitle(mService.getText(R.string.notification_title))
+                   .setContentText(speechName)
+                   .setContentIntent(mIntentStartingHostActivity);
 
+            mNotification = builder.build();
             mService.startForeground(NOTIFICATION_ID, mNotification);
-
             mShowingNotification = true;
         }
 
