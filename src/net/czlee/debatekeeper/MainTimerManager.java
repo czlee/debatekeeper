@@ -341,7 +341,7 @@ public class MainTimerManager extends DebateElementManager {
         if (bi.isPauseOnBell())
             pause();
         mCurrentPeriodInfo.update(bi.getNextPeriodInfo());
-        mAlertManager.triggerAlert(bi, mCurrentPeriodInfo);
+        mAlertManager.triggerAlert(bi.getBellSoundInfo());
     }
 
     /**

@@ -222,7 +222,10 @@ public class AlertManager
                     mService.getText(R.string.notification_tickerText),
                     System.currentTimeMillis());
 
-            updateNotification(speechName);
+            mNotification.setLatestEventInfo(mService,
+                    mService.getText(R.string.notification_title), speechName,
+                    mIntentStartingHostActivity);
+
             mService.startForeground(NOTIFICATION_ID, mNotification);
 
             mShowingNotification = true;
@@ -324,14 +327,10 @@ public class AlertManager
      * @param bi the {@link BellInfo} to use to play the bell
      * @param pi the {@link PeriodInfo} to use in the notification
      */
-    public void triggerAlert(BellInfo bi, PeriodInfo pi) {
-        updateNotification(pi.getDescription());
+    public void triggerAlert(BellSoundInfo bsi) {
         if(mShowingNotification) {
-
             mNotificationManager.notify(NOTIFICATION_ID, mNotification);
-
-            playBell(bi.getBellSoundInfo());
-
+            playBell(bsi);
         }
     }
 
@@ -396,13 +395,6 @@ public class AlertManager
         // it.  Turning this off makes it okay to acquire or release multiple times.
         mWakeLock.setReferenceCounted(false);
     }
-
-    private void updateNotification(String notificationText) {
-            mNotification.setLatestEventInfo(mService,
-                    mService.getText(R.string.notification_title),
-                    notificationText, mIntentStartingHostActivity);
-    }
-
 
     /**
      * Flashes the screen according to the specifications of a bell.
