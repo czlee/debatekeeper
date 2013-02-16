@@ -65,7 +65,7 @@ public class DebatingTimerService extends Service
 
         public DebateManager createDebateManager(DebateFormat df) {
             releaseDebateManager();
-            mDebateManager = new DebateManager(df, mAlertManager);
+            mDebateManager = new DebateManager(DebatingTimerService.this, df, mAlertManager);
             mDebateManager.setBroadcastSender(new GuiUpdateBroadcastSender());
             return mDebateManager;
         }
@@ -78,7 +78,7 @@ public class DebatingTimerService extends Service
     }
 
     /**
-     * This class is passed to the <code>SpeechManager</code> (indirectly) as a means to trigger a
+     * This class is passed to the <code>MainTimerManager</code> (indirectly) as a means to trigger a
      * GUI update in the <code>DebatingActivity</code>.
      */
     public class GuiUpdateBroadcastSender {

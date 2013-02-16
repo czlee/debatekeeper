@@ -21,9 +21,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
+import net.czlee.debatekeeper.AlertManager.FlashScreenListener;
 import net.czlee.debatekeeper.AlertManager.FlashScreenMode;
-import net.czlee.debatekeeper.SpeechFormat.CountDirection;
 
 import org.xml.sax.SAXException;
 
@@ -77,29 +79,35 @@ import android.widget.ViewFlipper;
  */
 public class DebatingActivity extends Activity {
 
-    private ViewFlipper mDebateTimerViewFlipper;
+    private ViewFlipper      mDebateTimerViewFlipper;
     private RelativeLayout[] mDebateTimerDisplays;
-    private int mCurrentDebateTimerDisplayIndex = 0;
-    private boolean mIsEditingTime = false;
+    private int              mCurrentDebateTimerDisplayIndex = 0;
+    private boolean          mIsEditingTime = false;
+    private final Semaphore  mFlashScreenSemaphore = new Semaphore(1, true);
+    private final int        mNormalBackgroundColour = 0;
 
     private Button mLeftControlButton;
     private Button mCentreControlButton;
     private Button mRightControlButton;
     private Button mPlayBellButton;
 
-    private DebateManager mDebateManager;
-    private Bundle mLastStateBundle;
+    private DebateManager         mDebateManager;
+    private Bundle                mLastStateBundle;
     private FormatXmlFilesManager mFilesManager;
 
-    private String mFormatXmlFileName = null;
-    private UserPreferenceCountDirection mUserCountDirection = UserPreferenceCountDirection.GENERALLY_UP;
-    private boolean mPoiTimerEnabled = true;
+    private String               mFormatXmlFileName      = null;
+    private CountDirection       mCountDirection         = CountDirection.COUNT_UP;
+    private CountDirection       mPrepTimeCountDirection = CountDirection.COUNT_DOWN;
+    private BackgroundColourArea mBackgroundColourArea   = BackgroundColourArea.WHOLE_SCREEN;
+    private boolean              mPoiTimerEnabled        = true;
+    private boolean              mKeepScreenOn;
+    private boolean              mPrepTimeKeepScreenOn;
 
-    private static final String BUNDLE_SUFFIX_DEBATE_MANAGER = "dm";
-    private static final String PREFERENCE_XML_FILE_NAME     = "xmlfn";
-    private static final String DO_NOT_SHOW_POI_TIMER_DIALOG = "dnspoi";
-    private static final String DIALOG_BUNDLE_FATAL_MESSAGE  = "fm";
-    private static final String DIALOG_BUNDLE_XML_ERROR_LOG  = "xel";
+    private static final String BUNDLE_SUFFIX_DEBATE_MANAGER     = "dm";
+    private static final String PREFERENCE_XML_FILE_NAME         = "xmlfn";
+    private static final String DO_NOT_SHOW_POI_TIMER_DIALOG     = "dnspoi";
+    private static final String DIALOG_BUNDLE_FATAL_MESSAGE      = "fm";
+    private static final String DIALOG_BUNDLE_XML_ERROR_LOG      = "xel";
 
     private static final int    CHOOSE_STYLE_REQUEST   = 0;
     private static final int    DIALOG_XML_FILE_FATAL  = 0;
@@ -144,27 +152,50 @@ public class DebatingActivity extends Activity {
     }
 
     private class DebatingTimerFlashScreenListener implements FlashScreenListener {
+
         private void flashScreen(final int colour) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    findViewById(R.id.debateActivityRootView).setBackgroundColor(colour);
+                    findViewById(R.id.mainScreen_rootView).setBackgroundColor(colour);
                 }
             });
         }
 
         @Override
+        public boolean begin() {
+            try {
+                return mFlashScreenSemaphore.tryAcquire(2, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                return false; // Don't bother with the flash screen any more
+            }
+        }
+
+        @Override
         public void flashScreenOn(int colour) {
+
+            // First, if the whole screen is coloured, remove the colouring.
+            // It will be restored by updateGui() in done().
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mBackgroundColourArea == BackgroundColourArea.WHOLE_SCREEN) {
+                        // Log.v(this.getClass().getSimpleName(), "removing background colour on " + Thread.currentThread().toString());
+                        mDebateTimerDisplays[mCurrentDebateTimerDisplayIndex].setBackgroundColor(0);
+                    }
+                }
+            });
             flashScreen(colour);
         }
 
         @Override
         public void flashScreenOff() {
-            flashScreen(0x00000000);
+            flashScreen(mNormalBackgroundColour);
         }
 
         @Override
         public void done() {
+            mFlashScreenSemaphore.release();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -339,28 +370,45 @@ public class DebatingActivity extends Activity {
         }
     }
 
-    private enum OverallCountDirection {
-        COUNT_UP, COUNT_DOWN
+    private enum BackgroundColourArea {
+        // These must match the values string array in the preference.xml file.
+        // (We can pull strings from the resource automatically,
+        // but we can't assign them to enums automatically.)
+        DISABLED     ("disabled"),
+        TOP_BAR_ONLY ("topBarOnly"),
+        WHOLE_SCREEN ("wholeScreen");
+
+        private final String key;
+
+        private BackgroundColourArea(String key) {
+            this.key = key;
+        }
+
+        public static BackgroundColourArea toEnum(String key) {
+            BackgroundColourArea[] values = BackgroundColourArea.values();
+            for (int i = 0; i < values.length; i++)
+                if (key.equals(values[i].key))
+                    return values[i];
+            throw new IllegalArgumentException(String.format("There is no enumerated constant '%s'", key));
+        }
     }
 
-    private enum UserPreferenceCountDirection {
+    private enum CountDirection {
 
         // These must match the values string array in the preference.xml file.
         // (We can pull strings from the resource automatically,
         // but we can't assign them to enums automatically.)
-        ALWAYS_UP      ("alwaysUp"),
-        GENERALLY_UP   ("generallyUp"),
-        GENERALLY_DOWN ("generallyDown"),
-        ALWAYS_DOWN    ("alwaysDown");
+        COUNT_UP   ("alwaysUp"),
+        COUNT_DOWN ("alwaysDown");
 
         private final String key;
 
-        private UserPreferenceCountDirection(String key) {
+        private CountDirection(String key) {
             this.key = key;
         }
 
-        public static UserPreferenceCountDirection toEnum(String key) {
-            UserPreferenceCountDirection[] values = UserPreferenceCountDirection.values();
+        public static CountDirection toEnum(String key) {
+            CountDirection[] values = CountDirection.values();
             for (int i = 0; i < values.length; i++)
                 if (key.equals(values[i].key))
                     return values[i];
@@ -370,7 +418,7 @@ public class DebatingActivity extends Activity {
     }
 
     //******************************************************************************************
-    // Public and protected methods
+    // Public methods
     //******************************************************************************************
 
     @Override
@@ -391,7 +439,7 @@ public class DebatingActivity extends Activity {
         // If the timer is stopped AND it's not the first speaker, go back one speaker.
         // Note: We do not just leave this check to goToPreviousSpeaker(), because we want to do
         // other things if it's not in a state in which it could go to the previous speaker.
-        if (!mDebateManager.isFirstSpeech() && !mDebateManager.isRunning()) {
+        if (!mDebateManager.isFirstItem() && !mDebateManager.isRunning()) {
             goToPreviousSpeech();
             return;
 
@@ -415,20 +463,20 @@ public class DebatingActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         editCurrentTimeFinish(false);
         switch (item.getItemId()) {
-        case R.id.prevSpeaker:
+        case R.id.mainScreen_menuItem_prevSpeaker:
             goToPreviousSpeech();
             return true;
-        case R.id.chooseFormat:
+        case R.id.mainScreen_menuItem_chooseFormat:
             Intent getStyleIntent = new Intent(this, FormatChooserActivity.class);
             getStyleIntent.putExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME, mFormatXmlFileName);
             startActivityForResult(getStyleIntent, CHOOSE_STYLE_REQUEST);
             return true;
-        case R.id.resetDebate:
+        case R.id.mainScreen_menuItem_resetDebate:
             if (mDebateManager == null) return true;
             resetDebate();
             updateGui();
             return true;
-        case R.id.settings:
+        case R.id.mainScreen_menuItem_settings:
             startActivity(new Intent(this, GlobalSettingsActivity.class));
             return true;
         default:
@@ -439,11 +487,11 @@ public class DebatingActivity extends Activity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
 
-        MenuItem prevSpeakerItem = menu.findItem(R.id.prevSpeaker);
-        MenuItem resetDebateItem = menu.findItem(R.id.resetDebate);
+        MenuItem prevSpeakerItem = menu.findItem(R.id.mainScreen_menuItem_prevSpeaker);
+        MenuItem resetDebateItem = menu.findItem(R.id.mainScreen_menuItem_resetDebate);
 
         if (mDebateManager != null) {
-            prevSpeakerItem.setEnabled(!mDebateManager.isFirstSpeech() && !mDebateManager.isRunning() && !mIsEditingTime);
+            prevSpeakerItem.setEnabled(!mDebateManager.isFirstItem() && !mDebateManager.isRunning() && !mIsEditingTime);
             resetDebateItem.setEnabled(true);
         } else {
             prevSpeakerItem.setEnabled(false);
@@ -452,6 +500,10 @@ public class DebatingActivity extends Activity {
 
         return super.onPrepareOptionsMenu(menu);
     }
+
+    //******************************************************************************************
+    // Protected methods
+    //******************************************************************************************
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -472,7 +524,7 @@ public class DebatingActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.debate_activity);
+        setContentView(R.layout.activity_debate);
 
         mFilesManager = new FormatXmlFilesManager(this);
 
@@ -482,16 +534,16 @@ public class DebatingActivity extends Activity {
         mDebateTimerDisplays[1]    = (RelativeLayout) findViewById(R.id.debateTimerDisplay1);
 
         for (int i = 0; i < mDebateTimerDisplays.length; i++) {
-            TimePicker currentTimePicker = (TimePicker) mDebateTimerDisplays[i].findViewById(R.id.currentTimePicker);
+            TimePicker currentTimePicker = (TimePicker) mDebateTimerDisplays[i].findViewById(R.id.debateTimer_currentTimePicker);
             currentTimePicker.setIs24HourView(true);
         }
 
         mDebateTimerViewFlipper.setDisplayedChild(mCurrentDebateTimerDisplayIndex);
 
-        mLeftControlButton   = (Button) findViewById(R.id.leftControlButton);
-        mCentreControlButton = (Button) findViewById(R.id.centreControlButton);
-        mRightControlButton  = (Button) findViewById(R.id.rightControlButton);
-        mPlayBellButton      = (Button) findViewById(R.id.playBellButton);
+        mLeftControlButton   = (Button) findViewById(R.id.mainScreen_leftControlButton);
+        mCentreControlButton = (Button) findViewById(R.id.mainScreen_centreControlButton);
+        mRightControlButton  = (Button) findViewById(R.id.mainScreen_rightControlButton);
+        mPlayBellButton      = (Button) findViewById(R.id.mainScreen_playBellButton);
 
         //
         // OnClickListeners
@@ -503,7 +555,7 @@ public class DebatingActivity extends Activity {
         mLastStateBundle = savedInstanceState; // This could be null
 
         for (int i = 0; i < mDebateTimerDisplays.length; i++) {
-            View poiTimerButton  = mDebateTimerDisplays[i].findViewById(R.id.poiTimerButton);
+            View poiTimerButton  = mDebateTimerDisplays[i].findViewById(R.id.debateTimer_poiTimerButton);
             poiTimerButton.setOnClickListener(new PoiButtonOnClickListener());
         }
 
@@ -515,7 +567,7 @@ public class DebatingActivity extends Activity {
 
         GestureDetector gd2 = new GestureDetector(new CurrentTimeOnGestureListener());
         for (int i = 0; i < mDebateTimerDisplays.length; i++) {
-            View currentTimeText = mDebateTimerDisplays[i].findViewById(R.id.currentTime);
+            View currentTimeText = mDebateTimerDisplays[i].findViewById(R.id.debateTimer_currentTime);
             currentTimeText.setOnTouchListener(new GestureOnTouchListener(gd2));
         }
 
@@ -539,16 +591,16 @@ public class DebatingActivity extends Activity {
     }
 
     @Override
-    protected Dialog onCreateDialog(int id, Bundle bundle) {
+    protected Dialog onCreateDialog(int id, Bundle args) {
         switch (id) {
         case DIALOG_XML_FILE_FATAL:
-            return getFatalProblemWithXmlFileDialog(bundle);
+            return getFatalProblemWithXmlFileDialog(args);
         case DIALOG_XML_FILE_ERRORS:
-            return getErrorsWithXmlFileDialog(bundle);
+            return getErrorsWithXmlFileDialog(args);
         case DIALOG_POI_TIMERS_INFO:
             return getPoiTimerInfoDialog();
         }
-        return super.onCreateDialog(id);
+        return super.onCreateDialog(id, args);
     }
 
     @Override
@@ -611,10 +663,10 @@ public class DebatingActivity extends Activity {
      */
     private void applyPreferences() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean silentMode, vibrateMode, overtimeBellsEnabled, keepScreenOn;
-        boolean poiBuzzerEnabled, poiVibrateEnabled;
+        boolean silentMode, vibrateMode, overtimeBellsEnabled;
+        boolean poiBuzzerEnabled, poiVibrateEnabled, prepTimerEnabled;
         int firstOvertimeBell, overtimeBellPeriod;
-        String userCountDirectionValue, poiFlashScreenModeValue;
+        String userCountDirectionValue, userPrepTimeCountDirectionValue, poiFlashScreenModeValue, backgroundColourAreaValue;
         FlashScreenMode flashScreenMode, poiFlashScreenMode;
 
         Resources res = getResources();
@@ -622,44 +674,76 @@ public class DebatingActivity extends Activity {
         try {
 
             // The boolean preferences
-            silentMode = prefs.getBoolean(res.getString(R.string.PrefSilentModeKey),
-                    res.getBoolean(R.bool.DefaultPrefSilentMode));
-            vibrateMode = prefs.getBoolean(res.getString(R.string.PrefVibrateModeKey),
-                    res.getBoolean(R.bool.DefaultPrefVibrateMode));
-            overtimeBellsEnabled = prefs.getBoolean(res.getString(R.string.PrefOvertimeBellsEnableKey),
-                    res.getBoolean(R.bool.DefaultPrefOvertimeBellsEnable));
-            keepScreenOn = prefs.getBoolean(res.getString(R.string.PrefKeepScreenOnKey),
-                    res.getBoolean(R.bool.DefaultPrefKeepScreenOn));
+            silentMode = prefs.getBoolean(res.getString(R.string.pref_silentMode_key),
+                    res.getBoolean(R.bool.prefDefault_silentMode));
+            vibrateMode = prefs.getBoolean(res.getString(R.string.pref_vibrateMode_key),
+                    res.getBoolean(R.bool.prefDefault_vibrateMode));
+            overtimeBellsEnabled = prefs.getBoolean(res.getString(R.string.pref_overtimeBellsEnable_key),
+                    res.getBoolean(R.bool.prefDefault_overtimeBellsEnable));
 
-            mPoiTimerEnabled = prefs.getBoolean(res.getString(R.string.PrefPoiTimerEnableKey),
-                    res.getBoolean(R.bool.DefaultPrefPoiTimerEnable));
-            poiBuzzerEnabled = prefs.getBoolean(res.getString(R.string.PrefPoiBuzzerEnableKey),
-                    res.getBoolean(R.bool.DefaultPrefPoiBuzzerEnable));
-            poiVibrateEnabled = prefs.getBoolean(res.getString(R.string.PrefPoiVibrateEnableKey),
-                    res.getBoolean(R.bool.DefaultPrefPoiVibrateEnable));
+            mKeepScreenOn = prefs.getBoolean(res.getString(R.string.pref_keepScreenOn_key),
+                    res.getBoolean(R.bool.prefDefault_keepScreenOn));
+            mPrepTimeKeepScreenOn = prefs.getBoolean(res.getString(R.string.pref_prepTimer_keepScreenOn_key),
+                    res.getBoolean(R.bool.prefDefault_prepTimer_keepScreenOn));
+
+            mPoiTimerEnabled = prefs.getBoolean(res.getString(R.string.pref_poiTimer_enable_key),
+                    res.getBoolean(R.bool.prefDefault_poiTimer_enable));
+            poiBuzzerEnabled = prefs.getBoolean(res.getString(R.string.pref_poiTimer_buzzerEnable_key),
+                    res.getBoolean(R.bool.prefDefault_poiTimer_buzzerEnable));
+            poiVibrateEnabled = prefs.getBoolean(res.getString(R.string.pref_poiTimer_vibrateEnable_key),
+                    res.getBoolean(R.bool.prefDefault_poiTimer_vibrateEnable));
+
+            prepTimerEnabled = prefs.getBoolean(res.getString(R.string.pref_prepTimer_enable_key),
+                    res.getBoolean(R.bool.prefDefault_prepTimer_enable));
 
             // Overtime bell integers
             if (overtimeBellsEnabled) {
-                firstOvertimeBell  = prefs.getInt(res.getString(R.string.PrefFirstOvertimeBellKey),
-                        res.getInteger(R.integer.DefaultPrefFirstOvertimeBell));
-                overtimeBellPeriod = prefs.getInt(res.getString(R.string.PrefOvertimeBellPeriodKey),
-                        res.getInteger(R.integer.DefaultPrefOvertimeBellPeriod));
+                firstOvertimeBell  = prefs.getInt(res.getString(R.string.pref_firstOvertimeBell_key),
+                        res.getInteger(R.integer.prefDefault_firstOvertimeBell));
+                overtimeBellPeriod = prefs.getInt(res.getString(R.string.pref_overtimeBellPeriod_key),
+                        res.getInteger(R.integer.prefDefault_overtimeBellPeriod));
             } else {
                 firstOvertimeBell = 0;
                 overtimeBellPeriod = 0;
             }
 
-            // List preference: Count direction
-            userCountDirectionValue = prefs.getString(res.getString(R.string.PrefCountDirectionKey),
-                    res.getString(R.string.DefaultPrefCountDirection));
-            mUserCountDirection = UserPreferenceCountDirection.toEnum(userCountDirectionValue);
-
             // List preference: POI flash screen mode
-            poiFlashScreenModeValue = prefs.getString(res.getString(R.string.PrefPoiFlashScreenModeKey),
-                    res.getString(R.string.DefaultPrefPoiFlashScreenMode));
+            poiFlashScreenModeValue = prefs.getString(res.getString(R.string.pref_poiTimer_flashScreenMode_key),
+                    res.getString(R.string.prefDefault_poiTimer_flashScreenMode));
             poiFlashScreenMode = FlashScreenMode.toEnum(poiFlashScreenModeValue);
 
+            // List preference: Count direction
+            //  - Backwards compatibility measure
+            // This changed in version 0.9, to remove the generallyUp and generallyDown options.
+            // Therefore, if we find either of those, we need to replace it with alwaysUp or
+            // alwaysDown, respectively.
+            userCountDirectionValue = prefs.getString(res.getString(R.string.pref_countDirection_key),
+                    res.getString(R.string.prefDefault_countDirection));
+            if (userCountDirectionValue.equals("generallyUp") || userCountDirectionValue.equals("generallyDown")) {
+                // Replace the preference with alwaysUp or alwaysDown, respectively.
+                SharedPreferences.Editor editor = prefs.edit();
+                String newValue = (userCountDirectionValue.equals("generallyUp")) ? "alwaysUp" : "alwaysDown";
+                editor.putString(res.getString(R.string.pref_countDirection_key), newValue);
+                editor.commit();
+                Log.w(this.getClass().getSimpleName(),
+                        String.format("countDirection: replaced %s with %s", userCountDirectionValue, newValue));
+                userCountDirectionValue = newValue;
+            }
+            mCountDirection = CountDirection.toEnum(userCountDirectionValue);
+
+            // List preference: Count direction for prep time
+            userPrepTimeCountDirectionValue = prefs.getString(res.getString(R.string.pref_prepTimer_countDirection_key),
+                    res.getString(R.string.prefDefault_prepTimer_countDirection));
+            mPrepTimeCountDirection = CountDirection.toEnum(userPrepTimeCountDirectionValue);
+
+            // List preference: Background colour area
+            backgroundColourAreaValue = prefs.getString(res.getString(R.string.pref_backgroundColourArea_key),
+                    res.getString(R.string.prefDefault_backgroundColourArea));
+            mBackgroundColourArea = BackgroundColourArea.toEnum(backgroundColourAreaValue);
+            resetBackgroundColour();
+
             // List preference: Flash screen mode
+            //  - Backwards compatibility measure
             // This changed from a boolean to a list preference in version 0.6, so there is
             // backwards compatibility to take care of.  Backwards compatibility applies if
             // (a) the list preference is NOT present AND (b) the boolean preference IS present.
@@ -667,20 +751,20 @@ public class DebatingActivity extends Activity {
             // list preference.  In all other cases, just take the list preference (using the
             // normal default mechanism if it isn't present, i.e. neither are present).
 
-            if (!prefs.contains(res.getString(R.string.PrefFlashScreenModeKey)) &&
-                    prefs.contains(res.getString(R.string.PrefFlashScreenBoolKey))) {
+            if (!prefs.contains(res.getString(R.string.pref_flashScreenMode_key)) &&
+                    prefs.contains(res.getString(R.string.pref_flashScreenBool_key))) {
                 // Boolean preference.
                 // First, get the string and convert it to an enum.
                 boolean flashScreenModeBool = prefs.getBoolean(
-                        res.getString(R.string.PrefFlashScreenBoolKey), false);
+                        res.getString(R.string.pref_flashScreenBool_key), false);
                 flashScreenMode = (flashScreenModeBool) ? FlashScreenMode.SOLID_FLASH : FlashScreenMode.OFF;
 
                 // Then, convert that enum to the list preference value (a string) and write that
                 // back to the preferences.  Also, remove the old boolean preference.
                 String flashStringModePrefValue = flashScreenMode.toPrefValue();
                 SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(res.getString(R.string.PrefFlashScreenModeKey), flashStringModePrefValue);
-                editor.remove(res.getString(R.string.PrefFlashScreenBoolKey));
+                editor.putString(res.getString(R.string.pref_flashScreenMode_key), flashStringModePrefValue);
+                editor.remove(res.getString(R.string.pref_flashScreenBool_key));
                 editor.commit();
                 Log.w(this.getClass().getSimpleName(),
                         String.format("flashScreenMode: replaced boolean preference with list preference: %s", flashStringModePrefValue));
@@ -689,11 +773,10 @@ public class DebatingActivity extends Activity {
                 // List preference.
                 // Get the string and convert it to an enum.
                 String flashScreenModeValue;
-                flashScreenModeValue = prefs.getString(res.getString(R.string.PrefFlashScreenModeKey),
-                        res.getString(R.string.DefaultPrefFlashScreenMode));
+                flashScreenModeValue = prefs.getString(res.getString(R.string.pref_flashScreenMode_key),
+                        res.getString(R.string.prefDefault_flashScreenMode));
                 flashScreenMode = FlashScreenMode.toEnum(flashScreenModeValue);
             }
-
 
         } catch (ClassCastException e) {
             Log.e(this.getClass().getSimpleName(), "applyPreferences: caught ClassCastException!");
@@ -702,8 +785,10 @@ public class DebatingActivity extends Activity {
 
         if (mDebateManager != null) {
             mDebateManager.setOvertimeBells(firstOvertimeBell, overtimeBellPeriod);
+            mDebateManager.setPrepTimeEnabled(prepTimerEnabled);
+            applyPrepTimeBells();
         } else {
-            Log.w(this.getClass().getSimpleName(), "applyPreferences: Couldn't restore overtime bells, mDebateManager doesn't yet exist");
+            Log.i(this.getClass().getSimpleName(), "applyPreferences: Couldn't restore overtime bells, mDebateManager doesn't yet exist");
         }
 
         if (mBinder != null) {
@@ -714,17 +799,26 @@ public class DebatingActivity extends Activity {
             setVolumeControlStream((silentMode) ? AudioManager.STREAM_RING : AudioManager.STREAM_MUSIC);
 
             am.setVibrateMode(vibrateMode);
-            am.setKeepScreenOn(keepScreenOn);
             am.setFlashScreenMode(flashScreenMode);
 
             am.setPoiBuzzerEnabled(poiBuzzerEnabled);
             am.setPoiVibrateEnabled(poiVibrateEnabled);
             am.setPoiFlashScreenMode(poiFlashScreenMode);
 
+            this.updateKeepScreenOn();
+
             Log.v(this.getClass().getSimpleName(), "applyPreferences: successfully applied");
         } else {
-            Log.w(this.getClass().getSimpleName(), "applyPreferences: Couldn't restore AlertManager preferences; mBinder doesn't yet exist");
+            Log.i(this.getClass().getSimpleName(), "applyPreferences: Couldn't restore AlertManager preferences; mBinder doesn't yet exist");
         }
+
+    }
+
+    private void applyPrepTimeBells() {
+        PrepTimeBellsManager ptbm = new PrepTimeBellsManager(this);
+        SharedPreferences prefs = getSharedPreferences(PrepTimeBellsManager.PREP_TIME_BELLS_PREFERENCES_NAME, MODE_PRIVATE);
+        ptbm.loadFromPreferences(prefs);
+        mDebateManager.setPrepTimeBellsManager(ptbm);
     }
 
     /**
@@ -747,19 +841,19 @@ public class DebatingActivity extends Activity {
         try {
             is = mFilesManager.open(filename);
         } catch (IOException e) {
-            throw new FatalXmlError(getString(R.string.FatalProblemWithXmlFileMessage_CannotFind, filename), e);
+            throw new FatalXmlError(getString(R.string.fatalProblemWithXmlFileDialog_message_cannotFind, filename), e);
         }
 
         try {
             df = dfbfx.buildDebateFromXml(is);
         } catch (IOException e) {
-            throw new FatalXmlError(getString(R.string.FatalProblemWithXmlFileMessage_CannotRead, filename), e);
+            throw new FatalXmlError(getString(R.string.fatalProblemWithXmlFileDialog_message_cannotRead, filename), e);
         } catch (SAXException e) {
             throw new FatalXmlError(getString(
-                    R.string.FatalProblemWithXmlFileMessage_BadXml, filename, e.getMessage()), e);
+                    R.string.fatalProblemWithXmlFileDialog_message_badXml, filename, e.getMessage()), e);
         } catch (IllegalStateException e) {
             throw new FatalXmlError(getString(
-                    R.string.FatalProblemWithXmlFileMessage_NoSpeeches, filename), e);
+                    R.string.fatalProblemWithXmlFileDialog_message_noSpeeches, filename), e);
         }
 
         if (dfbfx.hasErrors()) {
@@ -786,21 +880,31 @@ public class DebatingActivity extends Activity {
         // Only if things were in a valid state do we enter edit time mode
         mIsEditingTime = true;
 
-        TimePicker currentTimePicker = (TimePicker) getCurrentDebateTimerDisplay().findViewById(R.id.currentTimePicker);
+        TimePicker currentTimePicker = (TimePicker) getCurrentDebateTimerDisplay().findViewById(R.id.debateTimer_currentTimePicker);
         long currentTime = mDebateManager.getCurrentSpeechTime();
 
         // Invert the time if in count-down mode
         currentTime = subtractFromSpeechLengthIfCountingDown(currentTime);
 
         // Limit to the allowable time range
-        if (currentTime < 0) currentTime = 0;
-        if (currentTime >= 24 * 60) currentTime = 24 * 60 - 1;
+        if (currentTime < 0) {
+            currentTime = 0;
+            Toast.makeText(this, R.string.mainScreen_toast_editTextDiscardChangesInfo_limitedBelow, Toast.LENGTH_LONG).show();
+        }
+        if (currentTime >= 24 * 60) {
+            currentTime = 24 * 60 - 1;
+            Toast.makeText(this, R.string.mainScreen_toast_editTextDiscardChangesInfo_limitedAbove, Toast.LENGTH_LONG).show();
+        }
 
         // We're using this in hours and minutes, not minutes and seconds
         currentTimePicker.setCurrentHour((int) (currentTime / 60));
         currentTimePicker.setCurrentMinute((int) (currentTime % 60));
 
         updateGui();
+
+        // If we had to limit the time, display a helpful/apologetic message informing the user
+        // of how to discard their changes, since they can't recover the time.
+
     }
 
     /**
@@ -810,7 +914,7 @@ public class DebatingActivity extends Activity {
      */
     private void editCurrentTimeFinish(boolean save) {
 
-        TimePicker currentTimePicker = (TimePicker) getCurrentDebateTimerDisplay().findViewById(R.id.currentTimePicker);
+        TimePicker currentTimePicker = (TimePicker) getCurrentDebateTimerDisplay().findViewById(R.id.debateTimer_currentTimePicker);
 
         currentTimePicker.clearFocus();
 
@@ -835,38 +939,29 @@ public class DebatingActivity extends Activity {
     }
 
     /**
-     * Assembles the speech format and user count directions to find the count direction to use
-     * currently.
-     * @return OverallCountDirection.UP or OverallCountDirection.DOWN
+     * Returns the count direction that should currently be used.
+     * This method used to assemble the speech format and user count directions to find the
+     * count direction to use.  In version 0.9, the speech format count direction was made
+     * obsolete, so the only thing it has to take into account now is the user count direction.
+     * However, because of the addition of a separate prep time count direction, there is still
+     * some brain-work to do.
+     * @return CountDirection.COUNT_UP or CountDirection.COUNT_DOWN
      */
-    private OverallCountDirection getCountDirection() {
+    private CountDirection getCountDirection() {
 
-        // If the user has specified always up or always down, that takes priority.
-        if (mUserCountDirection == UserPreferenceCountDirection.ALWAYS_DOWN)
-            return OverallCountDirection.COUNT_DOWN;
-        if (mUserCountDirection == UserPreferenceCountDirection.ALWAYS_UP)
-            return OverallCountDirection.COUNT_UP;
+        // Initialise as the user count direction by default
+        CountDirection userCountDirection = mCountDirection;
 
-        // If the user hasn't specified, and the speech format has specified a count direction,
-        // use the speech format suggestion.
         if (mDebateManager != null) {
-            SpeechFormat currentSpeechFormat = mDebateManager.getCurrentSpeechFormat();
-            CountDirection sfCountDirection = currentSpeechFormat.getCountDirection();
-            if (sfCountDirection == CountDirection.COUNT_DOWN)
-                return OverallCountDirection.COUNT_DOWN;
-            if (sfCountDirection == CountDirection.COUNT_UP)
-                return OverallCountDirection.COUNT_UP;
+            // If prep time, use the prep time count direction
+            if (mDebateManager.isPrepTime())
+                userCountDirection = mPrepTimeCountDirection;
+            // Otherwise, use the normal count direction
+            else
+                userCountDirection = mCountDirection;
         }
 
-        // Otherwise, use the user setting.
-        if (mUserCountDirection == UserPreferenceCountDirection.GENERALLY_DOWN)
-            return OverallCountDirection.COUNT_DOWN;
-        if (mUserCountDirection == UserPreferenceCountDirection.GENERALLY_UP)
-            return OverallCountDirection.COUNT_UP;
-
-        // We've now covered all possibilities.  But just in case (and to satisfy the compiler)...
-        return OverallCountDirection.COUNT_UP;
-
+        return userCountDirection;
     }
 
     /**
@@ -879,20 +974,20 @@ public class DebatingActivity extends Activity {
     private Dialog getErrorsWithXmlFileDialog(Bundle bundle) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        String errorMessage = getString(R.string.ErrorsInXmlFileDialogMessagePrefix);
+        StringBuilder errorMessage = new StringBuilder(getString(R.string.errorsinXmlFileDialog_message_prefix));
 
         ArrayList<String> errorLog = bundle.getStringArrayList(DIALOG_BUNDLE_XML_ERROR_LOG);
         Iterator<String> errorIterator = errorLog.iterator();
 
         while (errorIterator.hasNext()) {
-            errorMessage = errorMessage.concat("\n");
-            errorMessage = errorMessage.concat(errorIterator.next());
+            errorMessage.append("\n");
+            errorMessage.append(errorIterator.next());
         }
 
-        builder.setTitle(R.string.ErrorsInXmlFileDialogTitle)
+        builder.setTitle(R.string.errorsinXmlFileDialog_title)
                .setMessage(errorMessage)
                .setCancelable(true)
-               .setPositiveButton(R.string.ErrorsInXmlFileDialogButton, new DialogInterface.OnClickListener() {
+               .setPositiveButton(R.string.errorsinXmlFileDialog_button, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -905,13 +1000,13 @@ public class DebatingActivity extends Activity {
     private Dialog getFatalProblemWithXmlFileDialog(Bundle bundle) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        String errorMessage = bundle.getString(DIALOG_BUNDLE_FATAL_MESSAGE);
-        errorMessage = errorMessage.concat(getString(R.string.FatalProblemWithXmlFileMessageSuffix));
+        StringBuilder errorMessage = new StringBuilder(bundle.getString(DIALOG_BUNDLE_FATAL_MESSAGE));
+        errorMessage.append(getString(R.string.fatalProblemWithXmlFileDialog_message_suffix));
 
-        builder.setTitle(R.string.FatalProblemWithXmlFileDialogTitle)
+        builder.setTitle(R.string.fatalProblemWithXmlFileDialog_title)
                .setMessage(errorMessage)
                .setCancelable(true)
-               .setPositiveButton(R.string.FatalProblemWithXmlFileDialogButton, new DialogInterface.OnClickListener() {
+               .setPositiveButton(R.string.fatalProblemWithXmlFileDialog_button, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(DebatingActivity.this, FormatChooserActivity.class);
@@ -932,28 +1027,26 @@ public class DebatingActivity extends Activity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         View content = getLayoutInflater().inflate(R.layout.poi_timer_dialog, null);
-        final CheckBox doNotShowAgain = (CheckBox) content.findViewById(R.id.poiTimerInfoDialogDontShow);
+        final CheckBox doNotShowAgain = (CheckBox) content.findViewById(R.id.poiTimerInfoDialog_dontShow);
 
-        builder.setTitle(R.string.PoiTimerInfoDialogTitle)
+        builder.setTitle(R.string.poiTimerInfoDialog_title)
                .setView(content)
                .setCancelable(true)
-               .setPositiveButton(R.string.PoiTimerInfoDialogButtonOK, new DialogInterface.OnClickListener() {
+               .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
                         // Take note of "do not show again" setting
                         SharedPreferences prefs = getPreferences(MODE_PRIVATE);
                         Editor editor = prefs.edit();
                         editor.putBoolean(DO_NOT_SHOW_POI_TIMER_DIALOG, doNotShowAgain.isChecked());
                         editor.commit();
-
                         dialog.dismiss();
                     }
                 })
-               .setNeutralButton(R.string.PoiTimerInfoDialogButtonLearnMore, new DialogInterface.OnClickListener() {
+               .setNeutralButton(R.string.poiTimerInfoDialog_button_learnMore, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Uri uri = Uri.parse(getString(R.string.PoiTimerMoreInfoUrl));
+                        Uri uri = Uri.parse(getString(R.string.poiTimer_moreInfoUrl));
                         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                         startActivity(intent);
                     }
@@ -978,13 +1071,13 @@ public class DebatingActivity extends Activity {
 
         if (mDebateManager == null) return;
         if (mDebateManager.isRunning()) return;
-        if (mDebateManager.isLastSpeech()) return;
+        if (mDebateManager.isLastItem()) return;
         if (mIsEditingTime) return;
 
         // Swap the current display index
         mCurrentDebateTimerDisplayIndex = (mCurrentDebateTimerDisplayIndex == 1) ? 0 : 1;
 
-        mDebateManager.goToNextSpeaker();
+        mDebateManager.goToNextItem();
         updateDebateTimerDisplay(mCurrentDebateTimerDisplayIndex);
         mDebateTimerViewFlipper.setInAnimation(AnimationUtils.loadAnimation(
                 DebatingActivity.this, R.anim.slide_from_right));
@@ -993,6 +1086,7 @@ public class DebatingActivity extends Activity {
         mDebateTimerViewFlipper.setDisplayedChild(mCurrentDebateTimerDisplayIndex);
 
         updateGui();
+        updateKeepScreenOn();
 
     }
 
@@ -1005,13 +1099,13 @@ public class DebatingActivity extends Activity {
 
         if (mDebateManager == null) return;
         if (mDebateManager.isRunning()) return;
-        if (mDebateManager.isFirstSpeech()) return;
+        if (mDebateManager.isFirstItem()) return;
         if (mIsEditingTime) return;
 
         // Swap the current display index
         mCurrentDebateTimerDisplayIndex = (mCurrentDebateTimerDisplayIndex == 1) ? 0 : 1;
 
-        mDebateManager.goToPreviousSpeaker();
+        mDebateManager.goToPreviousItem();
         updateDebateTimerDisplay(mCurrentDebateTimerDisplayIndex);
         mDebateTimerViewFlipper.setInAnimation(AnimationUtils.loadAnimation(
                 DebatingActivity.this, R.anim.slide_from_left));
@@ -1020,6 +1114,7 @@ public class DebatingActivity extends Activity {
         mDebateTimerViewFlipper.setDisplayedChild(mCurrentDebateTimerDisplayIndex);
 
         updateGui();
+        updateKeepScreenOn();
 
     }
 
@@ -1071,9 +1166,26 @@ public class DebatingActivity extends Activity {
         return filename;
     }
 
+    /**
+     * Resets all background colours to the default.
+     * This should be called whenever the background colour preference is changed, as <code>updateGui()</code>
+     * doesn't automatically do this (for efficiency). You should call <code>updateGui()</code> as immediately as
+     * practicable after calling this.
+     */
+    private void resetBackgroundColour() {
+        for (int i = 0; i < mDebateTimerDisplays.length; i++) {
+            View v = mDebateTimerDisplays[i];
+            v.setBackgroundColor(mNormalBackgroundColour);
+            View speechNameText = v.findViewById(R.id.debateTimer_speechNameText);
+            View periodDescriptionText = v.findViewById(R.id.debateTimer_periodDescriptionText);
+            speechNameText.setBackgroundColor(mNormalBackgroundColour);
+            periodDescriptionText.setBackgroundColor(mNormalBackgroundColour);
+        }
+    }
+
     private void resetDebate() {
         resetDebateWithoutToast();
-        Toast.makeText(this, R.string.ResetDebateToastText, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.mainScreen_toast_resetDebate, Toast.LENGTH_SHORT).show();
     }
 
     private void resetDebateWithoutToast() {
@@ -1092,14 +1204,21 @@ public class DebatingActivity extends Activity {
         }
     }
 
-    // Sets the text and visibility of a single button
+    /**
+     *  Sets the text and visibility of a single button
+     */
     private void setButton(Button button, int resid) {
         button.setText(resid);
-        int visibility = (resid == R.string.NullButtonText) ? View.GONE : View.VISIBLE;
+        int visibility = (resid == R.string.mainScreen_null_buttonText) ? View.GONE : View.VISIBLE;
         button.setVisibility(visibility);
     }
 
-    // Sets the text, visibility and "weight" of all buttons
+    /**
+     *  Sets the text, visibility and "weight" of all buttons
+     * @param leftResid
+     * @param centreResid
+     * @param rightResid
+     */
     private void setButtons(int leftResid, int centreResid, int rightResid) {
         setButton(mLeftControlButton, leftResid);
         setButton(mCentreControlButton, centreResid);
@@ -1107,7 +1226,7 @@ public class DebatingActivity extends Activity {
 
         // If there are exactly two buttons, make the weight of the left button double,
         // so that it fills two-thirds of the width of the screen.
-        float leftControlButtonWeight = (float) ((centreResid == R.string.NullButtonText && rightResid != R.string.NullButtonText) ? 2.0 : 1.0);
+        float leftControlButtonWeight = (float) ((centreResid == R.string.mainScreen_null_buttonText && rightResid != R.string.mainScreen_null_buttonText) ? 2.0 : 1.0);
         mLeftControlButton.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, leftControlButtonWeight));
     }
 
@@ -1129,8 +1248,8 @@ public class DebatingActivity extends Activity {
      *  The [Bell] button always is on the right of any of the above three buttons.
      */
     private void updateControls() {
-        View currentTimeText   = getCurrentDebateTimerDisplay().findViewById(R.id.currentTime);
-        View currentTimePicker = getCurrentDebateTimerDisplay().findViewById(R.id.currentTimePicker);
+        View currentTimeText   = getCurrentDebateTimerDisplay().findViewById(R.id.debateTimer_currentTime);
+        View currentTimePicker = getCurrentDebateTimerDisplay().findViewById(R.id.debateTimer_currentTimePicker);
 
         if (mDebateManager != null) {
 
@@ -1138,16 +1257,16 @@ public class DebatingActivity extends Activity {
             // Show a "restart debate" button instead.
             switch (mDebateManager.getStatus()) {
             case NOT_STARTED:
-                setButtons(R.string.StartTimerButtonText, R.string.NullButtonText, R.string.NextSpeakerButtonText);
+                setButtons(R.string.mainScreen_startTimer_buttonText, R.string.mainScreen_null_buttonText, R.string.mainScreen_nextSpeaker_buttonText);
                 break;
             case RUNNING:
-                setButtons(R.string.StopTimerButtonText, R.string.NullButtonText, R.string.NullButtonText);
+                setButtons(R.string.mainScreen_stopTimer_buttonText, R.string.mainScreen_null_buttonText, R.string.mainScreen_null_buttonText);
                 break;
             case STOPPED_BY_BELL:
-                setButtons(R.string.ResumeTimerAfterAlarmButtonText, R.string.NullButtonText, R.string.NullButtonText);
+                setButtons(R.string.mainScreen_resumeTimerAfterAlarm_buttonText, R.string.mainScreen_null_buttonText, R.string.mainScreen_null_buttonText);
                 break;
             case STOPPED_BY_USER:
-                setButtons(R.string.ResumeTimerAfterUserStopButtonText, R.string.ResetTimerButtonText, R.string.NextSpeakerButtonText);
+                setButtons(R.string.mainScreen_resumeTimerAfterUserStop_buttonText, R.string.mainScreen_resetTimer_buttonText, R.string.mainScreen_nextSpeaker_buttonText);
                 break;
             default:
                 break;
@@ -1170,14 +1289,14 @@ public class DebatingActivity extends Activity {
                 // Disable the [Next Speaker] button if there are no more speakers
                 mLeftControlButton.setEnabled(true);
                 mCentreControlButton.setEnabled(true);
-                mRightControlButton.setEnabled(!mDebateManager.isLastSpeech());
+                mRightControlButton.setEnabled(!mDebateManager.isLastItem());
             }
 
         } else {
             // If no debate is loaded, show only one control button, which leads the user to
             // choose a style.
             // (Keep the play bell button enabled.)
-            setButtons(R.string.NoDebateLoadedButtonText, R.string.NullButtonText, R.string.NullButtonText);
+            setButtons(R.string.mainScreen_noDebateLoaded_buttonText, R.string.mainScreen_null_buttonText, R.string.mainScreen_null_buttonText);
             mLeftControlButton.setEnabled(true);
             mCentreControlButton.setEnabled(false);
             mRightControlButton.setEnabled(false);
@@ -1196,30 +1315,39 @@ public class DebatingActivity extends Activity {
 
         View v = mDebateTimerDisplays[debateTimerDisplayIndex];
 
-        TextView periodDescriptionText = (TextView) v.findViewById(R.id.periodDescriptionText);
-        TextView speechNameText        = (TextView) v.findViewById(R.id.speechNameText);
-        TextView currentTimeText       = (TextView) v.findViewById(R.id.currentTime);
-        TextView nextTimeText          = (TextView) v.findViewById(R.id.nextTime);
-        TextView finalTimeText         = (TextView) v.findViewById(R.id.finalTime);
+        TextView periodDescriptionText = (TextView) v.findViewById(R.id.debateTimer_periodDescriptionText);
+        TextView speechNameText        = (TextView) v.findViewById(R.id.debateTimer_speechNameText);
+        TextView currentTimeText       = (TextView) v.findViewById(R.id.debateTimer_currentTime);
+        TextView infoLineText          = (TextView) v.findViewById(R.id.debateTimer_informationLine);
 
         if (mDebateManager != null) {
 
-            SpeechFormat currentSpeechFormat = mDebateManager.getCurrentSpeechFormat();
-            PeriodInfo   currentPeriodInfo   = mDebateManager.getCurrentPeriodInfo();
+            SpeechOrPrepFormat currentSpeechFormat = mDebateManager.getCurrentSpeechFormat();
+            PeriodInfo         currentPeriodInfo   = mDebateManager.getCurrentPeriodInfo();
 
+            // The information at the top of the screen
             speechNameText.setText(mDebateManager.getCurrentSpeechName());
-            speechNameText.setBackgroundColor(currentPeriodInfo.getBackgroundColor());
             periodDescriptionText.setText(currentPeriodInfo.getDescription());
-            periodDescriptionText.setBackgroundColor(currentPeriodInfo.getBackgroundColor());
+
+            // Background colour, this is user-preference dependent
+            Integer backgroundColour = currentPeriodInfo.getBackgroundColor();
+            switch (mBackgroundColourArea) {
+            case TOP_BAR_ONLY:
+                speechNameText.setBackgroundColor(backgroundColour);
+                periodDescriptionText.setBackgroundColor(backgroundColour);
+                break;
+            case WHOLE_SCREEN:
+                // Don't do the whole screen if there is a flash screen in progress
+                if (mFlashScreenSemaphore.tryAcquire()) {
+                    v.setBackgroundColor(backgroundColour);
+                    mFlashScreenSemaphore.release();
+                }
+            }
 
             long currentSpeechTime = mDebateManager.getCurrentSpeechTime();
-            Long nextBellTime = mDebateManager.getNextBellTime();
-            boolean nextBellIsPause = mDebateManager.isNextBellPause();
 
             // Take count direction into account for display
             currentSpeechTime = subtractFromSpeechLengthIfCountingDown(currentSpeechTime);
-            if (nextBellTime != null)
-                nextBellTime = subtractFromSpeechLengthIfCountingDown(nextBellTime);
 
             Resources resources = getResources();
             int currentTimeTextColor;
@@ -1230,37 +1358,98 @@ public class DebatingActivity extends Activity {
             currentTimeText.setText(secsToText(currentSpeechTime));
             currentTimeText.setTextColor(currentTimeTextColor);
 
-            if (nextBellTime != null) {
-                if (nextBellIsPause) {
-                    nextTimeText.setText(String.format(
-                            this.getString(R.string.NextBellWithPauseText),
-                            secsToText(nextBellTime)));
-                } else {
-                    nextTimeText.setText(String.format(this.getString(R.string.NextBellText),
-                            secsToText(nextBellTime)));
+            // Construct the line that goes at the bottom
+            StringBuilder infoLine = new StringBuilder();
+
+            // First, length...
+            long length = currentSpeechFormat.getLength();
+            String lengthStr;
+            if (length % 60 == 0)
+                lengthStr = String.format(getResources().
+                        getQuantityString(R.plurals.timeInMinutes, (int) (length / 60), length / 60));
+            else
+                lengthStr = secsToText(length);
+
+            int finalTimeTextUnformattedResid = (mDebateManager.isPrepTime()) ? R.string.prepTimeLength: R.string.speechLength;
+            infoLine.append(String.format(this.getString(finalTimeTextUnformattedResid),
+                    lengthStr));
+
+            if (mDebateManager.isPrepTime() && mDebateManager.isPrepTimeControlled())
+                infoLine.append(getString(R.string.prepTimeControlledIndicator));
+
+            // ...then, if applicable, bells
+            ArrayList<BellInfo> currentSpeechBells = currentSpeechFormat.getBellsSorted();
+            Iterator<BellInfo> currentSpeechBellsIter = currentSpeechBells.iterator();
+
+            if (mDebateManager.isOvertime()) {
+                // show next overtime bell (don't bother with list of bells anymore)
+                Long nextOvertimeBellTime = mDebateManager.getNextOvertimeBellTime();
+                if (nextOvertimeBellTime == null)
+                    infoLine.append(getString(R.string.mainScreen_bellsList_noOvertimeBells));
+                else {
+                    long timeToDisplay = subtractFromSpeechLengthIfCountingDown(nextOvertimeBellTime);
+                    infoLine.append(getString(R.string.mainScreen_bellsList_nextOvertimeBell,
+                            secsToText(timeToDisplay)));
                 }
+
+            } else if (currentSpeechBellsIter.hasNext()) {
+                // Convert the list of bells into a string.
+                StringBuilder bellsStr = new StringBuilder();
+
+                while (currentSpeechBellsIter.hasNext()) {
+                    BellInfo bi = currentSpeechBellsIter.next();
+                    long bellTime = subtractFromSpeechLengthIfCountingDown(bi.getBellTime());
+                    bellsStr.append(secsToText(bellTime));
+                    if (bi.isPauseOnBell())
+                        bellsStr.append(getString(R.string.pauseOnBellIndicator));
+                    if (bi.isSilent())
+                        bellsStr.append(getString(R.string.silentBellIndicator));
+                    if (currentSpeechBellsIter.hasNext())
+                        bellsStr.append(", ");
+                }
+
+                infoLine.append(getResources().getQuantityString(R.plurals.mainScreen_bellsList_normal, currentSpeechBells.size(), bellsStr));
+
             } else {
-                nextTimeText.setText(this.getString(R.string.NoMoreBellsText));
+                infoLine.append(getString(R.string.mainScreen_bellsList_noBells));
             }
-            finalTimeText.setText(String.format(
-                this.getString(R.string.SpeechLengthText),
-                secsToText(currentSpeechFormat.getSpeechLength())
-            ));
+
+            infoLineText.setText(infoLine.toString());
 
         } else {
             // Blank out all the fields
-            periodDescriptionText.setText(R.string.NoDebateLoadedText);
+            periodDescriptionText.setText(R.string.mainScreen_noDebateLoaded_text);
             speechNameText.setText("");
             periodDescriptionText.setBackgroundColor(0);
             speechNameText.setBackgroundColor(0);
             currentTimeText.setText("");
-            nextTimeText.setText("");
-            finalTimeText.setText("");
+            infoLineText.setText("");
         }
 
         // Update the POI timer button
         updatePoiTimerButton(debateTimerDisplayIndex);
 
+    }
+
+    /**
+     * Sets the "keep screen on" setting according to whether it is prep time or a speech.
+     * This method should be called whenever (a) we switch between speeches and prep time,
+     * and (b) the user preference is applied again.
+     */
+    private void updateKeepScreenOn() {
+        if (mBinder == null)
+            return;
+
+        AlertManager am = mBinder.getAlertManager();
+
+        if (mDebateManager != null) {
+            if (mDebateManager.isPrepTime()) {
+                am.setKeepScreenOn(mPrepTimeKeepScreenOn);
+                return;
+            }
+        }
+
+        am.setKeepScreenOn(mKeepScreenOn);
     }
 
     /**
@@ -1271,9 +1460,9 @@ public class DebatingActivity extends Activity {
         updateControls();
 
         if (mDebateManager != null) {
-            this.setTitle(getString(R.string.DebatingActivityTitleBarWithFormatName, mDebateManager.getDebateFormatName()));
+            this.setTitle(getString(R.string.activityName_Debating_withFormat, mDebateManager.getDebateFormatName()));
         } else {
-            setTitle(R.string.DebatingActivityTitleBarWithoutFormatName);
+            setTitle(R.string.activityName_Debating_withoutFormat);
         }
 
     }
@@ -1286,7 +1475,7 @@ public class DebatingActivity extends Activity {
     private void updatePoiTimerButton(int debateTimerDisplayIndex) {
         View v = mDebateTimerDisplays[debateTimerDisplayIndex];
 
-        Button poiButton = (Button) v.findViewById(R.id.poiTimerButton);
+        Button poiButton = (Button) v.findViewById(R.id.debateTimer_poiTimerButton);
 
         // Determine whether or not we display the POI timer button
         // Display only when user has POI timer enabled, and a debate is loaded and the current
@@ -1306,11 +1495,11 @@ public class DebatingActivity extends Activity {
 
                 Long poiTime = mDebateManager.getCurrentPoiTime();
                 if (poiTime == null)
-                    poiButton.setText(R.string.PoiButtonText);
+                    poiButton.setText(R.string.mainScreen_poiTimer_buttonText);
                 else
                     poiButton.setText(poiTime.toString());
             } else {
-                poiButton.setText(R.string.PoiButtonText);
+                poiButton.setText(R.string.mainScreen_poiTimer_buttonText);
                 poiButton.setEnabled(false);
             }
 
@@ -1324,7 +1513,7 @@ public class DebatingActivity extends Activity {
         if (time >= 0) {
             return String.format("%02d:%02d", time / 60, time % 60);
         } else {
-            return String.format("%02d:%02d over", -time / 60, -time % 60);
+            return String.format("+%02d:%02d", -time / 60, -time % 60);
         }
     }
 
@@ -1337,8 +1526,8 @@ public class DebatingActivity extends Activity {
      */
     private long subtractFromSpeechLengthIfCountingDown(long time) {
         if (mDebateManager != null)
-            if (getCountDirection() == OverallCountDirection.COUNT_DOWN)
-                return mDebateManager.getCurrentSpeechFormat().getSpeechLength() - time;
+            if (getCountDirection() == CountDirection.COUNT_DOWN)
+                return mDebateManager.getCurrentSpeechFormat().getLength() - time;
         return time;
     }
 

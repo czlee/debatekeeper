@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2013 Chuan-Zheng Lee
+ *
+ * This file is part of the Debatekeeper app, which is licensed under the
+ * GNU General Public Licence version 3 (GPLv3).  You can redistribute
+ * and/or modify it under the terms of the GPLv3, and you must not use
+ * this file except in compliance with the GPLv3.
+ *
+ * This app is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public Licence for more details.
+ *
+ * You should have received a copy of the GNU General Public Licence
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:picker="http://schemas.android.com/apk/res/net.czlee.debatekeeper"
+    android:order="1" >
+
+    <PreferenceCategory android:title="@string/prefCategory_overtimeBells_title" >
+        <CheckBoxPreference
+            android:defaultValue="@bool/prefDefault_overtimeBellsEnable"
+            android:disableDependentsState="false"
+            android:key="@string/pref_overtimeBellsEnable_key"
+            android:summaryOff="@string/pref_overtimeBellsEnable_offSummary"
+            android:summaryOn="@string/pref_overtimeBellsEnable_onSummary"
+            android:title="@string/pref_overtimeBellsEnable_title" />
+
+        <com.michaelnovakjr.numberpicker.NumberPickerPreference
+            android:dependency="@string/pref_overtimeBellsEnable_key"
+            android:dialogMessage="@string/pref_firstOvertimeBell_dialogMessage"
+            android:key="@string/pref_firstOvertimeBell_key"
+            android:summary="@string/pref_firstOvertimeBell_summary"
+            android:title="@string/pref_firstOvertimeBell_title"
+            picker:defaultValue="@integer/prefDefault_firstOvertimeBell"
+            picker:endRange="120"
+            picker:startRange="3" />
+        <com.michaelnovakjr.numberpicker.NumberPickerPreference
+            android:dependency="@string/pref_overtimeBellsEnable_key"
+            android:dialogMessage="@string/pref_overtimeBellPeriod_dialogMessage"
+            android:key="@string/pref_overtimeBellPeriod_key"
+            android:summary="@string/pref_overtimeBellPeriod_summary"
+            android:title="@string/pref_overtimeBellPeriod_title"
+            picker:defaultValue="@integer/prefDefault_overtimeBellPeriod"
+            picker:endRange="120"
+            picker:startRange="3" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

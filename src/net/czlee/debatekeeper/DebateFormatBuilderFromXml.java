@@ -23,7 +23,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 
 import net.czlee.debatekeeper.DebateFormatBuilder.DebateFormatBuilderException;
-import net.czlee.debatekeeper.SpeechFormat.CountDirection;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -49,13 +48,13 @@ public class DebateFormatBuilderFromXml {
     private       String              mSchemaVersion = null;
 
     private final String DEBATING_TIMER_URI;
-    private static final String MAXIMUM_SCHEMA_VERSION = "1.0";
+    private static final String MAXIMUM_SCHEMA_VERSION = "1.1";
 
     public DebateFormatBuilderFromXml(Context context) {
         mContext = context;
         mDfb     = new DebateFormatBuilder(context);
 
-        DEBATING_TIMER_URI = context.getString(R.string.XmlUri);
+        DEBATING_TIMER_URI = context.getString(R.string.xml_uri);
     }
 
     //******************************************************************************************
@@ -71,9 +70,9 @@ public class DebateFormatBuilderFromXml {
         //      m*Ref is NOT null           implies       we are in * context
         // but  m*Ref is null            does NOT imply   we are NOT in * context
         // and we are NOT in * context   does NOT imply   m*Ref is null
-        private String  mCurrentSpeechFormatFirstPeriod = null;
-        private String  mCurrentSpeechFormatRef         = null;
-        private String  mCurrentResourceRef             = null;
+        private String  mCurrentFirstPeriod                 = null;
+        private String  mCurrentSpeechFormatRef             = null;
+        private String  mCurrentResourceRef                 = null;
 
         private DebateFormatXmlSecondLevelContext mCurrentSecondLevelContext
                 = DebateFormatXmlSecondLevelContext.NONE;
@@ -100,22 +99,46 @@ public class DebateFormatBuilderFromXml {
              * <debateformat name="something" schemaversion="1.0">
              * End the root context.
              */
-            if (areEqual(localName, R.string.XmlElemNameRoot)) {
+            if (areEqual(localName, R.string.xmlElemName_root)) {
                 mIsInRootContext = false;
 
             /** <resource ref="string">
              * End the context.
              */
-            } else if (areEqual(localName, R.string.XmlElemNameResource)) {
+            } else if (areEqual(localName, R.string.xmlElemName_resource)) {
                 mCurrentSecondLevelContext = DebateFormatXmlSecondLevelContext.NONE;
                 mCurrentResourceRef = null;
 
-            /** <speechtype ref="string" length="5:00" firstperiod="string" countdir="up">
-             * Set the first period, then end the context.
+            /**
+             * <preptime-controlled length="7:00" firstperiod="string">
+             * Set the first period and finish bell, then end the context.
              */
-            } else if (areEqual(localName, R.string.XmlElemNameSpeechFormat)) {
+            } else if (areEqual(localName, R.string.xmlElemName_prepTimeControlledFormat)) {
                 try {
-                    mDfb.setFirstPeriod(mCurrentSpeechFormatRef, mCurrentSpeechFormatFirstPeriod);
+                    mDfb.setFirstPeriodOfPrepTime(mCurrentFirstPeriod);
+                } catch (DebateFormatBuilderException e) {
+                    logXmlError(e);
+                }
+
+                try {
+                    // If there isn't already a finish bell in this, add one and log the error.
+                    if (!mDfb.hasFinishBellInPrepTimeControlled()) {
+                        logXmlError(R.string.xmlError_prepTimeNoFinishBell);
+                        mDfb.addBellInfoToPrepTimeAtFinish(new BellInfo(0, 2), null);
+                    }
+                } catch (DebateFormatBuilderException e) {
+                    logXmlError(e);
+                }
+
+                mCurrentSecondLevelContext = DebateFormatXmlSecondLevelContext.NONE;
+                mCurrentFirstPeriod = null;
+
+            /** <speechtype ref="string" length="5:00" firstperiod="string" countdir="up">
+             * Set the first period and finish bell, then end the context.
+             */
+            } else if (areEqual(localName, R.string.xmlElemName_speechFormat)) {
+                try {
+                    mDfb.setFirstPeriodOfSpeechFormat(mCurrentSpeechFormatRef, mCurrentFirstPeriod);
                 } catch (DebateFormatBuilderException e) {
                     logXmlError(e);
                 }
@@ -123,7 +146,7 @@ public class DebateFormatBuilderFromXml {
                 try {
                     // If there isn't already a finish bell in this, add one and log the error.
                     if (!mDfb.hasFinishBellInSpeechFormat(mCurrentSpeechFormatRef)) {
-                        logXmlError(R.string.XmlErrorSpeechFormatNoFinishBell, mCurrentSpeechFormatRef);
+                        logXmlError(R.string.xmlError_speechFormatNoFinishBell, mCurrentSpeechFormatRef);
                         mDfb.addBellInfoToSpeechFormatAtFinish(mCurrentSpeechFormatRef, new BellInfo(0, 2), null);
                     }
                 } catch (DebateFormatBuilderException e) {
@@ -131,17 +154,17 @@ public class DebateFormatBuilderFromXml {
                 }
 
                 mCurrentSecondLevelContext = DebateFormatXmlSecondLevelContext.NONE;
-                mCurrentSpeechFormatFirstPeriod = null;
+                mCurrentFirstPeriod = null;
                 mCurrentSpeechFormatRef = null;
 
             /** <speeches>
              * End the speeches context.
              */
-            } else if (areEqual(localName, R.string.XmlElemNameSpeechesList)) {
+            } else if (areEqual(localName, R.string.xmlElemName_speechesList)) {
                 mCurrentSecondLevelContext = DebateFormatXmlSecondLevelContext.NONE;
             }
 
-            /** <bell time="1:00" number="1" nextperiod="#stay" sound="#default" pauseonbell="true">
+            /** <bell time="1:00" number="1" nextperiod="#stay" pauseonbell="true">
              * Do nothing
              */
 
@@ -163,23 +186,23 @@ public class DebateFormatBuilderFromXml {
             /**
              * <debateformat name="something" schemaversion="1.0">
              */
-            if (areEqual(localName, R.string.XmlElemNameRoot)) {
+            if (areEqual(localName, R.string.xmlElemName_root)) {
 
-                String name = getValue(atts, R.string.XmlAttrNameRootName);
+                String name = getValue(atts, R.string.xmlAttrName_root_name);
                 if (name == null) {
-                    logXmlError(R.string.XmlErrorRootNoName);
+                    logXmlError(R.string.xmlError_rootNoName);
                     return;
                 }
 
-                mSchemaVersion = getValue(atts, R.string.XmlAttrNameRootSchemaVersion);
+                mSchemaVersion = getValue(atts, R.string.xmlAttrName_root_schemaVersion);
                 if (mSchemaVersion == null) {
-                    logXmlError(R.string.XmlErrorRootNoSchemaVersion);
+                    logXmlError(R.string.xmlError_rootNoSchemaVersion);
                 } else {
                     try {
                         if (!isSchemaSupported())
-                            logXmlError(R.string.XmlErrorRootNewSchemaVersion, mSchemaVersion, MAXIMUM_SCHEMA_VERSION);
+                            logXmlError(R.string.xmlError_rootNewSchemaVersion, mSchemaVersion, MAXIMUM_SCHEMA_VERSION);
                     } catch (IllegalArgumentException e) {
-                        logXmlError(R.string.XmlErrorRootInvalidSchemaVersion, mSchemaVersion);
+                        logXmlError(R.string.xmlError_rootInvalidSchemaVersion, mSchemaVersion);
                     }
                 }
 
@@ -192,7 +215,7 @@ public class DebateFormatBuilderFromXml {
             // For everything else, we must be inside the root element.
             // If we're not, refuse to do anything.
             if (!mIsInRootContext) {
-                logXmlError(R.string.XmlErrorSomethingOutsideRoot);
+                logXmlError(R.string.xmlError_somethingOutsideRoot);
                 return;
             }
 
@@ -201,19 +224,19 @@ public class DebateFormatBuilderFromXml {
              * Must not be inside a resource or speech format.
              * 'ref' is mandatory.
              */
-            if (areEqual(localName, R.string.XmlElemNameResource)) {
+            if (areEqual(localName, R.string.xmlElemName_resource)) {
 
                 // 1. Get the reference string.
-                String reference = getValue(atts, R.string.XmlAttrNameCommonRef);
+                String reference = getValue(atts, R.string.xmlAttrName_common_ref);
                 if (reference == null) {
-                    logXmlError(R.string.XmlErrorResourceNoRef);
+                    logXmlError(R.string.xmlError_resourceNoRef);
                     return;
                 }
 
                 // 2. Check we're not inside any contexts.
                 // If we are, ignore and reset all contexts.
                 if (!assertNotInsideAnySecondLevelContextAndResetOtherwise()) {
-                    logXmlError(R.string.XmlErrorResourceInsideContext, reference,
+                    logXmlError(R.string.xmlError_resourceInsideContext, reference,
                             getCurrentSecondLevelContext().toString());
                     return;
                 }
@@ -231,40 +254,132 @@ public class DebateFormatBuilderFromXml {
                 mCurrentSecondLevelContext = DebateFormatXmlSecondLevelContext.RESOURCE;
                 mCurrentResourceRef = reference;
 
+            /**
+             * <preptime length="15:00" />
+             * Create simple prep time.
+             * 'length' is mandatory.
+             */
+            } else if (areEqual(localName, R.string.xmlElemName_prepTimeSimpleFormat)) {
+
+                // 1. Check we're not inside any contexts.  If we are, ignore and reset all
+                // contexts.
+                if (!assertNotInsideAnySecondLevelContextAndResetOtherwise()) {
+                    logXmlError(R.string.xmlError_prepTimeInsideContext,
+                            getCurrentSecondLevelContext().toString());
+                    return;
+                }
+
+                // 2. Get the length string, then convert it to seconds. Mandatory; exit on error.
+                // Take note of it, in case bells use "finish" as their bell time.
+                String lengthStr = getValue(atts, R.string.xmlAttrName_controlledTimeLength);
+                long length = 0;
+                if (lengthStr == null) {
+                    logXmlError(R.string.xmlError_prepTimeNoLength);
+                    return;
+                }
+                try {
+                    length = timeStr2Secs(lengthStr);
+                } catch (NumberFormatException e) {
+                    logXmlError(R.string.xmlError_prepTimeInvalidLength, lengthStr);
+                    return;
+                }
+
+                // 3. Create the prep time.
+                try {
+                    mDfb.addPrepTimeSimple(length);
+                } catch (DebateFormatBuilderException e) {
+                    // TODO Auto-generated catch block
+                    logXmlError(e);
+                    return;
+                }
+
+            /**
+             * <preptime-controlled length="7:00" firstperiod="string">
+             * Create controlled prep time
+             * 'length' is mandatory.
+             * 'firstperiod' is optional.
+             */
+            } else if (areEqual(localName, R.string.xmlElemName_prepTimeControlledFormat)) {
+
+                // 1. Check we're not inside any contexts.  If we are, ignore and reset all
+                // contexts.
+                if (!assertNotInsideAnySecondLevelContextAndResetOtherwise()) {
+                    logXmlError(R.string.xmlError_prepTimeInsideContext,
+                            getCurrentSecondLevelContext().toString());
+                    return;
+                }
+
+                // 2. Get the length string, then convert it to seconds. Mandatory; exit on error.
+                // Take note of it, in case bells use "finish" as their bell time.
+                String lengthStr = getValue(atts, R.string.xmlAttrName_controlledTimeLength);
+                long length = 0;
+                if (lengthStr == null) {
+                    logXmlError(R.string.xmlError_prepTimeNoLength);
+                    return;
+                }
+                try {
+                    length = timeStr2Secs(lengthStr);
+                } catch (NumberFormatException e) {
+                    logXmlError(R.string.xmlError_prepTimeInvalidLength, lengthStr);
+                    return;
+                }
+
+                // 3. Create the prep time.
+                try {
+                    mDfb.addPrepTimeControlled(length);
+                } catch (DebateFormatBuilderException e) {
+                    // TODO Auto-generated catch block
+                    logXmlError(e);
+                    return;
+                }
+
+                // 4. If we got this far, take note of this reference string for all this speech
+                // format's sub-elements.  (Don't do this if there was an error, so that
+                // sub-elements can be ignored.)
+                mCurrentSecondLevelContext = DebateFormatXmlSecondLevelContext.PREP_TIME_CONTROLLED;
+
+                // Now do the optional attributes...
+
+                // 5. Get the first period, and take note for later.
+                // We'll deal with it as we exit this element, because the period is defined
+                // inside the element.
+                mCurrentFirstPeriod =
+                        getValue(atts, R.string.xmlAttrName_controlledTimeFirstPeriod);
+
             /** <speechtype ref="string" length="5:00" firstperiod="string" countdir="up">
              * Create a speech format.
              * 'ref' and 'length' are mandatory.
              * 'firstperiod' and 'countdir' are optional.
              */
-            } else if (areEqual(localName, R.string.XmlElemNameSpeechFormat)) {
+            } else if (areEqual(localName, R.string.xmlElemName_speechFormat)) {
 
                 // 1. Get the reference string. Mandatory; exit on error.
-                String reference = getValue(atts, R.string.XmlAttrNameCommonRef);
+                String reference = getValue(atts, R.string.xmlAttrName_common_ref);
                 if (reference == null) {
-                    logXmlError(R.string.XmlErrorSpeechFormatNoRef);
+                    logXmlError(R.string.xmlError_speechFormatNoRef);
                     return;
                 }
 
                 // 2. Check we're not inside any contexts.
                 // If we are, ignore and reset all contexts.
                 if (!assertNotInsideAnySecondLevelContextAndResetOtherwise()) {
-                    logXmlError(R.string.XmlErrorSpeechFormatInsideContext, reference,
+                    logXmlError(R.string.xmlError_speechFormatInsideContext, reference,
                             getCurrentSecondLevelContext().toString());
                     return;
                 }
 
                 // 3. Get the length string, then convert it to seconds. Mandatory; exit on error.
                 // Take note of it, in case bells use "finish" as their bell time.
-                String lengthStr = getValue(atts, R.string.XmlAttrNameSpeechFormatLength);
+                String lengthStr = getValue(atts, R.string.xmlAttrName_controlledTimeLength);
                 long length = 0;
                 if (lengthStr == null) {
-                    logXmlError(R.string.XmlErrorSpeechFormatNoLength, reference);
+                    logXmlError(R.string.xmlError_speechFormatNoLength, reference);
                     return;
                 }
                 try {
                     length = timeStr2Secs(lengthStr);
                 } catch (NumberFormatException e) {
-                    logXmlError(R.string.XmlErrorSpeechFormatInvalidLength, reference, lengthStr);
+                    logXmlError(R.string.xmlError_speechFormatInvalidLength, reference, lengthStr);
                     return;
                 }
 
@@ -284,32 +399,18 @@ public class DebateFormatBuilderFromXml {
 
                 // Now do the optional attributes...
 
-                // 6. Get the count direction, and set it if it's present
-                String countdir = getValue(atts, R.string.XmlAttrNameSpeechFormatCountDir);
+                // The 'countdir' attribute is obsolete.  If we find it, use an appropriate
+                // warning message.
+                String countdir = getValue(atts, R.string.xmlAttrName_speechFormat_countDir);
                 if (countdir != null) {
-                    try {
-                        if (areEqualIgnoringCase(countdir,
-                                R.string.XmlAttrValueSpeechFormatCountDirUp)) {
-                            mDfb.setCountDirection(reference, CountDirection.COUNT_UP);
-                        } else if (areEqualIgnoringCase(countdir,
-                                R.string.XmlAttrValueSpeechFormatCountDirDown)) {
-                            mDfb.setCountDirection(reference, CountDirection.COUNT_DOWN);
-                        } else if (areEqualIgnoringCase(countdir,
-                                R.string.XmlAttrValueSpeechFormatCountDirUser)) {
-                            mDfb.setCountDirection(reference, CountDirection.COUNT_USER);
-                        } else {
-                            logXmlError(R.string.XmlErrorSpeechFormatInvalidCountDir, reference, countdir);
-                        }
-                    } catch (DebateFormatBuilderException e) {
-                        logXmlError(R.string.XmlErrorSpeechFormatUnexpectedlyNotFound, reference);
-                    }
+                    logXmlError(R.string.xmlError_speechFormatFoundCountDir);
                 }
 
                 // 7. Get the first period, and take note for later.
                 // We'll deal with it as we exit this element, because the period is defined
                 // inside the element.
-                mCurrentSpeechFormatFirstPeriod =
-                        getValue(atts, R.string.XmlAttrNameSpeechFormatFirstPeriod);
+                mCurrentFirstPeriod =
+                        getValue(atts, R.string.xmlAttrName_controlledTimeFirstPeriod);
 
             /** <bell time="1:00" number="1" nextperiod="#stay" sound="#default" pauseonbell="true">
              * Create a BellInfo.
@@ -317,35 +418,35 @@ public class DebateFormatBuilderFromXml {
              * 'time' is mandatory.
              * All other attributes are optional.
              */
-            } else if (areEqual(localName, R.string.XmlElemNameBell)) {
+            } else if (areEqual(localName, R.string.xmlElemName_bell)) {
 
                 // 1. Get the bell time. Mandatory; exit on error.
-                String timeStr = getValue(atts, R.string.XmlAttrNameBellTime);;
+                String timeStr = getValue(atts, R.string.xmlAttrName_bell_time);;
                 long time = 0;
                 boolean atFinish = false;
                 if (timeStr == null) {
-                    logXmlError(R.string.XmlErrorBellNoTime, getCurrentContextAndReferenceStr());
+                    logXmlError(R.string.xmlError_bellNoTime, getCurrentContextAndReferenceStr());
                     return;
-                } else if (areEqualIgnoringCase(timeStr, R.string.XmlAttrValueBellTimeFinish)) {
+                } else if (areEqualIgnoringCase(timeStr, R.string.xmlAttrValue_bell_time_finish)) {
                     time = 0;  // will be overwritten addBellInfoToSpeechFormatAtFinish().
                     atFinish = true;
                 } else {
                     try {
                         time = timeStr2Secs(timeStr);
                     } catch (NumberFormatException e) {
-                        logXmlError(R.string.XmlErrorBellInvalidTime, getCurrentContextAndReferenceStr(), timeStr);
+                        logXmlError(R.string.xmlError_bellInvalidTime, getCurrentContextAndReferenceStr(), timeStr);
                         return;
                     }
                 }
 
                 // 2. Get the number of times to play, or default to 1.
-                String numberStr = getValue(atts, R.string.XmlAttrNameBellNumber);
+                String numberStr = getValue(atts, R.string.xmlAttrName_bell_number);
                 int number = 1;
                 if (numberStr != null) {
                     try {
                         number = Integer.parseInt(numberStr);
                     } catch (NumberFormatException e) {
-                        logXmlError(R.string.XmlErrorBellInvalidNumber, getCurrentContextAndReferenceStr(), timeStr);
+                        logXmlError(R.string.xmlError_bellInvalidNumber, getCurrentContextAndReferenceStr(), timeStr);
                     }
                 }
 
@@ -354,33 +455,20 @@ public class DebateFormatBuilderFromXml {
 
                 // 4. Get the next period reference, or default to null
                 // "#stay" means null (i.e. leave unchanged)
-                String periodInfoRef = getValue(atts, R.string.XmlAttrNameBellNextPeriod);
+                String periodInfoRef = getValue(atts, R.string.xmlAttrName_bell_nextPeriod);
                 if (periodInfoRef != null)
-                    if (areEqualIgnoringCase(periodInfoRef, R.string.XmlAttrValueCommonStay))
+                    if (areEqualIgnoringCase(periodInfoRef, R.string.xmlAttrValue_common_stay))
                         periodInfoRef = null;
 
-                // 5. Get the sound to play, or default to the default
-                String bellSound = getValue(atts, R.string.XmlAttrNameBellSound);
-                if (bellSound != null) {
-                    if (areEqualIgnoringCase(bellSound, R.string.XmlAttrValueCommonStay))
-                        bellSound = null;
-                    else if (areEqualIgnoringCase(bellSound, R.string.XmlAttrValueBellNextPeriodSilent))
-                        bi.setSound(0);
-                    else if (areEqualIgnoringCase(bellSound, R.string.XmlAttrValueCommonDefault));
-                        // Do nothing
-                    else
-                        logXmlError(R.string.XmlErrorBellInvalidSound, getCurrentContextAndReferenceStr(), bellSound);
-                }
-
-                // 6. Determine whether to pause on this bell
-                String pauseOnBellStr = getValue(atts, R.string.XmlAttrNameBellPauseOnBell);
+                // 5. Determine whether to pause on this bell
+                String pauseOnBellStr = getValue(atts, R.string.xmlAttrName_bell_pauseOnBell);
                 if (pauseOnBellStr != null) {
-                    if (areEqualIgnoringCase(pauseOnBellStr, R.string.XmlAttrValueCommonTrue))
+                    if (areEqualIgnoringCase(pauseOnBellStr, R.string.xmlAttrValue_common_true))
                         bi.setPauseOnBell(true);
-                    else if (areEqualIgnoringCase(pauseOnBellStr, R.string.XmlAttrValueCommonFalse))
+                    else if (areEqualIgnoringCase(pauseOnBellStr, R.string.xmlAttrValue_common_false))
                         bi.setPauseOnBell(false);
                     else
-                        logXmlError(R.string.XmlErrorBellInvalidPauseOnBell, getCurrentContextAndReferenceStr(), pauseOnBellStr);
+                        logXmlError(R.string.xmlError_bellInvalidPauseOnBell, getCurrentContextAndReferenceStr(), pauseOnBellStr);
                 }
 
                 // Finally, add the bell, but first check that the period info exists (and nullify
@@ -390,15 +478,25 @@ public class DebateFormatBuilderFromXml {
                     case RESOURCE:
                         if (mCurrentResourceRef == null) break;
                         if (periodInfoRef != null && !mDfb.hasPeriodInfoInResource(mCurrentResourceRef, periodInfoRef)) {
-                            logXmlError(R.string.XmlErrorResourcePeriodInfoNotFound, periodInfoRef, mCurrentResourceRef);
+                            logXmlError(R.string.xmlError_resourcePeriodInfoNotFound, periodInfoRef, mCurrentResourceRef);
                             periodInfoRef = null;
                         }
                         mDfb.addBellInfoToResource(mCurrentResourceRef, bi, periodInfoRef);
                         break;
+                    case PREP_TIME_CONTROLLED:
+                        if (periodInfoRef != null && !mDfb.hasPeriodInfoInPrepTimeControlled(periodInfoRef)) {
+                            logXmlError(R.string.xmlError_prepTimePeriodInfoNotFound, periodInfoRef, mCurrentResourceRef);
+                            periodInfoRef = null;
+                        }
+                        if (atFinish)
+                            mDfb.addBellInfoToPrepTimeAtFinish(bi, periodInfoRef);
+                        else
+                            mDfb.addBellInfoToPrepTime(bi, periodInfoRef);
+                        break;
                     case SPEECH_FORMAT:
                         if (mCurrentSpeechFormatRef == null) break;
                         if (periodInfoRef != null && !mDfb.hasPeriodInfoInSpeechFormat(mCurrentSpeechFormatRef, periodInfoRef)) {
-                            logXmlError(R.string.XmlErrorSpeechFormatPeriodInfoNotFound, periodInfoRef, mCurrentSpeechFormatRef);
+                            logXmlError(R.string.xmlError_speechFormatPeriodInfoNotFound, periodInfoRef, mCurrentSpeechFormatRef);
                             periodInfoRef = null;
                         }
                         if (atFinish)
@@ -407,7 +505,7 @@ public class DebateFormatBuilderFromXml {
                             mDfb.addBellInfoToSpeechFormat(mCurrentSpeechFormatRef, bi, periodInfoRef);
                         break;
                     default:
-                        logXmlError(R.string.XmlErrorBellOutsideContext);
+                        logXmlError(R.string.xmlError_bellOutsideContext);
                     }
                 } catch (DebateFormatBuilderException e) {
                     logXmlError(e);
@@ -419,27 +517,27 @@ public class DebateFormatBuilderFromXml {
              * 'ref' is mandatory.
              * 'desc' and 'bgcolor' are optional.
              */
-            } else if (areEqual(localName, R.string.XmlElemNamePeriod)){
+            } else if (areEqual(localName, R.string.xmlElemName_period)){
 
                 // 1. Get the reference. Mandatory; exit on error.
-                String reference = getValue(atts, R.string.XmlAttrNameCommonRef);
+                String reference = getValue(atts, R.string.xmlAttrName_common_ref);
                 if (reference == null) {
-                    logXmlError(R.string.XmlErrorPeriodNoRef, getCurrentContextAndReferenceStr());
+                    logXmlError(R.string.xmlError_periodNoRef, getCurrentContextAndReferenceStr());
                     return;
                 }
 
                 // 2. Get the description (implicitly default to null)
-                String description = getValue(atts, R.string.XmlAttrNamePeriodDesc);
+                String description = getValue(atts, R.string.xmlAttrName_period_desc);
                 if (description != null) {
-                    if (areEqualIgnoringCase(description, R.string.XmlAttrValueCommonStay))
+                    if (areEqualIgnoringCase(description, R.string.xmlAttrValue_common_stay))
                         description = null;
                 }
 
                 // 3. Get the background colour (implicitly default to null)
-                String bgcolorStr = getValue(atts, R.string.XmlAttrNamePeriodBgcolor);
+                String bgcolorStr = getValue(atts, R.string.xmlAttrName_period_bgcolor);
                 Integer backgroundColor = null;
                 if (bgcolorStr != null) {
-                    if (areEqualIgnoringCase(bgcolorStr, R.string.XmlAttrValueCommonStay))
+                    if (areEqualIgnoringCase(bgcolorStr, R.string.xmlAttrValue_common_stay))
                         backgroundColor = null;
                     else if (bgcolorStr.startsWith("#")) {
                         try {
@@ -447,23 +545,23 @@ public class DebateFormatBuilderFromXml {
                             // integers to be parsed as unsigned integers.
                             backgroundColor = new BigInteger(bgcolorStr.substring(1), 16).intValue();
                         } catch (NumberFormatException e) {
-                            logXmlError(R.string.XmlErrorPeriodInvalidColor, reference, bgcolorStr);
+                            logXmlError(R.string.xmlError_periodInvalidColor, reference, bgcolorStr);
                         }
                     } else {
-                        logXmlError(R.string.XmlErrorPeriodInvalidColor, reference, bgcolorStr);
+                        logXmlError(R.string.xmlError_periodInvalidColor, reference, bgcolorStr);
                     }
                 }
 
                 // 4. Get whether POIs are allowed (implicitly default to false)
-                String poisAllowedStr = getValue(atts, R.string.XmlAttrNamePeriodPoisAllowed);
+                String poisAllowedStr = getValue(atts, R.string.xmlAttrName_period_poisAllowed);
                 boolean poisAllowed = false;
                 if (poisAllowedStr != null) {
-                    if (areEqualIgnoringCase(poisAllowedStr, R.string.XmlAttrValueCommonTrue))
+                    if (areEqualIgnoringCase(poisAllowedStr, R.string.xmlAttrValue_common_true))
                         poisAllowed = true;
-                    else if (areEqualIgnoringCase(poisAllowedStr, R.string.XmlAttrValueCommonFalse))
+                    else if (areEqualIgnoringCase(poisAllowedStr, R.string.xmlAttrValue_common_false))
                         poisAllowed = false;
                     else
-                        logXmlError(R.string.XmlErrorPeriodInvalidPoisAllowed, reference, poisAllowedStr);
+                        logXmlError(R.string.xmlError_periodInvalidPoisAllowed, reference, poisAllowedStr);
                 }
 
                 // 5. We now have enough information to make the PeriodInfo
@@ -476,12 +574,15 @@ public class DebateFormatBuilderFromXml {
                         if (mCurrentResourceRef != null)
                             mDfb.addPeriodInfoToResource(mCurrentResourceRef, reference, pi);
                         break;
+                    case PREP_TIME_CONTROLLED:
+                        mDfb.addPeriodInfoToPrepTime(reference, pi);
+                        break;
                     case SPEECH_FORMAT:
                         if (mCurrentSpeechFormatRef != null)
                             mDfb.addPeriodInfoToSpeechFormat(mCurrentSpeechFormatRef, reference, pi);
                         break;
                     default:
-                        logXmlError(R.string.XmlErrorPeriodOutsideContext, reference);
+                        logXmlError(R.string.xmlError_periodOutsideContext, reference);
                     }
 
                 } catch (DebateFormatBuilderException e) {
@@ -493,18 +594,18 @@ public class DebateFormatBuilderFromXml {
              * This must be in a speech format.
              * 'resource' is mandatory.
              */
-            } else if (areEqual(localName, R.string.XmlElemNameInclude)) {
+            } else if (areEqual(localName, R.string.xmlElemName_include)) {
 
                 // 1. Get the resource reference. Mandatory; exit on error.
-                String resourceRef = getValue(atts, R.string.XmlAttrNameIncludeResource);
+                String resourceRef = getValue(atts, R.string.xmlAttrName_include_resource);
                 if (resourceRef == null) {
-                    logXmlError(R.string.XmlErrorIncludeNoResource, getCurrentContextAndReferenceStr());
+                    logXmlError(R.string.xmlError_includeNoResource, getCurrentContextAndReferenceStr());
                     return;
                 }
 
                 // 2. Check we're inside a speech format
                 if (getCurrentSecondLevelContext() != DebateFormatXmlSecondLevelContext.SPEECH_FORMAT) {
-                    logXmlError(R.string.XmlErrorIncludeOutsideSpeechFormat, resourceRef);
+                    logXmlError(R.string.xmlError_includeOutsideSpeechFormat, resourceRef);
                     return;
                 }
 
@@ -519,9 +620,9 @@ public class DebateFormatBuilderFromXml {
             /** <speeches>
              * Start the speeches context.
              */
-            } else if (areEqual(localName, R.string.XmlElemNameSpeechesList)) {
+            } else if (areEqual(localName, R.string.xmlElemName_speechesList)) {
                 if (!assertNotInsideAnySecondLevelContextAndResetOtherwise()) {
-                    logXmlError(R.string.XmlErrorSpeechesListInsideContext,
+                    logXmlError(R.string.xmlError_speechesListInsideContext,
                             getCurrentSecondLevelContext().toString());
                     return;
                 }
@@ -533,25 +634,25 @@ public class DebateFormatBuilderFromXml {
              * Add a speech.
              * This must be inside the speeches context.
              */
-            } else if (areEqual(localName, R.string.XmlElemNameSpeech)) {
+            } else if (areEqual(localName, R.string.xmlElemName_speech)) {
 
                 // 1. Get the speech name.
-                String name = getValue(atts, R.string.XmlAttrNameSpeechName);
+                String name = getValue(atts, R.string.xmlAttrName_speech_name);
                 if (name == null) {
-                    logXmlError(R.string.XmlErrorSpeechNoName);
+                    logXmlError(R.string.xmlError_speechNoName);
                     return;
                 }
 
                 // 2. Get the speech format.
-                String format = getValue(atts, R.string.XmlAttrNameSpeechFormat);
+                String format = getValue(atts, R.string.xmlAttrName_speech_format);
                 if (format == null) {
-                    logXmlError(R.string.XmlErrorSpeechNoFormat, name);
+                    logXmlError(R.string.xmlError_speechNoFormat, name);
                     return;
                 }
 
                 // 3. We must be inside the speeches list.
                 if (getCurrentSecondLevelContext() != DebateFormatXmlSecondLevelContext.SPEECHES_LIST) {
-                    logXmlError(R.string.XmlErrorSpeechOutsideSpeechesList, name);
+                    logXmlError(R.string.xmlError_speechOutsideSpeechesList, name);
                     return;
                 }
 
@@ -568,9 +669,9 @@ public class DebateFormatBuilderFromXml {
 
         private String getCurrentContextAndReferenceStr() {
             if (mCurrentResourceRef != null) {
-                return String.format("%s '%s'", getString(R.string.XmlElemNameResource), mCurrentResourceRef);
+                return String.format("%s '%s'", getString(R.string.xmlElemName_resource), mCurrentResourceRef);
             } else if (mCurrentSpeechFormatRef != null) {
-                return String.format("%s '%s'", getString(R.string.XmlElemNameSpeechFormat), mCurrentSpeechFormatRef);
+                return String.format("%s '%s'", getString(R.string.xmlElemName_speechFormat), mCurrentSpeechFormatRef);
             } else {
                 return "unknown context";
             }
@@ -601,7 +702,7 @@ public class DebateFormatBuilderFromXml {
             if (getCurrentSecondLevelContext() != DebateFormatXmlSecondLevelContext.NONE) {
                 mCurrentResourceRef = null;
                 mCurrentSpeechFormatRef = null;
-                mCurrentSpeechFormatFirstPeriod = null;
+                mCurrentFirstPeriod = null;
                 return false;
             }
             return true;

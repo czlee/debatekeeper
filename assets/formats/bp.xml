@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<debateformat name="British Parliamentary" schemaversion="1.1">
+	<info>
+		<region>World</region>
+		<level>University</level>
+		<usedat>World Universities Debating Championship</usedat>
+		<usedat>European Universities Debating Championship</usedat>
+		<usedat>Pan-African Universities Debating Championships</usedat>
+		<desc>Four teams of two, 7 minute speeches, POIs allowed</desc>
+	</info>
+	
+	<preptime length="15:00" />
+
+	<speechtype ref="all" length="7:00" firstperiod="initial">
+		<period ref="initial" bgcolor="#stay" />
+		<period ref="pois-allowed" bgcolor="#7700ff00" poisallowed="true"/>
+		<period ref="warning" bgcolor="#77ffcc00" />
+		<period ref="overtime" bgcolor="#77ff0000" />
+		<bell time="1:00" number="1" nextperiod="pois-allowed" />
+		<bell time="6:00" number="1" nextperiod="warning" />
+		<bell time="finish" number="2" nextperiod="overtime" />
+	</speechtype>
+
+	<speeches>
+		<speech name="Prime Minister" type="all" />
+		<speech name="Leader of the Opposition" type="all" />
+		<speech name="Deputy Prime Minister" type="all" />
+		<speech name="Deputy Leader of the Opposition" type="all" />
+		<speech name="Member for the Government" type="all" />
+		<speech name="Member for the Opposition" type="all" />
+		<speech name="Government Whip" type="all" />
+		<speech name="Opposition Whip" type="all" />
+	</speeches>
+</debateformat>

@@ -57,6 +57,7 @@ public class FormatXmlFilesManager {
 
     private final AssetManager mAssets;
     private static final String XML_FILE_ROOT_DIRECTORY_NAME = "debatekeeper";
+    private static final String ASSETS_PATH                  = "formats";
 
     public static final int LOCATION_ASSETS       = 0;
     public static final int LOCATION_USER_DEFINED = 1;
@@ -80,7 +81,7 @@ public class FormatXmlFilesManager {
         InputStream is = openFromRoot(filename);
         if (is != null)
             return is;
-        return mAssets.open(filename);
+        return openFromAssets(filename);
     }
 
     /**
@@ -104,7 +105,7 @@ public class FormatXmlFilesManager {
         }
 
         // Then add files in the assets...
-        String[] assetList = mAssets.list("");
+        String[] assetList = mAssets.list(ASSETS_PATH);
         if (assetList != null) {
             for (int i = 0; i < assetList.length; i++) {
                 compiledSet.add(assetList[i]);
@@ -128,7 +129,7 @@ public class FormatXmlFilesManager {
 
         InputStream assetInputStream;
         try {
-            assetInputStream = mAssets.open(filename);
+            assetInputStream = openFromAssets(filename);
         } catch (IOException e) {
             return LOCATION_NOT_FOUND;
         }
@@ -195,6 +196,11 @@ public class FormatXmlFilesManager {
 
         // And if we can, return the resulting input stream.
         return fis;
+    }
+
+    private InputStream openFromAssets(String filename) throws IOException {
+        File xmlFile = new File(ASSETS_PATH, filename);
+        return mAssets.open(xmlFile.getPath());
     }
 
 }

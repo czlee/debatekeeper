@@ -39,6 +39,7 @@ import android.util.Log;
 public class DebateFormat {
 
     private String                               mName = "";
+    private PrepTimeFormat                       mPrepTimeFormat;
     private final HashMap<String, SpeechFormat>  mSpeechFormats;
     private final ArrayList<SpeechSpec>          mSpeechSpecs;
 
@@ -87,8 +88,17 @@ public class DebateFormat {
      */
     public DebateFormat() {
         super();
-        mSpeechFormats = new HashMap<String, SpeechFormat>();
-        mSpeechSpecs   = new ArrayList<SpeechSpec>();
+        mSpeechFormats  = new HashMap<String, SpeechFormat>();
+        mSpeechSpecs    = new ArrayList<SpeechSpec>();
+        mPrepTimeFormat = null;
+    }
+
+    /**
+     * Sets the prep format.
+     * @param pf the {@link PrepTimeSimpleFormat}
+     */
+    public void setPrepFormat(PrepTimeFormat ptf) {
+        mPrepTimeFormat = ptf;
     }
 
     /**
@@ -117,14 +127,29 @@ public class DebateFormat {
     }
 
     /**
+     * @return true if this format has prep time associated with it, false otherwise
+     */
+    public boolean hasPrepFormat() {
+        return (mPrepTimeFormat != null);
+    }
+
+    /**
+     * Returns the prep format.
+     * @return
+     */
+    public PrepTimeFormat getPrepFormat() {
+        return mPrepTimeFormat;
+    }
+
+    /**
      * Returns the speech format for a specified speech.
      * @param index the index of the speech (0 for first speech, 1 for second, etc.)
      * @return a SpeechFormat object for that speech, or null if there is no such speech or if
      * the speech has no such format.
      */
-    public SpeechFormat getSpeechFormat(int index) {
+    public SpeechOrPrepFormat getSpeechFormat(int index) {
         String speechType;
-        SpeechFormat speechFormat;
+        SpeechOrPrepFormat speechFormat;
 
         // 1. Retrieve the speech type
         try {

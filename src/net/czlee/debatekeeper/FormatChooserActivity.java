@@ -28,15 +28,21 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
+import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Xml;
 import android.util.Xml.Encoding;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -64,8 +70,6 @@ public class FormatChooserActivity extends Activity {
     private FormatXmlFilesManager mFilesManager;
 
     private ListView mStylesListView;
-    private Button   mOKButton;
-    private Button   mCancelButton;
     private String   mCurrentStyleName = null;
 
     private DebateFormatEntryArrayAdapter mStylesArrayAdapter;
@@ -193,9 +197,9 @@ public class FormatChooserActivity extends Activity {
             if (!uri.equals(DEBATING_TIMER_URI))
                 return;
 
-            if (localName.equals(getString(R.string.XmlElemNameRoot))) {
+            if (localName.equals(getString(R.string.xmlElemName_root))) {
                 mCurrentStyleName = atts.getValue(DEBATING_TIMER_URI,
-                        getString(R.string.XmlAttrNameRootName));
+                        getString(R.string.xmlAttrName_root_name));
                 throw new AllInformationFoundException();
                 // We don't need to parse any more once we find the style name
             }
@@ -206,22 +210,7 @@ public class FormatChooserActivity extends Activity {
     private class OKButtonOnClickListener implements OnClickListener {
         @Override
         public void onClick(View v) {
-            int selectedPosition = mStylesListView.getCheckedItemPosition();
-            if (selectedPosition == getIncomingSelection()) {
-                Toast.makeText(FormatChooserActivity.this,
-                        R.string.ToastFormatUnchanged, Toast.LENGTH_SHORT)
-                        .show();
-                FormatChooserActivity.this.finish();
-            } else if (selectedPosition != ListView.INVALID_POSITION) {
-                Toast.makeText(FormatChooserActivity.this, getString(R.string.ToastSelection,
-                        mStylesList.get(selectedPosition).getStyleName()), Toast.LENGTH_SHORT)
-                        .show();
-                returnSelectionByPosition(selectedPosition);
-            } else {
-                Toast.makeText(FormatChooserActivity.this, R.string.ToastNoSelection,
-                        Toast.LENGTH_SHORT).show();
-                FormatChooserActivity.this.finish();
-            }
+            confirmSelectionAndReturn();
         }
     }
 
@@ -255,24 +244,61 @@ public class FormatChooserActivity extends Activity {
     }
 
     //******************************************************************************************
-    // Protected methods
+    // Public methods
     //******************************************************************************************
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // We only show these buttons if there is an action bar.  In Gingerbread and earlier,
+        // we show dedicated OK/Cancel buttons.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.format_chooser_action_bar, menu);
+            return true;
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case android.R.id.home:
+        case R.id.formatChooser_actionBar_cancel:
+            finish();
+            break;
+        case R.id.formatChooser_actionBar_ok:
+            confirmSelectionAndReturn();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    //******************************************************************************************
+    // Protected methods
+    //******************************************************************************************
+
+    @TargetApi(11)
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.format_chooser);
-        DEBATING_TIMER_URI = getString(R.string.XmlUri);
+        setContentView(R.layout.activity_format_chooser);
+        DEBATING_TIMER_URI = getString(R.string.xml_uri);
 
         mFilesManager = new FormatXmlFilesManager(this);
 
-        mStylesListView = (ListView) findViewById(R.id.StylesListView);
-        mOKButton       = (Button)   findViewById(R.id.FormatChooserOKButton);
-        mCancelButton   = (Button)   findViewById(R.id.FormatChooserCancelButton);
+        // Set the action bar
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            ActionBar bar = getActionBar();
+            bar.setDisplayHomeAsUpEnabled(true);
+        }
 
-        mOKButton.setOnClickListener(new OKButtonOnClickListener());
-        mCancelButton.setOnClickListener(new CancelButtonOnClickListener());
+        // Set OnClickListeners
+        // These buttons only exist in layouts for versions Gingerbread and older
+        Button okButton = (Button) findViewById(R.id.formatChooser_okButton);
+        if (okButton != null) okButton.setOnClickListener(new OKButtonOnClickListener());
+        Button cancelButton = (Button) findViewById(R.id.formatChooser_cancelButton);
+        if (cancelButton != null) cancelButton.setOnClickListener(new CancelButtonOnClickListener());
 
+        // Populate mStylesList
         try {
             populateStylesLists();
         } catch (IOException e) {
@@ -286,8 +312,9 @@ public class FormatChooserActivity extends Activity {
         // Sort alphabetically by style name
         mStylesArrayAdapter.sort(new StyleEntryComparatorByStyleName());
 
+        // Configure the ListView
+        mStylesListView = (ListView) findViewById(R.id.formatChooser_stylesList);
         mStylesListView.setAdapter(mStylesArrayAdapter);
-
         mStylesListView.setOnItemClickListener(new StylesListViewOnItemClickListener());
 
         // Select and scroll to the incoming selection (if existent)
@@ -368,6 +395,25 @@ public class FormatChooserActivity extends Activity {
     }
 
     /**
+     * Confirms and handles the selection appropriately, and ends the Activity.
+     */
+    private void confirmSelectionAndReturn() {
+        int selectedPosition = mStylesListView.getCheckedItemPosition();
+        if (selectedPosition == getIncomingSelection()) {
+            Toast.makeText(FormatChooserActivity.this,
+                    R.string.formatChooser_toast_formatUnchanged, Toast.LENGTH_SHORT)
+                    .show();
+            FormatChooserActivity.this.finish();
+        } else if (selectedPosition != ListView.INVALID_POSITION) {
+            returnSelectionByPosition(selectedPosition);
+        } else {
+            Toast.makeText(FormatChooserActivity.this, R.string.formatChooser_toast_noSelection,
+                    Toast.LENGTH_SHORT).show();
+            FormatChooserActivity.this.finish();
+        }
+    }
+
+    /**
      * @return the selection (as an integer) that was passed in the <code>Intent</code> that
      * started this <code>Activity</code>, or <code>ListView.INVALID_POSITION</code>
      */
@@ -416,10 +462,10 @@ public class FormatChooserActivity extends Activity {
      */
     private AlertDialog getIOErrorAlert() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.IOErrorDialogTitle)
-                .setMessage(R.string.IOErrorDialogMessage)
+        builder.setTitle(R.string.ioErrorDialog_title)
+                .setMessage(R.string.ioErrorDialog_message)
                 .setCancelable(false)
-                .setPositiveButton(R.string.IOErrorDialogButton,
+                .setPositiveButton(R.string.ioErrorDialog_button,
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -453,9 +499,10 @@ public class FormatChooserActivity extends Activity {
 
         if (dfi != null) {
             populateBasicInfo(view, dfi);
-            populateTwoColumnTable(view, R.id.ViewFormatTableSpeechTypes, R.layout.speech_type_row,
+            populatePrepTimeInfo(view, dfi);
+            populateTwoColumnTable(view, R.id.viewFormat_table_speechTypes, R.layout.speech_type_row,
                     dfi.getSpeechFormatDescriptions());
-            populateTwoColumnTable(view, R.id.ViewFormatTableSpeeches, R.layout.speech_row,
+            populateTwoColumnTable(view, R.id.viewFormat_table_speeches, R.layout.speech_row,
                     dfi.getSpeeches());
             builder.setTitle(dfi.getName());
         } else {
@@ -480,10 +527,10 @@ public class FormatChooserActivity extends Activity {
      */
     private AlertDialog getBlankDetailsDialog(String filename, Exception e) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.BlankDetailsDialogTitle)
+        builder.setTitle(R.string.blankDetailsDialog_title)
                .setCancelable(true)
-               .setMessage(getString(R.string.BlankDetailsDialogText, filename, e.getMessage()))
-               .setPositiveButton(R.string.BlankDetailsDialogButtonText, new DialogInterface.OnClickListener() {
+               .setMessage(getString(R.string.blankDetailsDialog_text, filename, e.getMessage()))
+               .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
@@ -523,13 +570,13 @@ public class FormatChooserActivity extends Activity {
      * @param is an <code>InputStream> for the XML file from which data is to be taken
      */
     private void populateBasicInfo(View view, DebateFormatInfo dfi) {
-        ((TextView) view.findViewById(R.id.ViewFormatTableCellRegionValue)).setText(
+        ((TextView) view.findViewById(R.id.viewFormat_tableCell_regionValue)).setText(
                 concatenate(dfi.getRegions()));
-        ((TextView) view.findViewById(R.id.ViewFormatTableCellLevelValue)).setText(
+        ((TextView) view.findViewById(R.id.viewFormat_tableCell_levelValue)).setText(
                 concatenate(dfi.getLevels()));
-        ((TextView) view.findViewById(R.id.ViewFormatTableCellUsedAtValue)).setText(
+        ((TextView) view.findViewById(R.id.viewFormat_tableCell_usedAtValue)).setText(
                 concatenate(dfi.getUsedAts()));
-        ((TextView) view.findViewById(R.id.ViewFormatTableCellDescValue)).setText(
+        ((TextView) view.findViewById(R.id.viewFormat_tableCell_descValue)).setText(
                 dfi.getDescription());
     }
 
@@ -540,11 +587,24 @@ public class FormatChooserActivity extends Activity {
      */
     private void populateFileInfo(View view, String filename) {
         if (mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_USER_DEFINED) {
-            TextView fileLocationText = (TextView) view.findViewById(R.id.ViewFormatFileLocationValue);
-            fileLocationText.setText(getString(R.string.ViewFormatFileLocationValueUserDefined));
+            TextView fileLocationText = (TextView) view.findViewById(R.id.viewFormat_fileLocationValue);
+            fileLocationText.setText(getString(R.string.viewFormat_fileLocationValue_userDefined));
             fileLocationText.setVisibility(View.VISIBLE);
         }
-        ((TextView) view.findViewById(R.id.ViewFormatFileNameValue)).setText(filename);
+        ((TextView) view.findViewById(R.id.viewFormat_fileNameValue)).setText(filename);
+    }
+
+    private void populatePrepTimeInfo(View view, DebateFormatInfo dfi) {
+        String prepTimeDescription = dfi.getPrepTimeDescription();
+
+        // If there is prep time, populate the view.
+        if (prepTimeDescription != null)
+            ((TextView) view.findViewById(R.id.viewFormat_prepTimeValue)).setText(
+                    prepTimeDescription);
+
+        // Otherwise, hide the whole row.
+        else
+            view.findViewById(R.id.viewFormat_prepTimeRow).setVisibility(View.GONE);
     }
 
     /**

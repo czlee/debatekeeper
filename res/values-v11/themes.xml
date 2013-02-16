@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The purpose of this file is to apply Holo to Honeycomb and later, without applying it to
+Gingerbread and earlier.  See http://android-developers.blogspot.co.nz/2012/01/holo-everywhere.html -->
+<resources>
+    <style name="DefaultTheme" parent="@android:style/Theme.Holo" />
+</resources>

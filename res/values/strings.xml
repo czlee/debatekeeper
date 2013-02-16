@@ -1,63 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2012 Phillip Cao, Chuan-Zheng Lee
+ *
+ * This file is part of the Debatekeeper app, which is licensed under the
+ * GNU General Public Licence version 3 (GPLv3).  You can redistribute
+ * and/or modify it under the terms of the GPLv3, and you must not use
+ * this file except in compliance with the GPLv3.
+ *
+ * This app is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public Licence for more details.
+ *
+ * You should have received a copy of the GNU General Public Licence
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
 <resources>
 
     <string name="app_name">Debatekeeper</string>
-    <string name="DebatingActivityTitleBarWithoutFormatName">Debatekeeper</string>
-    <string name="DebatingActivityTitleBarWithFormatName">%1$s - Debatekeeper</string>
-    <string name="GlobalSettingsActivityName">Settings</string>
-    <string name="FormatChooserActivityName">Choose style</string>
+    <string name="activityName_Debating_withoutFormat">Debatekeeper</string>
+    <string name="activityName_Debating_withFormat">%1$s - Debatekeeper</string>
+    <string name="activityName_GlobalSettings">Settings</string>
+    <string name="activityName_FormatChooser">Choose style</string>
+    <string name="activityName_PrepTimeBellsEdit">Prep timer bells</string>
 
     <!-- Buttons -->
-    <string name="StartTimerButtonText">Start</string>
-    <string name="StopTimerButtonText">Stop</string>
-    <string name="ResumeTimerAfterAlarmButtonText">Resume</string>
-    <string name="ResumeTimerAfterUserStopButtonText">Resume</string>
-    <string name="ResetTimerButtonText">Reset</string>
-    <string name="NextSpeakerButtonText">Next speech</string>
-    <string name="NullButtonText">&lt;None></string>
-    <string name="PlayBellButtonText">Bell</string>
-    <string name="PoiButtonText">POI</string>
+    <string name="mainScreen_startTimer_buttonText">Start</string>
+    <string name="mainScreen_stopTimer_buttonText">Stop</string>
+    <string name="mainScreen_resumeTimerAfterAlarm_buttonText">Resume</string>
+    <string name="mainScreen_resumeTimerAfterUserStop_buttonText">Resume</string>
+    <string name="mainScreen_resetTimer_buttonText">Reset</string>
+    <string name="mainScreen_nextSpeaker_buttonText">Next</string>
+    <string name="mainScreen_null_buttonText">&lt;None></string>
+    <string name="mainScreen_playBell_buttonText">Bell</string>
+    <string name="mainScreen_poiTimer_buttonText">POI</string>
     
     <!-- Notices -->
-    <string name="NotificationTitle">Debatekeeper</string>
-    <string name="NotificationTickerText">Debatekeeper is timing</string>
-    <string name="NextBellText">The next bell is at %1$s</string>
-    <string name="NextBellWithPauseText">The next bell pauses the timer at %1$s</string>
-    <string name="NoMoreBellsText">There are no more bells in this speech</string>
-    <string name="SpeechLengthText">The length of this speech is %1$s</string>
-    <string name="ResetDebateToastText">All speeches in debate reset</string>
-    <string name="NoDebateLoadedText">No debate loaded</string>
-    <string name="NoDebateLoadedButtonText">Choose style</string>
+    <string name="notification_title">Debatekeeper</string>
+    <string name="notification_tickerText">Debatekeeper is timing</string>
 
-    <color name="overtime">#ffff7878</color>
-    <color name="overtimeDuringInvert">#33ff0000</color>
+    <string name="mainScreen_bellsList_noBells">"; no bells"</string>
+    <plurals name="mainScreen_bellsList_normal">
+        <item quantity="one">"; bell at %1$s"</item>
+        <item quantity="other">"; bells at %1$s"</item>
+    </plurals>
+    <string name="mainScreen_bellsList_nextOvertimeBell">"; next overtime bell at %1$s"</string>
+    <string name="mainScreen_bellsList_noOvertimeBells">"; no overtime bells"</string>
+
+    <plurals name="timeInMinutes">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <string name="speechLength">%s long</string>
+    <string name="prepTimeLength">%s allowed</string>
+    <string name="prepTimeControlledIndicator">", controlled"</string>
+    <string name="pauseOnBellIndicator">" (pause)"</string>
+    <string name="silentBellIndicator">" (silent)"</string>
+    
+    <string name="mainScreen_toast_resetDebate">All timers in debate reset</string>
+    <string name="mainScreen_noDebateLoaded_text">No debate loaded</string>
+    <string name="mainScreen_noDebateLoaded_buttonText">Choose style</string>
+    
+    <string name="prepTime_title">Preparation time</string>
+    
+    <string name="mainScreen_toast_editTextDiscardChangesInfo_limitedBelow">To discard changes, press the back button. (You can\'t set the time to an overtime value.)</string>
+    <string name="mainScreen_toast_editTextDiscardChangesInfo_limitedAbove">To discard changes, press the back button. (You can\'t set the time to greater than 23:59.)</string>
 
     <!-- Menu -->
-    <string name="ResetDebateMenuItem">Reset debate</string>
-    <string name="SettingsMenuItem">Settings</string>
-    <string name="PrevSpeakerMenuItem">Previous speech</string>
-    <string name="ChooseFormatMenuItem">Debate styles</string>
+    <string name="mainScreen_menuItem_resetDebate">Reset debate</string>
+    <string name="mainScreen_menuItem_settings">Settings</string>
+    <string name="mainScreen_menuItem_prevSpeaker">Previous</string>
+    <string name="mainScreen_menuItem_chooseFormat">Debate styles</string>
 
     <!-- Dialogs -->
-    <string name="FatalProblemWithXmlFileDialogTitle">Oh no!</string>
-    <string name="FatalProblemWithXmlFileDialogButton">Choose style</string>
-    <string name="FatalProblemWithXmlFileMessage_NoSpeeches">"I can't work with this debate format XML file (%1$s) because there are no speeches in it."</string>
-    <string name="FatalProblemWithXmlFileMessage_CannotRead">"I've hit a problem opening this debate format XML file (%1$s)."</string>
-    <string name="FatalProblemWithXmlFileMessage_CannotFind">"I've hit a problem opening this debate format XML file (%1$s)."</string>
-    <string name="FatalProblemWithXmlFileMessage_BadXml">"I can't work with this debate format XML file (%1$s) because the XML isn't well-formed. The XML error was:\n\n%2$s\n"</string>
-    <string name="FatalProblemWithXmlFileMessageSuffix">"\nPlease choose another style."</string>
-    <string name="FatalProblemWithXmlFileNoSchemaVersionSuffix">"\n\nNo schema version was specified; please ask the author of this XML file to specify one.\n"</string>
-    <string name="FatalProblemWithXmlFileSchemaTooNewSuffix">"\n\nThis schema version (%1$s) isn't supported.  You might need to update this app.\n"</string>
+    <string name="fatalProblemWithXmlFileDialog_title">Oh no!</string>
+    <string name="fatalProblemWithXmlFileDialog_button">Choose style</string>
+    <string name="fatalProblemWithXmlFileDialog_message_noSpeeches">"There are no speeches in this debate format (%1$s)."</string>
+    <string name="fatalProblemWithXmlFileDialog_message_cannotRead">"I've hit a problem opening this debate format file (%1$s)."</string>
+    <string name="fatalProblemWithXmlFileDialog_message_cannotFind">"I've hit a problem opening this debate format file (%1$s)."</string>
+    <string name="fatalProblemWithXmlFileDialog_message_badXml">"There's a problem with the XML in this debate format file (%1$s). The error was:\n\n%2$s\n"</string>
+    <string name="fatalProblemWithXmlFileDialog_message_suffix">"\nPlease choose another style."</string>
+    <string name="fatalProblemWithXmlFileDialog_noSchemaVersion_suffix">"\n\nNo schema version was specified; please ask the author of this XML file to specify one.\n"</string>
+    <string name="fatalProblemWithXmlFileDialog_schemaTooNew_suffix">"\n\nThis schema version (%1$s) isn't supported.  You might need to update this app.\n"</string>
 
-    <string name="ErrorsInXmlFileDialogTitle">Warning</string>
-    <string name="ErrorsInXmlFileDialogButton">OK</string>
-    <string name="ErrorsInXmlFileDialogMessagePrefix">"There are a few problems with this debate format XML file. I'll try to work with it, but it probably won't work properly. The problems are:\n"</string>
+    <string name="errorsinXmlFileDialog_title">Warning</string>
+    <string name="errorsinXmlFileDialog_button">OK</string>
+    <string name="errorsinXmlFileDialog_message_prefix">"There are a few problems with this debate format file. I'll try to work with it, but it probably won't work properly. The problems are:\n"</string>
 
 	<!-- POI timer -->
-	<string name="PoiTimerInfoDialogTitle">About the POI timer</string>
-	<string name="PoiTimerInfoDialogMessage">Pressing the <b>POI</b> button starts a 15-second countdown for POIs.\n\nIf you don\'t want to use it, you can hide it under <b>Settings &gt; Points of information</b>.</string>
-	<string name="PoiTimerInfoDialogDontShow">Do not show this again</string>
-	<string name="PoiTimerInfoDialogButtonOK">OK</string>
-	<string name="PoiTimerInfoDialogButtonLearnMore">Learn more</string>
-	<string name="PoiTimerMoreInfoUrl">http://tryingtoreason.wordpress.com/debatekeeper/points-of-information/</string>
+	<string name="poiTimerInfoDialog_title">About the POI timer</string>
+	<string name="poiTimerInfoDialog_message">The <b>POI</b> button starts a 15-second countdown.\n\nIf you don\'t want to use it, you can hide it under <b>Settings &gt; Show POIs timer</b>.</string>
+	<string name="poiTimerInfoDialog_dontShow">Do not show this again</string>
+	<string name="poiTimerInfoDialog_button_learnMore">Learn more</string>
+	<string name="poiTimer_moreInfoUrl">http://tryingtoreason.wordpress.com/debatekeeper/points-of-information/</string>
 </resources>

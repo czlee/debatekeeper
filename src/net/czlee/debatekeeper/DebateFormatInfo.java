@@ -55,6 +55,7 @@ public class DebateFormatInfo {
     private final HashMap<String, Resource>         resources     = new HashMap<String, Resource>();
     private final HashMap<String, SpeechFormatInfo> speechFormats = new HashMap<String, SpeechFormatInfo>();
     private final ArrayList<SpeechInfo>             speeches      = new ArrayList<SpeechInfo>();
+    private       PrepTimeInfo                      prepFormat    = null;
     private       String                            description   = new String("-");
 
     public DebateFormatInfo(Context context) {
@@ -84,7 +85,7 @@ public class DebateFormatInfo {
     private class Resource {
         private final ArrayList<MiniBellInfo> bells = new ArrayList<MiniBellInfo>();
 
-        public ArrayList<MiniBellInfo> getBells() {
+        protected ArrayList<MiniBellInfo> getBells() {
             return bells;
         }
         public void addBell(long time, boolean pause) {
@@ -92,18 +93,71 @@ public class DebateFormatInfo {
         }
     }
 
-    private class SpeechFormatInfo extends Resource {
-        private long length;
+    private class SpeechFormatOrPrepInfo extends Resource {
+        protected final long length;
+
+        public SpeechFormatOrPrepInfo(long length) {
+            super();
+            this.length = length;
+        }
 
         public long getLength() {
             return length;
         }
-        public void setLength(long length) {
-            this.length = length;
+
+        public String getDescription() {
+            // Length line
+            String description;
+            if (length % 60 == 0) {
+                long minutes = length / 60;
+                description = mContext.getResources().getQuantityString(R.plurals.viewFormat_timeDescription_lengthInMinutesOnly, (int) minutes, minutes);
+            } else
+                description = mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, secsToText(length));
+
+            if (getBells().size() > 0) {
+                String bellsDesc = getBellsString();
+                description += "\n" + bellsDesc;
+            }
+
+            return description;
+        }
+
+        protected String getBellsString() {
+            String bellsList = concatenateBellTimes(getBells());
+            String bellsDesc = mContext.getResources().getQuantityString(R.plurals.viewFormat_timeDescription_bellsList, getBells().size(), bellsList);
+            return bellsDesc;
         }
 
         /**
-         * Adds all the bells in a {@link Resource} to this SpeechFormatInfo.
+         * Concatenates all the bell times in a list into a single user-readable string
+         * @param list a list of <code>MiniBellInfo</code>s
+         * @return the single string listing all the bell times
+         */
+        private String concatenateBellTimes(ArrayList<MiniBellInfo> list) {
+            StringBuilder str = new StringBuilder();
+            Iterator<MiniBellInfo> iterator = list.iterator();
+
+            while (iterator.hasNext()) {
+                MiniBellInfo bi = iterator.next();
+                str.append(secsToText(bi.getTime()));
+                if (bi.isPause())
+                    str.append(mContext.getString(R.string.pauseOnBellIndicator));
+
+                // If there's one after this, add a comma
+                if (iterator.hasNext()) str.append(", ");
+            }
+
+            return str.toString();
+        }
+    }
+
+    private class SpeechFormatInfo extends SpeechFormatOrPrepInfo {
+        public SpeechFormatInfo(long length) {
+            super(length);
+        }
+
+        /**
+         * Adds all the bells in a {@link Resource} to this SpeechFormatOrPrepInfo.
          * @param res the <code>Resource</code> to add
          */
         public void addResource(Resource res) {
@@ -114,9 +168,41 @@ public class DebateFormatInfo {
                 this.addBell(bi.getTime(), bi.isPause());
             }
         }
+
     }
 
-    public class SpeechInfo {
+    private class PrepTimeInfo extends SpeechFormatOrPrepInfo {
+
+        private final boolean controlled;
+
+        public PrepTimeInfo(long length, boolean controlled) {
+            super(length);
+            this.controlled = controlled;
+        }
+
+        @Override
+        public String getDescription() {
+            // Length line
+            String description;
+            if (length % 60 == 0){
+                long minutes = length / 60;
+                description = mContext.getResources().getQuantityString(R.plurals.viewFormat_timeDescription_lengthInMinutesOnly, (int) minutes, minutes);
+            } else
+                description = mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, secsToText(length));
+
+            if (controlled)
+                description += mContext.getString(R.string.viewFormat_timeDescription_controlledPrepSuffix);
+
+            if (getBells().size() > 0) {
+                String bellsDesc = getBellsString();
+                description += "\n" + bellsDesc;
+            }
+
+            return description;
+        }
+    }
+
+    private class SpeechInfo {
         private final String name;
         private final String format;
         public SpeechInfo(String name, String format) {
@@ -182,13 +268,43 @@ public class DebateFormatInfo {
     }
 
     /**
+     * Adds a prep time format to this debate format.
+     * Does nothing if a prep time format has already been added.
+     * @param length the length in seconds of the prep time
+     */
+    public void addPrepTime(long length, boolean controlled) {
+        if (prepFormat != null) return;
+        prepFormat = new PrepTimeInfo(length, controlled);
+    }
+
+    /**
      * Adds a speech format to this debate format.
      * @param ref a short reference for this speech format
      * @param length the length in seconds of this speech
      */
     public void addSpeechFormat(String ref, long length) {
-        speechFormats.put(ref, new SpeechFormatInfo());
-        speechFormats.get(ref).setLength(length);
+        speechFormats.put(ref, new SpeechFormatInfo(length));
+    }
+
+    /**
+     * Adds a bell to the prep time in this debate format.
+     * Does nothing if there is no prep time in this debate format.
+     * @param time the bell time within the speech
+     * @param pause <b>true</b> if this bell pauses the timer, <b>false</b> if not
+     */
+    public void addBellToPrepTime(long time, boolean pause) {
+        if (prepFormat == null) return;
+        prepFormat.addBell(time, pause);
+    }
+
+    /**
+     * Adds a finish bell to the prep time in this debate format.
+     * @param pause <b>true</b> if this bell pauses the timer, <b>false</b> if not
+     */
+    public void addFinishBellToPrepTime(boolean pause) {
+        if (prepFormat == null) return;
+        long finishTime = prepFormat.getLength();
+        addBellToPrepTime(finishTime, pause);
     }
 
     /**
@@ -217,7 +333,7 @@ public class DebateFormatInfo {
      * @param speechRef the short reference for the speech format to which this bell should be added
      */
     public void addFinishBellToSpeechFormat(boolean pause, String speechRef) {
-        SpeechFormatInfo sfi = speechFormats.get(speechRef);
+        SpeechFormatOrPrepInfo sfi = speechFormats.get(speechRef);
         long finishTime = sfi.getLength();
         addBellToSpeechFormat(finishTime, pause, speechRef);
     }
@@ -245,6 +361,11 @@ public class DebateFormatInfo {
         return speechFormats.containsKey(ref);
     }
 
+    public String getPrepTimeDescription() {
+        if (prepFormat == null) return null;
+        else return prepFormat.getDescription();
+    }
+
     /**
      * Returns a list of all the speech formats in this debate format, with descriptions.
      * @return An <code>ArrayList</code> of <code>String</code> arrays. Each
@@ -264,10 +385,8 @@ public class DebateFormatInfo {
             String formatRef = iterator.next().getFormat();
             if (!seenFormatRefs.contains(formatRef) && speechFormats.containsKey(formatRef)) {
                 seenFormatRefs.add(formatRef);
-                SpeechFormatInfo sti = speechFormats.get(formatRef);
-                String bellsList = concatenate(sti.getBells());
-                String typeDesc = mContext.getString(R.string.SpeechTypeDescription,
-                        secsToText(sti.getLength()), bellsList);
+                SpeechFormatOrPrepInfo sti = speechFormats.get(formatRef);
+                String typeDesc = sti.getDescription();
                 String[] pair = {formatRef, typeDesc};
                 result.add(pair);
             }
@@ -294,40 +413,11 @@ public class DebateFormatInfo {
         return result;
     }
 
+    // ******************************************************************************************
+    // Private methods
+    // ******************************************************************************************
+
     private static String secsToText(long time) {
-        if (time >= 0) {
-            return String.format("%02d:%02d", time / 60, time % 60);
-        } else {
-            return String.format("%02d:%02d over", -time / 60, -time % 60);
-        }
-    }
-
-    /**
-     * Concatenates all the bell times in a list into a single user-readable string
-     * @param list a list of <code>MiniBellInfo</code>s
-     * @return the single string listing all the bell times
-     */
-    private String concatenate(ArrayList<MiniBellInfo> list) {
-        String str = new String();
-        Iterator<MiniBellInfo> iterator = list.iterator();
-        MiniBellInfo bi;
-
-        // Start with the first item (if it exists)
-        if (iterator.hasNext()) {
-            bi = iterator.next();
-            str = secsToText(bi.getTime());
-            if (bi.isPause())
-                str = str.concat(mContext.getString(R.string.SpeechTypePauseIndicator));
-        }
-
-        // Add the second and further items, putting a line break in between.
-        while (iterator.hasNext()) {
-            str = str.concat(", ");
-            bi = iterator.next();
-            str = str.concat(secsToText(bi.getTime()));
-            if (bi.isPause())
-                str = str.concat(mContext.getString(R.string.SpeechTypePauseIndicator));
-        }
-        return str;
+        return String.format("%02d:%02d", time / 60, time % 60);
     }
 }

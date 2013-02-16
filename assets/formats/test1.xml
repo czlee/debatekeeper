@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<debateformat name="Test format 1" schemaversion="1.0">
+	<info>
+		<region>None</region>
+		<level>None</level>
+		<usedat>Nowhere</usedat>
+		<desc>Use this format to try out this app without waiting ages for bells</desc>
+	</info>
+
+	<preptime length="20" />
+	
+	<resource ref="#all">
+		<period ref="initial" bgcolor="#stay" />
+		<period ref="warning" bgcolor="#77ffcc00" />
+		<period ref="overtime" bgcolor="#77ff0000" />
+	</resource>
+
+	<speechtype ref="substantive" length="20" firstperiod="initial">
+		<period ref="pois-allowed" bgcolor="#7700ff00" poisallowed="true" />
+		<bell time="5" number="1" nextperiod="pois-allowed" />
+		<bell time="15" number="1" nextperiod="warning" />
+		<bell time="finish" number="2" nextperiod="overtime" />
+	</speechtype>
+
+	<speechtype ref="reply" length="10" firstperiod="initial">
+		<bell time="5" number="1" nextperiod="warning" />
+		<bell time="finish" number="2" nextperiod="overtime" />
+	</speechtype>
+
+	<speeches>
+		<speech name="Prime Minister" type="substantive" />
+		<speech name="Leader of the Opposition" type="substantive" />
+		<speech name="Deputy Prime Minister" type="substantive" />
+		<speech name="Deputy Leader of the Opposition" type="substantive" />
+		<speech name="Government Whip" type="substantive" />
+		<speech name="Opposition Whip" type="substantive" />
+		<speech name="Opposition Reply" type="reply" />
+		<speech name="Government Reply" type="reply" />
+	</speeches>
+</debateformat>

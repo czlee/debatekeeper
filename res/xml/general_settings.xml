@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2012 Chuan-Zheng Lee
+ *
+ * This file is part of the Debatekeeper app, which is licensed under the
+ * GNU General Public Licence version 3 (GPLv3).  You can redistribute
+ * and/or modify it under the terms of the GPLv3, and you must not use
+ * this file except in compliance with the GPLv3.
+ *
+ * This app is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public Licence for more details.
+ *
+ * You should have received a copy of the GNU General Public Licence
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory
+        android:order="0"
+        android:title="@string/prefCategory_bells_title" >
+        <CheckBoxPreference
+            android:defaultValue="@bool/prefDefault_silentMode"
+            android:key="@string/pref_silentMode_key"
+            android:summaryOff="@string/pref_silentMode_offSummary"
+            android:summaryOn="@string/pref_silentMode_onSummary"
+            android:title="@string/pref_silentMode_title" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/prefDefault_vibrateMode"
+            android:key="@string/pref_vibrateMode_key"
+            android:summaryOff="@string/pref_vibrateMode_offSummary"
+            android:summaryOn="@string/pref_vibrateMode_onSummary"
+            android:title="@string/pref_vibrateMode_title" />
+
+        <ListPreference
+            android:defaultValue="@string/prefDefault_flashScreenMode"
+            android:entries="@array/pref_flashScreenMode_entries"
+            android:entryValues="@array/pref_flashScreenMode_values"
+            android:key="@string/pref_flashScreenMode_key"
+            android:title="@string/pref_flashScreenMode_title" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:order="2"
+        android:title="@string/prefCategory_general_title" >
+        <ListPreference
+            android:defaultValue="@string/prefDefault_countDirection"
+            android:entries="@array/pref_countDirection_entries"
+            android:entryValues="@array/pref_countDirection_values"
+            android:key="@string/pref_countDirection_key"
+            android:title="@string/pref_countDirection_title" />
+        <ListPreference
+            android:defaultValue="@string/prefDefault_backgroundColourArea"
+            android:entries="@array/pref_backgroundColourArea_entries"
+            android:entryValues="@array/pref_backgroundColourArea_values"
+            android:key="@string/pref_backgroundColourArea_key"
+            android:title="@string/pref_backgroundColourArea_title" />
+
+        <CheckBoxPreference
+            android:defaultValue="@bool/prefDefault_keepScreenOn"
+            android:key="@string/pref_keepScreenOn_key"
+            android:summaryOff="@string/pref_keepScreenOn_offSummary"
+            android:summaryOn="@string/pref_keepScreenOn_onSummary"
+            android:title="@string/pref_keepScreenOn_title" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:order="3"
+        android:title="@string/prefCategory_prepTime_title" >
+        <CheckBoxPreference
+            android:defaultValue="@bool/prefDefault_prepTimer_enable"
+            android:disableDependentsState="false"
+            android:key="@string/pref_prepTimer_enable_key"
+            android:summaryOff="@string/pref_prepTimer_enable_offSummary"
+            android:summaryOn="@string/pref_prepTimer_enable_onSummary"
+            android:title="@string/pref_prepTimer_enable_title" />
+
+        <PreferenceScreen
+            android:dependency="@string/pref_prepTimer_enable_key"
+            android:key="@string/pref_prepTimer_bells_key"
+            android:summary="@string/pref_prepTimer_bells_summary"
+            android:title="@string/pref_prepTimer_bells_title" />
+
+        <ListPreference
+            android:defaultValue="@string/prefDefault_prepTimer_countDirection"
+            android:dependency="@string/pref_prepTimer_enable_key"
+            android:entries="@array/pref_countDirection_entries"
+            android:entryValues="@array/pref_countDirection_values"
+            android:key="@string/pref_prepTimer_countDirection_key"
+            android:title="@string/pref_countDirection_title" />
+
+        <CheckBoxPreference
+            android:defaultValue="@bool/prefDefault_prepTimer_keepScreenOn"
+            android:dependency="@string/pref_prepTimer_enable_key"
+            android:key="@string/pref_prepTimer_keepScreenOn_key"
+            android:summaryOff="@string/pref_prepTimer_keepScreenOn_offSummary"
+            android:summaryOn="@string/pref_prepTimer_keepScreenOn_onSummary"
+            android:title="@string/pref_keepScreenOn_title" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:order="4"
+        android:title="@string/prefCategory_pois_title" >
+        <CheckBoxPreference
+            android:defaultValue="@bool/prefDefault_poiTimer_enable"
+            android:disableDependentsState="false"
+            android:key="@string/pref_poiTimer_enable_key"
+            android:summaryOff="@string/pref_poiTimer_enable_offSummary"
+            android:summaryOn="@string/pref_poiTimer_enable_onSummary"
+            android:title="@string/pref_poiTimer_enable_title" />
+        <!--
+The POI buzzer option isn't used.  The only part that isn't implemented is the part that
+actually plays the buzzer using a MediaPlayer (and the sound file itself).  I'm not sure whether
+this is worth implementing - adjudicators would have to stop the timer for speakers who stay
+under the POI time limit, i.e. most of the time - it's easier to have it quiet all the time and
+to be alerted without sound at the 15 second mark?
+        -->
+        <!-- <CheckBoxPreference android:key="@string/pref_poiTimer_buzzerEnable_key" android:summaryOff="@string/pref_poiTimer_buzzerEnable_offSummary" android:title="@string/pref_poiTimer_buzzerEnable_title" android:summaryOn="@string/pref_poiTimer_buzzerEnable_onSummary" android:dependency="@string/pref_poiTimer_enable_key" android:defaultValue="@bool/prefDefault_poiTimer_buzzerEnable" /> -->
+        <CheckBoxPreference
+            android:defaultValue="@bool/prefDefault_poiTimer_vibrateEnable"
+            android:dependency="@string/pref_poiTimer_enable_key"
+            android:key="@string/pref_poiTimer_vibrateEnable_key"
+            android:summaryOff="@string/pref_poiTimer_vibrateEnable_offSummary"
+            android:summaryOn="@string/pref_poiTimer_vibrateEnable_onSummary"
+            android:title="@string/pref_poiTimer_vibrateEnable_title" />
+
+        <ListPreference
+            android:defaultValue="@string/prefDefault_poiTimer_flashScreenMode"
+            android:dependency="@string/pref_poiTimer_enable_key"
+            android:dialogTitle="@string/pref_poiTimer_flashScreenMode_dialogTitle"
+            android:entries="@array/pref_flashScreenMode_entries"
+            android:entryValues="@array/pref_flashScreenMode_values"
+            android:key="@string/pref_poiTimer_flashScreenMode_key"
+            android:title="@string/pref_flashScreenMode_title" />
+
+        <Preference
+            android:key="@string/pref_poiTimer_learnMore_key"
+            android:summary="@string/pref_poiTimer_learnMore_summary"
+            android:title="@string/pref_poiTimer_learnMore_title" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

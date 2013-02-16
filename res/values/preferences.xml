@@ -1,139 +1,190 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2012 Chuan-Zheng Lee
+ *
+ * This file is part of the Debatekeeper app, which is licensed under the
+ * GNU General Public Licence version 3 (GPLv3).  You can redistribute
+ * and/or modify it under the terms of the GPLv3, and you must not use
+ * this file except in compliance with the GPLv3.
+ *
+ * This app is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public Licence for more details.
+ *
+ * You should have received a copy of the GNU General Public Licence
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
 <resources>
-    
+
     <!-- Keys -->
     <!-- These strings must be unique. -->
-    <string name="PrefSilentModeKey">silentMode</string>
-    <string name="PrefVibrateModeKey">vibrateMode</string>
-    <string name="PrefFlashScreenModeKey">flashScreenMode</string>
-    <string name="PrefOvertimeBellsEnableKey">overtimeBellsEnable</string>
-    <string name="PrefFirstOvertimeBellKey">firstOvertimeBell</string>
-    <string name="PrefOvertimeBellPeriodKey">overtimeBellPeriod</string>
-    <string name="PrefCountDirectionKey">countDirection</string>
-    <string name="PrefKeepScreenOnKey">keepScreenOn</string>
-    <string name="PrefPoiTimerEnableKey">poiTimerEnable</string>
-    <string name="PrefPoiBuzzerEnableKey">poiBuzzerEnable</string>
-    <string name="PrefPoiVibrateEnableKey">poiVibrateEnable</string>
-    <string name="PrefPoiFlashScreenModeKey">poiFlashScreenMode</string>
-    <string name="PrefPoiLearnMoreKey">poiLearnMore</string>
+    <string name="pref_silentMode_key">silentMode</string>
+    <string name="pref_vibrateMode_key">vibrateMode</string>
+    <string name="pref_flashScreenMode_key">flashScreenMode</string>
+    <string name="pref_overtimeBellsEnable_key">overtimeBellsEnable</string>
+    <string name="pref_firstOvertimeBell_key">firstOvertimeBell</string>
+    <string name="pref_overtimeBellPeriod_key">overtimeBellPeriod</string>
+    <string name="pref_countDirection_key">countDirection</string>
+    <string name="pref_backgroundColourArea_key">backgroundColourArea</string>
+    <string name="pref_keepScreenOn_key">keepScreenOn</string>
+    <string name="pref_poiTimer_enable_key">poiTimerEnable</string>
+    <string name="pref_poiTimer_buzzerEnable_key">poiBuzzerEnable</string>
+    <string name="pref_poiTimer_vibrateEnable_key">poiVibrateEnable</string>
+    <string name="pref_poiTimer_flashScreenMode_key">poiFlashScreenMode</string>
+    <string name="pref_poiTimer_learnMore_key">poiLearnMore</string>
+    <string name="pref_prepTimer_enable_key">prepTimerEnable</string>
+    <string name="pref_prepTimer_countDirection_key">prepTimerCountDirection</string>
+    <string name="pref_prepTimer_keepScreenOn_key">prepTimerKeepScreenOn</string>
+    <string name="pref_prepTimer_bells_key">prepTimerBells</string>
 
-    <string name="PrefScreenPoiKey">poiPrefs</string>    
-    
     <!-- Keys for backwards-compatibility -->
-    <string name="PrefFlashScreenBoolKey">flashScreen</string> <!-- replaced in version 0.6 -->
-    
+    <string name="pref_flashScreenBool_key">flashScreen</string> <!-- replaced in version 0.6 -->
+
     <!-- Category titles -->
-	<string name="PrefCategoryOvertimeBellsTitle">Overtime bells</string>
-	<string name="PrefCategoryPoisTitle">Points of information</string>
-	<string name="PrefCategoryBellsTitle">Bells</string>
-	<string name="PrefCategoryGeneralTitle">General</string>
-		
-	<!-- Silent mode -->
-    <string name="PrefSilentModeTitle">Silent mode</string>
-    <string name="PrefSilentModeOnSummary">Bell will not sound (this doesn\'t affect other sounds from your phone)</string>
-    <string name="PrefSilentModeOffSummary">Bell will sound</string>
-    <bool   name="DefaultPrefSilentMode">false</bool>
-    
+    <string name="prefCategory_overtimeBells_title">Overtime bells</string>
+    <string name="prefCategory_pois_title">Points of information</string>
+    <string name="prefCategory_prepTime_title">Preparation timer</string>
+    <string name="prefCategory_bells_title">Bells</string>
+    <string name="prefCategory_general_title">General</string>
+
+    <!-- Silent mode -->
+    <string name="pref_silentMode_title">Silent mode</string>
+    <string name="pref_silentMode_onSummary">Bell will not sound (this doesn\'t affect other sounds from your phone)</string>
+    <string name="pref_silentMode_offSummary">Bell will sound\n(Everyone except the timekeeper should enable silent mode)</string>
+    <bool   name="prefDefault_silentMode">false</bool>
+
     <!-- Vibrate mode -->
-    <string name="PrefVibrateModeTitle">Vibrator</string>
-    <string name="PrefVibrateModeOnSummary">Vibrate at bell times</string>
-    <string name="PrefVibrateModeOffSummary">Don\'t vibrate</string>
-    <bool   name="DefaultPrefVibrateMode">false</bool>
-    
+    <string name="pref_vibrateMode_title">Vibrator</string>
+    <string name="pref_vibrateMode_onSummary">Vibrate at bell times</string>
+    <string name="pref_vibrateMode_offSummary">Don\'t vibrate</string>
+    <bool   name="prefDefault_vibrateMode">false</bool>
+
     <!-- Flash screen -->
-    <string name="PrefFlashScreenModeTitle">Flash screen</string>
-    <string-array name="PrefFlashScreenModeSummaries">
+    <string name="pref_flashScreenMode_title">Flash screen</string>
+    <string-array name="pref_flashScreenMode_summaries">
         <item>Don\'t flash screen</item>
-    	<item>Do a strobe flash at bell times</item>
-    	<item>Flash screen white briefly at bell times</item>
+        <item>Do a strobe flash at bell times</item>
+        <item>Flash screen white briefly at bell times</item>
     </string-array>
-    <string-array name="PrefFlashScreenModeEntries">
+    <string-array name="pref_flashScreenMode_entries">
         <item>Off</item>
-    	<item>Strobe flash</item>
-    	<item>Solid flash</item>
+        <item>Strobe flash</item>
+        <item>Solid flash</item>
     </string-array>
-    <string-array name="PrefFlashScreenModeValues">
+    <string-array name="pref_flashScreenMode_values">
         <item>off</item>
-    	<item>strobeFlash</item>
-    	<item>solidFlash</item>
+        <item>strobeFlash</item>
+        <item>solidFlash</item>
     </string-array>
-    <string name="DefaultPrefFlashScreenMode">off</string>
-    
+    <string name="prefDefault_flashScreenMode">off</string>
+
     <!-- Overtime bells -->
-    <string name="PrefOvertimeBellsEnableTitle">Enable overtime bells</string>
-    <string name="PrefOvertimeBellsEnableOnSummary">Ring overtime bells as specified below</string>
-    <string name="PrefOvertimeBellsEnableOffSummary">Don\'t ring any overtime bells</string>
-    <bool   name="DefaultPrefOvertimeBellsEnable">true</bool>
-    
-    <string name="PrefFirstOvertimeBellTitle">First overtime bell</string>
-    <string name="PrefFirstOvertimeBellSummary">Ring the first overtime bell after %s seconds…</string>
-    <string name="PrefFirstOvertimeBellDialogMessage">"The time after finish in seconds of the first overtime bell:"</string>
-    <integer name="DefaultPrefFirstOvertimeBell">15</integer>
-    
-    <string name="PrefOvertimeBellPeriodTitle">Overtime bell period</string>
-    <string name="PrefOvertimeBellPeriodSummary">…and then every %s seconds after that</string>
-    <string name="PrefOvertimeBellPeriodDialogMessage">"The time between overtime bells (after the first) in seconds:"</string>
-    <integer name="DefaultPrefOvertimeBellPeriod">15</integer>
-    
+    <string name="pref_overtimeBellsEnable_title">Enable overtime bells</string>
+    <string name="pref_overtimeBellsEnable_onSummary">Ring overtime bells as specified below</string>
+    <string name="pref_overtimeBellsEnable_offSummary">Don\'t ring any overtime bells</string>
+    <bool   name="prefDefault_overtimeBellsEnable">true</bool>
+
+    <string name="pref_firstOvertimeBell_title">First overtime bell</string>
+    <string name="pref_firstOvertimeBell_summary">Ring the first overtime bell after %s seconds…</string>
+    <string name="pref_firstOvertimeBell_dialogMessage">"The time after finish in seconds of the first overtime bell:"</string>
+    <integer name="prefDefault_firstOvertimeBell">15</integer>
+
+    <string name="pref_overtimeBellPeriod_title">Overtime bell period</string>
+    <string name="pref_overtimeBellPeriod_summary">…and then every %s seconds after that</string>
+    <string name="pref_overtimeBellPeriod_dialogMessage">"The time between overtime bells (after the first) in seconds:"</string>
+    <integer name="prefDefault_overtimeBellPeriod">15</integer>
+
     <!-- Count direction -->
-    <string name="PrefCountDirectionTitle">Count direction</string>
-    <string-array name="PrefCountDirectionSummaries">
-        <item>Always count up</item>
-    	<item>Count up (unless the style suggests down)</item>
-    	<item>Count down (unless the style suggests up)</item>
-    	<item>Always count down</item>
+    <string name="pref_countDirection_title">Count direction</string>
+    <string-array name="pref_countDirection_summaries">
+        <item>Count up</item>
+        <item>Count down</item>
     </string-array>
-    <string-array name="PrefCountDirectionEntries">
-        <item>Always up</item>
-    	<item>Generally up</item>
-    	<item>Generally down</item>
-    	<item>Always down</item>
+    <string-array name="pref_countDirection_entries">
+        <item>Count up</item>
+        <item>Count down</item>
     </string-array>
-    <string-array name="PrefCountDirectionValues">
+    <!-- In case you're wondering, the reason these are called alwaysUp and alwaysDown is because
+    there used to be options called generallyUp and generallyDown. These options were obsoleted
+    in version 0.9, but to retain compatibility we keep the values for the other two as they
+    were before. Since the user never sees these, it doesn't matter what they're called. -->
+    <string-array name="pref_countDirection_values">
         <item>alwaysUp</item>
-    	<item>generallyUp</item>
-    	<item>generallyDown</item>
-    	<item>alwaysDown</item>
+        <item>alwaysDown</item>
     </string-array>
-    <string name="DefaultPrefCountDirection">generallyUp</string>
+    <string name="prefDefault_countDirection">alwaysUp</string>
     
+    <!-- Background colour -->
+    <string name="pref_backgroundColourArea_title">Background colour area</string>
+    <string-array name="pref_backgroundColourArea_summaries">
+        <item>Leave background black for whole debate</item>
+        <item>Colour top bar only to indicate periods within speeches</item>
+        <item>Colour whole screen to indicate periods within speeches</item>
+    </string-array>
+    <string-array name="pref_backgroundColourArea_entries">
+        <item>Disabled</item>
+        <item>Top bar only</item>
+        <item>Whole screen</item>
+    </string-array>
+    <string-array name="pref_backgroundColourArea_values">
+        <item>disabled</item>
+        <item>topBarOnly</item>
+        <item>wholeScreen</item>
+    </string-array>
+    <string name="prefDefault_backgroundColourArea">wholeScreen</string>
+
     <!-- Keep screen on -->
-    <string name="PrefKeepScreenOnTitle">Keep screen on</string>
-    <string name="PrefKeepScreenOnOnSummary">Keep screen on (dimmed) while timer is running</string>
-    <string name="PrefKeepScreenOnOffSummary">Apply normal screen timeout</string>
-    <bool   name="DefaultPrefKeepScreenOn">true</bool>
-    
-    <!-- *** Points of information *** -->
-	<string name="PrefPoiScreenTitle">Points of information</string>
-	<string name="PrefPoiScreenSummary">Change settings for the POIs timer</string>
-	<string name="PrefPoiScreenSummaryWhenEnabled">Change settings for the POIs timer (enabled)</string>
-	<string name="PrefPoiScreenSummaryWhenDisabled">Change settings for the POIs timer (disabled)</string>
-	
-    <string name="PrefPoiTimerEnableTitle">Show POIs timer</string>
-    <string name="PrefPoiTimerEnableOnSummary">Show the POIs timer when appropriate</string>
-    <string name="PrefPoiTimerEnableOffSummary">Hide the POIs timer</string>
-    <bool   name="DefaultPrefPoiTimerEnable">true</bool>
-    
-    <string name="PrefPoiBuzzerEnableTitle">Play buzzer</string>
-    <string name="PrefPoiBuzzerEnableOnSummary">Play a buzzer when POI time expires</string>
-    <string name="PrefPoiBuzzerEnableOffSummary">Don\'t play POI buzzers</string>
-    <bool   name="DefaultPrefPoiBuzzerEnable">false</bool>
-    
-    <string name="PrefPoiVibrateEnableTitle">Vibrate</string>
-    <string name="PrefPoiVibrateEnableOnSummary">Vibrate when POI time expires</string>
-    <string name="PrefPoiVibrateEnableOffSummary">Don\'t vibrate for POIs</string>
-    <bool   name="DefaultPrefPoiVibrateEnable">false</bool>
-    
-    <string name="PrefPoiFlashScreenModeDialogTitle">Flash screen for POIs</string>
-    <string name="DefaultPrefPoiFlashScreenMode">solidFlash</string>
-    <string-array name="PrefPoiFlashScreenModeSummaries">
+    <string name="pref_keepScreenOn_title">Keep screen on</string>
+    <string name="pref_keepScreenOn_onSummary">Keep screen on (dimmed) while timer is running</string>
+    <string name="pref_keepScreenOn_offSummary">Apply normal screen timeout</string>
+    <bool   name="prefDefault_keepScreenOn">true</bool>
+
+    <!-- *** Preparation time *** -->
+    <string name="pref_prepTimer_enable_title">Enable prep timer</string>
+    <string name="pref_prepTimer_enable_onSummary">Use the preparation timer</string>
+    <string name="pref_prepTimer_enable_offSummary">"Don't use the preparation timer"</string>
+    <bool   name="prefDefault_prepTimer_enable">true</bool>
+
+    <string-array name="pref_prepTimer_countDirection_summaries">
+        <item>Count up in the prep timer</item>
+        <item>Count down in the prep timer</item>
+    </string-array>
+    <string name="prefDefault_prepTimer_countDirection">alwaysDown</string>
+
+    <string name="pref_prepTimer_keepScreenOn_onSummary">Keep screen on (dimmed) while prep timer is running</string>
+    <string name="pref_prepTimer_keepScreenOn_offSummary">Apply normal screen timeout during prep time</string>
+    <bool   name="prefDefault_prepTimer_keepScreenOn">false</bool>
+
+    <string name="pref_prepTimer_bells_title">Prep timer bells</string>
+    <string name="pref_prepTimer_bells_summary">Edit bells used during preparation time</string>
+
+       <!-- *** Points of information *** -->
+    <string name="pref_poiTimer_enable_title">Show POIs timer</string>
+    <string name="pref_poiTimer_enable_onSummary">Show the POIs timer when appropriate</string>
+    <string name="pref_poiTimer_enable_offSummary">Hide the POIs timer</string>
+    <bool   name="prefDefault_poiTimer_enable">true</bool>
+
+    <string name="pref_poiTimer_buzzerEnable_title">Play buzzer</string>
+    <string name="pref_poiTimer_buzzerEnable_onSummary">Play a buzzer when POI time expires</string>
+    <string name="pref_poiTimer_buzzerEnable_offSummary">Don\'t play POI buzzers</string>
+    <bool   name="prefDefault_poiTimer_buzzerEnable">false</bool>
+
+    <string name="pref_poiTimer_vibrateEnable_title">Vibrate</string>
+    <string name="pref_poiTimer_vibrateEnable_onSummary">Vibrate when POI time expires</string>
+    <string name="pref_poiTimer_vibrateEnable_offSummary">Don\'t vibrate for POIs</string>
+    <bool   name="prefDefault_poiTimer_vibrateEnable">false</bool>
+
+    <string name="pref_poiTimer_flashScreenMode_dialogTitle">Flash screen for POIs</string>
+    <string-array name="pref_poiTimer_flashScreenMode_summaries">
         <item>Don\'t flash screen for POIs</item>
-    	<item>Do a strobe flash when POI time expires</item>
-    	<item>Flash screen blue briefly when POI time expires</item>
+        <item>Do a strobe flash when POI time expires</item>
+        <item>Flash screen blue briefly when POI time expires</item>
     </string-array>
     <!-- For the entries and entry values, use the same ones as the main flash screen preference -->
+    <string name="prefDefault_poiTimer_flashScreenMode">solidFlash</string>
 
-	<string name="PrefPoiLearnMoreTitle">Learn more</string>
-	<string name="PrefPoiLearnMoreSummary">Learn more about the POIs timer (launches web browser)</string>
+    <string name="pref_poiTimer_learnMore_title">Learn more</string>
+    <string name="pref_poiTimer_learnMore_summary">Learn more about the POIs timer (launches web browser)</string>
 
 </resources>

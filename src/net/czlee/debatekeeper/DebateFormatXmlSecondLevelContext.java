@@ -27,6 +27,7 @@ public enum DebateFormatXmlSecondLevelContext {
     NONE ("no context"),
     INFO ("info"),
     RESOURCE ("resource"),
+    PREP_TIME_CONTROLLED ("prep time (controlled)"),
     SPEECH_FORMAT ("speech format"),
     SPEECHES_LIST ("speeches list");
 

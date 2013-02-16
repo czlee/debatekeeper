@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2012 Chuan-Zheng Lee
+ *
+ * This file is part of the Debatekeeper app, which is licensed under the
+ * GNU General Public Licence version 3 (GPLv3).  You can redistribute
+ * and/or modify it under the terms of the GPLv3, and you must not use
+ * this file except in compliance with the GPLv3.
+ *
+ * This app is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public Licence for more details.
+ *
+ * You should have received a copy of the GNU General Public Licence
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
@@ -8,31 +24,55 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
+        <!-- File info row -->
         <include
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             layout="@layout/view_format_file_info" />
         
+        <!-- Information from the <info> element -->
         <include
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             layout="@layout/view_format_short" />
 
+        <!-- Prep time row -->
+		<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:paddingBottom="7dip"
+		    android:id="@+id/viewFormat_prepTimeRow" >
+    
+	   	    <TextView
+		        android:id="@+id/viewFormat_prepTimeLabel"
+		        style="@style/ViewFormat_TableLabel"
+		        android:text="@string/viewFormat_prepTimeLabel"
+		         />
+		
+		    <TextView
+		        android:id="@+id/viewFormat_prepTimeValue"
+		        style="@style/ViewFormat_TableValue"
+		        android:layout_toRightOf="@id/viewFormat_prepTimeLabel"
+		         />
+		
+		</RelativeLayout>
+
+		<!-- Speeches table -->
         <TextView
-            android:id="@+id/ViewFormatSpeechesLabelText"
-            style="@style/ViewFormatTableLabelStyle"
-            android:text="@string/ViewFormatSpeechesLabel" />
+            android:id="@+id/viewFormat_speechesLabel"
+            style="@style/ViewFormat_TableLabel"
+            android:text="@string/viewFormat_speechesLabel" />
 
         <TableLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/ViewFormatTableSpeechTypes"
-            style="@style/ViewFormatTableSpeechesStyle"
+            android:id="@+id/viewFormat_table_speechTypes"
+            style="@style/ViewFormat_TableSpeeches"
             android:shrinkColumns="1" />
 
         <TableLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/ViewFormatTableSpeeches"
-            style="@style/ViewFormatTableSpeechesStyle"
+            android:id="@+id/viewFormat_table_speeches"
+            style="@style/ViewFormat_TableSpeeches"
             android:shrinkColumns="0" />
     </LinearLayout>
 
