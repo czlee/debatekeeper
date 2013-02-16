@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<debate-format schema-version="2.0">
+
+	<!-- "halfway" option - Human-readable fields are elements, everything else is an attribute -->
+
+	<name>Easters</name>
+
+	<info>
+		<region>New Zealand</region>
+		<level>University</level>
+		<used-at>New Zealand Impromptu Debating Championships (Officers' Cup)</used-at>
+		<description>2 vs 2, 7 minutes prep, 6-minute substantive speeches, 3-minute replies</description>
+	</info>
+
+	<!----------------------------------- NOTE ON PERIODS --------------------------------
+	  In the proposed schema overhaul, there will be four standard period types defined:
+	  "normal", "pois-allowed", "warning" and "overtime". XML file authors will not need
+	  to define these themselves any more. The idea is to make consistency between these
+	  standard period types easier.  It also allows for the future possibility of
+	  allowing the user to define background colours as a preference.
+
+	  Because some styles would have special period types, we introduce a new 
+	  <period-types> element.  Only non-standard period types need to be defined here.
+	  The catch is that these period types will be considered global, so they must have
+	  unique names among ALL debate formats, unless they are being deliberately shared.
+	  This allows for them to be included in the user-defined background colours, and
+	  also allows for de facto new "standard" period types to emerge, if necessary.
+	  An example of this is the "choose moot" and "choose side" periods of Easters prep
+	  time.
+	------------------------------------------------------------------------------------->
+
+	<period-types>
+		<period ref="easters.moot">
+			<name>Easters: moot</name>      <!-- The name shown in the user-defined background colour interface -->
+			<display>Choose moot</display>  <!-- The description shown on the main screen when this period is active -->
+		</period>
+		<period ref="easters.side">
+			<name>Easters: side</name>
+			<display>Choose side</display>
+		</period>
+	</period-types>
+
+	<prep-time-controlled length="7:00" first-period="easters.moot">
+		<bell time="1:00" number="1" pause-on-bell="true" next-period="easters.side" />
+		<bell time="2:00" number="1" pause-on-bell="true" next-period="normal" />
+		<bell time="finish" number="2" />
+	</prep-time-controlled>
+
+	<speech-types>
+		<speech-type ref="substantive" length="6:00" first-period="initial">
+			<bell time="4:00" number="1" next-period="warning" />
+			<bell time="finish" number="2" next-period="overtime" />
+		</speech-type>
+	
+		<speech-type ref="reply" length="3:00" first-period="normal">
+			<bell time="2:00" number="1" next-period="warning" />
+			<bell time="finish" number="2" next-period="overtime" />
+		</speech-type>
+	</speech-types>
+
+	<speeches>
+		<speech type="substantive">
+			<name>1st Affirmative</name>
+		</speech>
+		<speech type="substantive">
+			<name>1st Negative</name>
+		</speech>
+		<speech type="substantive">
+			<name>2nd Affirmative</name>
+		</speech>
+		<speech type="substantive">
+			<name>2nd Negative</name>
+		</speech>
+		<speech type="reply">
+			<name>Negative Leader's Reply</name>
+		</speech>
+		<speech type="reply">
+			<name>Affirmative Leader's Reply</name>
+		</speech>
+	</speeches>
+</debate-format>

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <debate-format schema-version="2.0">
+
+	<!-- "full" option - All fields except internal references are elements -->
+
 	<name>Joynt Scroll</name>
 
 	<info>
@@ -8,6 +11,14 @@
 		<used-at>New Zealand Universities Prepared Debating Championships</used-at>
 		<description>3 vs 3, 10-minute speeches, 5-minute replies, POIs allowed</description>
 	</info>
+
+	<!----------------------------------- NOTE ON PERIODS --------------------------------
+	  In the proposed schema overhaul, there will be four standard period types defined:
+	  "normal", "pois-allowed", "warning" and "overtime". XML file authors will not need
+	  to define these themselves any more. The idea is to make consistency between these
+	  standard period types easier.  It also allows for the future possibility of
+	  allowing the user to define background colours as a preference.
+	------------------------------------------------------------------------------------->
 
 	<speech-types>
 		<speech-type ref="substantive">
@@ -34,6 +45,10 @@
 			<length>5:00</length>
 			<first-period ref="normal"/>
 			<bell>
+				<!-- Note the new 'from' attribute, which allows the specification of
+				a bell time relative to the end of the speech. In order to do this, the
+				time must be an element, not an attribute of <bell>. But I have
+				reservations about how useful this would be. -->
 				<time from="finish">-1:00</time>
 				<number>1</number>
 				<next-period ref="warning"/>
