@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<debateformat name="Australian" schemaversion="1.0">
+<debateformat name="Australian" schemaversion="1.1">
 	<info>
 		<region>Australia</region>
 		<level>University</level>
