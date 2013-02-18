@@ -13,16 +13,16 @@
 		<used-at>Pan-African Universities Debating Championships</used-at>
 		<description>Four teams of two, 7 minute speeches, POIs allowed</description>
 	</info>
-	
+
 	<prep-time length="15:00" />
 
-	<!----------------------------------- NOTE ON PERIODS --------------------------------
+	<!--******************************** NOTE ON PERIODS *********************************
 	  In the proposed schema overhaul, there will be four standard period types defined:
 	  "normal", "pois-allowed", "warning" and "overtime". XML file authors will not need
 	  to define these themselves any more. The idea is to make consistency between these
 	  standard period types easier.  It also allows for the future possibility of
 	  allowing the user to define background colours as a preference.
-	------------------------------------------------------------------------------------->
+	***********************************************************************************-->
 
 	<speech-types>
 		<speech-type ref="all">

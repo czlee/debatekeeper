@@ -65,7 +65,7 @@
 			<optional>
 				<choice>
 					<element name="prep-time">
-						<attribute name="length">
+						<attribute name="length"/>
 					</element>
 				</choice>
 			</optional>

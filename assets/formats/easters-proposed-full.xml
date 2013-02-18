@@ -12,14 +12,14 @@
 		<description>2 vs 2, 7 minutes prep, 6-minute substantive speeches, 3-minute replies</description>
 	</info>
 
-	<!----------------------------------- NOTE ON PERIODS --------------------------------
+	<!--******************************** NOTE ON PERIODS *********************************
 	  In the proposed schema overhaul, there will be four standard period types defined:
 	  "normal", "pois-allowed", "warning" and "overtime". XML file authors will not need
 	  to define these themselves any more. The idea is to make consistency between these
 	  standard period types easier.  It also allows for the future possibility of
 	  allowing the user to define background colours as a preference.
 
-	  Because some styles would have special period types, we introduce a new 
+	  Because some styles would have special period types, we introduce a new
 	  <period-types> element.  Only non-standard period types need to be defined here.
 	  The catch is that these period types will be considered global, so they must have
 	  unique names among ALL debate formats, unless they are being deliberately shared.
@@ -27,8 +27,8 @@
 	  also allows for de facto new "standard" period types to emerge, if necessary.
 	  An example of this is the "choose moot" and "choose side" periods of Easters prep
 	  time.
-	------------------------------------------------------------------------------------->
-	
+	***********************************************************************************-->
+
 	<period-types>
 		<period ref="easters.moot">
 			<name>Easters: moot</name>      <!-- The name shown in the user-defined background colour interface -->
@@ -64,7 +64,7 @@
 			<number>2</number>
 		</bell>
 	</prep-time-controlled>
-		
+
 	<speech-types>
 		<speech-type ref="substantive">
 			<length>6:00</length>
@@ -80,7 +80,7 @@
 				<next-period ref="overtime"/>
 			</bell>
 		</speech-type>
-		
+
 		<speech-type ref="reply">
 			<length>3:00</length>
 			<first-period ref="normal"/>
