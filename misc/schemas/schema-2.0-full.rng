@@ -38,34 +38,42 @@
 				</interleave>
 			</element>
 
-			<element name="period-types">
-				<oneOrMore>
-					<element name="period">
-						<attribute name="ref">
-							<data type="string"/>
-						</attribute>
-						<interleave>
-							<element name="name">
+			<optional>
+				<element name="period-types">
+					<oneOrMore>
+						<element name="period">
+							<attribute name="ref">
 								<data type="string"/>
-							</element>
-							<element name="display">
-								<data type="string"/>
-							</element>
-							<optional>
-								<element name="pois-allowed">
-									<empty/>
+							</attribute>
+							<interleave>
+								<element name="name">
+									<data type="string"/>
 								</element>
-							</optional>
-						</interleave>
-					</element>
-				</oneOrMore>
-			</element>
+								<element name="display">
+									<data type="string"/>
+								</element>
+								<optional>
+									<element name="pois-allowed">
+										<empty/>
+									</element>
+								</optional>
+							</interleave>
+						</element>
+					</oneOrMore>
+				</element>
+			</optional>
 
 			<!-- Can choose either or prep-time and prep-time-controlled but not both -->
 			<optional>
 				<choice>
 					<element name="prep-time">
-						<attribute name="length"/>
+						<element name="length">
+							<ref name="value-time"/>
+						</element>
+					</element>
+
+					<element name="prep-time-controlled">
+						<ref name="common.controlled-time"/>
 					</element>
 				</choice>
 			</optional>
@@ -73,19 +81,10 @@
 			<element name="speech-types">
 				<oneOrMore>
 					<element name="speech-type">
-						<interleave>
-							<element name="length">
-								<data type="string"/>
-							</element>
-							<element name="first-period">
-								<attribute name="ref">
-									<data type="string"/>
-								</attribute>
-							</element>
-						</interleave>
-						<interleave>
-							<ref name="common.speechelementscontainer"/>
-						</interleave>
+						<attribute name="ref">
+							<data type="string"/>
+						</attribute>
+						<ref name="common.controlled-time"/>
 					</element>
 				</oneOrMore>
 			</element>
@@ -108,10 +107,15 @@
 
 	</start>
 
-	<define name="common.speechelementscontainer">
-		<attribute name="ref">
-			<data type="string"/>
-		</attribute>
+	<define name="common.controlled-time">
+		<element name="length">
+			<ref name="value-time"/>
+		</element>
+		<element name="first-period">
+			<attribute name="ref">
+				<data type="string"/>
+			</attribute>
+		</element>
 		<oneOrMore>
 			<ref name="common.bell"/>
 		</oneOrMore>
@@ -129,18 +133,33 @@
 							</choice>
 						</attribute>
 					</optional>
-					<data type="string"/>
+					<ref name="value-time"/>
 				</element>
-				<element name="number">
-					<data type="integer"/>
-				</element>
-				<element name="next-period">
-					<attribute name="ref">
-						<data type="string"/>
-					</attribute>
-				</element>
+				<optional>
+					<element name="number">
+						<data type="integer"/>
+					</element>
+				</optional>
+				<optional>
+					<element name="next-period">
+						<attribute name="ref">
+							<data type="string"/>
+						</attribute>
+					</element>
+				</optional>
+				<optional>
+					<element name="pause-on-bell">
+						<empty/>
+					</element>
+				</optional>
 			</interleave>
 		</element>
+	</define>
+
+	<define name="value-time">
+		<data type="string">
+			<param name="pattern">-?\d+(:\d\d)?</param>
+		</data>
 	</define>
 
 </grammar>
