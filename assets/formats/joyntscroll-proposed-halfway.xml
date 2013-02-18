@@ -21,13 +21,13 @@
 	***********************************************************************************-->
 
 	<speech-types>
-		<speech-type ref="substantive" length="10:00" first-period="normal">
+		<speech-type ref="substantive" length="10:00">
 			<bell time="1:00" number="1" next-period="pois-allowed" />
 			<bell time="9:00" number="1" next-period="warning" />
 			<bell time="finish" number="2" next-period="overtime" />
 		</speech-type>
 
-		<speech-type ref="reply" length="5:00" first-period="normal">
+		<speech-type ref="reply" length="5:00">
 			<bell time="4:00" number="1" next-period="warning" />
 			<bell time="finish" number="2" next-period="overtime" />
 		</speech-type>

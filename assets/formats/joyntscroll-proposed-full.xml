@@ -23,7 +23,6 @@
 	<speech-types>
 		<speech-type ref="substantive">
 			<length>10:00</length>
-			<first-period ref="normal"/>
 			<bell>
 				<time>1:00</time>
 				<number>1</number>
@@ -43,7 +42,6 @@
 
 		<speech-type ref="reply">
 			<length>5:00</length>
-			<first-period ref="normal"/>
 			<bell>
 				<!-- Note the new 'from' attribute, which allows the specification of
 				a bell time relative to the end of the speech. In order to do this, the

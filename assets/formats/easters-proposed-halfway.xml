@@ -47,12 +47,12 @@
 	</prep-time-controlled>
 
 	<speech-types>
-		<speech-type ref="substantive" length="6:00" first-period="initial">
+		<speech-type ref="substantive" length="6:00">
 			<bell time="4:00" number="1" next-period="warning" />
 			<bell time="finish" number="2" next-period="overtime" />
 		</speech-type>
 
-		<speech-type ref="reply" length="3:00" first-period="normal">
+		<speech-type ref="reply" length="3:00">
 			<bell time="2:00" number="1" next-period="warning" />
 			<bell time="finish" number="2" next-period="overtime" />
 		</speech-type>

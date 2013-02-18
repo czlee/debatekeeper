@@ -111,11 +111,13 @@
 		<element name="length">
 			<ref name="value-time"/>
 		</element>
-		<element name="first-period">
-			<attribute name="ref">
-				<data type="string"/>
-			</attribute>
-		</element>
+		<optional>
+			<element name="first-period">
+				<attribute name="ref">
+					<data type="string"/>
+				</attribute>
+			</element>
+		</optional>
 		<oneOrMore>
 			<ref name="common.bell"/>
 		</oneOrMore>
