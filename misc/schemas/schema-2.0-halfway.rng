@@ -116,32 +116,28 @@
 				<data type="string"/>
 			</attribute>
 		</optional>
-		<oneOrMore>
-			<ref name="common.bell"/>
-		</oneOrMore>
-	</define>
-
-	<define name="common.bell">
-		<element name="bell">
-			<attribute name="time">
-				<ref name="value-time"/>
-			</attribute>
-			<optional>
-				<attribute name="number">
-					<data type="integer"/>
+		<zeroOrMore>
+			<element name="bell">
+				<attribute name="time">
+					<ref name="value-time"/>
 				</attribute>
-			</optional>
-			<optional>
-				<attribute name="next-period">
-					<data type="string"/>
-				</attribute>
-			</optional>
-			<optional>
-				<attribute name="pause-on-bell">
-					<data type="boolean"/>
-				</attribute>
-			</optional>
-		</element>
+				<optional>
+					<attribute name="number">
+						<data type="integer"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="next-period">
+						<data type="string"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="pause-on-bell">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+			</element>
+		</zeroOrMore>
 	</define>
 
 	<define name="value-time">

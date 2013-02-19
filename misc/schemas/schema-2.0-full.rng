@@ -118,44 +118,40 @@
 				</attribute>
 			</element>
 		</optional>
-		<oneOrMore>
-			<ref name="common.bell"/>
-		</oneOrMore>
-	</define>
-
-	<define name="common.bell">
-		<element name="bell">
-			<interleave>
-				<element name="time">
+		<zeroOrMore>
+			<element name="bell">
+				<interleave>
+					<element name="time">
+						<optional>
+							<attribute name="from">
+								<choice>
+									<value>start</value>
+									<value>finish</value>
+								</choice>
+							</attribute>
+						</optional>
+						<ref name="value-time"/>
+					</element>
 					<optional>
-						<attribute name="from">
-							<choice>
-								<value>start</value>
-								<value>finish</value>
-							</choice>
-						</attribute>
+						<element name="number">
+							<data type="integer"/>
+						</element>
 					</optional>
-					<ref name="value-time"/>
-				</element>
-				<optional>
-					<element name="number">
-						<data type="integer"/>
-					</element>
-				</optional>
-				<optional>
-					<element name="next-period">
-						<attribute name="ref">
-							<data type="string"/>
-						</attribute>
-					</element>
-				</optional>
-				<optional>
-					<element name="pause-on-bell">
-						<empty/>
-					</element>
-				</optional>
-			</interleave>
-		</element>
+					<optional>
+						<element name="next-period">
+							<attribute name="ref">
+								<data type="string"/>
+							</attribute>
+						</element>
+					</optional>
+					<optional>
+						<element name="pause-on-bell">
+							<empty/>
+						</element>
+					</optional>
+				</interleave>
+			</element>
+		</zeroOrMore>
 	</define>
 
 	<define name="value-time">
