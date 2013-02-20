@@ -30,7 +30,7 @@ import android.util.Log;
  * Examples of debate formats: British Parliamentary, Australs, Australian Easters.  This does
  * nothing other than provide information.  The class DebateManager deals with managing the debate.
  *
- * The DebateFormatBuilder class should be used to construct one of these.  DebateFormat doesn't
+ * The DebateFormatBuilderForSchema1 class should be used to construct one of these.  DebateFormat doesn't
  * know about how formats are specified (in e.g. XML), it just knows about its speech formats.
  *
  * @author Chuan-Zheng Lee

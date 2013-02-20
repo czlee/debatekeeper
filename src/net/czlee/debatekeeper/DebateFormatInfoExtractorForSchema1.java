@@ -36,13 +36,13 @@ import android.util.Xml.Encoding;
  * @author Chuan-Zheng Lee
  * @since  2012-06-20
  */
-public class DebateFormatInfoExtractor {
+public class DebateFormatInfoExtractorForSchema1 {
 
     private final Context          mContext;
     private final String           DEBATING_TIMER_URI;
     private DebateFormatInfo mDfi;
 
-    public DebateFormatInfoExtractor(Context context) {
+    public DebateFormatInfoExtractorForSchema1(Context context) {
         mContext           = context;
         DEBATING_TIMER_URI = context.getString(R.string.xml_uri);
     }
@@ -89,7 +89,7 @@ public class DebateFormatInfoExtractor {
              * <debateformat name="something" schemaversion="1.0">
              * End the root context.
              */
-            if (areEqual(localName, R.string.xmlElemName_root)) {
+            if (areEqual(localName, R.string.xml1elemName_root)) {
                 mIsInRootContext = false;
                 return;
             }
@@ -98,11 +98,11 @@ public class DebateFormatInfoExtractor {
              * <info>, <resource>, <speechtype>, <speeches>, <preptime-controlled>
              * End the second-level context.
              */
-            if (areEqual(localName, R.string.xmlElemName_info) ||
-                areEqual(localName, R.string.xmlElemName_resource) ||
-                areEqual(localName, R.string.xmlElemName_speechFormat) ||
-                areEqual(localName, R.string.xmlElemName_speechesList) ||
-                areEqual(localName, R.string.xmlElemName_prepTimeControlledFormat))
+            if (areEqual(localName, R.string.xml1elemName_info) ||
+                areEqual(localName, R.string.xml1elemName_resource) ||
+                areEqual(localName, R.string.xml1elemName_speechFormat) ||
+                areEqual(localName, R.string.xml1elemName_speechesList) ||
+                areEqual(localName, R.string.xml1elemName_prepTimeControlledFormat))
                     mCurrentSecondLevelContext = DebateFormatXmlSecondLevelContext.NONE;
 
             if (getCurrentSecondLevelContext() == DebateFormatXmlSecondLevelContext.INFO) {
@@ -112,16 +112,16 @@ public class DebateFormatInfoExtractor {
                         return;
                     }
                     // <region>
-                    if (areEqual(localName, R.string.xmlElemName_info_region)) {
+                    if (areEqual(localName, R.string.xml1elemName_info_region)) {
                         mDfi.addRegion(mCharactersBuffer);
                     // <level>
-                    } else if (areEqual(localName, R.string.xmlElemName_info_level)) {
+                    } else if (areEqual(localName, R.string.xml1elemName_info_level)) {
                         mDfi.addLevel(mCharactersBuffer);
                     // <usedat>
-                    } else if (areEqual(localName, R.string.xmlElemName_info_usedAt)) {
+                    } else if (areEqual(localName, R.string.xml1elemName_info_usedAt)) {
                         mDfi.addUsedAt(mCharactersBuffer);
                     // <desc>
-                    } else if (areEqual(localName, R.string.xmlElemName_info_desc)) {
+                    } else if (areEqual(localName, R.string.xml1elemName_info_desc)) {
                         if (!mDescriptionFound) {
                             mDescriptionFound = true;
                             mDfi.setDescription(mCharactersBuffer);
@@ -143,8 +143,8 @@ public class DebateFormatInfoExtractor {
             /**
              * <debateformat name="something" schemaversion="1.0">
              */
-            if (areEqual(localName, R.string.xmlElemName_root)) {
-                String name = getValue(atts, R.string.xmlAttrName_root_name);
+            if (areEqual(localName, R.string.xml1elemName_root)) {
+                String name = getValue(atts, R.string.xml1attrName_root_name);
                 if (name != null)
                     mDfi.setName(name);
                 mIsInRootContext = true;
@@ -160,7 +160,7 @@ public class DebateFormatInfoExtractor {
             /**
              * <info>
              */
-            if (areEqual(localName, R.string.xmlElemName_info)) {
+            if (areEqual(localName, R.string.xml1elemName_info)) {
                 mCurrentSecondLevelContext = DebateFormatXmlSecondLevelContext.INFO;
                 return;
 
@@ -172,11 +172,11 @@ public class DebateFormatInfoExtractor {
             /**
              * <preptime length="15:00" />
              */
-            } else if (areEqual(localName, R.string.xmlElemName_prepTimeSimpleFormat)) {
+            } else if (areEqual(localName, R.string.xml1elemName_prepTimeSimpleFormat)) {
 
                 // Ignore if any of the following are true:
                 //  1. No length is given or the length is invalid.
-                String lengthStr = getValue(atts, R.string.xmlAttrName_controlledTimeLength);
+                String lengthStr = getValue(atts, R.string.xml1attrName_controlledTimeLength);
                 long length = 0;
                 if (lengthStr == null)
                     return;
@@ -191,7 +191,7 @@ public class DebateFormatInfoExtractor {
             /**
              * <preptime-controlled length="15:00">
              */
-            } else if (areEqual(localName, R.string.xmlElemName_prepTimeControlledFormat)) {
+            } else if (areEqual(localName, R.string.xml1elemName_prepTimeControlledFormat)) {
 
                 // Ignore if any of the following are true:
                 //  1. We're already inside a second-level context
@@ -199,7 +199,7 @@ public class DebateFormatInfoExtractor {
                 if (!assertNotInsideAnySecondLevelContextAndResetOtherwise())
                     return;
 
-                String lengthStr = getValue(atts, R.string.xmlAttrName_controlledTimeLength);
+                String lengthStr = getValue(atts, R.string.xml1attrName_controlledTimeLength);
                 long length;
                 if (lengthStr == null)
                     return;
@@ -215,13 +215,13 @@ public class DebateFormatInfoExtractor {
             /**
              * <resource ref="string">
              */
-            } else if (areEqual(localName, R.string.xmlElemName_resource)) {
+            } else if (areEqual(localName, R.string.xml1elemName_resource)) {
 
                 // Ignore if any of the following are true:
                 //  1. No reference is given
                 //  2. We're already inside a second-level context
                 //  3. This resource already exists
-                String reference = getValue(atts, R.string.xmlAttrName_common_ref);
+                String reference = getValue(atts, R.string.xml1attrName_common_ref);
                 if (reference == null)
                     return;
                 if (!assertNotInsideAnySecondLevelContextAndResetOtherwise())
@@ -236,14 +236,14 @@ public class DebateFormatInfoExtractor {
             /**
              * <speechtype ref="string" length="5:00">
              */
-            } else if (areEqual(localName, R.string.xmlElemName_speechFormat)) {
+            } else if (areEqual(localName, R.string.xml1elemName_speechFormat)) {
 
                 // Ignore if any of the following are true:
                 //  1. No reference is given
                 //  2. We're already inside a second-level context
                 //  3. This speech format already exists
                 //  4. No length is given or the length is invalid
-                String reference = getValue(atts, R.string.xmlAttrName_common_ref);
+                String reference = getValue(atts, R.string.xml1attrName_common_ref);
                 if (reference == null)
                     return;
                 if (!assertNotInsideAnySecondLevelContextAndResetOtherwise())
@@ -251,7 +251,7 @@ public class DebateFormatInfoExtractor {
                 if (mDfi.hasSpeechFormat(reference))
                     return;
 
-                String lengthStr = getValue(atts, R.string.xmlAttrName_controlledTimeLength);
+                String lengthStr = getValue(atts, R.string.xml1attrName_controlledTimeLength);
                 long length;
                 if (lengthStr == null)
                     return;
@@ -268,19 +268,19 @@ public class DebateFormatInfoExtractor {
             /**
              * <bell time="1:00" pauseonbell="true">
              */
-            } else if (areEqual(localName, R.string.xmlElemName_bell)) {
+            } else if (areEqual(localName, R.string.xml1elemName_bell)) {
 
                 // Ignore if any of the following are true:
                 //  1. No time is given or the time is invalid
                 //  2. We are not in an applicable second-level context
                 //  3. It is a (valid) silent bell
 
-                String timeStr = getValue(atts, R.string.xmlAttrName_bell_time);;
+                String timeStr = getValue(atts, R.string.xml1attrName_bell_time);;
                 long time = 0;
                 boolean isFinish = false;
                 if (timeStr == null)
                     return;
-                else if (areEqualIgnoringCase(timeStr, R.string.xmlAttrValue_bell_time_finish))
+                else if (areEqualIgnoringCase(timeStr, R.string.xml1attrValue_bell_time_finish))
                     isFinish = true;
                 else {
                     try {
@@ -290,7 +290,7 @@ public class DebateFormatInfoExtractor {
                     }
                 }
 
-                String numberStr = getValue(atts, R.string.xmlAttrName_bell_number);
+                String numberStr = getValue(atts, R.string.xml1attrName_bell_number);
                 int number = 1;
                 if (numberStr != null) {
                     try {
@@ -303,9 +303,9 @@ public class DebateFormatInfoExtractor {
 
                 // (We also need to check if this is a pause-on-bell.)
                 boolean pause = false;
-                String pauseOnBellStr = getValue(atts, R.string.xmlAttrName_bell_pauseOnBell);
+                String pauseOnBellStr = getValue(atts, R.string.xml1attrName_bell_pauseOnBell);
                 if (pauseOnBellStr != null) {
-                    if (areEqualIgnoringCase(pauseOnBellStr, R.string.xmlAttrValue_common_true))
+                    if (areEqualIgnoringCase(pauseOnBellStr, R.string.xml1attrValue_common_true))
                         pause = true;
                 }
 
@@ -333,13 +333,13 @@ public class DebateFormatInfoExtractor {
             /**
              * <include resource="reference">
              */
-            } else if (areEqual(localName, R.string.xmlElemName_include)) {
+            } else if (areEqual(localName, R.string.xml1elemName_include)) {
 
                 // Ignore if any of the following are true:
                 //  1. No resource reference is given
                 //  2. We're not inside a speech format
 
-                String resourceRef = getValue(atts, R.string.xmlAttrName_include_resource);
+                String resourceRef = getValue(atts, R.string.xml1attrName_include_resource);
                 if (resourceRef == null)
                     return;
                 if (getCurrentSecondLevelContext() != DebateFormatXmlSecondLevelContext.SPEECH_FORMAT)
@@ -351,7 +351,7 @@ public class DebateFormatInfoExtractor {
             /**
              * <speeches>
              */
-            } else if (areEqual(localName, R.string.xmlElemName_speechesList)) {
+            } else if (areEqual(localName, R.string.xml1elemName_speechesList)) {
                 // Ignore if we're already inside a second-level context
                 if (!assertNotInsideAnySecondLevelContextAndResetOtherwise())
                     return;
@@ -360,15 +360,15 @@ public class DebateFormatInfoExtractor {
             /**
             * <speech name="1st Affirmative" type="formatname">
             */
-            } else if (areEqual(localName, R.string.xmlElemName_speech)) {
+            } else if (areEqual(localName, R.string.xml1elemName_speech)) {
 
                 // Ignore if any of the following are true:
                 //  1. No name is given
                 //  2. No format is given
                 //  3. We are not inside the speeches list
 
-                String name = getValue(atts, R.string.xmlAttrName_speech_name);
-                String format = getValue(atts, R.string.xmlAttrName_speech_format);
+                String name = getValue(atts, R.string.xml1attrName_speech_name);
+                String format = getValue(atts, R.string.xml1attrName_speech_format);
                 if (name == null || format == null)
                     return;
                 if (getCurrentSecondLevelContext() != DebateFormatXmlSecondLevelContext.SPEECHES_LIST)

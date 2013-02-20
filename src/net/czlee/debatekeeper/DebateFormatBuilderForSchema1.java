@@ -26,18 +26,18 @@ import net.czlee.debatekeeper.DebateFormat.NoSuchFormatException;
 import android.content.Context;
 
 /**
- * DebateFormatBuilder provides mechanisms for building DebateFormats.
+ * DebateFormatBuilderForSchema1 provides mechanisms for building DebateFormats.
  *
- * DebateFormatBuilder takes raw information and uses it to build a {@link DebateFormat}.  It knows
+ * DebateFormatBuilderForSchema1 takes raw information and uses it to build a {@link DebateFormat}.  It knows
  * about "resources" and can refer the periods and resources by a string reference.
  *
- * DebateFormatBuilder may be used directly or extended to more specific cases, e.g. an XML file
+ * DebateFormatBuilderForSchema1 may be used directly or extended to more specific cases, e.g. an XML file
  * parser.
  *
  * @author Chuan-Zheng Lee
  * @since  2012-06-02
  */
-public class DebateFormatBuilder {
+public class DebateFormatBuilderForSchema1 {
 
     protected enum State {
         ADDING_FORMATS, ADDING_SPEECHES, DONE
@@ -362,7 +362,7 @@ public class DebateFormatBuilder {
     /**
      * Constructor.
      */
-    public DebateFormatBuilder(Context context) {
+    public DebateFormatBuilderForSchema1(Context context) {
         super();
         mResourceForAll = null;
         mResources = new HashMap<String, Resource>();
@@ -381,10 +381,10 @@ public class DebateFormatBuilder {
      */
     public void addNewResource(String ref) throws DebateFormatBuilderException {
         assertFormatsAreAddable();
-        if (ref.equalsIgnoreCase(getString(R.string.xmlAttrValue_resource_ref_common))) {
+        if (ref.equalsIgnoreCase(getString(R.string.xml1attrValue_resource_ref_common))) {
             if (mResourceForAll != null) {
                 throw new DebateFormatBuilderException(R.string.dfbError_resourceDuplicate,
-                        getString(R.string.xmlAttrValue_resource_ref_common));
+                        getString(R.string.xml1attrValue_resource_ref_common));
             }
             mResourceForAll = new Resource();
         } else if (!mResources.containsKey(ref)) {
@@ -776,7 +776,7 @@ public class DebateFormatBuilder {
      */
     private Resource getResource(String ref) throws DebateFormatBuilderException {
         Resource res;
-        if (ref.equalsIgnoreCase(mContext.getString(R.string.xmlAttrValue_resource_ref_common)))
+        if (ref.equalsIgnoreCase(mContext.getString(R.string.xml1attrValue_resource_ref_common)))
             res = mResourceForAll;
         else res = mResources.get(ref);
         if (res == null) {
