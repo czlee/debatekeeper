@@ -834,7 +834,7 @@ public class DebatingActivity extends Activity {
      * The message of the exception will be human-readable and can be displayed in a dialogue box.
      */
     private DebateFormat buildDebateFromXml(String filename) throws FatalXmlError {
-        DebateFormatBuilderFromXml dfbfx = new DebateFormatBuilderFromXml(this);
+        DebateFormatBuilderFromXmlForSchema1 dfbfx = new DebateFormatBuilderFromXmlForSchema1(this);
         InputStream is = null;
         DebateFormat df;
 

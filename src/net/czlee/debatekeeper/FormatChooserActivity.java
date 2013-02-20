@@ -197,9 +197,9 @@ public class FormatChooserActivity extends Activity {
             if (!uri.equals(DEBATING_TIMER_URI))
                 return;
 
-            if (localName.equals(getString(R.string.xmlElemName_root))) {
+            if (localName.equals(getString(R.string.xml1elemName_root))) {
                 mCurrentStyleName = atts.getValue(DEBATING_TIMER_URI,
-                        getString(R.string.xmlAttrName_root_name));
+                        getString(R.string.xml1attrName_root_name));
                 throw new AllInformationFoundException();
                 // We don't need to parse any more once we find the style name
             }
@@ -549,7 +549,7 @@ public class FormatChooserActivity extends Activity {
     private DebateFormatInfo getDebateFormatInfo(String filename) throws IOException, SAXException {
         InputStream is;
         is = mFilesManager.open(filename);
-        DebateFormatInfoExtractor dfie = new DebateFormatInfoExtractor(this);
+        DebateFormatInfoExtractorForSchema1 dfie = new DebateFormatInfoExtractorForSchema1(this);
         return dfie.getDebateFormatInfo(is);
     }
 
