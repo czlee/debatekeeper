@@ -21,9 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import android.content.Context;
 import android.util.Log;
@@ -51,7 +50,7 @@ public class DebateFormatInfoExtractorForSchema1 {
     // Private classes
     // ******************************************************************************************
 
-    private class DebateFormatInfoContentHandler implements ContentHandler {
+    private class DebateFormatInfoContentHandler extends DefaultHandler {
 
         private boolean mIsInRootContext        = false;
         private boolean mDescriptionFound       = false;
@@ -62,16 +61,6 @@ public class DebateFormatInfoExtractorForSchema1 {
 
         private DebateFormatXmlSecondLevelContext mCurrentSecondLevelContext
                 = DebateFormatXmlSecondLevelContext.NONE;
-
-        @Override public void endDocument() throws SAXException {}
-        @Override public void endPrefixMapping(String prefix) throws SAXException {}
-        @Override public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {}
-        @Override public void processingInstruction(String target, String data) throws SAXException {}
-        @Override public void setDocumentLocator(Locator locator) {}
-        @Override public void skippedEntity(String name) throws SAXException {}
-        @Override public void startDocument() throws SAXException {}
-        @Override public void startPrefixMapping(String prefix, String uri) throws SAXException {}
-
 
         @Override
         public void characters(char[] ch, int start, int length)

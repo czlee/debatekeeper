@@ -24,9 +24,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import android.annotation.TargetApi;
 import android.app.ActionBar;
@@ -172,17 +171,7 @@ public class FormatChooserActivity extends Activity {
      * This class just looks for the string inside &lt;debateformat name="...">
      * and saves it to <code>mCurrentStyleName</code>.
      */
-    private class GetDebateFormatNameXmlContentHandler implements ContentHandler {
-
-        @Override public void characters(char[] arg0, int arg1, int arg2) throws SAXException {}
-        @Override public void endDocument() throws SAXException {}
-        @Override public void endElement(String arg0, String arg1, String arg2) throws SAXException {}
-        @Override public void endPrefixMapping(String prefix) throws SAXException {}
-        @Override public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {}
-        @Override public void processingInstruction(String target, String data) throws SAXException {}
-        @Override public void setDocumentLocator(Locator locator) {}
-        @Override public void skippedEntity(String name) throws SAXException {}
-        @Override public void startPrefixMapping(String prefix, String uri) throws SAXException {}
+    private class GetDebateFormatNameXmlContentHandler extends DefaultHandler {
 
         @Override
         public void startDocument() throws SAXException {
