@@ -25,9 +25,8 @@ import java.util.ArrayList;
 import net.czlee.debatekeeper.DebateFormatBuilderForSchema1.DebateFormatBuilderException;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import android.content.Context;
 import android.util.Log;
@@ -60,7 +59,7 @@ public class DebateFormatBuilderFromXmlForSchema1 {
     //******************************************************************************************
     // Private classes
     //******************************************************************************************
-    private class DebateFormatXmlContentHandler implements ContentHandler {
+    private class DebateFormatXmlContentHandler extends DefaultHandler {
 
         // endElement should erase these (i.e. set them to null) so that they're only not null
         // when we're inside one of these elements.  NOTE however that they may be null even when
@@ -70,24 +69,14 @@ public class DebateFormatBuilderFromXmlForSchema1 {
         //      m*Ref is NOT null           implies       we are in * context
         // but  m*Ref is null            does NOT imply   we are NOT in * context
         // and we are NOT in * context   does NOT imply   m*Ref is null
-        private String  mCurrentFirstPeriod                 = null;
-        private String  mCurrentSpeechFormatRef             = null;
-        private String  mCurrentResourceRef                 = null;
+        private String  mCurrentFirstPeriod     = null;
+        private String  mCurrentSpeechFormatRef = null;
+        private String  mCurrentResourceRef     = null;
 
         private DebateFormatXmlSecondLevelContext mCurrentSecondLevelContext
                 = DebateFormatXmlSecondLevelContext.NONE;
 
-        private boolean mIsInRootContext                = false;
-
-        @Override public void characters(char[] ch, int start, int length) throws SAXException {}
-        @Override public void endDocument() throws SAXException {}
-        @Override public void endPrefixMapping(String prefix) throws SAXException {}
-        @Override public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {}
-        @Override public void processingInstruction(String target, String data) throws SAXException {}
-        @Override public void setDocumentLocator(Locator locator) {}
-        @Override public void skippedEntity(String name) throws SAXException {}
-        @Override public void startDocument() throws SAXException {}
-        @Override public void startPrefixMapping(String prefix, String uri) throws SAXException {}
+        private boolean mIsInRootContext = false;
 
         @Override
         public void endElement(String uri, String localName, String qName)
