@@ -30,14 +30,14 @@
 	***********************************************************************************-->
 
 	<period-types>
-		<period ref="easters.moot">
+		<period-type ref="easters.moot">
 			<name>Easters: moot</name>      <!-- The name shown in the user-defined background colour interface -->
 			<display>Choose moot</display>  <!-- The description shown on the main screen when this period is active -->
-		</period>
-		<period ref="easters.side">
+		</period-type>
+		<period-type ref="easters.side">
 			<name>Easters: side</name>
 			<display>Choose side</display>
-		</period>
+		</period-type>
 	</period-types>
 
 	<prep-time-controlled>

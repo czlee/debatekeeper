@@ -18,6 +18,52 @@
 <resources>
     <string name="xml_uri"></string>
 
+    <string name="xml2elemName_root">debate-format</string>
+        <string name="xml2attrName_root_schemaVersion">schema-version</string>
+        <string name="xml2attrName_common_ref">ref</string>
+            <string name="xml2attrValue_common_true">true</string>
+            <string name="xml2attrValue_common_false">false</string>
+            <string name="xml2attrValue_common_stay">#stay</string>
+            <string name="xml2attrValue_common_default">#default</string>
+        
+    <string name="xml2elemName_name">name</string>
+    
+    <string name="xml2elemName_info">info</string>
+        <string name="xml2elemName_info_region">region</string>
+        <string name="xml2elemName_info_level">level</string>
+        <string name="xml2elemName_info_usedAt">used-at</string>
+        <string name="xml2elemName_info_desc">description</string>
+
+    <string name="xml2elemName_periodTypes">period-types</string>
+	    <string name="xml2elemName_periodType">period-type</string>
+	        <string name="xml2elemName_periodType_name">name</string>
+	        <string name="xml2elemName_periodType_display">display</string>
+	        <string name="xml2elemName_periodType_defaultBackgroundColor">default-bgcolor</string>
+	        <string name="xml2elemName_periodType_poisAllowed">pois-allowed</string>
+
+    <string name="xml2elemName_prepTimeSimpleFormat">prep-time</string>
+
+    <!-- attributes common to prep-time-controlled and speech-type -->
+        <string name="xml2attrName_controlledTimeLength">length</string>
+        <string name="xml2attrName_controlledTimeFirstPeriod">first-period</string>
+    
+    <string name="xml2elemName_prepTimeControlledFormat">prep-time-controlled</string>
+    
+    <string name="xml2elemName_speechFormats">speech-types</string>
+    <string name="xml2elemName_speechFormat">speech-type</string>
+
+    <string name="xml2elemName_bell">bell</string>
+        <string name="xml2attrName_bell_time">time</string>
+            <string name="xml2attrValue_bell_time_finish">finish</string>
+        <string name="xml2attrName_bell_number">number</string>
+        <string name="xml2attrName_bell_nextPeriod">next-period</string>
+        <string name="xml2attrName_bell_pauseOnBell">pause-on-bell</string>
+
+    <string name="xml2elemName_speechesList">speeches</string>
+        <string name="xml2elemName_speech">speech</string>
+            <string name="xml2elemName_speech_name">name</string>
+            <string name="xml2attrName_speech_format">type</string>
+    
     <string name="xml1elemName_root">debateformat</string>
         <string name="xml1attrName_root_name">name</string>
         <string name="xml1attrName_root_schemaVersion">schemaversion</string>
