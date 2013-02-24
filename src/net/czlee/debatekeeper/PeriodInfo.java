@@ -36,6 +36,8 @@ import android.os.Bundle;
  */
 public class PeriodInfo {
 
+    private String mName              = null;
+
     // The meaning of "null" in both these objects is "do not change from what it is currently".
     private String  mDescription      = null;
     private Integer mBackgroundColor  = null; // Use Integer so that we can also use null.
@@ -61,7 +63,15 @@ public class PeriodInfo {
         mPoisAllowed     = poisAllowed;
     }
 
-    public String  getDescription() {
+    public void setName(String name) {
+        mName = name;
+    }
+
+    public String getName() {
+        return mName;
+    }
+
+    public String getDescription() {
         return mDescription;
     }
 
@@ -125,4 +135,5 @@ public class PeriodInfo {
         mBackgroundColor = bundle.getInt(key + BUNDLE_SUFFIX_BGCOLOR);
         mPoisAllowed = bundle.getBoolean(key + BUNDLE_SUFFIX_POIS_ALLOWED, false);
     }
+
 }
