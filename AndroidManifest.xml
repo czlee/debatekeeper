@@ -18,8 +18,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.czlee.debatekeeper"
     android:installLocation="auto"
-    android:versionCode="13"
-    android:versionName="0.10-dev" >
+    android:versionCode="14"
+    android:versionName="0.10" >
 
     <uses-sdk
         android:minSdkVersion="8"
