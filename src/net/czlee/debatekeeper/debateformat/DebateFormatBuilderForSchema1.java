@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.czlee.debatekeeper.debateformat.schema1;
+package net.czlee.debatekeeper.debateformat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,23 +23,33 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import net.czlee.debatekeeper.R;
-import net.czlee.debatekeeper.debateformat.DebateFormat;
 import net.czlee.debatekeeper.debateformat.DebateFormat.NoSuchFormatException;
-import net.czlee.debatekeeper.debateformat.BellInfo;
-import net.czlee.debatekeeper.debateformat.PeriodInfo;
-import net.czlee.debatekeeper.debateformat.PrepTimeControlledFormat;
-import net.czlee.debatekeeper.debateformat.PrepTimeSimpleFormat;
-import net.czlee.debatekeeper.debateformat.SpeechFormat;
 import android.content.Context;
 
 /**
  * DebateFormatBuilderForSchema1 provides mechanisms for building DebateFormats.
  *
- * DebateFormatBuilderForSchema1 takes raw information and uses it to build a {@link DebateFormat}.  It knows
- * about "resources" and can refer the periods and resources by a string reference.
+ * <p>While "schema 1" refers to the XML schema, this class does not actually handle the XML.
+ * It merely provides building methods for other classes to use to construct a {@link DebateFormat}.
+ * The salient features of schema 1, that are not true for schema 2, are:</p>
+ * <ul>
+ * <li>Resources exist in schema 1; they are obsoleted in schema 2.</li>
+ * <li>Period types in schema 1 must be specified in this file; for schema 2 formats can take
+ * advantage of the "global" period types.</li>
+ * <li>All period types in schema 1 are local to the file; in schema 2 period types are global
+ * even if specified in a single debate format XML file.</li>
+ * </ul>
  *
- * DebateFormatBuilderForSchema1 may be used directly or extended to more specific cases, e.g. an XML file
- * parser.
+ * <p>DebateFormatBuilderForSchema1 takes raw information and uses it to build a {@link DebateFormat}.
+ * It knows about "resources" and can refer the periods and resources by a string reference.</p>
+ *
+ * <p>Note that "resources" are a concept known only to {@link DebateFormatBuilderForSchema1}.
+ * There is no concept of a "resource" in an instance of {@link DebateFormat}; this class handles
+ * resources and integrates them into speeches.</p>
+ *
+ * <p>It is expected that other classes will be used to interface between a means of storing
+ * information about debate formats, and this class.  For example, the {@link DebateFormatBuilderFromXmlForSchema1}
+ * class interfaces between XML files and this class.</p>
  *
  * @author Chuan-Zheng Lee
  * @since  2012-06-02
@@ -57,6 +67,18 @@ public class DebateFormatBuilderForSchema1 {
     protected HashMap<String, SpeechFormatBuilder> mSpeechFormatBuilders;
     protected PrepTimeControlledBuilder            mPrepTimeControlledBuilder;
     protected DebateFormat                         mDebateFormatBeingBuilt;
+
+    /**
+     * Constructor.
+     */
+    public DebateFormatBuilderForSchema1(Context context) {
+        super();
+        mResourceForAll = null;
+        mResources = new HashMap<String, Resource>();
+        mSpeechFormatBuilders = new HashMap<String, SpeechFormatBuilder>();
+        mDebateFormatBeingBuilt = new DebateFormat();
+        mContext = context;
+    }
 
     //******************************************************************************************
     // Public classes
@@ -365,18 +387,6 @@ public class DebateFormatBuilderForSchema1 {
     //******************************************************************************************
     // Public methods
     //******************************************************************************************
-
-    /**
-     * Constructor.
-     */
-    public DebateFormatBuilderForSchema1(Context context) {
-        super();
-        mResourceForAll = null;
-        mResources = new HashMap<String, Resource>();
-        mSpeechFormatBuilders = new HashMap<String, SpeechFormatBuilder>();
-        mDebateFormatBeingBuilt = new DebateFormat();
-        mContext = context;
-    }
 
     /**
      * Adds a new blank resource to the debate format being constructed by this builder.

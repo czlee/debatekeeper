@@ -24,7 +24,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 
 import net.czlee.debatekeeper.debateformat.DebateFormatInfo;
-import net.czlee.debatekeeper.debateformat.schema1.DebateFormatInfoExtractorForSchema1;
+import net.czlee.debatekeeper.debateformat.DebateFormatInfoExtractorForSchema1;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
