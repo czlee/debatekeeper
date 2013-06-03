@@ -36,10 +36,10 @@
 
     <string name="xml2elemName_periodTypes">period-types</string>
 	    <string name="xml2elemName_periodType">period-type</string>
+	        <string name="xml2attrName_periodType_poisAllowed">pois-allowed</string>
 	        <string name="xml2elemName_periodType_name">name</string>
 	        <string name="xml2elemName_periodType_display">display</string>
 	        <string name="xml2elemName_periodType_defaultBackgroundColor">default-bgcolor</string>
-	        <string name="xml2elemName_periodType_poisAllowed">pois-allowed</string>
 
     <string name="xml2elemName_prepTimeSimpleFormat">prep-time</string>
 

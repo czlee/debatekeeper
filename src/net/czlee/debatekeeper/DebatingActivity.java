@@ -526,6 +526,9 @@ public class DebatingActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_debate);
 
+        // TODO temporary line, just to make sure this doesn't crash
+        new GlobalPeriodInfoRetriever(this);
+
         mFilesManager = new FormatXmlFilesManager(this);
 
         mDebateTimerViewFlipper    = (ViewFlipper)    findViewById(R.id.debateTimerDisplayFlipper);
