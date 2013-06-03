@@ -1,4 +1,5 @@
-package net.czlee.debatekeeper;
+package net.czlee.debatekeeper.debateformat;
+
 
 
 public interface PrepTimeFormat extends SpeechOrPrepFormat {

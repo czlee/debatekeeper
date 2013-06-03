@@ -23,6 +23,9 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.ListIterator;
 
+import net.czlee.debatekeeper.debateformat.BellInfo;
+import net.czlee.debatekeeper.debateformat.PrepTimeSimpleFormat;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;

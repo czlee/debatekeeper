@@ -15,11 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.czlee.debatekeeper;
+package net.czlee.debatekeeper.debatemanager;
 
 import java.util.ArrayList;
 
+import net.czlee.debatekeeper.AlertManager;
 import net.czlee.debatekeeper.DebatingTimerService.GuiUpdateBroadcastSender;
+import net.czlee.debatekeeper.PrepTimeBellsManager;
+import net.czlee.debatekeeper.R;
+import net.czlee.debatekeeper.debateformat.DebateFormat;
+import net.czlee.debatekeeper.debateformat.PeriodInfo;
+import net.czlee.debatekeeper.debateformat.PrepTimeSimpleFormat;
+import net.czlee.debatekeeper.debateformat.SpeechFormat;
+import net.czlee.debatekeeper.debateformat.SpeechOrPrepFormat;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;

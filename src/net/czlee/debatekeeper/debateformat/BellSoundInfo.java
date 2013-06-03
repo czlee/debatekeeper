@@ -15,7 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.czlee.debatekeeper;
+package net.czlee.debatekeeper.debateformat;
+
+import net.czlee.debatekeeper.R;
+import net.czlee.debatekeeper.R.raw;
 
 /**
  * BellSoundInfo is a passive data class containing information about a bell sound.

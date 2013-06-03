@@ -26,6 +26,12 @@ import java.util.concurrent.TimeUnit;
 
 import net.czlee.debatekeeper.AlertManager.FlashScreenListener;
 import net.czlee.debatekeeper.AlertManager.FlashScreenMode;
+import net.czlee.debatekeeper.debateformat.BellInfo;
+import net.czlee.debatekeeper.debateformat.DebateFormat;
+import net.czlee.debatekeeper.debateformat.PeriodInfo;
+import net.czlee.debatekeeper.debateformat.SpeechOrPrepFormat;
+import net.czlee.debatekeeper.debateformat.schema1.DebateFormatBuilderFromXmlForSchema1;
+import net.czlee.debatekeeper.debatemanager.DebateManager;
 
 import org.xml.sax.SAXException;
 
