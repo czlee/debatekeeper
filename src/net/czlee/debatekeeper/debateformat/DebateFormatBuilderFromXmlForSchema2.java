@@ -39,8 +39,8 @@ import android.util.Log;
  * <p>Because there is no longer any concept of "resources", there is nothing that a builder needs
  * to implement that isn't already taken care of by {@link DebateFormat}.  Therefore, unlike for
  * schema 1, this builder creates formats directly from XML files, without an intermediate class
- * to provide mechanisms for handling resources.  It does, however, have to implement global
- * period types.</p>
+ * to provide mechanisms for handling resources.  It does, however, have to handle global
+ * period types, which it delegates to {@link PeriodInfoManager}.</p>
  *
  * <p>Unlike {@link DebateFormatBuilderForSchema1}, this class does not do error checking that is
  * handled by the schema.  It does do error checking that is not handled by the schema.</p>
@@ -50,10 +50,10 @@ import android.util.Log;
  */
 public class DebateFormatBuilderFromXmlForSchema2 {
 
-    private final Context                       mContext;
-    protected final DocumentBuilderFactory      mDocumentBuilderFactory;
-    protected final PeriodInfoManager           mPeriodInfoManager;
-    private final ArrayList<String>             mErrorLog = new ArrayList<String>();
+    private final DocumentBuilderFactory mDocumentBuilderFactory;
+    private final PeriodInfoManager      mPeriodInfoManager;
+    private final Context                mContext;
+    private final ArrayList<String>      mErrorLog = new ArrayList<String>();
 
     private final XmlUtilities xu;
 
@@ -68,10 +68,6 @@ public class DebateFormatBuilderFromXmlForSchema2 {
         xu = new XmlUtilities(context.getResources());
 
     }
-
-    //******************************************************************************************
-    // Private classes
-    //******************************************************************************************
 
 
     //******************************************************************************************
