@@ -1,9 +1,10 @@
-package net.czlee.debatekeeper;
+package net.czlee.debatekeeper.debateformat;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+
 
 /**
  * GenericSpeechOrPrepFormat is a generic abstract implementation of

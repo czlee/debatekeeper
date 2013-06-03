@@ -17,6 +17,8 @@
 
 package net.czlee.debatekeeper;
 
+import net.czlee.debatekeeper.debateformat.DebateFormat;
+import net.czlee.debatekeeper.debatemanager.DebateManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;

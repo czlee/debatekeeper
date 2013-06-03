@@ -15,10 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.czlee.debatekeeper;
+package net.czlee.debatekeeper.debateformat;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import net.czlee.debatekeeper.R;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

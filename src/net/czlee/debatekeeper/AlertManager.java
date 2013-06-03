@@ -20,6 +20,10 @@ package net.czlee.debatekeeper;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import net.czlee.debatekeeper.debateformat.BellInfo;
+import net.czlee.debatekeeper.debateformat.BellSoundInfo;
+import net.czlee.debatekeeper.debateformat.PeriodInfo;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;

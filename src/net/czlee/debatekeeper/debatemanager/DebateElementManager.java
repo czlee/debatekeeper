@@ -1,5 +1,6 @@
-package net.czlee.debatekeeper;
+package net.czlee.debatekeeper.debatemanager;
 
+import net.czlee.debatekeeper.AlertManager;
 import net.czlee.debatekeeper.DebatingTimerService.GuiUpdateBroadcastSender;
 
 /**
