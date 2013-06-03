@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.czlee.debatekeeper;
+package net.czlee.debatekeeper.debateformat;
 
 import android.os.Bundle;
 

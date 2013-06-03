@@ -15,10 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.czlee.debatekeeper;
+package net.czlee.debatekeeper.debatemanager;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import net.czlee.debatekeeper.AlertManager;
 
 
 /**

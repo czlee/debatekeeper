@@ -20,6 +20,8 @@ package net.czlee.debatekeeper;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import net.czlee.debatekeeper.debateformat.BellSoundInfo;
+
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.util.Log;
