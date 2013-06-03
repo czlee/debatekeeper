@@ -76,7 +76,7 @@ public class PeriodInfo {
     /**
      * @return a reference string, not strictly part of the period type information but users
      * may find it useful to know what the reference was that was used to create this
-     * <code>PeriodInfo</code>.  This may return <code>null</code> if the {@link PeriodInfo} was
+     * <code>PeriodInfo</code>.  This may return <code>null</code> if the <code>PeriodInfo</code> was
      * created from a version 1 schema.
      */
     public String getReference() {

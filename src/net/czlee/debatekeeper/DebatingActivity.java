@@ -30,6 +30,7 @@ import net.czlee.debatekeeper.debateformat.BellInfo;
 import net.czlee.debatekeeper.debateformat.DebateFormat;
 import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXmlForSchema1;
 import net.czlee.debatekeeper.debateformat.PeriodInfo;
+import net.czlee.debatekeeper.debateformat.PeriodInfoManager;
 import net.czlee.debatekeeper.debateformat.SpeechOrPrepFormat;
 import net.czlee.debatekeeper.debatemanager.DebateManager;
 
@@ -533,7 +534,7 @@ public class DebatingActivity extends Activity {
         setContentView(R.layout.activity_debate);
 
         // TODO temporary line, just to make sure this doesn't crash
-        new GlobalPeriodInfoRetriever(this);
+        new PeriodInfoManager(this);
 
         mFilesManager = new FormatXmlFilesManager(this);
 

@@ -41,13 +41,30 @@ import java.util.Iterator;
  */
 public class SpeechFormat extends ControlledSpeechOrPrepFormat {
 
+    private String mReference = null;
+
     public SpeechFormat(long speechLength) {
         super(speechLength);
+    }
+
+    public SpeechFormat(String reference, long speechLength) {
+        super(speechLength);
+        mReference = reference;
     }
 
     //******************************************************************************************
     // Public methods
     //******************************************************************************************
+
+    /**
+     * @return a reference string, not strictly part of the speech format but users
+     * may find it useful to know what the reference was that was used to create this
+     * <code>SpeechFormat</code>.  This may return <code>null</code> if the <code>SpeechFormat</code>
+     * was created from a version 1 schema.
+     */
+    public String getReference() {
+        return mReference;
+    }
 
     /**
      * Finds whether any period anywhere in the speech has POIs allowed.
