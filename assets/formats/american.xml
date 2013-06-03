@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<debateformat name="American Parliamentary" schemaversion="1.0">
+<debateformat name="American Parliamentary" schemaversion="1.1">
 	<info>
 		<region>United States</region>
 		<level>University</level>
