@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
-
 import android.util.Log;
 
 /**
@@ -96,7 +95,7 @@ public class DebateFormat {
 
     /**
      * Sets the prep format.
-     * @param pf the {@link PrepTimeSimpleFormat}
+     * @param pf the {@link PrepTimeFormat}
      */
     public void setPrepFormat(PrepTimeFormat ptf) {
         mPrepTimeFormat = ptf;

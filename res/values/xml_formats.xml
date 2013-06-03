@@ -67,8 +67,11 @@
     <string name="xml2error_invalidTime">Invalid time: %1$s</string>
     <string name="dfb2error_periodInfoBuiltInDuplicate">"The period-type '%1$s' is a built-in period-type; you can't use it"</string>
     <string name="dfb2error_periodInfoDuplicate">"The period-type '%1$s' was specified more than once"</string>
-    <string name="dfb2error_periodInfoNotFound">"There is no period-type with ref'%1$s'"</string>
-
+    <string name="dfb2error_periodInfoNotFound">"There is no period-type with ref '%1$s'"</string>
+    <string name="dfb2error_addSpeechSpeechFormatNotFound">"There is no speech-type with ref '%1$s' (%2$s)"</string>
+    <string name="dfb2error_bellAfterFinishTime">"The bell at %1$s is after the finish time"</string>
+    <string name="dfb2error_multiplePrepTimes">"Both a prep-time and a prep-time-controlled were found"</string>
+    
     <string name="xml1elemName_root">debateformat</string>
         <string name="xml1attrName_root_name">name</string>
         <string name="xml1attrName_root_schemaVersion">schemaversion</string>

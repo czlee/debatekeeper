@@ -9,6 +9,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import net.czlee.debatekeeper.R;
+import net.czlee.debatekeeper.debateformat.DebateFormat.NoSuchFormatException;
 import net.czlee.debatekeeper.debateformat.PeriodInfoManager.PeriodInfoException;
 
 import org.w3c.dom.Document;
@@ -109,7 +110,18 @@ public class DebateFormatBuilderFromXmlForSchema2 {
         }
 
         // 3. Prep time
-        // TODO
+        Element prepTimeSimple     = xu.findElement(root, R.string.xml2elemName_prepTimeSimpleFormat);
+        Element prepTimeControlled = xu.findElement(root, R.string.xml2elemName_prepTimeControlledFormat);
+
+        if (prepTimeSimple != null && prepTimeControlled != null) {
+            logXmlError(R.string.dfb2error_multiplePrepTimes);
+        } else if (prepTimeSimple != null) {
+            PrepTimeSimpleFormat ptsf = createPrepTimeSimpleFormatFromElement(prepTimeSimple);
+            if (ptsf != null) df.setPrepFormat(ptsf);
+        } else if (prepTimeControlled != null) {
+            PrepTimeControlledFormat ptcf = createPrepTimeControlledFormatFromElement(prepTimeSimple);
+            if (ptcf != null) df.setPrepFormat(ptcf);
+        }
 
         // 4. Speech formats
         Element speechFormats = xu.findElement(root, R.string.xml2elemName_speechFormats);
@@ -123,7 +135,22 @@ public class DebateFormatBuilderFromXmlForSchema2 {
             df.addSpeechFormat(reference, sf);
         }
 
-        return null;
+        // 5. Speeches
+        Element speechesList = xu.findElement(root, R.string.xml2elemName_speechesList);
+        NodeList speechElements = xu.findAllElements(speechesList, R.string.xml2elemName_speech);
+        for (int i = 0; i < speechElements.getLength(); i++) {
+            Element speechElement = (Element) speechElements.item(i);
+            String speechName = xu.findElementText(speechElement, R.string.xml2elemName_speech_name);
+            String formatRef = xu.findAttributeText(speechElement, R.string.xml2attrName_speech_format);
+            try {
+                df.addSpeech(speechName, formatRef);
+            } catch (NoSuchFormatException e) {
+                logXmlError(R.string.dfb2error_addSpeechSpeechFormatNotFound, formatRef, name);
+                continue;
+            }
+        }
+
+        return df;
     }
 
     //******************************************************************************************
@@ -170,26 +197,7 @@ public class DebateFormatBuilderFromXmlForSchema2 {
 
         SpeechFormat sf = new SpeechFormat(reference, length);
 
-        // If there is a first period specified, and it is not "#stay", set it accordingly
-        String firstPeriod = xu.findAttributeText(element, R.string.xml2attrName_controlledTimeFirstPeriod);
-        if (firstPeriod != null) {
-            if (!firstPeriod.equalsIgnoreCase(getString(R.string.xml1attrValue_common_stay))) {
-                PeriodInfo npi = mPeriodInfoManager.getPeriodInfo(firstPeriod);
-                if (npi == null)
-                    logXmlError(R.string.dfb2error_periodInfoNotFound, firstPeriod);
-                else
-                    sf.setFirstPeriodInfo(npi);
-            }
-        }
-
-        // Add all the bells
-        NodeList bellElements = xu.findAllElements(element, R.string.xml2elemName_bell);
-        for (int i = 0; i < bellElements.getLength(); i++) {
-            Element bellElement = (Element) bellElements.item(i);
-            BellInfo bi = createBellInfoFromElement(bellElement, length);
-            if (bi == null) continue;
-            sf.addBellInfo(bi);
-        }
+        populateControlledTimeFormat(sf, element);
 
         return sf;
     }
@@ -217,6 +225,11 @@ public class DebateFormatBuilderFromXmlForSchema2 {
             }
         }
 
+        if (time > speechFinishTime) {
+            logXmlError(R.string.dfb2error_bellAfterFinishTime, timeStr);
+            return null;
+        }
+
         Integer timesToPlay = xu.findAttributeAsInteger(element, R.string.xml2attrName_bell_number);
         if (timesToPlay == null) timesToPlay = 1;
 
@@ -238,6 +251,88 @@ public class DebateFormatBuilderFromXmlForSchema2 {
         bi.setPauseOnBell(pauseOnBell);
 
         return bi;
+
+    }
+
+    /**
+     * Creates a {@link PrepTimeSimpleFormat} derived from an {@link Element}
+     * @param element an {@link Element} object
+     * @return a {@link PrepTimeSimpleFormat}, may return <code>null</code> if there was an error preventing
+     * the object from being created
+     */
+    private PrepTimeSimpleFormat createPrepTimeSimpleFormatFromElement(Element element) {
+
+        Long length;
+        try {
+            length = xu.findAttributeAsTime(element, R.string.xml2attrName_controlledTimeLength);
+        } catch (NumberFormatException e) {
+            logXmlError(e);
+            return null;
+        }
+        if (length == null) return null;
+
+        return new PrepTimeSimpleFormat(length);
+
+    }
+
+    /**
+     * Creates a {@link PrepTimeControlledFormat} derived from an {@link Element}
+     * @param element an {@link Element} object
+     * @return a {@link PrepTimeControlledFormat}, may return <code>null</code> if there was an error preventing
+     * the object from being created
+     */
+    private PrepTimeControlledFormat createPrepTimeControlledFormatFromElement(Element element) {
+
+        Long length;
+        try {
+            length = xu.findAttributeAsTime(element, R.string.xml2attrName_controlledTimeLength);
+        } catch (NumberFormatException e) {
+            logXmlError(e);
+            return null;
+        }
+        if (length == null) return null;
+
+        PrepTimeControlledFormat ptcf = new PrepTimeControlledFormat(length);
+
+        populateControlledTimeFormat(ptcf, element);
+
+        return ptcf;
+    }
+
+    /**
+     * Populates a {@link ControlledSpeechOrPrepFormat} with the first-period and the bells in
+     * the {@link Element}.  By the time this method is called, the {@link ControlledSpeechOrPrepFormat}
+     * (more likely one of its subclasses) must already exist and have a length associated with it.
+     * This method exists mainly to avoid duplicate code to handle the two subclasses of
+     * {@link ControlledSpeechOrPrepFormat} ({@link SpeechFormat} and {@link PrepTimeControlledFormat}).
+     * @param cspf
+     * @param element
+     * @param length
+     */
+    private void populateControlledTimeFormat(ControlledSpeechOrPrepFormat cspf, Element element) {
+
+        // If there is a first period specified, and it is not "#stay", set it accordingly
+        String firstPeriod = xu.findAttributeText(element, R.string.xml2attrName_controlledTimeFirstPeriod);
+        if (firstPeriod != null) {
+            if (!firstPeriod.equalsIgnoreCase(getString(R.string.xml1attrValue_common_stay))) {
+                PeriodInfo npi = mPeriodInfoManager.getPeriodInfo(firstPeriod);
+                if (npi == null)
+                    logXmlError(R.string.dfb2error_periodInfoNotFound, firstPeriod);
+                else
+                    cspf.setFirstPeriodInfo(npi);
+            }
+        }
+
+        long length = cspf.getLength();
+
+        // Add all the bells
+        NodeList bellElements = xu.findAllElements(element, R.string.xml2elemName_bell);
+        for (int i = 0; i < bellElements.getLength(); i++) {
+            Element bellElement = (Element) bellElements.item(i);
+            BellInfo bi = createBellInfoFromElement(bellElement, length);
+            if (bi == null) continue;
+            cspf.addBellInfo(bi);
+        }
 
     }
 
