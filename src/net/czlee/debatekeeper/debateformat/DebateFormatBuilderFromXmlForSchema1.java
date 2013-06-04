@@ -40,7 +40,7 @@ import android.util.Xml.Encoding;
  * @author Chuan-Zheng Lee
  * @since  2012-06-15
  */
-public class DebateFormatBuilderFromXmlForSchema1 {
+public class DebateFormatBuilderFromXmlForSchema1 implements DebateFormatBuilderFromXml {
 
     private final Context                       mContext;
     private final DebateFormatBuilderForSchema1 mDfb;
@@ -48,6 +48,7 @@ public class DebateFormatBuilderFromXmlForSchema1 {
     private       String                        mSchemaVersion = null;
 
     private final String DEBATING_TIMER_URI;
+    private static final String MINIMUM_SCHEMA_VERSION = "1.0";
     private static final String MAXIMUM_SCHEMA_VERSION = "1.1";
 
     public DebateFormatBuilderFromXmlForSchema1(Context context) {
@@ -192,7 +193,7 @@ public class DebateFormatBuilderFromXmlForSchema1 {
                         if (!isSchemaSupported())
                             logXmlError(R.string.xmlError_rootNewSchemaVersion, mSchemaVersion, MAXIMUM_SCHEMA_VERSION);
                     } catch (IllegalArgumentException e) {
-                        logXmlError(R.string.xml1error_rootInvalidSchemaVersion, mSchemaVersion);
+                        logXmlError(R.string.xmlError_rootInvalidSchemaVersion, mSchemaVersion);
                     }
                 }
 
@@ -278,7 +279,6 @@ public class DebateFormatBuilderFromXmlForSchema1 {
                 try {
                     mDfb.addPrepTimeSimple(length);
                 } catch (DebateFormatBuilderException e) {
-                    // TODO Auto-generated catch block
                     logXmlError(e);
                     return;
                 }
@@ -318,7 +318,6 @@ public class DebateFormatBuilderFromXmlForSchema1 {
                 try {
                     mDfb.addPrepTimeControlled(length);
                 } catch (DebateFormatBuilderException e) {
-                    // TODO Auto-generated catch block
                     logXmlError(e);
                     return;
                 }
@@ -708,42 +707,39 @@ public class DebateFormatBuilderFromXmlForSchema1 {
     //******************************************************************************************
     // Public methods
     //******************************************************************************************
-    /**
-     * Builds a debate from a given input stream, which must be an XML file.
-     * @param is an {@link InputStream} to an XML file
-     * @return the {@link DebateFormat}
-     * @throws IOException if there was an IO error with the <code>InputStream</code>
-     * @throws SAXException if thrown by the XML parser
-     * @throws IllegalStateException if there were no speeches in this format
+    /* (non-Javadoc)
+     * @see net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml#buildDebateFromXml(java.io.InputStream)
      */
+    @Override
     public DebateFormat buildDebateFromXml(InputStream is)
             throws IOException, SAXException, IllegalStateException {
         Xml.parse(is, Encoding.UTF_8, new DebateFormatXmlContentHandler());
         return mDfb.getDebateFormat();
     }
 
-    /**
-     * @return true if there are errors in the error log
+    /* (non-Javadoc)
+     * @see net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml#hasErrors()
      */
+    @Override
     public boolean hasErrors() {
         return mErrorLog.size() > 0;
     }
 
-    /**
-     * @return <code>true</code> if the schema version is supported.
-     * <code>false</code> if there is no schema version, this includes if this builder hasn't parsed
-     * an XML file yet.
+    /* (non-Javadoc)
+     * @see net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml#isSchemaSupported()
      */
-    public boolean isSchemaSupported() {
+    @Override
+    public boolean isSchemaSupported() throws IllegalArgumentException {
         if (mSchemaVersion == null)
             return false;
-        return (XmlUtilities.compareSchemaVersions(mSchemaVersion, MAXIMUM_SCHEMA_VERSION) <= 0);
+        return (XmlUtilities.compareSchemaVersions(mSchemaVersion, MAXIMUM_SCHEMA_VERSION) <= 0)
+                && (XmlUtilities.compareSchemaVersions(mSchemaVersion, MINIMUM_SCHEMA_VERSION) >= 0);
     }
 
-    /**
-     * @return An <i>ArrayList</i> of <code>String</code>s, each item being an error found by
-     * the XML parser
+    /* (non-Javadoc)
+     * @see net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml#getErrorLog()
      */
+    @Override
     public ArrayList<String> getErrorLog() {
         return mErrorLog;
     }

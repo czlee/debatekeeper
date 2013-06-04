@@ -28,6 +28,7 @@ import net.czlee.debatekeeper.AlertManager.FlashScreenListener;
 import net.czlee.debatekeeper.AlertManager.FlashScreenMode;
 import net.czlee.debatekeeper.debateformat.BellInfo;
 import net.czlee.debatekeeper.debateformat.DebateFormat;
+import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml;
 import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXmlForSchema1;
 import net.czlee.debatekeeper.debateformat.PeriodInfo;
 import net.czlee.debatekeeper.debateformat.PeriodInfoManager;
@@ -844,7 +845,8 @@ public class DebatingActivity extends Activity {
      * The message of the exception will be human-readable and can be displayed in a dialogue box.
      */
     private DebateFormat buildDebateFromXml(String filename) throws FatalXmlError {
-        DebateFormatBuilderFromXmlForSchema1 dfbfx = new DebateFormatBuilderFromXmlForSchema1(this);
+
+        DebateFormatBuilderFromXml dfbfx = new DebateFormatBuilderFromXmlForSchema1(this);
         InputStream is = null;
         DebateFormat df;
 

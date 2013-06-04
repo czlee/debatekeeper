@@ -48,7 +48,7 @@ import android.util.Log;
  * @author Chuan-Zheng Lee
  *
  */
-public class DebateFormatBuilderFromXmlForSchema2 {
+public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilderFromXml {
 
     private final DocumentBuilderFactory mDocumentBuilderFactory;
     private final PeriodInfoManager      mPeriodInfoManager;
@@ -56,6 +56,10 @@ public class DebateFormatBuilderFromXmlForSchema2 {
     private final ArrayList<String>      mErrorLog = new ArrayList<String>();
 
     private final XmlUtilities xu;
+
+    private String mSchemaVersion;
+    private static final String MINIMUM_SCHEMA_VERSION = "2.0";
+    private static final String MAXIMUM_SCHEMA_VERSION = "2.0";
 
     /**
      * Constructor.
@@ -79,12 +83,22 @@ public class DebateFormatBuilderFromXmlForSchema2 {
      * @throws IOException if there was an IO error with the <code>InputStream</code>
      * @throws SAXException if thrown by the XML parser
      */
+    @Override
     public DebateFormat buildDebateFromXml(InputStream is)
             throws SAXException, IOException {
 
         DebateFormat df = new DebateFormat();
         Document doc = getDocumentFromInputStream(is);
         Element root = doc.getDocumentElement();
+
+        // 0. Schema version
+        mSchemaVersion = xu.findAttributeText(root, R.string.xml2attrName_root_schemaVersion);
+        try {
+            if (!isSchemaSupported())
+                logXmlError(R.string.xmlError_rootNewSchemaVersion, mSchemaVersion, MAXIMUM_SCHEMA_VERSION);
+        } catch (IllegalArgumentException e) {
+            logXmlError(R.string.xmlError_rootInvalidSchemaVersion, mSchemaVersion);
+        }
 
         // 1. Name
         String name = xu.findElementText(root, R.string.xml2elemName_name); // value validity checked by schema
@@ -151,6 +165,25 @@ public class DebateFormatBuilderFromXmlForSchema2 {
         }
 
         return df;
+    }
+
+    @Override
+    public boolean hasErrors() {
+        return mErrorLog.size() > 0;
+    }
+
+
+    @Override
+    public boolean isSchemaSupported() {
+        if (mSchemaVersion == null)
+            return false;
+        return (XmlUtilities.compareSchemaVersions(mSchemaVersion, MAXIMUM_SCHEMA_VERSION) <= 0)
+                && (XmlUtilities.compareSchemaVersions(mSchemaVersion, MINIMUM_SCHEMA_VERSION) >= 0);
+    }
+
+    @Override
+    public ArrayList<String> getErrorLog() {
+        return mErrorLog;
     }
 
     //******************************************************************************************
@@ -376,7 +409,5 @@ public class DebateFormatBuilderFromXmlForSchema2 {
         addToErrorLog(mContext.getString(resId, formatArgs));
         Log.e("logXmlError", mContext.getString(resId, formatArgs));
     }
-
-
 
 }

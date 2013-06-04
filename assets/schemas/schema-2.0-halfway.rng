@@ -8,7 +8,9 @@
 		<element name="debate-format">
 
 			<attribute name="schema-version">
-				<value>2.0</value>
+				<data type="string">
+					<param name="pattern">\d+\.\d+</param>
+				</data>
 			</attribute>
 
 			<element name="name">
