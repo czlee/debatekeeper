@@ -177,8 +177,8 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             description += mContext.getString(R.string.viewFormat_timeDescription_controlledPrepSuffix);
 
             NodeList bells = xu.findAllElements(prepTimeControlled, R.string.xml2elemName_bell);
-            if (bells.getLength() > 0)
-                description += buildBellsString(bells);
+            String bellsString = buildBellsString(bells);
+            if (bellsString != null) description += "\n" + bellsString;
 
             return description;
 
@@ -202,8 +202,34 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
      */
     @Override
     public ArrayList<String[]> getSpeechFormatDescriptions() {
-        // TODO Auto-generated method stub
-        return null;
+        ArrayList<String[]> result = new ArrayList<String[]>();
+
+        if (mRootElement == null) return result;
+        Element speechFormatsElement = xu.findElement(mRootElement, R.string.xml2elemName_speechFormats);
+        if (speechFormatsElement == null) return result;
+        NodeList speechFormats = xu.findAllElements(speechFormatsElement, R.string.xml2elemName_speechFormat);
+
+        for (int i = 0; i < speechFormats.getLength(); i++) {
+            String reference, description;
+            Element element = (Element) speechFormats.item(i);
+
+            reference = xu.findAttributeText(element, R.string.xml2attrName_common_ref);
+            if (reference == null) continue;
+
+            Long length = xu.findAttributeAsTime(element, R.string.xml2attrName_controlledTimeLength);
+            if (length == null) continue;
+            else description = buildLengthString(length);
+
+            NodeList bells = xu.findAllElements(element, R.string.xml2elemName_bell);
+            String bellsString = buildBellsString(bells);
+            if (bellsString != null) description += "\n" + bellsString;
+
+            String [] pair = {reference, description};
+            result.add(pair);
+
+        }
+
+        return result;
     }
 
     /* (non-Javadoc)
@@ -211,8 +237,29 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
      */
     @Override
     public ArrayList<String[]> getSpeeches() {
-        // TODO Auto-generated method stub
-        return null;
+        ArrayList<String[]> result = new ArrayList<String[]>();
+
+        if (mRootElement == null) return result;
+        Element speechesElement = xu.findElement(mRootElement, R.string.xml2elemName_speechesList);
+        if (speechesElement == null) return result;
+        NodeList speechFormats = xu.findAllElements(speechesElement, R.string.xml2elemName_speech);
+
+        for (int i = 0; i < speechFormats.getLength(); i++) {
+            String name, format;
+            Element element = (Element) speechFormats.item(i);
+
+            name = xu.findElementText(element, R.string.xml2elemName_speech_name);
+            if (name == null) continue;
+
+            format = xu.findAttributeText(element, R.string.xml2attrName_speech_format);
+            if (format == null) continue;
+
+            String [] pair = {name, format};
+            result.add(pair);
+
+        }
+
+        return result;
     }
 
     //******************************************************************************************
