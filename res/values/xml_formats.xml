@@ -18,6 +18,8 @@
 <resources>
     <string name="xml_uri"></string>
 
+    <!-- Version 2 schema -->
+    
     <string name="xml2elemName_root">debate-format</string>
         <string name="xml2attrName_root_schemaVersion">schema-version</string>
         <string name="xml2attrName_common_ref">ref</string>
@@ -64,6 +66,8 @@
             <string name="xml2elemName_speech_name">name</string>
             <string name="xml2attrName_speech_format">type</string>
 
+    <string name="xmlError_rootNewSchemaVersion">"Only schema versions up to %2$s are supported (this file uses version %1$s); this might mean you need to update the app.\n"</string>
+            
     <string name="xml2error_invalidTime">Invalid time: %1$s</string>
     <string name="dfb2error_periodInfoBuiltInDuplicate">"The period-type '%1$s' is a built-in period-type; you can't use it"</string>
     <string name="dfb2error_periodInfoDuplicate">"The period-type '%1$s' was specified more than once"</string>
@@ -73,6 +77,8 @@
     <string name="dfb2error_bellAfterFinishTime">"The bell at %1$s is after the finish time"</string>
     <string name="dfb2error_multiplePrepTimes">"Both a prep-time and a prep-time-controlled were found"</string>
 
+    <!-- Version 1 schema -->
+    
     <string name="xml1elemName_root">debateformat</string>
         <string name="xml1attrName_root_name">name</string>
         <string name="xml1attrName_root_schemaVersion">schemaversion</string>
@@ -126,7 +132,6 @@
 
     <string name="xml1error_rootNoName">This debate format has no name!</string>
     <string name="xml1error_rootNoSchemaVersion">"This debate format has no schema version, so it's impossible to tell whether you need to update to support this file!\n"</string>
-    <string name="xml1error_rootNewSchemaVersion">"Only schema versions up to %2$s are supported (this file uses version %1$s); this might mean you need to update the app.\n"</string>
     <string name="xml1error_rootInvalidSchemaVersion">"Invalid schema version: '%1$s'"</string>
     <string name="xml1error_somethingOutsideRoot">There was something outside the root debateformat element</string>
     <string name="xml1error_resourceNoRef">"No 'ref' was specified for a resource"</string>

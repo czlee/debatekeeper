@@ -79,7 +79,7 @@ public class DebateFormatBuilderFromXmlForSchema2 {
      * @throws IOException if there was an IO error with the <code>InputStream</code>
      * @throws SAXException if thrown by the XML parser
      */
-    public DebateFormat buildFromXml(InputStream is)
+    public DebateFormat buildDebateFromXml(InputStream is)
             throws SAXException, IOException {
 
         DebateFormat df = new DebateFormat();

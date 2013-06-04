@@ -190,7 +190,7 @@ public class DebateFormatBuilderFromXmlForSchema1 {
                 } else {
                     try {
                         if (!isSchemaSupported())
-                            logXmlError(R.string.xml1error_rootNewSchemaVersion, mSchemaVersion, MAXIMUM_SCHEMA_VERSION);
+                            logXmlError(R.string.xmlError_rootNewSchemaVersion, mSchemaVersion, MAXIMUM_SCHEMA_VERSION);
                     } catch (IllegalArgumentException e) {
                         logXmlError(R.string.xml1error_rootInvalidSchemaVersion, mSchemaVersion);
                     }
@@ -734,17 +734,10 @@ public class DebateFormatBuilderFromXmlForSchema1 {
      * <code>false</code> if there is no schema version, this includes if this builder hasn't parsed
      * an XML file yet.
      */
-    public boolean isSchemaSupported() throws IllegalArgumentException {
+    public boolean isSchemaSupported() {
         if (mSchemaVersion == null)
             return false;
         return (XmlUtilities.compareSchemaVersions(mSchemaVersion, MAXIMUM_SCHEMA_VERSION) <= 0);
-    }
-
-    /**
-     * @return The schema version, could be <code>null</code>
-     */
-    public String getSchemaVersion() {
-        return mSchemaVersion;
     }
 
     /**
