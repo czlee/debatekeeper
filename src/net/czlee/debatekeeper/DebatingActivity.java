@@ -881,11 +881,20 @@ public class DebatingActivity extends Activity {
                 throw new FatalXmlError(getString(
                         R.string.fatalProblemWithXmlFileDialog_message_badXml, filename, e.getMessage()), e);
             } catch (IllegalStateException e) {
-                throw new FatalXmlError(getString(
-                        R.string.fatalProblemWithXmlFileDialog_message_noSpeeches, filename), e);
+                // Only complain about a lack of speeches if the schema appears to be of
+                // an appropriate version.
+                if (dfbfx.isSchemaSupported())
+                    throw new FatalXmlError(getString(
+                            R.string.fatalProblemWithXmlFileDialog_message_noSpeeches, filename), e);
+
+                // If the schema didn't appear to be of an appropriate version, the reassignment
+                // below wouldn't happen, so no harm done.
             }
 
-            // If it works and is supported, reassign the new debate format builder
+            // If it works and is supported, reassign the new debate format builder.
+            // Note that execution can't reach here if the schema is supported and there are
+            // no speeches, because that would trigger the FatalXmlError above.  So we're safe
+            // in that sense.
             if (dfbfx1.isSchemaSupported())
                 dfbfx = dfbfx1;
         }
