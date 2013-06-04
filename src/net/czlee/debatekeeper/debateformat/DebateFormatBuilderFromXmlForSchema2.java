@@ -129,7 +129,7 @@ public class DebateFormatBuilderFromXmlForSchema2 {
             String reference = sf.getReference();
             if (reference == null) continue;  // should be caught out by schema
             if (df.hasSpeechFormat(reference)) {
-                logXmlError(R.string.dfb2error_speechFormatDuplicate, formatRef); // not checked by schema
+                logXmlError(R.string.dfb2error_speechFormatDuplicate, reference); // not checked by schema
                 continue;
             }
             df.addSpeechFormat(reference, sf);

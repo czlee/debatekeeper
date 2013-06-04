@@ -115,8 +115,8 @@ public class DebateFormat {
      * @param formatRef the key (reference) to the speech format
      * @return <code>true</code> if a speech format with this reference exists, <code>false</code> otherwise
      */
-    public void hasSpeechFormat(String formatRef) {
-        mSpeechFormats.containsKey(formatRef);
+    public boolean hasSpeechFormat(String formatRef) {
+        return mSpeechFormats.containsKey(formatRef);
     }
 
     /**
