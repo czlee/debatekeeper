@@ -889,6 +889,8 @@ public class DebatingActivity extends Activity {
                         R.string.fatalProblemWithXmlFileDialog_message_badXml, filename, e.getMessage()), e);
             }
 
+            // If it's looking good, replace.
+            // (Otherwise, pretend this schema 1.0 attempt never happened.)
             if (dfbfx1.isSchemaSupported()) {
                 df    = df1;
                 dfbfx = dfbfx1;
