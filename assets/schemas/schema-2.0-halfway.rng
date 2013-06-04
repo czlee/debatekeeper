@@ -12,28 +12,28 @@
 			</attribute>
 
 			<element name="name">
-				<data type="string"/>
+				<ref name="value-string"/>
 			</element>
 
 			<element name="info">
 				<interleave>
 					<zeroOrMore>
 						<element name="region">
-							<data type="string"/>
+							<ref name="value-string"/>
 						</element>
 					</zeroOrMore>
 					<zeroOrMore>
 						<element name="level">
-							<data type="string"/>
+							<ref name="value-string"/>
 						</element>
 					</zeroOrMore>
 					<zeroOrMore>
 						<element name="used-at">
-							<data type="string"/>
+							<ref name="value-string"/>
 						</element>
 					</zeroOrMore>
 					<element name="description">
-						<data type="string"/>
+						<ref name="value-string"/>
 					</element>
 				</interleave>
 			</element>
@@ -41,21 +41,23 @@
 			<optional>
 				<element name="period-types">
 					<oneOrMore>
-						<element name="period">
+						<element name="period-type">
 							<attribute name="ref">
-								<data type="string"/>
+								<ref name="value-string"/>
 							</attribute>
 							<interleave>
 								<element name="name">
-									<data type="string"/>
-								</element>
-								<element name="display">
-									<data type="string"/>
+									<ref name="value-string"/>
 								</element>
 								<optional>
-									<element name="pois-allowed">
-										<empty/>
+									<element name="display">
+										<text/>
 									</element>
+								</optional>
+								<optional>
+									<attribute name="pois-allowed">
+										<data type="boolean"/>
+									</attribute>
 								</optional>
 							</interleave>
 						</element>
@@ -82,7 +84,7 @@
 				<oneOrMore>
 					<element name="speech-type">
 						<attribute name="ref">
-							<data type="string"/>
+							<ref name="value-string"/>
 						</attribute>
 						<ref name="common.controlled-time"/>
 					</element>
@@ -93,11 +95,10 @@
 				<oneOrMore>
 					<element name="speech">
 						<attribute name="type">
-							<data type="string"/>
+							<ref name="value-string"/>
 						</attribute>
-
 						<element name="name">
-							<data type="string"/>
+							<ref name="value-string"/>
 						</element>
 					</element>
 				</oneOrMore>
@@ -113,13 +114,16 @@
 		</attribute>
 		<optional>
 			<attribute name="first-period">
-				<data type="string"/>
+				<ref name="value-string"/>
 			</attribute>
 		</optional>
 		<zeroOrMore>
 			<element name="bell">
 				<attribute name="time">
-					<ref name="value-time"/>
+					<choice>
+						<ref name="value-time"/>
+						<value>finish</value>
+					</choice>
 				</attribute>
 				<optional>
 					<attribute name="number">
@@ -128,7 +132,7 @@
 				</optional>
 				<optional>
 					<attribute name="next-period">
-						<data type="string"/>
+						<ref name="value-string"/>
 					</attribute>
 				</optional>
 				<optional>
@@ -141,12 +145,15 @@
 	</define>
 
 	<define name="value-time">
-		<choice>
-			<data type="string">
-				<param name="pattern">\d+(:\d\d)?</param>
-			</data>
-			<value>finish</value>
-		</choice>
+		<data type="string">
+			<param name="pattern">\d+(:[0-5]\d)?</param>
+		</data>
+	</define>
+
+	<define name="value-string">
+		<data type="string">
+			<param name="minLength">1</param>
+		</data>
 	</define>
 
 </grammar>
