@@ -20,7 +20,7 @@ public interface DebateFormatBuilderFromXml {
      * @throws IllegalStateException if there were no speeches in this format
      */
     public abstract DebateFormat buildDebateFromXml(InputStream is)
-            throws IOException, SAXException, IllegalStateException;
+            throws IOException, SAXException;
 
     /**
      * @return true if there are errors in the error log

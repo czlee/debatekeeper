@@ -712,7 +712,7 @@ public class DebateFormatBuilderFromXmlForSchema1 implements DebateFormatBuilder
      */
     @Override
     public DebateFormat buildDebateFromXml(InputStream is)
-            throws IOException, SAXException, IllegalStateException {
+            throws IOException, SAXException {
         Xml.parse(is, Encoding.UTF_8, new DebateFormatXmlContentHandler());
         return mDfb.getDebateFormat();
     }

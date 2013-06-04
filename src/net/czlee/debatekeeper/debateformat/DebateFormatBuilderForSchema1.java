@@ -757,12 +757,8 @@ public class DebateFormatBuilderForSchema1 {
      * Returns the assembled {@link DebateFormat}.  Calls to any other method than this one, after
      * this has been called once, are illegal.
      * @return the assembled <code>DebateFormat</code>
-     * @throws IllegalStateException if there are no speeches added when this is called
      */
     public DebateFormat getDebateFormat() {
-        if (mDebateFormatBeingBuilt.numberOfSpeeches() == 0) {
-            throw new IllegalStateException("There are no speeches in this format!");
-        }
         mState = State.DONE;
         return mDebateFormatBeingBuilt;
     }

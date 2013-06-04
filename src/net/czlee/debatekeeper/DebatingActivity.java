@@ -293,6 +293,10 @@ public class DebatingActivity extends Activity {
         public FatalXmlError(String detailMessage, Throwable throwable) {
             super(detailMessage, throwable);
         }
+
+        public FatalXmlError(String detailMessage) {
+            super(detailMessage);
+        }
     }
 
     private class GestureOnTouchListener implements View.OnTouchListener {
@@ -872,32 +876,28 @@ public class DebatingActivity extends Activity {
 
         // If the schema wasn't supported, try schema 1.0 to see if it works
         if (!dfbfx.isSchemaSupported()) {
+
+            DebateFormat df1;
             DebateFormatBuilderFromXml dfbfx1 = new DebateFormatBuilderFromXmlForSchema1(this);
+
             try {
-                df = dfbfx1.buildDebateFromXml(is);
+                df1 = dfbfx1.buildDebateFromXml(is);
             } catch (IOException e) {
                 throw new FatalXmlError(getString(R.string.fatalProblemWithXmlFileDialog_message_cannotRead, filename), e);
             } catch (SAXException e) {
                 throw new FatalXmlError(getString(
                         R.string.fatalProblemWithXmlFileDialog_message_badXml, filename, e.getMessage()), e);
-            } catch (IllegalStateException e) {
-                // Only complain about a lack of speeches if the schema appears to be of
-                // an appropriate version.
-                if (dfbfx.isSchemaSupported())
-                    throw new FatalXmlError(getString(
-                            R.string.fatalProblemWithXmlFileDialog_message_noSpeeches, filename), e);
-
-                // If the schema didn't appear to be of an appropriate version, the reassignment
-                // below wouldn't happen, so no harm done.
             }
 
-            // If it works and is supported, reassign the new debate format builder.
-            // Note that execution can't reach here if the schema is supported and there are
-            // no speeches, because that would trigger the FatalXmlError above.  So we're safe
-            // in that sense.
-            if (dfbfx1.isSchemaSupported())
+            if (dfbfx1.isSchemaSupported()) {
+                df    = df1;
                 dfbfx = dfbfx1;
+            }
         }
+
+        if (df.numberOfSpeeches() == 0)
+            throw new FatalXmlError(getString(
+                    R.string.fatalProblemWithXmlFileDialog_message_noSpeeches, filename));
 
         if (dfbfx.hasErrors()) {
             Bundle bundle = new Bundle();
