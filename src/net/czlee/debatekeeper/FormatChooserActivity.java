@@ -534,7 +534,7 @@ public class FormatChooserActivity extends Activity {
     /**
      * Parses an XML file to get the {@link DebateFormatInfo} object
      * @param filename the filename for the debate format XML file
-     * @return the <code>DebateFormatInfo</code> object, or <code>null</code>
+     * @return the <code>DebateFormatInfoForSchema1</code> object, or <code>null</code>
      * @throws IOException if there was an IO problem with the XML file
      * @throws SAXException if thrown by the XML parser
      */

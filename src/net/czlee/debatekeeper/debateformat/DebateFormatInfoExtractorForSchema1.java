@@ -32,7 +32,7 @@ import android.util.Xml;
 import android.util.Xml.Encoding;
 
 /**
- * Extracts information form an XML file and returns a DebateFormatInfo object.
+ * Extracts information form an XML file and returns a DebateFormatInfoForSchema1 object.
  *
  * @author Chuan-Zheng Lee
  * @since  2012-06-20
@@ -41,7 +41,7 @@ public class DebateFormatInfoExtractorForSchema1 {
 
     private final Context          mContext;
     private final String           DEBATING_TIMER_URI;
-    private DebateFormatInfo mDfi;
+    private DebateFormatInfoForSchema1 mDfi;
 
     public DebateFormatInfoExtractorForSchema1(Context context) {
         mContext           = context;
@@ -408,13 +408,13 @@ public class DebateFormatInfoExtractorForSchema1 {
     /**
      * Gets the debate
      * @param is an <code>InputStream</code> for an XML file to parse
-     * @return the DebateFormatInfo object
+     * @return the DebateFormatInfoForSchema1 object
      * @throws IOException if thrown by the attempt to use the <code>InputStream</code>
      * @throws SAXException if thrown by the XML parser (SAX)
      */
     public DebateFormatInfo getDebateFormatInfo(InputStream is) throws IOException, SAXException {
 
-        mDfi = new DebateFormatInfo(mContext);
+        mDfi = new DebateFormatInfoForSchema1(mContext);
         Xml.parse(is, Encoding.UTF_8, new DebateFormatInfoContentHandler());
         return mDfi;
     }
