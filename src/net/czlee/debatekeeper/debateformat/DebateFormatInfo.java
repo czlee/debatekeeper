@@ -2,6 +2,12 @@ package net.czlee.debatekeeper.debateformat;
 
 import java.util.ArrayList;
 
+/**
+ * Interface for passive data classes holding information about a debate format that would
+ * be human-readable on a quick "information" screen about the debate format.
+ * @author Chuan-Zheng Lee
+ * @since  2013-06-04
+ */
 public interface DebateFormatInfo {
 
     public abstract String getName();

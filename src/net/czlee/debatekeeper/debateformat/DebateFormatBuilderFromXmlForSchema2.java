@@ -1,12 +1,17 @@
 package net.czlee.debatekeeper.debateformat;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 import net.czlee.debatekeeper.R;
 import net.czlee.debatekeeper.debateformat.DebateFormat.NoSuchFormatException;
@@ -60,6 +65,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
     private String mSchemaVersion;
     private static final String MINIMUM_SCHEMA_VERSION = "2.0";
     private static final String MAXIMUM_SCHEMA_VERSION = "2.0";
+    private static final File SCHEMA_FILE = new File("schemas", "schema-2.0-halfway.rng");
 
     /**
      * Constructor.
@@ -68,11 +74,11 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
         super();
         mContext = context;
         mDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
+        mDocumentBuilderFactory.setSchema(getSchema());
         mPeriodInfoManager = new PeriodInfoManager(context);
         xu = new XmlUtilities(context.getResources());
 
     }
-
 
     //******************************************************************************************
     // Public methods
@@ -206,6 +212,35 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
 
         // Parse the file
         return builder.parse(is);
+
+    }
+
+    /**
+     * @return a {@link Schema} for the 2.0 schema
+     */
+    private Schema getSchema() {
+
+        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.RELAXNG_NS_URI);
+
+        InputStream is;
+        try {
+            is = mContext.getAssets().open(SCHEMA_FILE.getPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        StreamSource source = new StreamSource(is);
+
+        Schema schema;
+        try {
+            schema = factory.newSchema(source);
+        } catch (SAXException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return schema;
 
     }
 
