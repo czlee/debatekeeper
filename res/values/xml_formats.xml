@@ -25,9 +25,9 @@
             <string name="xml2attrValue_common_false">false</string>
             <string name="xml2attrValue_common_stay">#stay</string>
             <string name="xml2attrValue_common_default">#default</string>
-        
+
     <string name="xml2elemName_name">name</string>
-    
+
     <string name="xml2elemName_info">info</string>
         <string name="xml2elemName_info_region">region</string>
         <string name="xml2elemName_info_level">level</string>
@@ -46,9 +46,9 @@
     <!-- attributes common to prep-time-controlled and speech-type -->
         <string name="xml2attrName_controlledTimeLength">length</string>
         <string name="xml2attrName_controlledTimeFirstPeriod">first-period</string>
-    
+
     <string name="xml2elemName_prepTimeControlledFormat">prep-time-controlled</string>
-    
+
     <string name="xml2elemName_speechFormats">speech-types</string>
     <string name="xml2elemName_speechFormat">speech-type</string>
 
@@ -63,15 +63,16 @@
         <string name="xml2elemName_speech">speech</string>
             <string name="xml2elemName_speech_name">name</string>
             <string name="xml2attrName_speech_format">type</string>
-    
+
     <string name="xml2error_invalidTime">Invalid time: %1$s</string>
     <string name="dfb2error_periodInfoBuiltInDuplicate">"The period-type '%1$s' is a built-in period-type; you can't use it"</string>
     <string name="dfb2error_periodInfoDuplicate">"The period-type '%1$s' was specified more than once"</string>
     <string name="dfb2error_periodInfoNotFound">"There is no period-type with ref '%1$s'"</string>
     <string name="dfb2error_addSpeechSpeechFormatNotFound">"There is no speech-type with ref '%1$s' (%2$s)"</string>
+    <string name="dfb2error_speechFormatDuplicate">"The speech-type '%1$s' was specified more than once"</string>
     <string name="dfb2error_bellAfterFinishTime">"The bell at %1$s is after the finish time"</string>
     <string name="dfb2error_multiplePrepTimes">"Both a prep-time and a prep-time-controlled were found"</string>
-    
+
     <string name="xml1elemName_root">debateformat</string>
         <string name="xml1attrName_root_name">name</string>
         <string name="xml1attrName_root_schemaVersion">schemaversion</string>
@@ -91,13 +92,13 @@
         <string name="xml1attrValue_resource_ref_common">#all</string>
 
     <string name="xml1elemName_prepTimeSimpleFormat">preptime</string>
-    
+
     <!-- attributes common to preptime-controlled and speechtype -->
         <string name="xml1attrName_controlledTimeLength">length</string>
         <string name="xml1attrName_controlledTimeFirstPeriod">firstperiod</string>
-    
+
     <string name="xml1elemName_prepTimeControlledFormat">preptime-controlled</string>
-    
+
     <string name="xml1elemName_speechFormat">speechtype</string>
         <string name="xml1attrName_speechFormat_countDir">countdir</string>
             <string name="xml1attrValue_speechFormat_countDir_up">up</string>
@@ -165,7 +166,7 @@
     <string name="dfb1error_bellDuplicate">"There is more than one bell at time %1$s"</string>
     <string name="dfb1error_bellAfterFinishTime">"The bell at %1$s is after the finish time"</string>
     <string name="dfb1error_resourceDuplicate">"The resource '%1$s' was specified more than once"</string>
-    <string name="dfb1error_speechFormatDuplicate">"The resource '%1$s' was specified more than once"</string>
+    <string name="dfb1error_speechFormatDuplicate">"The speech type '%1$s' was specified more than once"</string>
     <string name="dfb1error_speechFormatNotFound">"There is no speech type with reference '%1$s'"</string>
     <string name="dfb1error_resourceNotFound">"There is no resource with reference '%1$s'"</string>
     <string name="dfb1error_addSpeechSpeechFormatNotFound">"There is no speech type with reference '%1$s' (%2$s)"</string>

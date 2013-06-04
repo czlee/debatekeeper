@@ -205,6 +205,7 @@ public class PeriodInfoManager {
         defaultBackgroundColorStr = xu.findElementText(element, R.string.xml2elemName_periodType_defaultBackgroundColor);
         if (defaultBackgroundColorStr != null) {
             if (defaultBackgroundColorStr.startsWith("#")) {
+                // should be caught out by schema, so this error is not logged for the user, as they should have been informed at the schema check
                 try {
                     defaultBackgroundColor = new BigInteger(defaultBackgroundColorStr.substring(1), 16).intValue();
                 } catch (NumberFormatException e) {
@@ -216,7 +217,7 @@ public class PeriodInfoManager {
         }
 
         // Parse the "pois-allowed" attribute
-        poisAllowed = xu.isAttributeTrue(element, R.string.xml2attrName_periodType_poisAllowed);
+        poisAllowed = xu.isAttributeTrue(element, R.string.xml2attrName_periodType_poisAllowed); // value validity checked by schema
 
         PeriodInfo pi = new PeriodInfo(ref, name, description, defaultBackgroundColor, poisAllowed);
 

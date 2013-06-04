@@ -110,6 +110,15 @@ public class DebateFormat {
         mSpeechFormats.put(formatRef, sf);
     }
 
+
+    /**
+     * @param formatRef the key (reference) to the speech format
+     * @return <code>true</code> if a speech format with this reference exists, <code>false</code> otherwise
+     */
+    public void hasSpeechFormat(String formatRef) {
+        mSpeechFormats.containsKey(formatRef);
+    }
+
     /**
      * Adds a speech to the internal list of speeches.
      * @param name The human-readable name of the speech, e.g. "1st Affirmative", "Prime Minister"
