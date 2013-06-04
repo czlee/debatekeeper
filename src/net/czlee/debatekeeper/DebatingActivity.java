@@ -30,6 +30,7 @@ import net.czlee.debatekeeper.debateformat.BellInfo;
 import net.czlee.debatekeeper.debateformat.DebateFormat;
 import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml;
 import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXmlForSchema1;
+import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXmlForSchema2;
 import net.czlee.debatekeeper.debateformat.PeriodInfo;
 import net.czlee.debatekeeper.debateformat.PeriodInfoManager;
 import net.czlee.debatekeeper.debateformat.SpeechOrPrepFormat;
@@ -846,7 +847,8 @@ public class DebatingActivity extends Activity {
      */
     private DebateFormat buildDebateFromXml(String filename) throws FatalXmlError {
 
-        DebateFormatBuilderFromXml dfbfx = new DebateFormatBuilderFromXmlForSchema1(this);
+        DebateFormatBuilderFromXml dfbfx;
+
         InputStream is = null;
         DebateFormat df;
 
@@ -856,6 +858,9 @@ public class DebatingActivity extends Activity {
             throw new FatalXmlError(getString(R.string.fatalProblemWithXmlFileDialog_message_cannotFind, filename), e);
         }
 
+        dfbfx = new DebateFormatBuilderFromXmlForSchema2(this);
+
+        // First try schema 2.0
         try {
             df = dfbfx.buildDebateFromXml(is);
         } catch (IOException e) {
@@ -863,9 +868,26 @@ public class DebatingActivity extends Activity {
         } catch (SAXException e) {
             throw new FatalXmlError(getString(
                     R.string.fatalProblemWithXmlFileDialog_message_badXml, filename, e.getMessage()), e);
-        } catch (IllegalStateException e) {
-            throw new FatalXmlError(getString(
-                    R.string.fatalProblemWithXmlFileDialog_message_noSpeeches, filename), e);
+        }
+
+        // If the schema wasn't supported, try schema 1.0 to see if it works
+        if (!dfbfx.isSchemaSupported()) {
+            DebateFormatBuilderFromXml dfbfx1 = new DebateFormatBuilderFromXmlForSchema1(this);
+            try {
+                df = dfbfx1.buildDebateFromXml(is);
+            } catch (IOException e) {
+                throw new FatalXmlError(getString(R.string.fatalProblemWithXmlFileDialog_message_cannotRead, filename), e);
+            } catch (SAXException e) {
+                throw new FatalXmlError(getString(
+                        R.string.fatalProblemWithXmlFileDialog_message_badXml, filename, e.getMessage()), e);
+            } catch (IllegalStateException e) {
+                throw new FatalXmlError(getString(
+                        R.string.fatalProblemWithXmlFileDialog_message_noSpeeches, filename), e);
+            }
+
+            // If it works and is supported, reassign the new debate format builder
+            if (dfbfx1.isSchemaSupported())
+                dfbfx = dfbfx1;
         }
 
         if (dfbfx.hasErrors()) {

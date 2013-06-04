@@ -731,7 +731,7 @@ public class DebateFormatBuilderFromXmlForSchema1 implements DebateFormatBuilder
     @Override
     public boolean isSchemaSupported() throws IllegalArgumentException {
         if (mSchemaVersion == null)
-            return false;
+            return false; // either not built, or if it was built then probably the wrong schema
         return (XmlUtilities.compareSchemaVersions(mSchemaVersion, MAXIMUM_SCHEMA_VERSION) <= 0)
                 && (XmlUtilities.compareSchemaVersions(mSchemaVersion, MINIMUM_SCHEMA_VERSION) >= 0);
     }
