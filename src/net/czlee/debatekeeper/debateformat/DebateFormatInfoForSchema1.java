@@ -50,6 +50,7 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
     private final Context mContext;
 
     private       String                            name          = new String();
+    private       String                            schemaVersion = null;
     private final ArrayList<String>                 regions       = new ArrayList<String>();
     private final ArrayList<String>                 levels        = new ArrayList<String>();
     private final ArrayList<String>                 usedAts       = new ArrayList<String>();
@@ -356,6 +357,14 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
         return regions;
     }
 
+    /**
+     * @return the schemaVersion
+     */
+    @Override
+    public String getSchemaVersion() {
+        return schemaVersion;
+    }
+
     /* (non-Javadoc)
      * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getSpeeches()
      */
@@ -427,6 +436,10 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setSchemaVersion(String schemaVersion) {
+        this.schemaVersion = schemaVersion;
     }
 
     // ******************************************************************************************

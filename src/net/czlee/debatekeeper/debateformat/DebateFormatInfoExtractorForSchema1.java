@@ -139,6 +139,11 @@ public class DebateFormatInfoExtractorForSchema1 {
                 if (name != null)
                     mDfi.setName(name);
                 mIsInRootContext = true;
+
+                String schemaVersion = getValue(atts, R.string.xml1attrName_root_schemaVersion);
+                if (schemaVersion != null)
+                    mDfi.setSchemaVersion(schemaVersion);
+
                 return;
             }
 

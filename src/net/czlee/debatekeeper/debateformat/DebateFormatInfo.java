@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2013 Chuan-Zheng Lee
+ *
+ * This file is part of the Debatekeeper app, which is licensed under the
+ * GNU General Public Licence version 3 (GPLv3).  You can redistribute
+ * and/or modify it under the terms of the GPLv3, and you must not use
+ * this file except in compliance with the GPLv3.
+ *
+ * This app is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public Licence for more details.
+ *
+ * You should have received a copy of the GNU General Public Licence
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package net.czlee.debatekeeper.debateformat;
 
 import java.util.ArrayList;
@@ -10,17 +27,41 @@ import java.util.ArrayList;
  */
 public interface DebateFormatInfo {
 
+    /**
+     * @return the name of the format, or an empty string if there is none
+     */
     public abstract String getName();
 
+    /**
+     * @return a description, or a String with a single hyphen if there is none
+     */
     public abstract String getDescription();
 
+    /**
+     * @return a list of regions, or an empty list if there were none
+     */
     public abstract ArrayList<String> getRegions();
 
+    /**
+     * @return a list of levels, or an empty list if there were none
+     */
     public abstract ArrayList<String> getLevels();
 
+    /**
+     * @return a list of tournaments, or an empty list if there were none
+     */
     public abstract ArrayList<String> getUsedAts();
 
+    /**
+     * @return a description of prep time, or <code>null</code> if there is no prep time for this
+     * format
+     */
     public abstract String getPrepTimeDescription();
+
+    /**
+     * @return the schema version, or <code>null</code> if there is none
+     */
+    public abstract String getSchemaVersion();
 
     /**
      * Returns a list of all the speech formats in this debate format, with descriptions.
