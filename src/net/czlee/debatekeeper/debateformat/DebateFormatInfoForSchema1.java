@@ -60,6 +60,9 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
     private       PrepTimeInfo                      prepFormat    = null;
     private       String                            description   = new String("-");
 
+    private static final String MINIMUM_SCHEMA_VERSION = "1.0";
+    private static final String MAXIMUM_SCHEMA_VERSION = "1.1";
+
     public DebateFormatInfoForSchema1(Context context) {
         super();
         this.mContext = context;
@@ -417,6 +420,14 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
 
     public boolean hasSpeechFormat(String ref) {
         return speechFormats.containsKey(ref);
+    }
+
+    @Override
+    public boolean isSchemaSupported() {
+        if (schemaVersion == null)
+            return false; // either not built, or if it was built then probably the wrong schema
+        return (XmlUtilities.compareSchemaVersions(schemaVersion, MAXIMUM_SCHEMA_VERSION) <= 0)
+                && (XmlUtilities.compareSchemaVersions(schemaVersion, MINIMUM_SCHEMA_VERSION) >= 0);
     }
 
     /**

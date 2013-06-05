@@ -52,6 +52,9 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
     private final Element mRootElement;
     private final Element mInfoElement; // keep <info> readily accessible for performance
 
+    private static final String MINIMUM_SCHEMA_VERSION = "2.0";
+    private static final String MAXIMUM_SCHEMA_VERSION = "2.0";
+
     public DebateFormatInfoForSchema2(Context context, InputStream is) {
         mContext = context;
         xu = new XmlUtilities(context.getResources());
@@ -177,7 +180,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             description += mContext.getString(R.string.viewFormat_timeDescription_controlledPrepSuffix);
 
             NodeList bells = xu.findAllElements(prepTimeControlled, R.string.xml2elemName_bell);
-            String bellsString = buildBellsString(bells);
+            String bellsString = buildBellsString(bells, length);
             if (bellsString != null) description += "\n" + bellsString;
 
             return description;
@@ -221,7 +224,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             else description = buildLengthString(length);
 
             NodeList bells = xu.findAllElements(element, R.string.xml2elemName_bell);
-            String bellsString = buildBellsString(bells);
+            String bellsString = buildBellsString(bells, length);
             if (bellsString != null) description += "\n" + bellsString;
 
             String [] pair = {reference, description};
@@ -262,6 +265,15 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
         return result;
     }
 
+    @Override
+    public boolean isSchemaSupported() {
+        String schemaVersion = getSchemaVersion();
+        if (schemaVersion == null)
+            return false; // either not built, or if it was built then probably the wrong schema
+        return (XmlUtilities.compareSchemaVersions(schemaVersion, MAXIMUM_SCHEMA_VERSION) <= 0)
+                && (XmlUtilities.compareSchemaVersions(schemaVersion, MINIMUM_SCHEMA_VERSION) >= 0);
+    }
+
     //******************************************************************************************
     // Private methods
     //******************************************************************************************
@@ -283,9 +295,41 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
 
     }
 
-    private String buildBellsString(NodeList list) {
-        // TODO
-        return null;
+    /**
+     * Builds a string describing a list of bells
+     * @param list a list of &lt;bell&gt; {@link Element}s
+     * @return the completed string e.g. "bells at 01:00, 06:00, 07:00"
+     */
+    private String buildBellsString(NodeList list, long finishTime) {
+        StringBuilder bellsList = new StringBuilder();
+
+        for (int i = 0; i < list.getLength(); i++) {
+            Element element = (Element) list.item(i);
+            String timeStr = xu.findAttributeText(element, R.string.xml2attrName_bell_time);
+            long time;
+            if (timeStr == null) continue;
+            if (timeStr.equalsIgnoreCase(mContext.getString(R.string.xml2attrValue_bell_time_finish)))
+                time = finishTime;
+            else {
+                try {
+                    time = XmlUtilities.timeStr2Secs(timeStr);
+                } catch (NumberFormatException e) {
+                    continue; // if we couldn't interpret the time, ignore it
+                }
+            }
+            bellsList.append(secsToText(time));
+            boolean pauseOnBell = xu.isAttributeTrue(element, R.string.xml2attrName_bell_pauseOnBell);
+            if (pauseOnBell)
+                bellsList.append(mContext.getString(R.string.pauseOnBellIndicator));
+
+            // If there's one after this, add a comma
+            if (i < list.getLength() - 1) bellsList.append(", ");
+        }
+
+        String bellsDesc = mContext.getResources().getQuantityString(
+                R.plurals.viewFormat_timeDescription_bellsList, list.getLength(), bellsList);
+
+        return bellsDesc;
     }
 
     private String buildLengthString(long length) {

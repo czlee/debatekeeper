@@ -64,6 +64,11 @@ public interface DebateFormatInfo {
     public abstract String getSchemaVersion();
 
     /**
+     * @return <code>true</code> if the schema is supported by this class, <code>false</code> otherwise
+     */
+    public abstract boolean isSchemaSupported();
+
+    /**
      * Returns a list of all the speech formats in this debate format, with descriptions.
      * @return An <code>ArrayList</code> of <code>String</code> arrays. Each
      *         <code>String</code> array has two elements. The first element is

@@ -69,11 +69,12 @@ public class XmlUtilities {
      * Convenience function.  Finds the text of the attribute of the name given by a resource ID.
      * @param element an {@link Element}
      * @param attrNameResId a resource ID referring to a string
-     * @return a string, or the empty string if the attribute does not have a specified value
+     * @return a string, or <code>null</code> if the attribute does not have a specified value
      */
     public String findAttributeText(Element element, int attrNameResId) {
         String attrName = getString(attrNameResId);
-        return element.getAttribute(attrName);
+        if (!element.hasAttribute(attrName)) return null;
+        else return element.getAttribute(attrName);
     }
 
     /**
@@ -86,7 +87,7 @@ public class XmlUtilities {
      */
     public Long findAttributeAsTime(Element element, int attrNameResId) throws NumberFormatException {
         String text = findAttributeText(element, attrNameResId);
-        if (text.length() == 0) return null;
+        if (text == null) return null;
         long seconds;
         try {
             seconds = timeStr2Secs(text);
@@ -106,7 +107,7 @@ public class XmlUtilities {
      */
     public Integer findAttributeAsInteger(Element element, int attrNameResId) throws NumberFormatException {
         String text = findAttributeText(element, attrNameResId);
-        if (text.length() == 0) return null;
+        if (text == null) return null;
         return Integer.parseInt(text);
     }
 
@@ -120,6 +121,7 @@ public class XmlUtilities {
      */
     public boolean isAttributeTrue(Element element, int attrNameResId) {
         String text = findAttributeText(element, attrNameResId);
+        if (text == null) return false;
         return text.equalsIgnoreCase(getString(R.string.xml2attrValue_common_true));
     }
 

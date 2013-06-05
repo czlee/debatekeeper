@@ -237,6 +237,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
      */
     private Schema getSchema() {
 
+        System.setProperty(SchemaFactory.class.getName() + ":" + XMLConstants.RELAXNG_NS_URI, "com.thaiopensource.relaxng.jaxp.XMLSyntaxSchemaFactory");
         SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.RELAXNG_NS_URI);
 
         InputStream is;
