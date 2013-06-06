@@ -881,6 +881,13 @@ public class DebatingActivity extends Activity {
             DebateFormatBuilderFromXml dfbfx1 = new DebateFormatBuilderFromXmlForSchema1(this);
 
             try {
+                is.close();
+                is = mFilesManager.open(filename);
+            } catch (IOException e) {
+                throw new FatalXmlError(getString(R.string.fatalProblemWithXmlFileDialog_message_cannotFind, filename), e);
+            }
+
+            try {
                 df1 = dfbfx1.buildDebateFromXml(is);
             } catch (IOException e) {
                 throw new FatalXmlError(getString(R.string.fatalProblemWithXmlFileDialog_message_cannotRead, filename), e);

@@ -17,19 +17,14 @@
 
 package net.czlee.debatekeeper.debateformat;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 
 import net.czlee.debatekeeper.R;
 import net.czlee.debatekeeper.debateformat.DebateFormat.NoSuchFormatException;
@@ -84,7 +79,6 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
     private String mSchemaVersion;
     private static final String MINIMUM_SCHEMA_VERSION = "2.0";
     private static final String MAXIMUM_SCHEMA_VERSION = "2.0";
-    private static final File SCHEMA_FILE = new File("schemas", "schema-2.0-halfway.rng");
 
     /**
      * Constructor.
@@ -93,7 +87,6 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
         super();
         mContext = context;
         mDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
-        mDocumentBuilderFactory.setSchema(getSchema());
         mPeriodInfoManager = new PeriodInfoManager(context);
         xu = new XmlUtilities(context.getResources());
 
@@ -168,12 +161,14 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
             PrepTimeSimpleFormat ptsf = createPrepTimeSimpleFormatFromElement(prepTimeSimple);
             if (ptsf != null) df.setPrepFormat(ptsf);
         } else if (prepTimeControlled != null) {
-            PrepTimeControlledFormat ptcf = createPrepTimeControlledFormatFromElement(prepTimeSimple);
+            PrepTimeControlledFormat ptcf = createPrepTimeControlledFormatFromElement(prepTimeControlled);
             if (ptcf != null) df.setPrepFormat(ptcf);
         }
 
         // 4. <speech-types>/<speech-type> (speech formats)
         Element speechFormats = xu.findElement(root, R.string.xml2elemName_speechFormats);
+        if (speechFormats == null) return df; // we can't do anything if there aren't any speech formats, so just return
+
         NodeList speechFormatElements = xu.findAllElements(speechFormats, R.string.xml2elemName_speechFormat);
         for (int i = 0; i < speechFormatElements.getLength(); i++) {
             Element speechFormatElement = (Element) speechFormatElements.item(i);
@@ -191,6 +186,8 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
 
         // 5. <speeches>/<speech>
         Element speechesList = xu.findElement(root, R.string.xml2elemName_speechesList);
+        if (speechesList == null) return df; // we can't do anything if there aren't any speeches, so just return
+
         NodeList speechElements = xu.findAllElements(speechesList, R.string.xml2elemName_speech);
         for (int i = 0; i < speechElements.getLength(); i++) {
 
@@ -257,36 +254,6 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
 
         // Parse the file
         return builder.parse(is);
-
-    }
-
-    /**
-     * @return a {@link Schema} for the 2.0 schema
-     */
-    private Schema getSchema() {
-
-        System.setProperty(SchemaFactory.class.getName() + ":" + XMLConstants.RELAXNG_NS_URI, "com.thaiopensource.relaxng.jaxp.XMLSyntaxSchemaFactory");
-        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.RELAXNG_NS_URI);
-
-        InputStream is;
-        try {
-            is = mContext.getAssets().open(SCHEMA_FILE.getPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        StreamSource source = new StreamSource(is);
-
-        Schema schema;
-        try {
-            schema = factory.newSchema(source);
-        } catch (SAXException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        return schema;
 
     }
 
