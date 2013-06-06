@@ -300,7 +300,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
 
         long time;
         String timeStr = xu.findAttributeText(element, R.string.xml2attrName_bell_time);
-        if (timeStr.equalsIgnoreCase(getString(R.string.xml2attrValue_bell_time_finish)))
+        if (timeStr.equals(getString(R.string.xml2attrValue_bell_time_finish)))
             time = speechFinishTime;
         else {
             try {
@@ -324,7 +324,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
         // If there is a next period specified, and it is not "#stay", set it accordingly
         String nextPeriod = xu.findAttributeText(element, R.string.xml2attrName_bell_nextPeriod);
         if (nextPeriod != null) {
-            if (!nextPeriod.equalsIgnoreCase(getString(R.string.xml1attrValue_common_stay))) {
+            if (!nextPeriod.equals(getString(R.string.xml1attrValue_common_stay))) {
                 PeriodInfo npi = mPeriodInfoManager.getPeriodInfo(nextPeriod);
                 if (npi == null)
                     logXmlError(R.string.dfb2error_periodInfoNotFound, nextPeriod); // not checked by schema
@@ -400,7 +400,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
         // If there is a first period specified, and it is not "#stay", set it accordingly
         String firstPeriod = xu.findAttributeText(element, R.string.xml2attrName_controlledTimeFirstPeriod);
         if (firstPeriod != null) {
-            if (!firstPeriod.equalsIgnoreCase(getString(R.string.xml1attrValue_common_stay))) {
+            if (!firstPeriod.equals(getString(R.string.xml1attrValue_common_stay))) {
                 PeriodInfo npi = mPeriodInfoManager.getPeriodInfo(firstPeriod);
                 if (npi == null)
                     logXmlError(R.string.dfb2error_periodInfoNotFound, firstPeriod); // not checked by schema

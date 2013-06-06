@@ -66,10 +66,15 @@
             <string name="xml2elemName_speech_name">name</string>
             <string name="xml2attrName_speech_format">type</string>
 
+    <!-- Common error messages -->
+            
     <string name="xmlError_rootNewSchemaVersion">"Only schema versions up to %2$s are supported (this file uses version %1$s); this might mean you need to update the app.\n"</string>
     <string name="xmlError_rootInvalidSchemaVersion">"Invalid schema version: '%1$s'"</string>
     
+    <!-- Version 2 error messages -->
+    
     <string name="xml2error_invalidTime">Invalid time: %1$s</string>
+   
     <string name="dfb2error_periodInfoBuiltInDuplicate">"The period-type '%1$s' is a built-in period-type; you can't use it"</string>
     <string name="dfb2error_periodInfoDuplicate">"The period-type '%1$s' was specified more than once"</string>
     <string name="dfb2error_periodInfoNotFound">"There is no period-type with ref '%1$s'"</string>
@@ -131,6 +136,8 @@
             <string name="xml1attrName_speech_name">name</string>
             <string name="xml1attrName_speech_format">type</string>
 
+    <!-- Version 1 error messages -->
+            
     <string name="xml1error_rootNoName">This debate format has no name!</string>
     <string name="xml1error_rootNoSchemaVersion">"This debate format has no schema version, so it's impossible to tell whether you need to update to support this file!\n"</string>
     <string name="xml1error_somethingOutsideRoot">There was something outside the root debateformat element</string>

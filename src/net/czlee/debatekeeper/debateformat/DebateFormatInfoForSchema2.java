@@ -308,7 +308,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             String timeStr = xu.findAttributeText(element, R.string.xml2attrName_bell_time);
             long time;
             if (timeStr == null) continue;
-            if (timeStr.equalsIgnoreCase(mContext.getString(R.string.xml2attrValue_bell_time_finish)))
+            if (timeStr.equals(mContext.getString(R.string.xml2attrValue_bell_time_finish)))
                 time = finishTime;
             else {
                 try {

@@ -26,6 +26,25 @@ public class XmlUtilities {
     }
 
     //******************************************************************************************
+    // Public classes
+    //******************************************************************************************
+    public class XmlInvalidValueException extends Exception {
+
+        private static final long serialVersionUID = 6918559345445076788L;
+        private final String value;
+
+        public XmlInvalidValueException(String value) {
+            super();
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+    }
+
+    //******************************************************************************************
     // Public methods
     //******************************************************************************************
 
@@ -83,16 +102,16 @@ public class XmlUtilities {
      * @param element an {@link Element}
      * @param attrNameResId a resource ID referring to a string
      * @return a Long, or the <code>null</code> if the attribute does not have a specified value
-     * @throws NumberFormatException
+     * @throws XmlInvalidValueException if the attribute text cannot be interpreted as a time
      */
-    public Long findAttributeAsTime(Element element, int attrNameResId) throws NumberFormatException {
+    public Long findAttributeAsTime(Element element, int attrNameResId) throws XmlInvalidValueException {
         String text = findAttributeText(element, attrNameResId);
         if (text == null) return null;
         long seconds;
         try {
             seconds = timeStr2Secs(text);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException(getString(R.string.xml2error_invalidTime, text));
+            throw new XmlInvalidValueException(text);
         }
         return seconds;
     }
@@ -103,33 +122,40 @@ public class XmlUtilities {
      * @param element an {@link Element}
      * @param attrNameResId a resource ID referring to a string
      * @return a Long, or the <code>null</code> if the attribute does not have a specified value
-     * @throws NumberFormatException
+     * @throws XmlInvalidValueException if the attribute text cannot be interpreted as an integer
      */
-    public Integer findAttributeAsInteger(Element element, int attrNameResId) throws NumberFormatException {
+    public Integer findAttributeAsInteger(Element element, int attrNameResId) throws XmlInvalidValueException {
         String text = findAttributeText(element, attrNameResId);
         if (text == null) return null;
-        return Integer.parseInt(text);
+        try {
+            return Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            throw new XmlInvalidValueException(text);
+        }
     }
 
     /**
      * Convenience function.  Examines the attribute of the name given by a resource ID and
-     * determines if it is "true".
+     * determines if it is "true" or "false".  Values are case-sensitive.
      * @param element an {@link Element}
      * @param attrNameResId a resource ID referring to a string
-     * @return <code>true</code> if the attribute's value is "true" (case-insensitive),
-     * <code>false</code> otherwise
+     * @return <code>true</code> if the attribute's value is "true", <code>false</code> if it is
+     * "false" or isn't specified
+     *
      */
-    public boolean isAttributeTrue(Element element, int attrNameResId) {
+    public boolean isAttributeTrue(Element element, int attrNameResId) throws XmlInvalidValueException {
         String text = findAttributeText(element, attrNameResId);
         if (text == null) return false;
-        return text.equalsIgnoreCase(getString(R.string.xml2attrValue_common_true));
+        if (text.equals(getString(R.string.xml2attrValue_common_true))) return true;
+        if (text.equals(getString(R.string.xml2attrValue_common_false))) return false;
+        throw new XmlInvalidValueException(text);
     }
 
     /**
      * Converts a String in the format 00:00 to a long, being the number of seconds
      * @param s the String
      * @return the total number of seconds (minutes + seconds * 60)
-     * @throws NumberFormatException
+     * @throws NumberFormatException if the given value cannot be interpreted as a time
      */
     public static long timeStr2Secs(String s) throws NumberFormatException {
         long seconds = 0;
