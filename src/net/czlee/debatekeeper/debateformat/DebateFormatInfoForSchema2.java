@@ -26,6 +26,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import net.czlee.debatekeeper.R;
+import net.czlee.debatekeeper.debateformat.XmlUtilities.XmlInvalidValueException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -167,13 +168,23 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
         Element prepTimeControlled = xu.findElement(mRootElement, R.string.xml2elemName_prepTimeControlledFormat);
 
         if (prepTimeSimple != null && prepTimeControlled == null) { // simple
-            Long length = xu.findAttributeAsTime(prepTimeSimple, R.string.xml2attrName_controlledTimeLength);
+            Long length;
+            try {
+                length = xu.findAttributeAsTime(prepTimeSimple, R.string.xml2attrName_controlledTimeLength);
+            } catch (XmlInvalidValueException e) {
+                return null;
+            }
             if (length == null) return null;
             else return buildLengthString(length);
 
         } else if (prepTimeControlled != null && prepTimeSimple == null) { // controlled
             String description;
-            Long length = xu.findAttributeAsTime(prepTimeControlled, R.string.xml2attrName_controlledTimeLength);
+            Long length;
+            try {
+                length = xu.findAttributeAsTime(prepTimeControlled, R.string.xml2attrName_controlledTimeLength);
+            } catch (XmlInvalidValueException e) {
+                return null;
+            }
             if (length == null) return null;
             else description = buildLengthString(length);
 
@@ -219,7 +230,12 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             reference = xu.findAttributeText(element, R.string.xml2attrName_common_ref);
             if (reference == null) continue;
 
-            Long length = xu.findAttributeAsTime(element, R.string.xml2attrName_controlledTimeLength);
+            Long length;
+            try {
+                length = xu.findAttributeAsTime(element, R.string.xml2attrName_controlledTimeLength);
+            } catch (XmlInvalidValueException e) {
+                continue;
+            }
             if (length == null) continue;
             else description = buildLengthString(length);
 
@@ -318,7 +334,12 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
                 }
             }
             bellsList.append(secsToText(time));
-            boolean pauseOnBell = xu.isAttributeTrue(element, R.string.xml2attrName_bell_pauseOnBell);
+            boolean pauseOnBell;
+            try {
+                pauseOnBell = xu.isAttributeTrue(element, R.string.xml2attrName_bell_pauseOnBell);
+            } catch (XmlInvalidValueException e) {
+                pauseOnBell = false;
+            }
             if (pauseOnBell)
                 bellsList.append(mContext.getString(R.string.pauseOnBellIndicator));
 

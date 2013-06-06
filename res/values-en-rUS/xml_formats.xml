@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="xml2Error_periodTypeInvalidDefaultBgColor">"Invalid default background color (default-bgcolor) specified for period-type %1$s: '%2$s'"</string> 
     <string name="xml1Error_periodInvalidColor">"Invalid background color (bgcolor) specified for period %1$s: '%2$s'"</string>
 </resources>

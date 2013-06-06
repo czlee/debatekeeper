@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -33,6 +34,7 @@ import javax.xml.validation.SchemaFactory;
 import net.czlee.debatekeeper.R;
 import net.czlee.debatekeeper.debateformat.DebateFormat.NoSuchFormatException;
 import net.czlee.debatekeeper.debateformat.PeriodInfoManager.PeriodInfoException;
+import net.czlee.debatekeeper.debateformat.XmlUtilities.XmlInvalidValueException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -116,18 +118,29 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
 
         // 0. Schema version
         mSchemaVersion = xu.findAttributeText(root, R.string.xml2attrName_root_schemaVersion);
-        try {
-            if (!isSchemaSupported())
-                logXmlError(R.string.xmlError_rootNewSchemaVersion, mSchemaVersion, MAXIMUM_SCHEMA_VERSION);
-        } catch (IllegalArgumentException e) {
-            logXmlError(R.string.xmlError_rootInvalidSchemaVersion, mSchemaVersion);
+
+        if (mSchemaVersion == null)
+            logXmlError(R.string.xmlError_rootNoSchemaVersion);
+        else {
+            try {
+                if (!isSchemaSupported())
+                    logXmlError(R.string.xmlError_rootNewSchemaVersion, mSchemaVersion, MAXIMUM_SCHEMA_VERSION);
+            } catch (IllegalArgumentException e) {
+                logXmlError(R.string.xmlError_rootInvalidSchemaVersion, mSchemaVersion);
+            }
         }
 
-        // 1. Name
-        String name = xu.findElementText(root, R.string.xml2elemName_name); // value validity checked by schema
-        df.setName(name);
+        // 1. <name> - mandatory
+        String name = xu.findElementText(root, R.string.xml2elemName_name);
 
-        // 2. If there are period types in this format, deal with them first.  We'll need to
+        if (name == null) {
+            logXmlError(R.string.xml2error_root_noName);
+            name = "<not named>";
+        }
+
+        df.setName(name); // do this even if there was an error with the name
+
+        // 2. If there are <period-type>s in this format, deal with them first.  We'll need to
         // store them somewhere useful in the meantime.
         Element periodTypes = xu.findElement(root, R.string.xml2elemName_periodTypes);
         if (periodTypes != null) {
@@ -139,15 +152,18 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
                 } catch (PeriodInfoException e) {
                     logXmlError(e);
                 }
+                // Check for and log non-fatal errors, if any
+                Iterator<String> errors = mPeriodInfoManager.lastElementErrors().iterator();
+                while (errors.hasNext()) logXmlError(errors.next());
             }
         }
 
-        // 3. Prep time
+        // 3. <prep-time> or <prep-time-controlled> - optional, only one allowed
         Element prepTimeSimple     = xu.findElement(root, R.string.xml2elemName_prepTimeSimpleFormat);
         Element prepTimeControlled = xu.findElement(root, R.string.xml2elemName_prepTimeControlledFormat);
 
         if (prepTimeSimple != null && prepTimeControlled != null) {
-            logXmlError(R.string.dfb2error_multiplePrepTimes); // should also be caught out by schema
+            logXmlError(R.string.xml2error_prepTime_multiple);
         } else if (prepTimeSimple != null) {
             PrepTimeSimpleFormat ptsf = createPrepTimeSimpleFormatFromElement(prepTimeSimple);
             if (ptsf != null) df.setPrepFormat(ptsf);
@@ -156,7 +172,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
             if (ptcf != null) df.setPrepFormat(ptcf);
         }
 
-        // 4. Speech formats
+        // 4. <speech-types>/<speech-type> (speech formats)
         Element speechFormats = xu.findElement(root, R.string.xml2elemName_speechFormats);
         NodeList speechFormatElements = xu.findAllElements(speechFormats, R.string.xml2elemName_speechFormat);
         for (int i = 0; i < speechFormatElements.getLength(); i++) {
@@ -164,25 +180,37 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
             SpeechFormat sf = createSpeechFormatFromElement(speechFormatElement);
             if (sf == null) continue;
             String reference = sf.getReference();
-            if (reference == null) continue;  // should be caught out by schema
+
             if (df.hasSpeechFormat(reference)) {
-                logXmlError(R.string.dfb2error_speechFormatDuplicate, reference); // not checked by schema
+                logXmlError(R.string.dfb2error_speechFormat_duplicate, reference);
                 continue;
             }
+
             df.addSpeechFormat(reference, sf);
         }
 
-        // 5. Speeches
+        // 5. <speeches>/<speech>
         Element speechesList = xu.findElement(root, R.string.xml2elemName_speechesList);
         NodeList speechElements = xu.findAllElements(speechesList, R.string.xml2elemName_speech);
         for (int i = 0; i < speechElements.getLength(); i++) {
+
             Element speechElement = (Element) speechElements.item(i);
             String speechName = xu.findElementText(speechElement, R.string.xml2elemName_speech_name);
             String formatRef = xu.findAttributeText(speechElement, R.string.xml2attrName_speech_format);
+
+            if (speechName == null) {
+                logXmlError(R.string.xml2error_speech_name_null);
+                continue;
+            }
+            if (formatRef == null) {
+                logXmlError(R.string.xml2error_speech_format_null, speechName);
+                continue;
+            }
+
             try {
                 df.addSpeech(speechName, formatRef);
             } catch (NoSuchFormatException e) {
-                logXmlError(R.string.dfb2error_addSpeechSpeechFormatNotFound, formatRef, name); // not checked by schema
+                logXmlError(R.string.dfb2error_addSpeech_speechFormatNotFound, formatRef, name);
                 continue;
             }
         }
@@ -270,20 +298,36 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
      */
     private SpeechFormat createSpeechFormatFromElement(Element element) {
 
+        // attribute 'ref' - mandatory
         String reference = xu.findAttributeText(element, R.string.xml2attrName_common_ref);
 
+        if (reference == null) {
+            logXmlError(R.string.xml2error_speechFormat_ref_null);
+            return null;
+        }
+        if (reference.length() == 0) {
+            logXmlError(R.string.xml2error_speechFormat_ref_blank);
+            return null;
+        }
+
+        // attribute 'length' - mandatory
         Long length;
         try {
             length = xu.findAttributeAsTime(element, R.string.xml2attrName_controlledTimeLength);
-        } catch (NumberFormatException e) {
-            logXmlError(e); // should also be caught out be schema
+        } catch (XmlInvalidValueException e) {
+            logXmlError(R.string.xml2error_speechFormat_length_invalid, e.getValue(), reference);
             return null;
         }
-        if (length == null) return null; // should be caught out be schema
+        if (length == null) {
+            logXmlError(R.string.xml2error_speechFormat_length_null, reference);
+            return null;
+        }
 
         SpeechFormat sf = new SpeechFormat(reference, length);
 
-        populateControlledTimeFormat(sf, element);
+        String location = getString(R.string.xml2elemName_speechFormat) + "'" + reference + "'"; // for error messages
+
+        populateControlledTimeFormat(sf, element, location);
 
         return sf;
     }
@@ -291,49 +335,71 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
     /**
      * Creates a {@link BellInfo} derived from an {@link Element}
      * @param element an {@link Element} object
-     * @param speechFinishTime the length of the speech, used if the bell is to be at the finish
+     * @param finishTime the length of the speech, used if the bell is to be at the finish
      * time of the speech
      * @return a {@link BellInfo}, may return <code>null</code> if there was an error preventing
      * the object from being created
      */
-    private BellInfo createBellInfoFromElement(Element element, long speechFinishTime) {
+    private BellInfo createBellInfoFromElement(Element element, long finishTime, String location) {
 
+        // attribute 'time' - mandatory
         long time;
         String timeStr = xu.findAttributeText(element, R.string.xml2attrName_bell_time);
+
+        if (timeStr == null) {
+            logXmlError(R.string.xml2error_bell_time_null);
+            return null;
+        }
+
         if (timeStr.equals(getString(R.string.xml2attrValue_bell_time_finish)))
-            time = speechFinishTime;
+            time = finishTime;
         else {
             try {
                 time = XmlUtilities.timeStr2Secs(timeStr);
             } catch (NumberFormatException e) {
-                logXmlError(R.string.xml2error_invalidTime, timeStr); // should also be caught out be schema
+                logXmlError(R.string.xml2error_bell_time_invalid, timeStr, location);
                 return null;
             }
         }
 
-        if (time > speechFinishTime) {
-            logXmlError(R.string.dfb2error_bellAfterFinishTime, timeStr); // not checked by schema
+        if (time > finishTime) {
+            logXmlError(R.string.dfb2error_bell_afterFinishTime, timeStr, location); // not checked by schema
             return null;
         }
 
-        Integer timesToPlay = xu.findAttributeAsInteger(element, R.string.xml2attrName_bell_number);
+        // attribute 'number' - optional, defaults to 1
+        Integer timesToPlay;
+        try {
+            timesToPlay = xu.findAttributeAsInteger(element, R.string.xml2attrName_bell_number);
+        } catch (XmlInvalidValueException e) {
+            logXmlError(R.string.xml2error_bell_number_invalid, e.getValue(), location, timeStr);
+            timesToPlay = 1;
+        }
         if (timesToPlay == null) timesToPlay = 1;
 
         BellInfo bi = new BellInfo(time, timesToPlay);
 
+        // attribute 'next-period' - optional
         // If there is a next period specified, and it is not "#stay", set it accordingly
         String nextPeriod = xu.findAttributeText(element, R.string.xml2attrName_bell_nextPeriod);
         if (nextPeriod != null) {
             if (!nextPeriod.equals(getString(R.string.xml1attrValue_common_stay))) {
                 PeriodInfo npi = mPeriodInfoManager.getPeriodInfo(nextPeriod);
                 if (npi == null)
-                    logXmlError(R.string.dfb2error_periodInfoNotFound, nextPeriod); // not checked by schema
+                    logXmlError(R.string.dfb2error_periodInfo_notFound, nextPeriod);
                 else
                     bi.setNextPeriodInfo(npi);
             }
         }
 
-        boolean pauseOnBell = xu.isAttributeTrue(element, R.string.xml2attrName_bell_pauseOnBell); // value validity checked by schema
+        // attribute 'pause-on-bell' - optional
+        boolean pauseOnBell;
+        try {
+            pauseOnBell = xu.isAttributeTrue(element, R.string.xml2attrName_bell_pauseOnBell);
+        } catch (XmlInvalidValueException e) {
+            logXmlError(R.string.xml2error_bell_pauseOnBell_invalid, e.getValue(), location, timeStr);
+            pauseOnBell = false;
+        }
         bi.setPauseOnBell(pauseOnBell);
 
         return bi;
@@ -351,11 +417,14 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
         Long length;
         try {
             length = xu.findAttributeAsTime(element, R.string.xml2attrName_controlledTimeLength);
-        } catch (NumberFormatException e) {
-            logXmlError(e); // should also be caught out be schema
+        } catch (XmlInvalidValueException e) {
+            logXmlError(R.string.xml2error_prepTimeSimple_length_invalid, e.getValue());
             return null;
         }
-        if (length == null) return null; // should be caught out be schema
+        if (length == null) {
+            logXmlError(R.string.xml2error_prepTimeSimple_length_null);
+            return null;
+        }
 
         return new PrepTimeSimpleFormat(length);
 
@@ -372,15 +441,19 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
         Long length;
         try {
             length = xu.findAttributeAsTime(element, R.string.xml2attrName_controlledTimeLength);
-        } catch (NumberFormatException e) {
-            logXmlError(e); // should also be caught out be schema
+        } catch (XmlInvalidValueException e) {
+            logXmlError(R.string.xml2error_prepTimeControlled_length_invalid, e.getValue());
             return null;
         }
-        if (length == null) return null; // should be caught out be schema
+        if (length == null) {
+            logXmlError(R.string.xml2error_prepTimeControlled_length_null);
+            return null;
+        }
 
         PrepTimeControlledFormat ptcf = new PrepTimeControlledFormat(length);
 
-        populateControlledTimeFormat(ptcf, element);
+        String location = getString(R.string.xml2elemName_prepTimeControlledFormat); // for error messages
+        populateControlledTimeFormat(ptcf, element, location);
 
         return ptcf;
     }
@@ -395,7 +468,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
      * @param element
      * @param length
      */
-    private void populateControlledTimeFormat(ControlledSpeechOrPrepFormat cspf, Element element) {
+    private void populateControlledTimeFormat(ControlledSpeechOrPrepFormat cspf, Element element, String location) {
 
         // If there is a first period specified, and it is not "#stay", set it accordingly
         String firstPeriod = xu.findAttributeText(element, R.string.xml2attrName_controlledTimeFirstPeriod);
@@ -403,7 +476,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
             if (!firstPeriod.equals(getString(R.string.xml1attrValue_common_stay))) {
                 PeriodInfo npi = mPeriodInfoManager.getPeriodInfo(firstPeriod);
                 if (npi == null)
-                    logXmlError(R.string.dfb2error_periodInfoNotFound, firstPeriod); // not checked by schema
+                    logXmlError(R.string.dfb2error_periodInfo_notFound, firstPeriod); // not checked by schema
                 else
                     cspf.setFirstPeriodInfo(npi);
             }
@@ -415,7 +488,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
         NodeList bellElements = xu.findAllElements(element, R.string.xml2elemName_bell);
         for (int i = 0; i < bellElements.getLength(); i++) {
             Element bellElement = (Element) bellElements.item(i);
-            BellInfo bi = createBellInfoFromElement(bellElement, length);
+            BellInfo bi = createBellInfoFromElement(bellElement, length, location);
             if (bi == null) continue;
             cspf.addBellInfo(bi);
         }
@@ -428,10 +501,15 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
 
     // Error log methods
 
-    private void addToErrorLog(String message) {
+    /**
+     * Logs an XML-related error from a string.
+     * @param message the string
+     */
+    private void logXmlError(String message) {
         String bullet = "• ";
         String line   = bullet.concat(message);
         mErrorLog.add(line);
+        Log.e("logXmlError", message);
     }
 
     /**
@@ -439,8 +517,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
      * @param e the Exception
      */
     private void logXmlError(Exception e) {
-        addToErrorLog(e.getMessage());
-        Log.e("logXmlError", e.getMessage());
+        logXmlError(e.getMessage());
     }
 
     /**
@@ -448,8 +525,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
      * @param resId the resource ID of the string resource
      */
     private void logXmlError(int resId) {
-        addToErrorLog(mContext.getString(resId));
-        Log.e("logXmlError", mContext.getString(resId));
+        logXmlError(mContext.getString(resId));
     }
 
     /**
@@ -459,8 +535,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
      * @param formatArgs arguments to pass to <code>String.format</code>
      */
     private void logXmlError(int resId, Object... formatArgs) {
-        addToErrorLog(mContext.getString(resId, formatArgs));
-        Log.e("logXmlError", mContext.getString(resId, formatArgs));
+        logXmlError(mContext.getString(resId, formatArgs));
     }
 
 }

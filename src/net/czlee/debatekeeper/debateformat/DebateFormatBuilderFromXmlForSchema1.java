@@ -187,7 +187,7 @@ public class DebateFormatBuilderFromXmlForSchema1 implements DebateFormatBuilder
 
                 mSchemaVersion = getValue(atts, R.string.xml1attrName_root_schemaVersion);
                 if (mSchemaVersion == null) {
-                    logXmlError(R.string.xml1error_rootNoSchemaVersion);
+                    logXmlError(R.string.xmlError_rootNoSchemaVersion);
                 } else {
                     try {
                         if (!isSchemaSupported())

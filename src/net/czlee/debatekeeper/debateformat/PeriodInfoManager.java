@@ -20,6 +20,7 @@ package net.czlee.debatekeeper.debateformat;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -27,10 +28,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import net.czlee.debatekeeper.R;
+import net.czlee.debatekeeper.debateformat.XmlUtilities.XmlInvalidValueException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -51,11 +52,12 @@ import android.util.Log;
 public class PeriodInfoManager {
 
     private final Resources mResources;
+    private final ArrayList<String> mLastElementErrors = new ArrayList<String>();
     private final HashMap<String, PeriodInfo> mBuiltInPeriodInfos = new HashMap<String, PeriodInfo>();
     private final HashMap<String, PeriodInfo> mLocalPeriodInfos = new HashMap<String, PeriodInfo>();
     private final XmlUtilities xu;
 
-    private static final String GLOBAL_PERIODS_FILE = "periods.xml";
+    private static final String BUILT_IN_PERIODS_FILE = "periods.xml";
 
     public PeriodInfoManager(Context context) {
         mResources = context.getResources();
@@ -73,6 +75,8 @@ public class PeriodInfoManager {
      */
     public class PeriodInfoException extends Exception {
 
+        private static final long serialVersionUID = -6921860197911310673L;
+
         public PeriodInfoException(int resId) {
             super(mResources.getString(resId));
         }
@@ -89,19 +93,21 @@ public class PeriodInfoManager {
 
     /**
      * Adds a {@link PeriodInfo} based on an {@link Element} to the repository of local
-     * period infos.  If the period info doesn't have a reference, it does not add the
-     * {@link PeriodInfo}.
+     * {@link PeriodInfo} objects.  This will still return without error if non-fatal errors
+     * are encountered while adding the period.  The caller should call <code>lastElementErrors()</code>
+     * to check for non-fatal errors immediately after calling this method.
      * @param element the {@link Element} from which to create the period info
-     * @throws PeriodInfoException if the period info would be a duplicate
+     * @throws PeriodInfoException if a fatal error was encountered adding the period, for example
+     * if the period-type would be a duplicate, or if the period-type lacked a reference or name
+     *
      */
     public void addPeriodInfoFromElement(Element element) throws PeriodInfoException {
         PeriodInfo pi = createPeriodInfoFromElement(element);
         String reference = pi.getReference();
-        if (reference == null) return;
         if (mBuiltInPeriodInfos.containsKey(reference))
-            throw new PeriodInfoException(R.string.dfb2error_periodInfoBuiltInDuplicate, reference);
+            throw new PeriodInfoException(R.string.dfb2error_periodInfo_builtInDuplicate, reference);
         if (mLocalPeriodInfos.containsKey(reference))
-            throw new PeriodInfoException(R.string.dfb2error_periodInfoDuplicate, reference);
+            throw new PeriodInfoException(R.string.dfb2error_periodInfo_duplicate, reference);
         mLocalPeriodInfos.put(reference, pi);
     }
 
@@ -120,6 +126,15 @@ public class PeriodInfoManager {
         return result; // just return, as if this is also null we will want to return null anyway
     }
 
+    /**
+     * Retrieves the list of parsing errors in processing the last element with <code>addPeriodInfoFromElement()</code>
+     * @return an {@link ArrayList} of strings, each one being a parsing error message encountered
+     * while parsing the last {@link Element} passed to <code>addPeriodInfoFromElement()</code>
+     */
+    public ArrayList<String> lastElementErrors() {
+        return mLastElementErrors;
+    }
+
     //******************************************************************************************
     // Private methods
     //******************************************************************************************
@@ -136,7 +151,7 @@ public class PeriodInfoManager {
         // Open the global periods file
         InputStream is;
         try {
-            is = assets.open(GLOBAL_PERIODS_FILE);
+            is = assets.open(BUILT_IN_PERIODS_FILE);
         } catch (IOException e) {
             e.printStackTrace();
             Log.wtf(this.getClass().getSimpleName(), "Error opening global periods file");
@@ -175,7 +190,16 @@ public class PeriodInfoManager {
         // For each such element, add a PeriodInfo to the repository
         for (int i = 0; i < periodTypeElements.getLength(); i++) {
             Element periodType = (Element) periodTypeElements.item(i);
-            PeriodInfo pi = createPeriodInfoFromElement(periodType);
+            PeriodInfo pi;
+
+            try {
+                pi = createPeriodInfoFromElement(periodType);
+            } catch (PeriodInfoException e) {
+                // this should never happen
+                Log.e(this.getClass().getSimpleName(), e.getMessage());
+                continue;
+            }
+
             String reference = pi.getReference();
             if (reference != null)
                 mBuiltInPeriodInfos.put(reference, pi);
@@ -186,43 +210,74 @@ public class PeriodInfoManager {
     }
 
     /**
-     * @param node an {@link Element} representing a <period-type> element (for convenience
-     * it can take a {@link Node} so long as it is an {@link Element}, it will do the class cast)
+     * Creates a {@link PeriodInfo} object from an {@link Element}, storing any non-fatal parsing
+     * errors to mLastElementErrors for retrieval via <code>lastElementErrors()</code>.  This checks
+     * for XML format errors, but does not check for duplicate period-type references; the
+     * caller must check that if required.  If this method returns without throwing a {@link PeriodInfoException},
+     * then the reference of the {@link PeriodInfo} is guaranteed not to be <code>null</code>.
+     * @param node an {@link Element} representing a &lt;period-type&gt; element
      * @return a fully-period {@link PeriodInfo} with the information in the element
+     * @throws PeriodInfoException if there was a fatal parsing error (<i>e.g.</i> the period-type
+     * had no reference).
      */
-    private PeriodInfo createPeriodInfoFromElement(Element element) {
+    private PeriodInfo createPeriodInfoFromElement(Element element) throws PeriodInfoException {
 
-        String ref, name, description, defaultBackgroundColorStr, poisAllowedStr;
+        String ref, name, description, defaultBackgroundColorStr;
         Integer defaultBackgroundColor = null;
-        boolean poisAllowed;
+        boolean poisAllowed = false;
 
-        // Extract the relevant information
-        ref         = xu.findAttributeText(element, R.string.xml2attrName_common_ref);
-        name        = xu.findElementText(element, R.string.xml2elemName_periodType_name);
+        // Clear the last element errors log
+        mLastElementErrors.clear();
+
+        // Extract the reference and check for validity
+        // We enforce restrictions against blank references and names because these have to
+        // work with the app globally, i.e. the effects aren't constrained to the file in which
+        // they are found.
+        ref = xu.findAttributeText(element, R.string.xml2attrName_common_ref);
+        if (ref == null)
+            throw new PeriodInfoException(R.string.xml2error_periodType_ref_null);
+        if (ref.length() == 0)
+            throw new PeriodInfoException(R.string.xml2error_periodType_ref_blank);
+
+        // Extract the name and check for validity
+        name = xu.findElementText(element, R.string.xml2elemName_periodType_name);
+        if (name == null)
+            throw new PeriodInfoException(R.string.xml2error_periodType_name_null, ref);
+        if (name.length() == 0)
+            throw new PeriodInfoException(R.string.xml2error_periodType_name_blank, ref);
+
+        // Extract the description (there are no constraints on this field)
         description = xu.findElementText(element, R.string.xml2elemName_periodType_display);
 
         // Parse the default background colour, if there is one
         defaultBackgroundColorStr = xu.findElementText(element, R.string.xml2elemName_periodType_defaultBackgroundColor);
         if (defaultBackgroundColorStr != null) {
             if (defaultBackgroundColorStr.startsWith("#")) {
-                // should be caught out by schema, so this error is not logged for the user, as they should have been informed at the schema check
                 try {
                     defaultBackgroundColor = new BigInteger(defaultBackgroundColorStr.substring(1), 16).intValue();
                 } catch (NumberFormatException e) {
-                    Log.w(this.getClass().getSimpleName(), "Invalid colour: " + defaultBackgroundColorStr);
+                    addError(R.string.xml2Error_periodType_defaultBgColor_invalid, defaultBackgroundColorStr, ref);
                 }
             } else {
-                Log.w(this.getClass().getSimpleName(), "Invalid colour: " + defaultBackgroundColorStr);
+                addError(R.string.xml2Error_periodType_defaultBgColor_invalid, defaultBackgroundColorStr, ref);
             }
         }
 
         // Parse the "pois-allowed" attribute
-        poisAllowed = xu.isAttributeTrue(element, R.string.xml2attrName_periodType_poisAllowed); // value validity checked by schema
+        try {
+            poisAllowed = xu.isAttributeTrue(element, R.string.xml2attrName_periodType_poisAllowed);
+        } catch (XmlInvalidValueException e) {
+            addError(R.string.xml2Error_periodType_poisAllowed_invalid, e.getValue());
+        }
 
         PeriodInfo pi = new PeriodInfo(ref, name, description, defaultBackgroundColor, poisAllowed);
 
         return pi;
 
+    }
+
+    private void addError(int resId, Object... formatArgs) {
+        mLastElementErrors.add(mResources.getString(resId, formatArgs));
     }
 
 }
