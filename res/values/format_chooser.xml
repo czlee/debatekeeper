@@ -36,6 +36,7 @@
     <string name="viewFormat_speechesLabel">Speeches</string>
     <string name="viewFormat_fileNameLabel">File name</string>
     <string name="viewFormat_fileLocationValue_userDefined">Custom user file</string>
+    <string name="viewFormat_outdatedSchemaVersion">Uses an outdated schema (version %1$s)</string>
     <string name="viewFormat_prepTimeLabel">Prep time</string>
     <string name="viewFormat_showDetails_buttonText">More</string>
 

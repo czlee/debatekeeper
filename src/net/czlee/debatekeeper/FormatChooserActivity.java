@@ -85,6 +85,8 @@ public class FormatChooserActivity extends Activity {
     private static final String BUNDLE_FILE_NAME = "fn";
     public  static final int RESULT_ERROR = RESULT_FIRST_USER;
 
+    public static final String CURRENT_SCHEMA_VERSION = "2.0";
+
     public static final String EXTRA_XML_FILE_NAME = "xmlfn";
 
     //******************************************************************************************
@@ -518,7 +520,10 @@ public class FormatChooserActivity extends Activity {
             return getBlankDetailsDialog(filename, e);
         }
 
-        populateFileInfo(view, filename);
+        String schemaVersion = null;
+        if (dfi != null) schemaVersion = dfi.getSchemaVersion();
+
+        populateFileInfo(view, filename, schemaVersion);
 
         if (dfi != null) {
             populateBasicInfo(view, dfi);
@@ -622,12 +627,24 @@ public class FormatChooserActivity extends Activity {
      * @param view the View to populate
      * @param filename the file name
      */
-    private void populateFileInfo(View view, String filename) {
+    private void populateFileInfo(View view, String filename, String schemaVersion) {
+
+        // Display its location if it's not a built-in file
         if (mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_USER_DEFINED) {
             TextView fileLocationText = (TextView) view.findViewById(R.id.viewFormat_fileLocationValue);
             fileLocationText.setText(getString(R.string.viewFormat_fileLocationValue_userDefined));
             fileLocationText.setVisibility(View.VISIBLE);
         }
+
+        // Display its schema version if it's not the current version
+        if (schemaVersion != null) {
+            if (!schemaVersion.equals(CURRENT_SCHEMA_VERSION)) {
+                TextView schemaVersionText = (TextView) view.findViewById(R.id.viewFormat_schemaVersionValue);
+                schemaVersionText.setText(getString(R.string.viewFormat_outdatedSchemaVersion, schemaVersion));
+                schemaVersionText.setVisibility(View.VISIBLE);
+            }
+        }
+
         ((TextView) view.findViewById(R.id.viewFormat_fileNameValue)).setText(filename);
     }
 
