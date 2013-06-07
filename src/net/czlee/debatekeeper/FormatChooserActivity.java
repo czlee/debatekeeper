@@ -26,6 +26,7 @@ import java.util.Iterator;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfo;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfoExtractorForSchema1;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfoForSchema2;
+import net.czlee.debatekeeper.debateformat.XmlUtilities;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -638,9 +639,22 @@ public class FormatChooserActivity extends Activity {
 
         // Display its schema version if it's not the current version
         if (schemaVersion != null) {
-            if (!schemaVersion.equals(CURRENT_SCHEMA_VERSION)) {
+            int comparison = 0;
+            String schemaVersionTextValue = null;
+            try {
+                comparison = XmlUtilities.compareSchemaVersions(schemaVersion, CURRENT_SCHEMA_VERSION);
+            } catch (IllegalArgumentException e) {
+                schemaVersionTextValue = getString(R.string.viewFormat_unrecognisedSchemaVersion, schemaVersion);
+            }
+            if (schemaVersionTextValue == null) {
+                if (comparison > 0)
+                    schemaVersionTextValue = getString(R.string.viewFormat_futureSchemaVersion, schemaVersion);
+                else if (comparison < 0)
+                    schemaVersionTextValue = getString(R.string.viewFormat_outdatedSchemaVersion, schemaVersion);
+            }
+            if (schemaVersionTextValue != null) {
                 TextView schemaVersionText = (TextView) view.findViewById(R.id.viewFormat_schemaVersionValue);
-                schemaVersionText.setText(getString(R.string.viewFormat_outdatedSchemaVersion, schemaVersion));
+                schemaVersionText.setText(schemaVersionTextValue);
                 schemaVersionText.setVisibility(View.VISIBLE);
             }
         }
