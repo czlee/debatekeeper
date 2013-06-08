@@ -1,18 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <debate-format schema-version="2.0">
-  <name>British Parliamentary (5 minutes)</name>
+  <name>British Parliamentary</name>
   <info>
-    <region>UK</region>
+    <region>World</region>
     <level>University</level>
-    <used-at>Various UK IVs/Opens</used-at>
-    <used-at>Welsh Novices</used-at>
-    <description>Four teams of two, 15 minutes prep, 5 minute speeches, POIs allowed</description>
+    <used-at>World Universities Debating Championship</used-at>
+    <used-at>European Universities Debating Championship</used-at>
+    <used-at>Pan-African Universities Debating Championships</used-at>
+    <description>Four teams of two, 7 minute speeches, POIs allowed</description>
   </info>
   <prep-time length="15:00"/>
   <speech-types>
-    <speech-type ref="all" length="5:00" first-period="normal">
+    <speech-type ref="all" length="7:00" first-period="normal">
       <bell time="1:00" number="1" next-period="pois-allowed"/>
-      <bell time="4:00" number="1" next-period="warning"/>
+      <bell time="6:00" number="1" next-period="warning"/>
       <bell time="finish" number="2" next-period="overtime"/>
     </speech-type>
   </speech-types>
