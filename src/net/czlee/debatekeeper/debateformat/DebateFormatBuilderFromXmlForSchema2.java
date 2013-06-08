@@ -29,6 +29,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import net.czlee.debatekeeper.R;
 import net.czlee.debatekeeper.debateformat.DebateFormat.NoSuchFormatException;
 import net.czlee.debatekeeper.debateformat.PeriodInfoManager.PeriodInfoException;
+import net.czlee.debatekeeper.debateformat.XmlUtilities.IllegalSchemaVersionException;
 import net.czlee.debatekeeper.debateformat.XmlUtilities.XmlInvalidValueException;
 
 import org.w3c.dom.Document;
@@ -225,8 +226,12 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
     public boolean isSchemaSupported() {
         if (mSchemaVersion == null)
             return false; // either not built, or if it was built then probably the wrong schema
-        return (XmlUtilities.compareSchemaVersions(mSchemaVersion, MAXIMUM_SCHEMA_VERSION) <= 0)
-                && (XmlUtilities.compareSchemaVersions(mSchemaVersion, MINIMUM_SCHEMA_VERSION) >= 0);
+        try {
+            return (XmlUtilities.compareSchemaVersions(mSchemaVersion, MAXIMUM_SCHEMA_VERSION) <= 0)
+                    && (XmlUtilities.compareSchemaVersions(mSchemaVersion, MINIMUM_SCHEMA_VERSION) >= 0);
+        } catch (IllegalSchemaVersionException e) {
+            return false;
+        }
     }
 
     @Override

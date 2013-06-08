@@ -28,7 +28,7 @@ public class XmlUtilities {
     //******************************************************************************************
     // Public classes
     //******************************************************************************************
-    public class XmlInvalidValueException extends Exception {
+    public static class XmlInvalidValueException extends Exception {
 
         private static final long serialVersionUID = 6918559345445076788L;
         private final String value;
@@ -40,6 +40,16 @@ public class XmlUtilities {
 
         public String getValue() {
             return value;
+        }
+
+    }
+
+    public static class IllegalSchemaVersionException extends Exception {
+
+        private static final long serialVersionUID = -5240666878173998127L;
+
+        public IllegalSchemaVersionException(String detailMessage) {
+            super(detailMessage);
         }
 
     }
@@ -179,8 +189,9 @@ public class XmlUtilities {
      * @param a
      * @param b
      * @return 1 if a > b, 0 if a == b, 1 if a < b
+     * @throws IllegalSchemaVersionException if the version could not be interpreted
      */
-    public static int compareSchemaVersions(String a, String b) throws IllegalArgumentException {
+    public static int compareSchemaVersions(String a, String b) throws IllegalSchemaVersionException {
         int[] a_int = versionToIntArray(a);
         int[] b_int = versionToIntArray(b);
         int min_length = (a_int.length > b_int.length) ? b_int.length : a_int.length;
@@ -201,17 +212,18 @@ public class XmlUtilities {
     /**
      * @param version
      * @return an integer array
+     * @throws IllegalSchemaVersionException if the version could not be interpreted
      */
-    private static int[] versionToIntArray(String version) throws IllegalArgumentException {
+    private static int[] versionToIntArray(String version) throws IllegalSchemaVersionException {
         int[] result = new int[2];
         String[] parts = version.split("\\.", 2);
         if (parts.length != 2)
-            throw new IllegalArgumentException("version must be in the form 'a.b' where a and b are numbers");
+            throw new IllegalSchemaVersionException("version must be in the form 'a.b' where a and b are numbers");
         for (int i = 0; i < 2; i++) {
             try {
                 result[i] = Integer.parseInt(parts[i]);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("version must be in the form 'a.b' where a and b are numbers");
+                throw new IllegalSchemaVersionException("version must be in the form 'a.b' where a and b are numbers");
             }
         }
         return result;

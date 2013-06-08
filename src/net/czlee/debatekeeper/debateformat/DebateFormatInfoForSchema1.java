@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import net.czlee.debatekeeper.R;
+import net.czlee.debatekeeper.debateformat.XmlUtilities.IllegalSchemaVersionException;
 import android.content.Context;
 
 /**
@@ -426,8 +427,12 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
     public boolean isSchemaSupported() {
         if (schemaVersion == null)
             return false; // either not built, or if it was built then probably the wrong schema
-        return (XmlUtilities.compareSchemaVersions(schemaVersion, MAXIMUM_SCHEMA_VERSION) <= 0)
-                && (XmlUtilities.compareSchemaVersions(schemaVersion, MINIMUM_SCHEMA_VERSION) >= 0);
+        try {
+            return (XmlUtilities.compareSchemaVersions(schemaVersion, MAXIMUM_SCHEMA_VERSION) <= 0)
+                    && (XmlUtilities.compareSchemaVersions(schemaVersion, MINIMUM_SCHEMA_VERSION) >= 0);
+        } catch (IllegalSchemaVersionException e) {
+            return false;
+        }
     }
 
     /**

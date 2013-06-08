@@ -24,6 +24,7 @@ import java.util.ArrayList;
 
 import net.czlee.debatekeeper.R;
 import net.czlee.debatekeeper.debateformat.DebateFormatBuilderForSchema1.DebateFormatBuilderException;
+import net.czlee.debatekeeper.debateformat.XmlUtilities.IllegalSchemaVersionException;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -732,8 +733,12 @@ public class DebateFormatBuilderFromXmlForSchema1 implements DebateFormatBuilder
     public boolean isSchemaSupported() throws IllegalArgumentException {
         if (mSchemaVersion == null)
             return false; // either not built, or if it was built then probably the wrong schema
-        return (XmlUtilities.compareSchemaVersions(mSchemaVersion, MAXIMUM_SCHEMA_VERSION) <= 0)
-                && (XmlUtilities.compareSchemaVersions(mSchemaVersion, MINIMUM_SCHEMA_VERSION) >= 0);
+        try {
+            return (XmlUtilities.compareSchemaVersions(mSchemaVersion, MAXIMUM_SCHEMA_VERSION) <= 0)
+                    && (XmlUtilities.compareSchemaVersions(mSchemaVersion, MINIMUM_SCHEMA_VERSION) >= 0);
+        } catch (IllegalSchemaVersionException e) {
+            return false;
+        }
     }
 
     /* (non-Javadoc)
