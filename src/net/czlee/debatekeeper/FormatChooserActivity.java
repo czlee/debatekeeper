@@ -27,6 +27,7 @@ import net.czlee.debatekeeper.debateformat.DebateFormatInfo;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfoExtractorForSchema1;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfoForSchema2;
 import net.czlee.debatekeeper.debateformat.XmlUtilities;
+import net.czlee.debatekeeper.debateformat.XmlUtilities.IllegalSchemaVersionException;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -643,7 +644,7 @@ public class FormatChooserActivity extends Activity {
             String schemaVersionTextValue = null;
             try {
                 comparison = XmlUtilities.compareSchemaVersions(schemaVersion, CURRENT_SCHEMA_VERSION);
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalSchemaVersionException e) {
                 schemaVersionTextValue = getString(R.string.viewFormat_unrecognisedSchemaVersion, schemaVersion);
             }
             if (schemaVersionTextValue == null) {
