@@ -403,7 +403,7 @@ if periods_to_write:
 
 # <prep-time> or <prep-time-controlled>
 if preptime is not None:
-    root_original.append(preptime.get_converted_element())
+    root_converted.append(preptime.get_converted_element())
 
 # <speech-types>
 speech_types = ET.SubElement(root_converted, "speech-types")
