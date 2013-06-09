@@ -297,7 +297,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
 
         SpeechFormat sf = new SpeechFormat(reference, length);
 
-        String location = getString(R.string.xml2elemName_speechFormat) + "'" + reference + "'"; // for error messages
+        String location = getString(R.string.xml2elemName_speechFormat) + " '" + reference + "'"; // for error messages
 
         populateControlledTimeFormat(sf, element, location);
 
