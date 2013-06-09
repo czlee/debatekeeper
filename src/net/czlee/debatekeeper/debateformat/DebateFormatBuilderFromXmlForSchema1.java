@@ -730,12 +730,23 @@ public class DebateFormatBuilderFromXmlForSchema1 implements DebateFormatBuilder
      * @see net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml#isSchemaSupported()
      */
     @Override
-    public boolean isSchemaSupported() throws IllegalArgumentException {
+    public boolean isSchemaSupported() {
         if (mSchemaVersion == null)
             return false; // either not built, or if it was built then probably the wrong schema
         try {
             return (XmlUtilities.compareSchemaVersions(mSchemaVersion, MAXIMUM_SCHEMA_VERSION) <= 0)
                     && (XmlUtilities.compareSchemaVersions(mSchemaVersion, MINIMUM_SCHEMA_VERSION) >= 0);
+        } catch (IllegalSchemaVersionException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isSchemaTooNew() {
+        if (mSchemaVersion == null)
+            return false; // either not built, or if it was built then probably the wrong schema
+        try {
+            return XmlUtilities.compareSchemaVersions(mSchemaVersion, MAXIMUM_SCHEMA_VERSION) > 0;
         } catch (IllegalSchemaVersionException e) {
             return false;
         }
@@ -747,6 +758,22 @@ public class DebateFormatBuilderFromXmlForSchema1 implements DebateFormatBuilder
     @Override
     public ArrayList<String> getErrorLog() {
         return mErrorLog;
+    }
+
+    /* (non-Javadoc)
+     * @see net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml#getSchemaVersion()
+     */
+    @Override
+    public String getSchemaVersion() {
+        return mSchemaVersion;
+    }
+
+    /* (non-Javadoc)
+     * @see net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml#getSupportedSchemaVersion()
+     */
+    @Override
+    public String getSupportedSchemaVersion() {
+        return MAXIMUM_SCHEMA_VERSION;
     }
 
     //******************************************************************************************

@@ -235,8 +235,29 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
     }
 
     @Override
+    public boolean isSchemaTooNew() {
+        if (mSchemaVersion == null)
+            return false; // either not built, or if it was built then probably the wrong schema
+        try {
+            return XmlUtilities.compareSchemaVersions(mSchemaVersion, MAXIMUM_SCHEMA_VERSION) > 0;
+        } catch (IllegalSchemaVersionException e) {
+            return false;
+        }
+    }
+
+    @Override
     public ArrayList<String> getErrorLog() {
         return mErrorLog;
+    }
+
+    @Override
+    public String getSchemaVersion() {
+        return mSchemaVersion;
+    }
+
+    @Override
+    public String getSupportedSchemaVersion() {
+        return MAXIMUM_SCHEMA_VERSION;
     }
 
     //******************************************************************************************

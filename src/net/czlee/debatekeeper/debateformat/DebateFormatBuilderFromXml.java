@@ -52,9 +52,25 @@ public interface DebateFormatBuilderFromXml {
     public abstract boolean isSchemaSupported() throws IllegalArgumentException;
 
     /**
+     * @return <code>true</code> if the schema is too new for this class, <code>false</code> otherwise.
+     * Returns <code>false</code> if the schema version is unknown or invalid.
+     */
+    public abstract boolean isSchemaTooNew();
+
+    /**
      * @return An <i>ArrayList</i> of <code>String</code>s, each item being an error found by
      * the XML parser
      */
     public abstract ArrayList<String> getErrorLog();
+
+    /**
+     * @return the schema version of the processed file
+     */
+    public abstract String getSchemaVersion();
+
+    /**
+     * @return the highest schema version supported by this builder
+     */
+    public abstract String getSupportedSchemaVersion();
 
 }
