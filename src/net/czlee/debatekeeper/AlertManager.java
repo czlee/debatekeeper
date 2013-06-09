@@ -23,7 +23,6 @@ import java.util.TimerTask;
 import net.czlee.debatekeeper.debateformat.BellInfo;
 import net.czlee.debatekeeper.debateformat.BellSoundInfo;
 import net.czlee.debatekeeper.debateformat.PeriodInfo;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -231,7 +230,7 @@ public class AlertManager
                    .setContentText(speechName)
                    .setContentIntent(mIntentStartingHostActivity);
 
-            mNotification = builder.build();
+            mNotification = builder.getNotification();
             mService.startForeground(NOTIFICATION_ID, mNotification);
             mShowingNotification = true;
         }
