@@ -25,6 +25,9 @@ import java.util.Iterator;
 
 import net.czlee.debatekeeper.debateformat.DebateFormatInfo;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfoExtractorForSchema1;
+import net.czlee.debatekeeper.debateformat.DebateFormatInfoForSchema2;
+import net.czlee.debatekeeper.debateformat.XmlUtilities;
+import net.czlee.debatekeeper.debateformat.XmlUtilities.IllegalSchemaVersionException;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -83,6 +86,8 @@ public class FormatChooserActivity extends Activity {
     private static final int DIALOG_MORE_DETAILS = 1;
     private static final String BUNDLE_FILE_NAME = "fn";
     public  static final int RESULT_ERROR = RESULT_FIRST_USER;
+
+    public static final String CURRENT_SCHEMA_VERSION = "2.0";
 
     public static final String EXTRA_XML_FILE_NAME = "xmlfn";
 
@@ -176,6 +181,8 @@ public class FormatChooserActivity extends Activity {
      */
     private class GetDebateFormatNameXmlContentHandler extends DefaultHandler {
 
+        private StringBuilder mNameBuffer = null;
+
         @Override
         public void startDocument() throws SAXException {
             // initialise
@@ -189,13 +196,41 @@ public class FormatChooserActivity extends Activity {
             if (!uri.equals(DEBATING_TIMER_URI))
                 return;
 
+            // To keep things light, we just use the attribute of the root element
+            // (schema 1) or the first <name> element (schema 2), whichever we find
+            // first.  We don't actually check the schema version, nor do we check
+            // that the <name> element is actually the right one.
+
             if (localName.equals(getString(R.string.xml1elemName_root))) {
                 mCurrentStyleName = atts.getValue(DEBATING_TIMER_URI,
                         getString(R.string.xml1attrName_root_name));
                 throw new AllInformationFoundException();
                 // We don't need to parse any more once we find the style name
             }
+
+            if (localName.equals(getString(R.string.xml2elemName_name))) {
+                mNameBuffer = new StringBuilder();
+                return;
+            }
         }
+
+        @Override
+        public void endElement(String uri, String localName, String qName) throws SAXException {
+            if (localName.equals(getString(R.string.xml2elemName_name))) {
+                mCurrentStyleName = mNameBuffer.toString();
+                throw new AllInformationFoundException();
+                // We don't need to parse any more once we finish getting the style name
+            }
+        }
+
+        @Override
+        public void characters(char[] ch, int start, int length) throws SAXException {
+            String str = new String(ch, start, length);
+            if (mNameBuffer == null) return;
+            mNameBuffer = mNameBuffer.append(str);
+        }
+
+
 
     }
 
@@ -487,7 +522,10 @@ public class FormatChooserActivity extends Activity {
             return getBlankDetailsDialog(filename, e);
         }
 
-        populateFileInfo(view, filename);
+        String schemaVersion = null;
+        if (dfi != null) schemaVersion = dfi.getSchemaVersion();
+
+        populateFileInfo(view, filename, schemaVersion);
 
         if (dfi != null) {
             populateBasicInfo(view, dfi);
@@ -534,15 +572,29 @@ public class FormatChooserActivity extends Activity {
     /**
      * Parses an XML file to get the {@link DebateFormatInfo} object
      * @param filename the filename for the debate format XML file
-     * @return the <code>DebateFormatInfo</code> object, or <code>null</code>
+     * @return a <code>DebateFormatInfo</code> object, or <code>null</code>
      * @throws IOException if there was an IO problem with the XML file
      * @throws SAXException if thrown by the XML parser
      */
     private DebateFormatInfo getDebateFormatInfo(String filename) throws IOException, SAXException {
         InputStream is;
         is = mFilesManager.open(filename);
-        DebateFormatInfoExtractorForSchema1 dfie = new DebateFormatInfoExtractorForSchema1(this);
-        return dfie.getDebateFormatInfo(is);
+
+        // Assume it's a 2.0 schema first.
+        DebateFormatInfoForSchema2 dfi2 = new DebateFormatInfoForSchema2(this, is);
+
+        // If it's not 2.0, check to see if it is 1.0 or 1.1
+        if (!dfi2.isSchemaSupported()) {
+            DebateFormatInfoExtractorForSchema1 dfie = new DebateFormatInfoExtractorForSchema1(this);
+            is.close();
+            is = mFilesManager.open(filename); // open again to try schema 1.0
+            DebateFormatInfo dfi1 = dfie.getDebateFormatInfo(is);
+            if (dfi1.isSchemaSupported()) return dfi1;
+        }
+
+        // If it isn't, keep pretending it was 2.0.
+        return dfi2;
+
     }
 
     /**
@@ -577,12 +629,37 @@ public class FormatChooserActivity extends Activity {
      * @param view the View to populate
      * @param filename the file name
      */
-    private void populateFileInfo(View view, String filename) {
+    private void populateFileInfo(View view, String filename, String schemaVersion) {
+
+        // Display its location if it's not a built-in file
         if (mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_USER_DEFINED) {
             TextView fileLocationText = (TextView) view.findViewById(R.id.viewFormat_fileLocationValue);
             fileLocationText.setText(getString(R.string.viewFormat_fileLocationValue_userDefined));
             fileLocationText.setVisibility(View.VISIBLE);
         }
+
+        // Display its schema version if it's not the current version
+        if (schemaVersion != null) {
+            int comparison = 0;
+            String schemaVersionTextValue = null;
+            try {
+                comparison = XmlUtilities.compareSchemaVersions(schemaVersion, CURRENT_SCHEMA_VERSION);
+            } catch (IllegalSchemaVersionException e) {
+                schemaVersionTextValue = getString(R.string.viewFormat_unrecognisedSchemaVersion, schemaVersion);
+            }
+            if (schemaVersionTextValue == null) {
+                if (comparison > 0)
+                    schemaVersionTextValue = getString(R.string.viewFormat_futureSchemaVersion, schemaVersion);
+                else if (comparison < 0)
+                    schemaVersionTextValue = getString(R.string.viewFormat_outdatedSchemaVersion, schemaVersion);
+            }
+            if (schemaVersionTextValue != null) {
+                TextView schemaVersionText = (TextView) view.findViewById(R.id.viewFormat_schemaVersionValue);
+                schemaVersionText.setText(schemaVersionTextValue);
+                schemaVersionText.setVisibility(View.VISIBLE);
+            }
+        }
+
         ((TextView) view.findViewById(R.id.viewFormat_fileNameValue)).setText(filename);
     }
 

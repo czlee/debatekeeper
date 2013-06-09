@@ -1,48 +1,50 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<debateformat name="American Parliamentary" schemaversion="1.1">
-	<info>
-		<region>United States</region>
-		<level>University</level>
-		<usedat>American Parliamentary Debate Association</usedat>
-		<desc>2 vs 2, POIs allowed, PM 7 minutes, LO, MG, MO 8 minutes, LO 4 minutes, PM 5 minutes</desc>
-	</info>
-
-	<resource ref="#all">
-		<period ref="firstmin" bgcolor="#stay" />
-		<period ref="main" bgcolor="#stay" />
-		<period ref="pois-allowed" bgcolor="#7700ff00" poisallowed="true" />
-		<period ref="warning" bgcolor="#77ffcc00" />
-		<period ref="overtime" bgcolor="#77ff0000" />
-	</resource>
-
-	<speechtype ref="pm-const" length="7:00" firstperiod="firstmin">
-		<bell time="1:00" number="1" nextperiod="pois-allowed" />
-		<bell time="6:00" number="1" nextperiod="warning" />
-		<bell time="finish" number="2" nextperiod="overtime" />
-	</speechtype>
-
-	<speechtype ref="constructive" length="8:00" firstperiod="firstmin">
-		<bell time="1:00" number="1" nextperiod="pois-allowed" />
-		<bell time="7:00" number="1" nextperiod="warning" />
-		<bell time="finish" number="2" nextperiod="overtime" />
-	</speechtype>
-
-	<speechtype ref="lo-rebuttal" length="4:00" firstperiod="main">
-		<bell time="3:00" number="1" nextperiod="warning" />
-		<bell time="finish" number="2" nextperiod="overtime" />
-	</speechtype>
-
-	<speechtype ref="pm-rebuttal" length="5:00" firstperiod="main">
-		<bell time="4:00" number="1" nextperiod="warning" />
-		<bell time="finish" number="2" nextperiod="overtime" />
-	</speechtype>
-
-	<speeches>
-		<speech name="Prime Minister's Constructive" type="pm-const" />
-		<speech name="Leader of the Opposition's Constructive" type="constructive" />
-		<speech name="Member of the Government" type="constructive" />
-		<speech name="Member of the Opposition" type="constructive" />
-		<speech name="Leader of the Opposition's Rebuttal" type="lo-rebuttal" />
-		<speech name="Prime Minister's Rebuttal" type="pm-rebuttal" />
-	</speeches>
-</debateformat>
+<?xml version='1.0' encoding='UTF-8'?>
+<debate-format schema-version="2.0">
+  <name>American Parliamentary</name>
+  <info>
+    <region>United States</region>
+    <level>University</level>
+    <used-at>American Parliamentary Debate Association</used-at>
+    <description>2 vs 2, POIs allowed, PM 7 minutes, LO, MG, MO 8 minutes, LO 4 minutes, PM 5 minutes</description>
+  </info>
+  <speech-types>
+    <speech-type ref="pm-const" length="7:00" first-period="normal">
+      <bell time="1:00" number="1" next-period="pois-allowed"/>
+      <bell time="6:00" number="1" next-period="warning"/>
+      <bell time="finish" number="2" next-period="overtime"/>
+    </speech-type>
+    <speech-type ref="constructive" length="8:00" first-period="normal">
+      <bell time="1:00" number="1" next-period="pois-allowed"/>
+      <bell time="7:00" number="1" next-period="warning"/>
+      <bell time="finish" number="2" next-period="overtime"/>
+    </speech-type>
+    <speech-type ref="lo-rebuttal" length="4:00" first-period="normal">
+      <bell time="3:00" number="1" next-period="warning"/>
+      <bell time="finish" number="2" next-period="overtime"/>
+    </speech-type>
+    <speech-type ref="pm-rebuttal" length="5:00" first-period="normal">
+      <bell time="4:00" number="1" next-period="warning"/>
+      <bell time="finish" number="2" next-period="overtime"/>
+    </speech-type>
+  </speech-types>
+  <speeches>
+    <speech type="pm-const">
+      <name>Prime Minister's Constructive</name>
+    </speech>
+    <speech type="constructive">
+      <name>Leader of the Opposition's Constructive</name>
+    </speech>
+    <speech type="constructive">
+      <name>Member of the Government</name>
+    </speech>
+    <speech type="constructive">
+      <name>Member of the Opposition</name>
+    </speech>
+    <speech type="lo-rebuttal">
+      <name>Leader of the Opposition's Rebuttal</name>
+    </speech>
+    <speech type="pm-rebuttal">
+      <name>Prime Minister's Rebuttal</name>
+    </speech>
+  </speeches>
+</debate-format>

@@ -36,6 +36,9 @@ import android.os.Bundle;
  */
 public class PeriodInfo {
 
+    private String mReference         = null;
+    private String mName              = null;
+
     // The meaning of "null" in both these objects is "do not change from what it is currently".
     private String  mDescription      = null;
     private Integer mBackgroundColor  = null; // Use Integer so that we can also use null.
@@ -54,6 +57,15 @@ public class PeriodInfo {
         super();
     }
 
+    public PeriodInfo(String reference, String name, String description, Integer backgroundColor, boolean poisAllowed) {
+        super();
+        mReference       = reference;
+        mName            = name;
+        mDescription     = description;
+        mBackgroundColor = backgroundColor;
+        mPoisAllowed     = poisAllowed;
+    }
+
     public PeriodInfo(String description, Integer backgroundColor, boolean poisAllowed) {
         super();
         mDescription     = description;
@@ -61,7 +73,28 @@ public class PeriodInfo {
         mPoisAllowed     = poisAllowed;
     }
 
-    public String  getDescription() {
+    /**
+     * @return a reference string, not strictly part of the period type information but users
+     * may find it useful to know what the reference was that was used to create this
+     * <code>PeriodInfo</code>.  This may return <code>null</code> if the <code>PeriodInfo</code> was
+     * created from a version 1 schema.
+     */
+    public String getReference() {
+        return mReference;
+    }
+
+    /**
+     * @return a name that would appear in a list of lots of period types.  This may return
+     * <code>null</code> if the {@link PeriodInfo} was created from a version 1 schema.
+     */
+    public String getName() {
+        return mName;
+    }
+
+    /**
+     * @return the description that would appear on the screen while this period is being displayed.
+     */
+    public String getDescription() {
         return mDescription;
     }
 
@@ -125,4 +158,5 @@ public class PeriodInfo {
         mBackgroundColor = bundle.getInt(key + BUNDLE_SUFFIX_BGCOLOR);
         mPoisAllowed = bundle.getBoolean(key + BUNDLE_SUFFIX_POIS_ALLOWED, false);
     }
+
 }

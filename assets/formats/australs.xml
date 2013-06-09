@@ -1,38 +1,47 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<debateformat name="Australs" schemaversion="1.1">
-	<info>
-		<region>Australasia</region>
-		<level>University</level>
-		<usedat>Australasian Intervarsity Debating Championships</usedat>
-		<desc>3 vs 3, 8-minute speeches, 4-minute replies, no POIs</desc>
-	</info>
-	
-	<preptime length="30:00" />
-	
-	<resource ref="#all">
-		<period ref="initial" bgcolor="#stay" />
-		<period ref="warning" bgcolor="#77ffcc00" />
-		<period ref="overtime" bgcolor="#77ff0000" />
-	</resource>
-	
-	<speechtype ref="substantive" length="8:00" firstperiod="initial">
-		<bell time="6:00" number="1" nextperiod="warning" />
-		<bell time="finish" number="2" nextperiod="overtime" />
-	</speechtype>
-	
-	<speechtype ref="reply" length="4:00" firstperiod="initial">
-		<bell time="3:00" number="1" nextperiod="warning" />
-		<bell time="finish" number="2" nextperiod="overtime" />
-	</speechtype>
-	
-	<speeches>
-		<speech name="1st Affirmative" type="substantive" />
-		<speech name="1st Negative" type="substantive" />
-		<speech name="2nd Affirmative" type="substantive" />
-		<speech name="2nd Negative" type="substantive" />
-		<speech name="3rd Affirmative" type="substantive" />
-		<speech name="3rd Negative" type="substantive" />
-		<speech name="Negative Leader's Reply" type="reply" />
-		<speech name="Affirmative Leader's Reply" type="reply" />
-	</speeches>
-</debateformat>
+<?xml version='1.0' encoding='UTF-8'?>
+<debate-format schema-version="2.0">
+  <name>Australs</name>
+  <info>
+    <region>Australasia</region>
+    <level>University</level>
+    <used-at>Australasian Intervarsity Debating Championships</used-at>
+    <description>3 vs 3, 8-minute speeches, 4-minute replies, no POIs</description>
+  </info>
+  <prep-time length="30:00"/>
+  <speech-types>
+    <speech-type ref="substantive" length="8:00" first-period="normal">
+      <bell time="6:00" number="1" next-period="warning"/>
+      <bell time="finish" number="2" next-period="overtime"/>
+    </speech-type>
+    <speech-type ref="reply" length="4:00" first-period="normal">
+      <bell time="3:00" number="1" next-period="warning"/>
+      <bell time="finish" number="2" next-period="overtime"/>
+    </speech-type>
+  </speech-types>
+  <speeches>
+    <speech type="substantive">
+      <name>1st Affirmative</name>
+    </speech>
+    <speech type="substantive">
+      <name>1st Negative</name>
+    </speech>
+    <speech type="substantive">
+      <name>2nd Affirmative</name>
+    </speech>
+    <speech type="substantive">
+      <name>2nd Negative</name>
+    </speech>
+    <speech type="substantive">
+      <name>3rd Affirmative</name>
+    </speech>
+    <speech type="substantive">
+      <name>3rd Negative</name>
+    </speech>
+    <speech type="reply">
+      <name>Negative Leader's Reply</name>
+    </speech>
+    <speech type="reply">
+      <name>Affirmative Leader's Reply</name>
+    </speech>
+  </speeches>
+</debate-format>

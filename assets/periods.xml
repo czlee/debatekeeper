@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Copyright (C) 2013 Chuan-Zheng Lee
+ *
+ * This file is part of the Debatekeeper app, which is licensed under the
+ * GNU General Public Licence version 3 (GPLv3).  You can redistribute
+ * and/or modify it under the terms of the GPLv3, and you must not use
+ * this file except in compliance with the GPLv3.
+ *
+ * This app is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public Licence for more details.
+ *
+ * You should have received a copy of the GNU General Public Licence
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<!-- This file contains the built-in period types. -->
+<period-types>
+	<period-type ref="normal">
+		<name>Normal</name>
+	</period-type>
+	<period-type ref="pois-allowed" pois-allowed="true">
+		<name>POIs allowed</name>
+		<default-bgcolor>#7700ff00</default-bgcolor>
+	</period-type>
+	<period-type ref="warning">
+		<name>Warning</name>
+		<default-bgcolor>#77ffcc00</default-bgcolor>
+	</period-type>
+	<period-type ref="overtime">
+		<name>Overtime</name>
+		<default-bgcolor>#77ff0000</default-bgcolor>
+	</period-type>
+</period-types>

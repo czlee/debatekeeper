@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
-
 import android.util.Log;
 
 /**
@@ -96,7 +95,7 @@ public class DebateFormat {
 
     /**
      * Sets the prep format.
-     * @param pf the {@link PrepTimeSimpleFormat}
+     * @param pf the {@link PrepTimeFormat}
      */
     public void setPrepFormat(PrepTimeFormat ptf) {
         mPrepTimeFormat = ptf;
@@ -109,6 +108,15 @@ public class DebateFormat {
      */
     public void addSpeechFormat(String formatRef, SpeechFormat sf) {
         mSpeechFormats.put(formatRef, sf);
+    }
+
+
+    /**
+     * @param formatRef the key (reference) to the speech format
+     * @return <code>true</code> if a speech format with this reference exists, <code>false</code> otherwise
+     */
+    public boolean hasSpeechFormat(String formatRef) {
+        return mSpeechFormats.containsKey(formatRef);
     }
 
     /**

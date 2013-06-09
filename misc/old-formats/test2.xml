@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<debateformat name="Test format 2" schemaversion="1.1">
+	<info>
+		<region>None</region>
+		<level>None</level>
+		<usedat>Nowhere</usedat>
+		<desc>Use this format to try out this app without waiting ages for bells</desc>
+	</info>
+
+	<preptime-controlled length="20" firstperiod="easters.moot">
+		<period ref="normal" desc="" bgcolor="#stay" />
+	    <period ref="easters.moot" desc="Choose moot" />
+		<period ref="easters.side" desc="Choose side" />
+	    <bell time="5" number="1" nextperiod="easters.side" pauseonbell="true" />
+		<bell time="10" number="1" nextperiod="normal" pauseonbell="true" />
+		<bell time="finish" number="2" />
+	</preptime-controlled>
+	
+	<resource ref="speeches">
+		<period ref="initial" bgcolor="#stay" />
+		<period ref="warning" bgcolor="#77ffcc00" />
+		<period ref="overtime" bgcolor="#77ff0000" />
+	</resource>
+
+	<speechtype ref="substantive" length="15" firstperiod="initial">
+		<include resource="speeches" />
+		<bell time="10" number="1" nextperiod="warning" />
+		<bell time="finish" number="2" nextperiod="overtime" />
+	</speechtype>
+
+	<speechtype ref="reply" length="10" firstperiod="initial">
+		<include resource="speeches" />
+		<bell time="5" number="1" nextperiod="warning" />
+		<bell time="finish" number="2" nextperiod="overtime" />
+	</speechtype>
+
+	<speeches>
+		<speech name="1st Affirmative" type="substantive" />
+		<speech name="1st Negative" type="substantive" />
+		<speech name="2nd Affirmative" type="substantive" />
+		<speech name="2nd Negative" type="substantive" />
+		<speech name="Negative Leader's Reply" type="reply" />
+		<speech name="Affirmative Leader's Reply" type="reply" />
+	</speeches>
+</debateformat>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="" xmlns="http://relaxng.org/ns/structure/1.0"
+		 datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+		 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">
+
+	<start>
+
+		<element name="debateformat">
+
+			<attribute name="schemaversion">
+				<value>1.1</value>
+			</attribute>
+
+			<attribute name="name">
+				<data type="string"/>
+			</attribute>
+
+			<element name="info">
+				<interleave>
+					<zeroOrMore>
+						<element name="region">
+							<data type="string"/>
+						</element>
+					</zeroOrMore>
+					<zeroOrMore>
+						<element name="level">
+							<data type="string"/>
+						</element>
+					</zeroOrMore>
+					<zeroOrMore>
+						<element name="usedat">
+							<data type="string"/>
+						</element>
+					</zeroOrMore>
+					<element name="desc">
+						<data type="string"/>
+					</element>
+				</interleave>
+			</element>
+
+			<interleave>
+
+				<!-- Can choose either or prep-time and prep-time-controlled but not both -->
+				<optional>
+					<choice>
+						<element name="preptime">
+							<attribute name="length">
+								<ref name="value-time"/>
+							</attribute>
+						</element>
+
+						<element name="preptime-controlled">
+							<ref name="common.controlled-time"/>
+						</element>
+					</choice>
+				</optional>
+
+				<zeroOrMore>
+					<element name="resource">
+						<attribute name="ref">
+							<data type="string"/>
+						</attribute>
+						<ref name="common.speech-elements"/>
+					</element>
+				</zeroOrMore>
+
+				<oneOrMore>
+					<element name="speechtype">
+						<attribute name="ref">
+							<data type="string"/>
+						</attribute>
+						<interleave>
+							<ref name="common.controlled-time"/>
+							<zeroOrMore>
+								<element name="include">
+									<attribute name="resource">
+										<data type="string"/>
+									</attribute>
+								</element>
+							</zeroOrMore>
+						</interleave>
+					</element>
+				</oneOrMore>
+
+			</interleave>
+
+			<element name="speeches">
+				<oneOrMore>
+					<element name="speech">
+						<attribute name="type">
+							<data type="string"/>
+						</attribute>
+
+						<attribute name="name">
+							<data type="string"/>
+						</attribute>
+					</element>
+				</oneOrMore>
+			</element>
+
+		</element>
+
+	</start>
+
+	<define name="common.controlled-time">
+		<attribute name="length">
+			<ref name="value-time"/>
+		</attribute>
+		<optional>
+			<attribute name="firstperiod">
+				<data type="string"/>
+			</attribute>
+		</optional>
+		<ref name="common.speech-elements"/>
+	</define>
+
+	<define name="common.speech-elements">
+		<interleave>
+			<zeroOrMore>
+				<element name="bell">
+					<attribute name="time">
+						<ref name="value-time"/>
+					</attribute>
+					<optional>
+						<attribute name="number">
+							<data type="integer"/>
+						</attribute>
+					</optional>
+					<optional>
+						<attribute name="nextperiod">
+							<data type="string"/>
+						</attribute>
+					</optional>
+					<optional>
+						<attribute name="pauseonbell">
+							<data type="boolean"/>
+						</attribute>
+					</optional>
+				</element>
+			</zeroOrMore>
+			<zeroOrMore>
+				<element name="period">
+					<attribute name="ref">
+						<data type="string"/>
+					</attribute>
+					<optional>
+						<attribute name="bgcolor">
+							<choice>
+								<data type="string">
+									<param name="pattern">#[a-fA-F0-9]{8}</param>
+								</data>
+								<value>#stay</value>
+							</choice>
+						</attribute>
+					</optional>
+					<optional>
+						<attribute name="desc">
+							<data type="string"/>
+						</attribute>
+					</optional>
+					<optional>
+						<attribute name="poisallowed">
+							<data type="boolean"/>
+						</attribute>
+					</optional>
+				</element>
+			</zeroOrMore>
+		</interleave>
+	</define>
+
+	<define name="value-time">
+		<choice>
+			<data type="string">
+				<param name="pattern">\d+(:\d\d)?</param>
+			</data>
+			<value>finish</value>
+		</choice>
+	</define>
+
+</grammar>

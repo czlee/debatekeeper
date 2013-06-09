@@ -133,7 +133,7 @@ public class DebateFormatBuilderForSchema1 {
 
             // Check for duplicate keys
             if (mPeriodInfos.containsKey(ref)) {
-                throw new DebateFormatBuilderException(R.string.dfbError_periodInfoDuplicate, ref);
+                throw new DebateFormatBuilderException(R.string.dfb1error_periodInfoDuplicate, ref);
             }
 
             // If okay, then add
@@ -170,7 +170,7 @@ public class DebateFormatBuilderForSchema1 {
                 pi = mPeriodInfos.get(periodInfoRef);
                 if (pi == null) {
                     throw new DebateFormatBuilderException(
-                            R.string.dfbError_periodInfoNotFound, periodInfoRef);
+                            R.string.dfb1error_periodInfoNotFound, periodInfoRef);
                 }
                 bi.setNextPeriodInfo(pi);
             }
@@ -217,7 +217,7 @@ public class DebateFormatBuilderForSchema1 {
                 BellInfo checkBi = biIterator.next();
                 if (checkBi.getBellTime() == bellTime) {
                     String timeStr = secsToText(bellTime);
-                    throw new DebateFormatBuilderException(R.string.dfbError_bellDuplicate, timeStr);
+                    throw new DebateFormatBuilderException(R.string.dfb1error_bellDuplicate, timeStr);
                 }
             }
         }
@@ -270,7 +270,7 @@ public class DebateFormatBuilderForSchema1 {
         public void setFirstPeriod(String firstPeriodRef) throws DebateFormatBuilderException {
             PeriodInfo pi = mPeriodInfos.get(firstPeriodRef);
             if (pi == null) {
-                throw new DebateFormatBuilderException(R.string.dfbError_periodInfoNotFound, firstPeriodRef);
+                throw new DebateFormatBuilderException(R.string.dfb1error_periodInfoNotFound, firstPeriodRef);
             }
             mFirstPeriodInfo = pi;
         }
@@ -331,7 +331,7 @@ public class DebateFormatBuilderForSchema1 {
             // Check that the bell isn't after the finish time
             if (bellTime > mLength) {
                 String timeStr = secsToText(bellTime);
-                throw new DebateFormatBuilderException(R.string.dfbError_bellAfterFinishTime, timeStr);
+                throw new DebateFormatBuilderException(R.string.dfb1error_bellAfterFinishTime, timeStr);
             }
 
         }
@@ -400,7 +400,7 @@ public class DebateFormatBuilderForSchema1 {
         assertFormatsAreAddable();
         if (ref.equalsIgnoreCase(getString(R.string.xml1attrValue_resource_ref_common))) {
             if (mResourceForAll != null) {
-                throw new DebateFormatBuilderException(R.string.dfbError_resourceDuplicate,
+                throw new DebateFormatBuilderException(R.string.dfb1error_resourceDuplicate,
                         getString(R.string.xml1attrValue_resource_ref_common));
             }
             mResourceForAll = new Resource();
@@ -408,7 +408,7 @@ public class DebateFormatBuilderForSchema1 {
             Resource res = new Resource();
             mResources.put(ref, res);
         } else {
-            throw new DebateFormatBuilderException(R.string.dfbError_resourceDuplicate, ref);
+            throw new DebateFormatBuilderException(R.string.dfb1error_resourceDuplicate, ref);
         }
     }
 
@@ -436,7 +436,7 @@ public class DebateFormatBuilderForSchema1 {
 
             mSpeechFormatBuilders.put(ref, sfb);
         } else {
-            throw new DebateFormatBuilderException(R.string.dfbError_speechFormatDuplicate, ref);
+            throw new DebateFormatBuilderException(R.string.dfb1error_speechFormatDuplicate, ref);
         }
     }
 
@@ -448,7 +448,7 @@ public class DebateFormatBuilderForSchema1 {
      */
     public void addPrepTimeSimple(long length) throws DebateFormatBuilderException {
         if (mDebateFormatBeingBuilt.hasPrepFormat() || mPrepTimeControlledBuilder != null)
-            throw new DebateFormatBuilderException(R.string.dfbError_multiplePrepTimes);
+            throw new DebateFormatBuilderException(R.string.dfb1error_multiplePrepTimes);
         PrepTimeSimpleFormat ptsf = new PrepTimeSimpleFormat(length);
         mDebateFormatBeingBuilt.setPrepFormat(ptsf);
     }
@@ -461,7 +461,7 @@ public class DebateFormatBuilderForSchema1 {
      */
     public void addPrepTimeControlled(long length) throws DebateFormatBuilderException {
         if (mDebateFormatBeingBuilt.hasPrepFormat() || mPrepTimeControlledBuilder != null)
-            throw new DebateFormatBuilderException(R.string.dfbError_multiplePrepTimes);
+            throw new DebateFormatBuilderException(R.string.dfb1error_multiplePrepTimes);
         mPrepTimeControlledBuilder = new PrepTimeControlledBuilder(length);
     }
 
@@ -489,7 +489,7 @@ public class DebateFormatBuilderForSchema1 {
             mDebateFormatBeingBuilt.addSpeech(name, formatRef);
         } catch (NoSuchFormatException e) {
             throw new DebateFormatBuilderException(
-                    R.string.dfbError_addSpeechSpeechFormatNotFound, formatRef, name);
+                    R.string.dfb1error_addSpeechSpeechFormatNotFound, formatRef, name);
         }
 
     }
@@ -727,7 +727,7 @@ public class DebateFormatBuilderForSchema1 {
      */
     public boolean hasFinishBellInPrepTimeControlled() throws DebateFormatBuilderException {
         if (mPrepTimeControlledBuilder == null)
-            throw new DebateFormatBuilderException(R.string.dfbError_prepTimeNotControlled);
+            throw new DebateFormatBuilderException(R.string.dfb1error_prepTimeNotControlled);
         return mPrepTimeControlledBuilder.hasFinishBell();
     }
 
@@ -741,7 +741,7 @@ public class DebateFormatBuilderForSchema1 {
     public boolean hasPeriodInfoInPrepTimeControlled(String periodInfoRef)
             throws DebateFormatBuilderException {
         if (mPrepTimeControlledBuilder == null)
-            throw new DebateFormatBuilderException(R.string.dfbError_prepTimeNotControlled);
+            throw new DebateFormatBuilderException(R.string.dfb1error_prepTimeNotControlled);
         return mPrepTimeControlledBuilder.hasPeriodInfo(periodInfoRef);
     }
 
@@ -757,12 +757,8 @@ public class DebateFormatBuilderForSchema1 {
      * Returns the assembled {@link DebateFormat}.  Calls to any other method than this one, after
      * this has been called once, are illegal.
      * @return the assembled <code>DebateFormat</code>
-     * @throws IllegalStateException if there are no speeches added when this is called
      */
     public DebateFormat getDebateFormat() {
-        if (mDebateFormatBeingBuilt.numberOfSpeeches() == 0) {
-            throw new IllegalStateException("There are no speeches in this format!");
-        }
         mState = State.DONE;
         return mDebateFormatBeingBuilt;
     }
@@ -783,7 +779,7 @@ public class DebateFormatBuilderForSchema1 {
             throw new IllegalStateException("You can't modify prep time after addSpeech() is called");
         }
         if (mPrepTimeControlledBuilder == null)
-            throw new DebateFormatBuilderException(R.string.dfbError_prepTimeNotControlled);
+            throw new DebateFormatBuilderException(R.string.dfb1error_prepTimeNotControlled);
     }
 
     /**
@@ -797,7 +793,7 @@ public class DebateFormatBuilderForSchema1 {
             res = mResourceForAll;
         else res = mResources.get(ref);
         if (res == null) {
-            throw new DebateFormatBuilderException(R.string.dfbError_resourceNotFound, ref);
+            throw new DebateFormatBuilderException(R.string.dfb1error_resourceNotFound, ref);
         }
         return res;
     }
@@ -812,7 +808,7 @@ public class DebateFormatBuilderForSchema1 {
 
         SpeechFormatBuilder sfb = mSpeechFormatBuilders.get(ref);
         if (sfb == null) {
-            throw new DebateFormatBuilderException(R.string.dfbError_speechFormatNotFound, ref);
+            throw new DebateFormatBuilderException(R.string.dfb1error_speechFormatNotFound, ref);
         }
         return sfb;
     }

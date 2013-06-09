@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="" xmlns="http://relaxng.org/ns/structure/1.0"
+		 datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+		 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">
+
+	<start>
+
+		<element name="debate-format">
+
+			<attribute name="schema-version">
+				<data type="string">
+					<param name="pattern">\d+\.\d+</param>
+				</data>
+			</attribute>
+
+			<element name="name">
+				<ref name="value-string"/>
+			</element>
+
+			<element name="info">
+				<interleave>
+					<zeroOrMore>
+						<element name="region">
+							<ref name="value-string"/>
+						</element>
+					</zeroOrMore>
+					<zeroOrMore>
+						<element name="level">
+							<ref name="value-string"/>
+						</element>
+					</zeroOrMore>
+					<zeroOrMore>
+						<element name="used-at">
+							<ref name="value-string"/>
+						</element>
+					</zeroOrMore>
+					<element name="description">
+						<ref name="value-string"/>
+					</element>
+				</interleave>
+			</element>
+
+			<optional>
+				<element name="period-types">
+					<oneOrMore>
+						<element name="period-type">
+							<attribute name="ref">
+								<ref name="value-string"/>
+							</attribute>
+							<optional>
+								<attribute name="pois-allowed">
+									<data type="boolean"/>
+								</attribute>
+							</optional>
+							<interleave>
+								<element name="name">
+									<ref name="value-string"/>
+								</element>
+								<optional>
+									<element name="display">
+										<text/>
+									</element>
+								</optional>
+								<optional>
+									<element name="default-bgcolor">
+										<data type="string">
+											<param name="pattern">#[0-9a-fA-F]{8}</param>
+										</data>
+									</element>
+								</optional>
+							</interleave>
+						</element>
+					</oneOrMore>
+				</element>
+			</optional>
+
+			<!-- Can choose either or prep-time and prep-time-controlled but not both -->
+			<optional>
+				<choice>
+					<element name="prep-time">
+						<attribute name="length">
+							<ref name="value-time"/>
+						</attribute>
+					</element>
+
+					<element name="prep-time-controlled">
+						<ref name="common.controlled-time"/>
+					</element>
+				</choice>
+			</optional>
+
+			<element name="speech-types">
+				<oneOrMore>
+					<element name="speech-type">
+						<attribute name="ref">
+							<ref name="value-string"/>
+						</attribute>
+						<ref name="common.controlled-time"/>
+					</element>
+				</oneOrMore>
+			</element>
+
+			<element name="speeches">
+				<oneOrMore>
+					<element name="speech">
+						<attribute name="type">
+							<ref name="value-string"/>
+						</attribute>
+						<element name="name">
+							<ref name="value-string"/>
+						</element>
+					</element>
+				</oneOrMore>
+			</element>
+
+		</element>
+
+	</start>
+
+	<define name="common.controlled-time">
+		<attribute name="length">
+			<ref name="value-time"/>
+		</attribute>
+		<optional>
+			<attribute name="first-period">
+				<ref name="value-string"/>
+			</attribute>
+		</optional>
+		<zeroOrMore>
+			<element name="bell">
+				<attribute name="time">
+					<choice>
+						<ref name="value-time"/>
+						<value>finish</value>
+					</choice>
+				</attribute>
+				<optional>
+					<attribute name="number">
+						<data type="integer"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="next-period">
+						<ref name="value-string"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="pause-on-bell">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+			</element>
+		</zeroOrMore>
+	</define>
+
+	<define name="value-time">
+		<data type="string">
+			<param name="pattern">\d+(:[0-5]\d)?</param>
+		</data>
+	</define>
+
+	<define name="value-string">
+		<data type="string">
+			<param name="minLength">2</param>
+		</data>
+	</define>
+
+</grammar>

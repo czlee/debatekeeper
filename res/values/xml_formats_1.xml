@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2012 Chuan-Zheng Lee
+ *
+ * This file is part of the Debatekeeper app, which is licensed under the
+ * GNU General Public Licence version 3 (GPLv3).  You can redistribute
+ * and/or modify it under the terms of the GPLv3, and you must not use
+ * this file except in compliance with the GPLv3.
+ *
+ * This app is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public Licence for more details.
+ *
+ * You should have received a copy of the GNU General Public Licence
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<resources>
+
+    <!-- Version 1 schema -->
+    
+    <string name="xml1elemName_root">debateformat</string>
+        <string name="xml1attrName_root_name">name</string>
+        <string name="xml1attrName_root_schemaVersion">schemaversion</string>
+        <string name="xml1attrName_common_ref">ref</string>
+            <string name="xml1attrValue_common_true">true</string>
+            <string name="xml1attrValue_common_false">false</string>
+            <string name="xml1attrValue_common_stay">#stay</string>
+            <string name="xml1attrValue_common_default">#default</string>
+
+    <string name="xml1elemName_info">info</string>
+        <string name="xml1elemName_info_region">region</string>
+        <string name="xml1elemName_info_level">level</string>
+        <string name="xml1elemName_info_usedAt">usedat</string>
+        <string name="xml1elemName_info_desc">desc</string>
+
+    <string name="xml1elemName_resource">resource</string>
+        <string name="xml1attrValue_resource_ref_common">#all</string>
+
+    <string name="xml1elemName_prepTimeSimpleFormat">preptime</string>
+
+    <!-- attributes common to preptime-controlled and speechtype -->
+        <string name="xml1attrName_controlledTimeLength">length</string>
+        <string name="xml1attrName_controlledTimeFirstPeriod">firstperiod</string>
+
+    <string name="xml1elemName_prepTimeControlledFormat">preptime-controlled</string>
+
+    <string name="xml1elemName_speechFormat">speechtype</string>
+        <string name="xml1attrName_speechFormat_countDir">countdir</string>
+            <string name="xml1attrValue_speechFormat_countDir_up">up</string>
+            <string name="xml1attrValue_speechFormat_countDir_down">down</string>
+
+    <string name="xml1elemName_bell">bell</string>
+        <string name="xml1attrName_bell_time">time</string>
+            <string name="xml1attrValue_bell_time_finish">finish</string>
+        <string name="xml1attrName_bell_number">number</string>
+        <string name="xml1attrName_bell_nextPeriod">nextperiod</string>
+        <string name="xml1attrName_bell_pauseOnBell">pauseonbell</string>
+
+    <string name="xml1elemName_period">period</string>
+        <string name="xml1attrName_period_desc">desc</string>
+        <string name="xml1attrName_period_bgcolor">bgcolor</string>
+        <string name="xml1attrName_period_poisAllowed">poisallowed</string>
+
+    <string name="xml1elemName_include">include</string>
+        <string name="xml1attrName_include_resource">resource</string>
+
+    <string name="xml1elemName_speechesList">speeches</string>
+        <string name="xml1elemName_speech">speech</string>
+            <string name="xml1attrName_speech_name">name</string>
+            <string name="xml1attrName_speech_format">type</string>
+
+    <!-- Version 1 error messages -->
+            
+    <string name="xml1error_rootNoName">This debate format has no name!</string>
+    <string name="xml1error_somethingOutsideRoot">There was something outside the root debateformat element</string>
+    <string name="xml1error_resourceNoRef">"No 'ref' was specified for a resource"</string>
+    <string name="xml1error_resourceInsideContext">"The resource '%1$s' was inside a %2$s"</string>
+    <string name="xml1error_resourcePeriodInfoNotFound">"There is no period with reference '%1$s' in resource '%2$s'"</string>
+    <string name="xml1error_speechFormatNoRef">"No 'ref' was specified for a speech type"</string>
+    <string name="xml1error_speechFormatNoLength">"Speech type '%1$s' had no length"</string>
+    <string name="xml1error_speechFormatInvalidLength">"Invalid time for length of speech type '%1$s': '%2$s'"</string>
+    <string name="xml1error_speechFormatUnexpectedlyNotFound">"Unexpectedly, I couldn't find speech type '%1$s'"</string>
+    <string name="xml1error_speechFormatInsideContext">"The speech type '%1$s' was inside a %2$s"</string>
+    <string name="xml1error_speechFormatPeriodInfoNotFound">"There is no period with reference '%1$s' in speech type '%2$s'"</string>
+    <string name="xml1error_speechFormatFoundCountDir">"The 'countdir' attribute was made obsolete in version 0.9; please remove it from the XML file."</string>
+    <string name="xml1error_speechFormatNoFinishBell">"The speech type '%1$s' has no finish bell defined, so I'll default to a double bell at the end of this speech type. To avoid this warning, please explicitly define a finish bell in the XML file. If you don't want a finish bell to sound, use &lt;bell time=\"finish\" number=\"0\"/&gt;"</string>
+    <string name="xml1error_prepTimeNoLength">"Prep time had no length"</string>
+    <string name="xml1error_prepTimeInvalidLength">"Invalid time for length of prep time: '%1$s'"</string>
+    <string name="xml1error_prepTimeInsideContext">"The prep time was inside a %1$s"</string>
+    <string name="xml1error_prepTimePeriodInfoNotFound">"There is no period with reference '%1$s' in the prep time"</string>
+    <string name="xml1error_prepTimeNoFinishBell">"The prep time has no finish bell defined, so I'll default to a double bell at the end of this speech type. To avoid this warning, please explicitly define a finish bell in the XML file. If you don't want a finish bell to sound, use &lt;bell time=\"finish\" number=\"0\"/&gt;"</string>
+    <string name="xml1error_bellNoTime">"A bell in %1$s did not specify a time."</string>
+    <string name="xml1error_bellInvalidTime">"Invalid time for bell in %1$s: '%2$s'"</string>
+    <string name="xml1error_bellInvalidNumber">"Invalid number of bells in %1$s: '%2$s'"</string>
+    <string name="xml1error_bellInvalidPauseOnBell">"Invalid pauseonbell value in %1$s: '%2$s'"</string>
+    <string name="xml1error_bellOutsideContext">"A bell is not inside a valid resource or speech type"</string>
+    <string name="xml1error_periodNoRef">"No 'ref' was specified for a period in %1$s."</string>
+    <string name="xml1error_periodInvalidColor">"Invalid background colour (bgcolor) specified for period %1$s: '%2$s'"</string>
+    <string name="xml1error_periodInvalidPoisAllowed">"Invalid POIs allowed indication (poisallowed) specified for period %1$s: '%2$s'"</string>
+    <string name="xml1error_periodOutsideContext">"The period '%1$s' was not inside a valid resource or speech type"</string>
+    <string name="xml1error_includeNoResource">"An include element in %1$s didn't specify a resource"</string>
+    <string name="xml1error_includeOutsideSpeechFormat">"An include element for invalid resource '%1$s' was outside a speech type"</string>
+    <string name="xml1error_speechesListInsideContext">"The speeches list started inside a %1$s"</string>
+    <string name="xml1error_speechNoName">"A speech did not specify a name"</string>
+    <string name="xml1error_speechNoFormat">"The speech '%1$s' did not specify a type"</string>
+    <string name="xml1error_speechOutsideSpeechesList">"The speech '%1$s' was outside the 'speeches' list"</string>
+
+    <string name="dfb1error_periodInfoDuplicate">"The period '%1$s' was specified more than once"</string>
+    <string name="dfb1error_periodInfoNotFound">"There is no period with reference '%1$s'"</string>
+    <string name="dfb1error_bellDuplicate">"There is more than one bell at time %1$s"</string>
+    <string name="dfb1error_bellAfterFinishTime">"The bell at %1$s is after the finish time"</string>
+    <string name="dfb1error_resourceDuplicate">"The resource '%1$s' was specified more than once"</string>
+    <string name="dfb1error_speechFormatDuplicate">"The speech type '%1$s' was specified more than once"</string>
+    <string name="dfb1error_speechFormatNotFound">"There is no speech type with reference '%1$s'"</string>
+    <string name="dfb1error_resourceNotFound">"There is no resource with reference '%1$s'"</string>
+    <string name="dfb1error_addSpeechSpeechFormatNotFound">"There is no speech type with reference '%1$s' (%2$s)"</string>
+    <string name="dfb1error_multiplePrepTimes">"More than one prep time was found"</string>
+    <string name="dfb1error_prepTimeNotControlled">"Either the prep time is not controlled or there is no prep time in this format, so can't add bells or periods to the prep time"</string>
+</resources>

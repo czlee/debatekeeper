@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<debateformat name="Thropy break rounds" schemaversion="1.1">
+	<info>
+		<region>New Zealand</region>
+		<level>University</level>
+		<usedat>New Zealand North Island Novice Debating Championships break rounds</usedat>
+		<desc>3 vs 3, 8-minute speeches, 4-minute replies, POIs allowed</desc>
+	</info>
+
+	<preptime length="30:00" />
+		
+	<resource ref="#all">
+		<period ref="warning" bgcolor="#77ffcc00" />
+		<period ref="overtime" bgcolor="#77ff0000" />
+	</resource>
+
+	<speechtype ref="substantive" length="8:00" firstperiod="firstmin">
+		<period ref="firstmin" bgcolor="#stay" />
+		<period ref="pois-allowed" bgcolor="#7700ff00" poisallowed="true" />
+		<bell time="1:00" number="1" nextperiod="pois-allowed" />
+		<bell time="7:00" number="1" nextperiod="warning" />
+		<bell time="finish" number="2" nextperiod="overtime" />
+	</speechtype>
+
+	<speechtype ref="reply" length="4:00" firstperiod="main">
+		<period ref="main" bgcolor="#stay" />
+		<bell time="3:00" number="1" nextperiod="warning" />
+		<bell time="finish" number="2" nextperiod="overtime" />
+	</speechtype>
+
+	<speeches>
+		<speech name="1st Affirmative" type="substantive" />
+		<speech name="1st Negative" type="substantive" />
+		<speech name="2nd Affirmative" type="substantive" />
+		<speech name="2nd Negative" type="substantive" />
+		<speech name="3rd Affirmative" type="substantive" />
+		<speech name="3rd Negative" type="substantive" />
+		<speech name="Negative Leader's Reply" type="reply" />
+		<speech name="Affirmative Leader's Reply" type="reply" />
+	</speeches>
+</debateformat>

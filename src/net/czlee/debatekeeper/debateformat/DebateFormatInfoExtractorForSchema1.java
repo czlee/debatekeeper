@@ -32,7 +32,7 @@ import android.util.Xml;
 import android.util.Xml.Encoding;
 
 /**
- * Extracts information form an XML file and returns a DebateFormatInfo object.
+ * Extracts information form an XML file and returns a DebateFormatInfoForSchema1 object.
  *
  * @author Chuan-Zheng Lee
  * @since  2012-06-20
@@ -41,7 +41,7 @@ public class DebateFormatInfoExtractorForSchema1 {
 
     private final Context          mContext;
     private final String           DEBATING_TIMER_URI;
-    private DebateFormatInfo mDfi;
+    private DebateFormatInfoForSchema1 mDfi;
 
     public DebateFormatInfoExtractorForSchema1(Context context) {
         mContext           = context;
@@ -54,28 +54,26 @@ public class DebateFormatInfoExtractorForSchema1 {
 
     private class DebateFormatInfoContentHandler extends DefaultHandler {
 
-        private boolean mIsInRootContext        = false;
-        private boolean mDescriptionFound       = false;
-        private String  mThirdLevelInfoContext  = null;
-        private String  mCharactersBuffer       = null;
-        private String  mCurrentSpeechFormatRef = null;
-        private String  mCurrentResourceRef     = null;
+        private boolean       mIsInRootContext        = false;
+        private boolean       mDescriptionFound       = false;
+        private String        mThirdLevelInfoContext  = null;
+        private String        mCurrentSpeechFormatRef = null;
+        private String        mCurrentResourceRef     = null;
+        private StringBuilder mCharactersBuffer       = null;
 
         private DebateFormatXmlSecondLevelContext mCurrentSecondLevelContext
                 = DebateFormatXmlSecondLevelContext.NONE;
 
         @Override
-        public void characters(char[] ch, int start, int length)
-                throws SAXException {
+        public void characters(char[] ch, int start, int length) throws SAXException {
             String str = new String(ch, start, length);
             if (mCharactersBuffer == null)
                 return;
-            mCharactersBuffer = mCharactersBuffer.concat(str);
+            mCharactersBuffer = mCharactersBuffer.append(str);
         }
 
         @Override
-        public void endElement(String uri, String localName, String qName)
-                throws SAXException {
+        public void endElement(String uri, String localName, String qName) throws SAXException {
             /**
              * <debateformat name="something" schemaversion="1.0">
              * End the root context.
@@ -104,18 +102,18 @@ public class DebateFormatInfoExtractorForSchema1 {
                     }
                     // <region>
                     if (areEqual(localName, R.string.xml1elemName_info_region)) {
-                        mDfi.addRegion(mCharactersBuffer);
+                        mDfi.addRegion(mCharactersBuffer.toString());
                     // <level>
                     } else if (areEqual(localName, R.string.xml1elemName_info_level)) {
-                        mDfi.addLevel(mCharactersBuffer);
+                        mDfi.addLevel(mCharactersBuffer.toString());
                     // <usedat>
                     } else if (areEqual(localName, R.string.xml1elemName_info_usedAt)) {
-                        mDfi.addUsedAt(mCharactersBuffer);
+                        mDfi.addUsedAt(mCharactersBuffer.toString());
                     // <desc>
                     } else if (areEqual(localName, R.string.xml1elemName_info_desc)) {
                         if (!mDescriptionFound) {
                             mDescriptionFound = true;
-                            mDfi.setDescription(mCharactersBuffer);
+                            mDfi.setDescription(mCharactersBuffer.toString());
                         }
                     }
                     mThirdLevelInfoContext = null; // end this context
@@ -139,6 +137,11 @@ public class DebateFormatInfoExtractorForSchema1 {
                 if (name != null)
                     mDfi.setName(name);
                 mIsInRootContext = true;
+
+                String schemaVersion = getValue(atts, R.string.xml1attrName_root_schemaVersion);
+                if (schemaVersion != null)
+                    mDfi.setSchemaVersion(schemaVersion);
+
                 return;
             }
 
@@ -158,7 +161,7 @@ public class DebateFormatInfoExtractorForSchema1 {
             // Inside the <info> tags
             } else if (getCurrentSecondLevelContext() == DebateFormatXmlSecondLevelContext.INFO) {
                 mThirdLevelInfoContext = localName;
-                mCharactersBuffer = new String();
+                mCharactersBuffer = new StringBuilder();
 
             /**
              * <preptime length="15:00" />
@@ -408,13 +411,13 @@ public class DebateFormatInfoExtractorForSchema1 {
     /**
      * Gets the debate
      * @param is an <code>InputStream</code> for an XML file to parse
-     * @return the DebateFormatInfo object
+     * @return the DebateFormatInfoForSchema1 object
      * @throws IOException if thrown by the attempt to use the <code>InputStream</code>
      * @throws SAXException if thrown by the XML parser (SAX)
      */
     public DebateFormatInfo getDebateFormatInfo(InputStream is) throws IOException, SAXException {
 
-        mDfi = new DebateFormatInfo(mContext);
+        mDfi = new DebateFormatInfoForSchema1(mContext);
         Xml.parse(is, Encoding.UTF_8, new DebateFormatInfoContentHandler());
         return mDfi;
     }
