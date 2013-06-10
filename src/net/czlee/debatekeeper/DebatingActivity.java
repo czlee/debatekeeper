@@ -26,13 +26,15 @@ import java.util.concurrent.TimeUnit;
 
 import net.czlee.debatekeeper.AlertManager.FlashScreenListener;
 import net.czlee.debatekeeper.AlertManager.FlashScreenMode;
+import net.czlee.debatekeeper.EnableableViewPager.PagingEnabledIndicator;
 import net.czlee.debatekeeper.debateformat.BellInfo;
 import net.czlee.debatekeeper.debateformat.DebateFormat;
 import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml;
 import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXmlForSchema1;
 import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXmlForSchema2;
 import net.czlee.debatekeeper.debateformat.PeriodInfo;
-import net.czlee.debatekeeper.debateformat.PeriodInfoManager;
+import net.czlee.debatekeeper.debateformat.PrepTimeFormat;
+import net.czlee.debatekeeper.debateformat.SpeechFormat;
 import net.czlee.debatekeeper.debateformat.SpeechOrPrepFormat;
 import net.czlee.debatekeeper.debatemanager.DebateManager;
 
@@ -58,24 +60,23 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AnimationUtils;
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-import android.widget.ViewFlipper;
 
 
 /**
@@ -89,17 +90,17 @@ import android.widget.ViewFlipper;
  */
 public class DebatingActivity extends Activity {
 
-    private ViewFlipper      mDebateTimerViewFlipper;
-    private RelativeLayout[] mDebateTimerDisplays;
-    private int              mCurrentDebateTimerDisplayIndex = 0;
+    private View             mDebateTimerDisplay;
     private boolean          mIsEditingTime = false;
     private final Semaphore  mFlashScreenSemaphore = new Semaphore(1, true);
     private final int        mNormalBackgroundColour = 0;
 
-    private Button mLeftControlButton;
-    private Button mCentreControlButton;
-    private Button mRightControlButton;
-    private Button mPlayBellButton;
+    private EnableableViewPager mViewPager;
+
+    private Button    mLeftControlButton;
+    private Button    mCentreControlButton;
+    private Button    mRightControlButton;
+    private Button    mPlayBellButton;
 
     private DebateManager         mDebateManager;
     private Bundle                mLastStateBundle;
@@ -155,16 +156,12 @@ public class DebatingActivity extends Activity {
         }
     }
 
-    /**
-     * We can't just use an OnLongClickListener because the current time TextView also needs to
-     * detect flings, just like the rest of the debate timer display.
-     */
-    private class CurrentTimeOnGestureListener extends DebateTimerDisplayOnGestureListener {
+    private class CurrentTimeOnLongClickListener implements OnLongClickListener {
 
         @Override
-        public void onLongPress(MotionEvent e) {
+        public boolean onLongClick(View v) {
             editCurrentTimeStart();
-            return;
+            return true;
         }
 
     }
@@ -199,7 +196,7 @@ public class DebatingActivity extends Activity {
                 public void run() {
                     if (mBackgroundColourArea == BackgroundColourArea.WHOLE_SCREEN) {
                         // Log.v(this.getClass().getSimpleName(), "removing background colour on " + Thread.currentThread().toString());
-                        mDebateTimerDisplays[mCurrentDebateTimerDisplayIndex].setBackgroundColor(0);
+                        mDebateTimerDisplay.setBackgroundColor(0);
                     }
                 }
             });
@@ -223,56 +220,258 @@ public class DebatingActivity extends Activity {
         }
     }
 
-    private class DebateTimerDisplayOnGestureListener extends SimpleOnGestureListener {
-
-        // Constants for touch gesture sensitivity
-        private static final float SWIPE_MIN_DISTANCE = 80;
-        private static final float SWIPE_THRESHOLD_VELOCITY = 200;
-        @Override
-        public boolean onDown(MotionEvent e) {
-            // Ignore all touch events if no debate is loaded
-            return (mDebateManager != null);
-        }
+    private class DebateTimerDisplayOnClickListener implements OnClickListener {
 
         @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-
-            // The goToNextSpeech() and goToPreviousSpeech() methods check that the debate manager
-            // is in a valid state, so we don't have to here.
-
-            float distanceX = e2.getX() - e1.getX();
-            float distanceY = e2.getY() - e1.getY();
-
-            // Log.v(this.getClass().getSimpleName(), String.format("dX=%.1f dY=%.1f Xv=%.1f Yv=%.1f",
-            //                 distanceX, distanceY, velocityX, velocityY));
-
-            // If we go further up/down than left/right, ignore as it's then not a horizontal swipe
-            if (Math.abs(distanceY) > Math.abs(distanceX))
-                return false;
-
-            // If the distance and velocity aren't in the same direction, then ignore for confusion
-            if (Math.signum(distanceX) != Math.signum(velocityX))
-                return false;
-
-            // If we go left or right far enough, then it's a horizontal swipe.
-            // Check for the direction.
-            if (Math.abs(distanceX) > SWIPE_MIN_DISTANCE) {
-                if (velocityX < -SWIPE_THRESHOLD_VELOCITY) {
-                    goToNextSpeech();
-                } else if (velocityX > SWIPE_THRESHOLD_VELOCITY) {
-                    goToPreviousSpeech();
-                } else {
-                    return false;
-                }
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        public boolean onSingleTapUp(MotionEvent e) {
+        public void onClick(View v) {
             editCurrentTimeFinish(true);
-            return true;
+        }
+
+    }
+
+    private class DebateTimerDisplayOnPageChangeListener implements OnPageChangeListener {
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+        }
+
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            mDebateManager.setCurrentPosition(position);
+        }
+
+    }
+
+    /**
+     * Implementation of {@link PagerAdapter} that pages through the various speeches of a debate
+     * managed by a {@link DebateManager}.
+     *
+     * @author Chuan-Zheng Lee
+     * @since 2013-06-10
+     *
+     */
+    private class DebateTimerDisplayPagerAdapter extends PagerAdapter {
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            View view = (View) object;
+            container.removeView(view);
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+
+            // If it was the "no debate loaded" screen and there is now a debate loaded,
+            // then the View no longer exists.  Likewise if there is no debate loaded and
+            // there was anything but the "no debate loaded" screen.
+            View v = (View) object;
+            if ((mDebateManager == null) != (v.getId() == R.id.mainScreen_noDebateLoaded))
+                return POSITION_NONE;
+
+            // If it was "no debate loaded" and there is still no debate loaded, it's unchanged.
+            if (mDebateManager == null && v.getId() == R.id.mainScreen_noDebateLoaded)
+                return POSITION_UNCHANGED;
+
+            // Otherwise, we delegate this function to the DebateManager.
+            int position = mDebateManager.getCurrentPosition();
+            Log.i(getClass().getSimpleName(), String.format("Position is %d", position));
+
+            return position;
+        }
+
+        @Override
+        public int getCount() {
+            if (mDebateManager == null) return 1;
+            else return mDebateManager.getCount();
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            // Note - the Object returned by this method must return the inflated View, because
+            // setPrimaryItem() relies on this correlation in order to set mDebateTimerDisplay.
+
+            if (mDebateManager == null) {
+                Log.i(getClass().getSimpleName(), "No debate loaded");
+                View v = View.inflate(DebatingActivity.this, R.layout.no_debate_loaded, null);
+                container.addView(v);
+                return v;
+            }
+
+            // The View for the position in question is the inflated debate_timer_display for
+            // the relevant timer (prep time or speech).
+            View v = View.inflate(DebatingActivity.this, R.layout.debate_timer_display, null);
+
+            Log.i(getClass().getSimpleName(), String.format("Instantiating position %d, %s", position, v.toString()));
+
+            // Set the time picker to 24-hour time
+            TimePicker currentTimePicker = (TimePicker) v.findViewById(R.id.debateTimer_currentTimePicker);
+            currentTimePicker.setIs24HourView(true);
+
+            // Set the POI timer OnClickListener
+            Button poiTimerButton = (Button) v.findViewById(R.id.debateTimer_poiTimerButton);
+            poiTimerButton.setOnClickListener(new PoiButtonOnClickListener());
+
+            // Populate the text fields
+            TextView periodDescriptionText = (TextView) v.findViewById(R.id.debateTimer_periodDescriptionText);
+            TextView speechNameText        = (TextView) v.findViewById(R.id.debateTimer_speechNameText);
+            TextView currentTimeText       = (TextView) v.findViewById(R.id.debateTimer_currentTime);
+            TextView infoLineText          = (TextView) v.findViewById(R.id.debateTimer_informationLine);
+
+            // OnTouchListeners
+            v.setOnClickListener(new DebateTimerDisplayOnClickListener());
+            currentTimeText.setOnLongClickListener(new CurrentTimeOnLongClickListener());
+
+            long               time = mDebateManager.getSpeechTime(position);
+            SpeechOrPrepFormat sf   = mDebateManager.getFormat(position);
+            PeriodInfo         pi   = sf.getPeriodInfoForTime(time);
+
+            boolean overtime = time > sf.getLength();
+
+            // The information at the top of the screen
+            speechNameText.setText(mDebateManager.getSpeechName(position));
+            periodDescriptionText.setText(pi.getDescription());
+
+            // Background colour, this is user-preference dependent
+            Integer backgroundColour = pi.getBackgroundColor();
+            switch (mBackgroundColourArea) {
+            case TOP_BAR_ONLY:
+                speechNameText.setBackgroundColor(backgroundColour);
+                periodDescriptionText.setBackgroundColor(backgroundColour);
+                break;
+            case WHOLE_SCREEN:
+                v.setBackgroundColor(backgroundColour);
+            }
+
+            // Take count direction into account for display
+            long timeToShow = subtractFromSpeechLengthIfCountingDown(time, sf);
+
+            Resources resources = getResources();
+            int timeTextColor;
+            if (overtime)
+                timeTextColor = resources.getColor(R.color.overtime);
+            else
+                timeTextColor = resources.getColor(android.R.color.primary_text_dark);
+            currentTimeText.setText(secsToText(timeToShow));
+            currentTimeText.setTextColor(timeTextColor);
+
+            // Construct the line that goes at the bottom
+            StringBuilder infoLine = new StringBuilder();
+
+            // First, length...
+            long length = sf.getLength();
+            String lengthStr;
+            if (length % 60 == 0)
+                lengthStr = String.format(getResources().
+                        getQuantityString(R.plurals.timeInMinutes, (int) (length / 60), length / 60));
+            else
+                lengthStr = secsToText(length);
+
+            int finalTimeTextUnformattedResid = (sf.isPrep()) ? R.string.prepTimeLength: R.string.speechLength;
+            infoLine.append(String.format(getString(finalTimeTextUnformattedResid), lengthStr));
+
+            if (sf.isPrep()) {
+                PrepTimeFormat pt = (PrepTimeFormat) sf;
+                if (pt.isControlled())
+                    infoLine.append(getString(R.string.prepTimeControlledIndicator));
+            }
+
+            // ...then, if applicable, bells
+            ArrayList<BellInfo> currentSpeechBells = sf.getBellsSorted();
+            Iterator<BellInfo> currentSpeechBellsIter = currentSpeechBells.iterator();
+
+            if (overtime) {
+                // show next overtime bell (don't bother with list of bells anymore)
+                Long nextOvertimeBellTime = mDebateManager.getNextOvertimeBellTimeAfter(time, position);
+                if (nextOvertimeBellTime == null)
+                    infoLine.append(getString(R.string.mainScreen_bellsList_noOvertimeBells));
+                else {
+                    long timeToDisplay = subtractFromSpeechLengthIfCountingDown(nextOvertimeBellTime, sf);
+                    infoLine.append(getString(R.string.mainScreen_bellsList_nextOvertimeBell,
+                            secsToText(timeToDisplay)));
+                }
+
+            } else if (currentSpeechBellsIter.hasNext()) {
+                // Convert the list of bells into a string.
+                StringBuilder bellsStr = new StringBuilder();
+
+                while (currentSpeechBellsIter.hasNext()) {
+                    BellInfo bi = currentSpeechBellsIter.next();
+                    long bellTime = subtractFromSpeechLengthIfCountingDown(bi.getBellTime(), sf);
+                    bellsStr.append(secsToText(bellTime));
+                    if (bi.isPauseOnBell())
+                        bellsStr.append(getString(R.string.pauseOnBellIndicator));
+                    if (bi.isSilent())
+                        bellsStr.append(getString(R.string.silentBellIndicator));
+                    if (currentSpeechBellsIter.hasNext())
+                        bellsStr.append(", ");
+                }
+
+                infoLine.append(getResources().getQuantityString(R.plurals.mainScreen_bellsList_normal, currentSpeechBells.size(), bellsStr));
+
+            } else {
+                infoLine.append(getString(R.string.mainScreen_bellsList_noBells));
+            }
+
+            infoLineText.setText(infoLine.toString());
+
+            // Determine whether or not we display the POI timer button
+            // Display only when user has POI timer enabled, and a debate is loaded and the current
+            // speech has POIs in it.
+            boolean displayPoiTimerButton = false;
+            if (mPoiTimerEnabled)
+                if (sf.getClass() == SpeechFormat.class)
+                    if (((SpeechFormat) sf).hasPoisAllowedSomewhere())
+                        displayPoiTimerButton = true;
+
+            // If it's appropriate to display the button, do so
+            // It'll always be disabled as the timer is never running when switching pages
+            if (displayPoiTimerButton) {
+                poiTimerButton.setVisibility(View.VISIBLE);
+                poiTimerButton.setText(R.string.mainScreen_poiTimer_buttonText);
+                poiTimerButton.setEnabled(false);
+
+                // Otherwise, hide the button
+            } else {
+                poiTimerButton.setVisibility(View.GONE);
+            }
+
+            container.addView(v);
+
+            return v;
+
+        }
+
+        @Override
+        public void setPrimaryItem(ViewGroup container, int position, Object object) {
+            Log.i(getClass().getSimpleName(), String.format("Setting primary item to position %d, %s", position, object.toString()));
+            mDebateTimerDisplay = (View) object;
+            updateGui();
+            super.setPrimaryItem(container, position, object);
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
+
+    }
+
+    private class DebateTimerPagingEnabledIndicator implements PagingEnabledIndicator {
+
+        @Override
+        public boolean isPagingEnabled() {
+
+            // This seems counter-intuitive, but we enable paging if there is no debate loaded,
+            // as there is only one page anyway, and this way the "scrolled to the limit"
+            // indicators appear on the screen.
+            if (mDebateManager == null) return true;
+
+            // Otherwise paging is enabled if and only if the timer is not running.
+            else return !mDebateManager.isRunning();
         }
 
     }
@@ -306,24 +505,6 @@ public class DebatingActivity extends Activity {
         public FatalXmlError(String detailMessage) {
             super(detailMessage);
         }
-    }
-
-    private class GestureOnTouchListener implements View.OnTouchListener {
-
-        GestureDetector gd;
-
-        public GestureOnTouchListener(GestureDetector gestureDetector) {
-            super();
-            this.gd = gestureDetector;
-        }
-
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            if (gd != null)
-                return gd.onTouchEvent(event);
-            return false;
-        }
-
     }
 
     private final class GuiUpdateBroadcastReceiver extends BroadcastReceiver {
@@ -548,27 +729,19 @@ public class DebatingActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_debate);
 
-        // TODO temporary line, just to make sure this doesn't crash
-        new PeriodInfoManager(this);
-
         mFilesManager = new FormatXmlFilesManager(this);
-
-        mDebateTimerViewFlipper    = (ViewFlipper)    findViewById(R.id.debateTimerDisplayFlipper);
-        mDebateTimerDisplays       = new RelativeLayout[2];
-        mDebateTimerDisplays[0]    = (RelativeLayout) findViewById(R.id.debateTimerDisplay0);
-        mDebateTimerDisplays[1]    = (RelativeLayout) findViewById(R.id.debateTimerDisplay1);
-
-        for (int i = 0; i < mDebateTimerDisplays.length; i++) {
-            TimePicker currentTimePicker = (TimePicker) mDebateTimerDisplays[i].findViewById(R.id.debateTimer_currentTimePicker);
-            currentTimePicker.setIs24HourView(true);
-        }
-
-        mDebateTimerViewFlipper.setDisplayedChild(mCurrentDebateTimerDisplayIndex);
 
         mLeftControlButton   = (Button) findViewById(R.id.mainScreen_leftControlButton);
         mCentreControlButton = (Button) findViewById(R.id.mainScreen_centreControlButton);
         mRightControlButton  = (Button) findViewById(R.id.mainScreen_rightControlButton);
         mPlayBellButton      = (Button) findViewById(R.id.mainScreen_playBellButton);
+
+        //
+        // ViewPager
+        mViewPager = (EnableableViewPager) findViewById(R.id.mainScreen_debateTimerViewPager);
+        mViewPager.setAdapter(new DebateTimerDisplayPagerAdapter());
+        mViewPager.setOnPageChangeListener(new DebateTimerDisplayOnPageChangeListener());
+        mViewPager.setPagingEnabledIndicator(new DebateTimerPagingEnabledIndicator());
 
         //
         // OnClickListeners
@@ -578,23 +751,6 @@ public class DebatingActivity extends Activity {
         mPlayBellButton     .setOnClickListener(new PlayBellButtonOnClickListener());
 
         mLastStateBundle = savedInstanceState; // This could be null
-
-        for (int i = 0; i < mDebateTimerDisplays.length; i++) {
-            View poiTimerButton  = mDebateTimerDisplays[i].findViewById(R.id.debateTimer_poiTimerButton);
-            poiTimerButton.setOnClickListener(new PoiButtonOnClickListener());
-        }
-
-        //
-        // OnTouchListeners
-        GestureDetector gd1 = new GestureDetector(new DebateTimerDisplayOnGestureListener());
-        View displayFlipper = findViewById(R.id.debateTimerDisplayFlipper);
-        displayFlipper.setOnTouchListener(new GestureOnTouchListener(gd1));
-
-        GestureDetector gd2 = new GestureDetector(new CurrentTimeOnGestureListener());
-        for (int i = 0; i < mDebateTimerDisplays.length; i++) {
-            View currentTimeText = mDebateTimerDisplays[i].findViewById(R.id.debateTimer_currentTime);
-            currentTimeText.setOnTouchListener(new GestureOnTouchListener(gd2));
-        }
 
         //
         // Find the style file name
@@ -953,7 +1109,13 @@ public class DebatingActivity extends Activity {
         // Only if things were in a valid state do we enter edit time mode
         mIsEditingTime = true;
 
-        TimePicker currentTimePicker = (TimePicker) getCurrentDebateTimerDisplay().findViewById(R.id.debateTimer_currentTimePicker);
+        TimePicker currentTimePicker = (TimePicker) mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTimePicker);
+
+        if (currentTimePicker == null) {
+            Log.e("editCurrentTimeStart", "currentTimePicker was null");
+            return;
+        }
+
         long currentTime = mDebateManager.getCurrentSpeechTime();
 
         // Invert the time if in count-down mode
@@ -987,7 +1149,12 @@ public class DebatingActivity extends Activity {
      */
     private void editCurrentTimeFinish(boolean save) {
 
-        TimePicker currentTimePicker = (TimePicker) getCurrentDebateTimerDisplay().findViewById(R.id.debateTimer_currentTimePicker);
+        TimePicker currentTimePicker = (TimePicker) mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTimePicker);
+
+        if (currentTimePicker == null) {
+            Log.e("editCurrentTimeFinish", "currentTimePicker was null");
+            return;
+        }
 
         currentTimePicker.clearFocus();
 
@@ -1020,28 +1187,11 @@ public class DebatingActivity extends Activity {
      * some brain-work to do.
      * @return CountDirection.COUNT_UP or CountDirection.COUNT_DOWN
      */
-    private CountDirection getCountDirection() {
-
-        // Initialise as the user count direction by default
-        CountDirection userCountDirection = mCountDirection;
-
-        if (mDebateManager != null) {
-            // If prep time, use the prep time count direction
-            if (mDebateManager.isPrepTime())
-                userCountDirection = mPrepTimeCountDirection;
-            // Otherwise, use the normal count direction
-            else
-                userCountDirection = mCountDirection;
-        }
-
-        return userCountDirection;
-    }
-
-    /**
-     * @return the current RelativeLayout for the debate timer display
-     */
-    private RelativeLayout getCurrentDebateTimerDisplay() {
-        return mDebateTimerDisplays[mCurrentDebateTimerDisplayIndex];
+    private CountDirection getCountDirection(SpeechOrPrepFormat spf) {
+        if (spf.isPrep())
+            return mPrepTimeCountDirection;
+        else
+            return mCountDirection;
     }
 
     private Dialog getDialogErrorsWithXmlFile(Bundle bundle) {
@@ -1204,16 +1354,8 @@ public class DebatingActivity extends Activity {
         if (mDebateManager.isLastItem()) return;
         if (mIsEditingTime) return;
 
-        // Swap the current display index
-        mCurrentDebateTimerDisplayIndex = (mCurrentDebateTimerDisplayIndex == 1) ? 0 : 1;
-
         mDebateManager.goToNextItem();
-        updateDebateTimerDisplay(mCurrentDebateTimerDisplayIndex);
-        mDebateTimerViewFlipper.setInAnimation(AnimationUtils.loadAnimation(
-                DebatingActivity.this, R.anim.slide_from_right));
-        mDebateTimerViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(
-                DebatingActivity.this, R.anim.slide_to_left));
-        mDebateTimerViewFlipper.setDisplayedChild(mCurrentDebateTimerDisplayIndex);
+        mViewPager.setCurrentItem(mDebateManager.getCurrentPosition());
 
         updateGui();
         updateKeepScreenOn();
@@ -1232,16 +1374,8 @@ public class DebatingActivity extends Activity {
         if (mDebateManager.isFirstItem()) return;
         if (mIsEditingTime) return;
 
-        // Swap the current display index
-        mCurrentDebateTimerDisplayIndex = (mCurrentDebateTimerDisplayIndex == 1) ? 0 : 1;
-
         mDebateManager.goToPreviousItem();
-        updateDebateTimerDisplay(mCurrentDebateTimerDisplayIndex);
-        mDebateTimerViewFlipper.setInAnimation(AnimationUtils.loadAnimation(
-                DebatingActivity.this, R.anim.slide_from_left));
-        mDebateTimerViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(
-                DebatingActivity.this, R.anim.slide_to_right));
-        mDebateTimerViewFlipper.setDisplayedChild(mCurrentDebateTimerDisplayIndex);
+        mViewPager.setCurrentItem(mDebateManager.getCurrentPosition());
 
         updateGui();
         updateKeepScreenOn();
@@ -1285,6 +1419,8 @@ public class DebatingActivity extends Activity {
                         showDialog(DIALOG_POI_TIMERS_INFO);
         }
 
+        mViewPager.getAdapter().notifyDataSetChanged();
+        mViewPager.setCurrentItem(mDebateManager.getCurrentPosition());
         applyPreferences();
         updateGui();
     }
@@ -1334,20 +1470,20 @@ public class DebatingActivity extends Activity {
     }
 
     /**
-     * Resets all background colours to the default.
+     * Resets the background colour to the default.
      * This should be called whenever the background colour preference is changed, as <code>updateGui()</code>
      * doesn't automatically do this (for efficiency). You should call <code>updateGui()</code> as immediately as
      * practicable after calling this.
      */
     private void resetBackgroundColour() {
-        for (int i = 0; i < mDebateTimerDisplays.length; i++) {
-            View v = mDebateTimerDisplays[i];
-            v.setBackgroundColor(mNormalBackgroundColour);
-            View speechNameText = v.findViewById(R.id.debateTimer_speechNameText);
-            View periodDescriptionText = v.findViewById(R.id.debateTimer_periodDescriptionText);
-            speechNameText.setBackgroundColor(mNormalBackgroundColour);
-            periodDescriptionText.setBackgroundColor(mNormalBackgroundColour);
-        }
+        if (mDebateTimerDisplay == null || mDebateManager == null) return;
+        if (mDebateTimerDisplay.getId() != R.id.debateTimer_root) return;
+        View v = mDebateTimerDisplay;
+        v.setBackgroundColor(mNormalBackgroundColour);
+        View speechNameText = v.findViewById(R.id.debateTimer_speechNameText);
+        View periodDescriptionText = v.findViewById(R.id.debateTimer_periodDescriptionText);
+        speechNameText.setBackgroundColor(mNormalBackgroundColour);
+        periodDescriptionText.setBackgroundColor(mNormalBackgroundColour);
     }
 
     private void resetDebate() {
@@ -1415,8 +1551,11 @@ public class DebatingActivity extends Activity {
      *  The [Bell] button always is on the right of any of the above three buttons.
      */
     private void updateControls() {
-        View currentTimeText   = getCurrentDebateTimerDisplay().findViewById(R.id.debateTimer_currentTime);
-        View currentTimePicker = getCurrentDebateTimerDisplay().findViewById(R.id.debateTimer_currentTimePicker);
+        if (mDebateTimerDisplay == null) return;
+        if (mDebateTimerDisplay.getId() != R.id.debateTimer_root) return;
+
+        View currentTimeText   = mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTime);
+        View currentTimePicker = mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTimePicker);
 
         if (mDebateManager != null) {
 
@@ -1474,18 +1613,24 @@ public class DebatingActivity extends Activity {
     }
 
     /**
-     * Updates the debate timer display (including speech name, period name, etc.) in a given view.
+     * Updates the debate timer display (including speech name, period name, etc.
      * The view should be the <code>RelativeLayout</code> in debate_timer_display.xml.
-     * @param debateTimerDisplayIndex The index of the debate timer display that will be updated.
      */
-    private void updateDebateTimerDisplay(int debateTimerDisplayIndex) {
+    private void updateDebateTimerDisplay() {
 
-        View v = mDebateTimerDisplays[debateTimerDisplayIndex];
+        if (mDebateTimerDisplay == null) {
+            Log.e(this.getClass().getSimpleName(), "mDebateTimerDisplay was null");
+            return;
+        }
+        if (mDebateTimerDisplay.getId() != R.id.debateTimer_root) {
+            Log.e(this.getClass().getSimpleName(), "mDebateTimerDisplay was not the debate timer display");
+            return;
+        }
 
-        TextView periodDescriptionText = (TextView) v.findViewById(R.id.debateTimer_periodDescriptionText);
-        TextView speechNameText        = (TextView) v.findViewById(R.id.debateTimer_speechNameText);
-        TextView currentTimeText       = (TextView) v.findViewById(R.id.debateTimer_currentTime);
-        TextView infoLineText          = (TextView) v.findViewById(R.id.debateTimer_informationLine);
+        TextView periodDescriptionText = (TextView) mDebateTimerDisplay.findViewById(R.id.debateTimer_periodDescriptionText);
+        TextView speechNameText        = (TextView) mDebateTimerDisplay.findViewById(R.id.debateTimer_speechNameText);
+        TextView currentTimeText       = (TextView) mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTime);
+        TextView infoLineText          = (TextView) mDebateTimerDisplay.findViewById(R.id.debateTimer_informationLine);
 
         if (mDebateManager != null) {
 
@@ -1506,7 +1651,7 @@ public class DebatingActivity extends Activity {
             case WHOLE_SCREEN:
                 // Don't do the whole screen if there is a flash screen in progress
                 if (mFlashScreenSemaphore.tryAcquire()) {
-                    v.setBackgroundColor(backgroundColour);
+                    mDebateTimerDisplay.setBackgroundColor(backgroundColour);
                     mFlashScreenSemaphore.release();
                 }
             }
@@ -1537,11 +1682,11 @@ public class DebatingActivity extends Activity {
             else
                 lengthStr = secsToText(length);
 
-            int finalTimeTextUnformattedResid = (mDebateManager.isPrepTime()) ? R.string.prepTimeLength: R.string.speechLength;
+            int finalTimeTextUnformattedResid = (mDebateManager.isInPrepTime()) ? R.string.prepTimeLength: R.string.speechLength;
             infoLine.append(String.format(this.getString(finalTimeTextUnformattedResid),
                     lengthStr));
 
-            if (mDebateManager.isPrepTime() && mDebateManager.isPrepTimeControlled())
+            if (mDebateManager.isInPrepTime() && mDebateManager.isPrepTimeControlled())
                 infoLine.append(getString(R.string.prepTimeControlledIndicator));
 
             // ...then, if applicable, bells
@@ -1594,7 +1739,7 @@ public class DebatingActivity extends Activity {
         }
 
         // Update the POI timer button
-        updatePoiTimerButton(debateTimerDisplayIndex);
+        updatePoiTimerButton();
 
     }
 
@@ -1610,7 +1755,7 @@ public class DebatingActivity extends Activity {
         AlertManager am = mBinder.getAlertManager();
 
         if (mDebateManager != null) {
-            if (mDebateManager.isPrepTime()) {
+            if (mDebateManager.isInPrepTime()) {
                 am.setKeepScreenOn(mPrepTimeKeepScreenOn);
                 return;
             }
@@ -1623,7 +1768,7 @@ public class DebatingActivity extends Activity {
      * Updates the GUI (in the general case).
      */
     private void updateGui() {
-        updateDebateTimerDisplay(mCurrentDebateTimerDisplayIndex);
+        updateDebateTimerDisplay();
         updateControls();
 
         if (mDebateManager != null) {
@@ -1639,10 +1784,8 @@ public class DebatingActivity extends Activity {
             mPlayBellButton.setVisibility((mBinder.getAlertManager().isSilentMode()) ? View.GONE : View.VISIBLE);
     }
 
-    private void updatePoiTimerButton(int debateTimerDisplayIndex) {
-        View v = mDebateTimerDisplays[debateTimerDisplayIndex];
-
-        Button poiButton = (Button) v.findViewById(R.id.debateTimer_poiTimerButton);
+    private void updatePoiTimerButton() {
+        Button poiButton = (Button) mDebateTimerDisplay.findViewById(R.id.debateTimer_poiTimerButton);
 
         // Determine whether or not we display the POI timer button
         // Display only when user has POI timer enabled, and a debate is loaded and the current
@@ -1693,9 +1836,13 @@ public class DebatingActivity extends Activity {
      */
     private long subtractFromSpeechLengthIfCountingDown(long time) {
         if (mDebateManager != null)
-            if (getCountDirection() == CountDirection.COUNT_DOWN)
-                return mDebateManager.getCurrentSpeechFormat().getLength() - time;
+            return subtractFromSpeechLengthIfCountingDown(time, mDebateManager.getCurrentSpeechFormat());
         return time;
     }
 
+    private long subtractFromSpeechLengthIfCountingDown(long time, SpeechOrPrepFormat sf) {
+        if (getCountDirection(sf) == CountDirection.COUNT_DOWN)
+            return sf.getLength() - time;
+        return time;
+    }
 }

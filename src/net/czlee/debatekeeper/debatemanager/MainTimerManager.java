@@ -26,7 +26,6 @@ import net.czlee.debatekeeper.debateformat.BellSoundInfo;
 import net.czlee.debatekeeper.debateformat.PeriodInfo;
 import net.czlee.debatekeeper.debateformat.SpeechFormat;
 import net.czlee.debatekeeper.debateformat.SpeechOrPrepFormat;
-
 import android.os.Bundle;
 import android.util.Log;
 
@@ -204,21 +203,22 @@ public class MainTimerManager extends DebateElementManager {
     }
 
     /**
-     * Returns the next overtime bell time in seconds as a Long object.
+     * Returns the next overtime bell time after the time given, assuming the length given.
      * @return the next overtime bell time in seconds, or <code>null</code> if there are no more bells.
      * If it is not yet overtime, it still returns the time of the first overtime bell.
      * Note that this can be <code>null</code>.
      */
-    public Long getNextOvertimeBellTime() {
+    public Long getNextOvertimeBellTimeAfter(long time, long length) {
+
+        // TODO is this the best place for this code?
 
         if (mFirstOvertimeBellTime == 0)
             return null;
 
-        long speechLength   = mFormat.getLength();
-        long overtimeAmount = mCurrentTime - speechLength;
+        long overtimeAmount = time - length;
 
         if (overtimeAmount < mFirstOvertimeBellTime)
-            return speechLength + mFirstOvertimeBellTime;
+            return length + mFirstOvertimeBellTime;
 
         // If past the first overtime bell, keep adding periods until we find one we haven't hit yet
         if (mOvertimeBellPeriod == 0)
@@ -229,7 +229,17 @@ public class MainTimerManager extends DebateElementManager {
         // TODO make this more efficient
         while (overtimeAmount > overtimeBellTime)
             overtimeBellTime += mOvertimeBellPeriod;
-        return speechLength + overtimeBellTime;
+        return length + overtimeBellTime;
+    }
+
+    /**
+     * Returns the next overtime bell time in seconds as a Long object.
+     * @return the next overtime bell time in seconds, or <code>null</code> if there are no more bells.
+     * If it is not yet overtime, it still returns the time of the first overtime bell.
+     * Note that this can be <code>null</code>.
+     */
+    public Long getNextOvertimeBellTime() {
+        return getNextOvertimeBellTimeAfter(mCurrentTime, mFormat.getLength());
     }
 
     /**

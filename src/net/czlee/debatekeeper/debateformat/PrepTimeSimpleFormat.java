@@ -73,6 +73,11 @@ public class PrepTimeSimpleFormat extends GenericSpeechOrPrepFormat implements P
         return false;
     }
 
+    @Override
+    public boolean isPrep() {
+        return true;
+    }
+
     //******************************************************************************************
     // Protected and private methods
     //******************************************************************************************

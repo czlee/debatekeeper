@@ -65,4 +65,9 @@ public interface SpeechOrPrepFormat {
      */
     public abstract ArrayList<BellInfo> getBellsSorted();
 
+    /**
+     * @return <code>true</code> if it is a prep time, <code>false</code> otherwise
+     */
+    public abstract boolean isPrep();
+
 }

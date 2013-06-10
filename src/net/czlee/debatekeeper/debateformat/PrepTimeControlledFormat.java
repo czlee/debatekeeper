@@ -46,4 +46,8 @@ public class PrepTimeControlledFormat extends ControlledSpeechOrPrepFormat
         return true;
     }
 
+    @Override
+    public boolean isPrep() {
+        return true;
+    }
 }

@@ -85,4 +85,9 @@ public class SpeechFormat extends ControlledSpeechOrPrepFormat {
         return false;
     }
 
+    @Override
+    public boolean isPrep() {
+        return false;
+    }
+
 }

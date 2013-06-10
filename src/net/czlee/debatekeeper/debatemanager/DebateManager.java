@@ -208,43 +208,49 @@ public class DebateManager {
 
     /**
      * Moves to the next item (speech or prep time).
-     * If already on the last speaker, reloads the last speaker.
+     * If already on the last speaker, does nothing.
      */
     public void goToNextItem() {
-        saveSpeech();
-        mSpeechManager.stop();
-        if (!isLastItem()) {
-            switch (mCurrentItemType) {
-            case PREP_TIME:
-                mCurrentSpeechIndex = 0;
-                mCurrentItemType    = DebateManagerItem.SPEECH;
-                break;
-            case SPEECH:
-                mCurrentSpeechIndex++;
-            }
-        }
-        loadSpeech();
+        if (isLastItem()) return;
+        setCurrentPosition(getCurrentPosition() + 1);
     }
 
     /**
      * Moves to the previous item (speech or prep time).
-     * If already on the first item, reloads the first item.
+     * If already on the first item, does nothing.
      */
     public void goToPreviousItem() {
+        if (isFirstItem()) return;
+        setCurrentPosition(getCurrentPosition() - 1);
+    }
+
+    /**
+     * Sets the current position (index of item that is current).  Does nothing if the new
+     * position is the same as the old current position.
+     * @param position the new position
+     */
+    public void setCurrentPosition(int position) {
+        if (position == getCurrentPosition()) return; // do nothing if no change
+
+        validatePosition(position);
         saveSpeech();
         mSpeechManager.stop();
-        if (!isFirstItem()) {
-            switch (mCurrentItemType) {
-            case PREP_TIME:
-                break;
-            case SPEECH:
-                if (mCurrentSpeechIndex == 0)
-                    mCurrentItemType = DebateManagerItem.PREP_TIME;
-                else
-                    mCurrentSpeechIndex--;
+
+        if (hasPrepTime()) {
+            if (position == 0) {
+                mCurrentItemType = DebateManagerItem.PREP_TIME;
+                mCurrentSpeechIndex = 0;
+            } else {
+                mCurrentItemType = DebateManagerItem.SPEECH;
+                mCurrentSpeechIndex = position - 1;
             }
+        } else {
+            mCurrentItemType = DebateManagerItem.SPEECH;
+            mCurrentSpeechIndex = position;
         }
+
         loadSpeech();
+
     }
 
     /**
@@ -252,6 +258,28 @@ public class DebateManager {
      */
     public MainTimerManager.DebatingTimerState getStatus() {
         return mSpeechManager.getStatus();
+    }
+
+    /**
+     * @return the current position out of all the timers in the debate, including prep timers,
+     * note that this can change when prep time is enabled or disabled
+     */
+    public int getCurrentPosition() {
+        if (mCurrentItemType == DebateManagerItem.PREP_TIME)
+            return 0;
+        else if (hasPrepTime())
+            return mCurrentSpeechIndex + 1;
+        else
+            return mCurrentSpeechIndex;
+    }
+
+    /**
+     * @return the total number of timers
+     */
+    public int getCount() {
+        int count = mDebateFormat.numberOfSpeeches();
+        if (hasPrepTime()) count += 1;
+        return count;
     }
 
     /**
@@ -266,10 +294,7 @@ public class DebateManager {
      * otherwise
      */
     public boolean isFirstItem() {
-        if (hasPrepTime())
-            return mCurrentItemType == DebateManagerItem.PREP_TIME;
-        else
-            return mCurrentSpeechIndex == 0;
+        return getCurrentPosition() == 0;
     }
 
     /**
@@ -277,14 +302,13 @@ public class DebateManager {
      * otherwise
      */
     public boolean isLastItem() {
-        return mCurrentItemType == DebateManagerItem.SPEECH &&
-                mCurrentSpeechIndex == mDebateFormat.numberOfSpeeches() - 1;
+        return getCurrentPosition() == getCount() - 1;
     }
 
     /**
      * @return <code>true</code> if the current item is prep time, <code>false</code> otherwise
      */
-    public boolean isPrepTime() {
+    public boolean isInPrepTime() {
         return mCurrentItemType == DebateManagerItem.PREP_TIME;
     }
 
@@ -359,10 +383,19 @@ public class DebateManager {
     }
 
     /**
-     * @return an ArrayList of speech times
+     * @param position the position of the timer in the {@link DebateManager}
+     * @return the current time for that position
      */
-    public ArrayList<Long> getSpeechTimes() {
-        return mSpeechTimes;
+    public long getSpeechTime(int position) {
+        validatePosition(position);
+        if (position == getCurrentPosition())
+            return getCurrentSpeechTime();
+        else if (position == 0 && hasPrepTime())
+            return mPrepTime;
+        else if (hasPrepTime())
+            return mSpeechTimes.get(position - 1);
+        else
+            return mSpeechTimes.get(position);
     }
 
     /**
@@ -370,6 +403,20 @@ public class DebateManager {
      */
     public String getDebateFormatName() {
         return mDebateFormat.getName();
+    }
+
+    /**
+     * @param position the position of the timer in the {@link DebateManager}
+     * @return the name of the timer (speech or prep time) at that position
+     */
+    public String getSpeechName(int position) {
+        validatePosition(position);
+        if (position == 0 && hasPrepTime())
+            return mContext.getString(R.string.prepTime_title);
+        else if (hasPrepTime())
+            return mDebateFormat.getSpeechName(position - 1);
+        else
+            return mDebateFormat.getSpeechName(position);
     }
 
     /**
@@ -383,10 +430,32 @@ public class DebateManager {
     }
 
     /**
-     * @return the current {@link SpeechFormat}
+     * @param position the position of the timer in the {@link DebateManager}
+     * @return the {@link SpeechOrPrepFormat} for that position
+     */
+    public SpeechOrPrepFormat getFormat(int position) {
+        validatePosition(position);
+        if (position == 0 && hasPrepTime())
+            return mDebateFormat.getPrepFormat();
+        else if (hasPrepTime())
+            return mDebateFormat.getSpeechFormat(position - 1);
+        else
+            return mDebateFormat.getSpeechFormat(position);
+    }
+
+    /**
+     * @return the current {@link SpeechOrPrepFormat}
      */
     public SpeechOrPrepFormat getCurrentSpeechFormat() {
         return mSpeechManager.getFormat();
+    }
+
+    /**
+     * @return the next overtime bell after the time given, or <code>null</code> if there are no more overtime bells
+     */
+    public Long getNextOvertimeBellTimeAfter(long time, int position) {
+        long length = getFormat(position).getLength();
+        return mSpeechManager.getNextOvertimeBellTimeAfter(time, length);
     }
 
     /**
@@ -525,6 +594,11 @@ public class DebateManager {
             mSpeechManager.loadSpeech(mDebateFormat.getSpeechFormat(mCurrentSpeechIndex),
                     getCurrentSpeechName(), mSpeechTimes.get(mCurrentSpeechIndex));
         }
+    }
+
+    private void validatePosition(int position) {
+        if (position >= mDebateFormat.numberOfSpeeches() + 1)
+            throw new IndexOutOfBoundsException(String.format("Position %d out of bounds, with prep time", position));
     }
 
 }
