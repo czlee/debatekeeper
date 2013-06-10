@@ -259,11 +259,16 @@ public class DebatingActivity extends Activity {
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             View view = (View) object;
+            Log.i(getClass().getSimpleName(), String.format("Destroying position %d, %s", position, view.toString()));
             container.removeView(view);
         }
 
         @Override
         public int getItemPosition(Object object) {
+
+            // TODO I think we'll have to either tag the views, or use different Objects and
+            // correlate them with Views somehow else, in order to implement this function to
+            // give reliable results.
 
             // If it was the "no debate loaded" screen and there is now a debate loaded,
             // then the View no longer exists.  Likewise if there is no debate loaded and
@@ -277,8 +282,9 @@ public class DebatingActivity extends Activity {
                 return POSITION_UNCHANGED;
 
             // Otherwise, we delegate this function to the DebateManager.
+            // TODO this isn't correct, it's meant to return the position for the given object,
+            // not the currently-selected object.
             int position = mDebateManager.getCurrentPosition();
-            Log.i(getClass().getSimpleName(), String.format("Position is %d", position));
 
             return position;
         }
@@ -447,10 +453,8 @@ public class DebatingActivity extends Activity {
 
         @Override
         public void setPrimaryItem(ViewGroup container, int position, Object object) {
-            Log.i(getClass().getSimpleName(), String.format("Setting primary item to position %d, %s", position, object.toString()));
             mDebateTimerDisplay = (View) object;
             updateGui();
-            super.setPrimaryItem(container, position, object);
         }
 
         @Override
