@@ -1420,6 +1420,10 @@ public class DebatingActivity extends Activity {
                 Bundle bundle = new Bundle();
                 bundle.putString(DIALOG_BUNDLE_FATAL_MESSAGE, e.getMessage());
                 queueDialog(DIALOG_XML_FILE_FATAL, bundle);
+
+                // We still need to notify of a data set change when there ends up being no
+                // debate format
+                mViewPager.getAdapter().notifyDataSetChanged();
                 return;
             }
 
@@ -1573,12 +1577,11 @@ public class DebatingActivity extends Activity {
      */
     private void updateControls() {
         if (mDebateTimerDisplay == null) return;
-        if (mDebateTimerDisplay.getId() != R.id.debateTimer_root) return;
 
-        View currentTimeText   = mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTime);
-        View currentTimePicker = mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTimePicker);
+        if (mDebateManager != null && mDebateTimerDisplay.getId() == R.id.debateTimer_root) {
 
-        if (mDebateManager != null) {
+            View currentTimeText   = mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTime);
+            View currentTimePicker = mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTimePicker);
 
             // If it's the last speaker, don't show a "next speaker" button.
             // Show a "restart debate" button instead.
@@ -1639,125 +1642,123 @@ public class DebatingActivity extends Activity {
      */
     private void updateDebateTimerDisplay() {
 
+        // Make sure it makes sense to run this method now
+
         if (mDebateTimerDisplay == null) {
-            Log.e(this.getClass().getSimpleName(), "mDebateTimerDisplay was null");
+            Log.w("updateDebateTimerDisplay", "mDebateTimerDisplay was null");
             return;
         }
         if (mDebateTimerDisplay.getId() != R.id.debateTimer_root) {
-            Log.e(this.getClass().getSimpleName(), "mDebateTimerDisplay was not the debate timer display");
+            Log.w("updateDebateTimerDisplay", "mDebateTimerDisplay was not the debate timer display");
             return;
         }
+
+        if (mDebateManager == null) {
+            Log.w("updateDebateTimerDisplay", "mDebateManager was null");
+            mViewPager.getAdapter().notifyDataSetChanged();
+            return;
+        }
+
+        // If it passed all those checks, populate the timer display
 
         TextView periodDescriptionText = (TextView) mDebateTimerDisplay.findViewById(R.id.debateTimer_periodDescriptionText);
         TextView speechNameText        = (TextView) mDebateTimerDisplay.findViewById(R.id.debateTimer_speechNameText);
         TextView currentTimeText       = (TextView) mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTime);
         TextView infoLineText          = (TextView) mDebateTimerDisplay.findViewById(R.id.debateTimer_informationLine);
 
-        if (mDebateManager != null) {
+        DebatePhaseFormat currentSpeechFormat = mDebateManager.getActivePhaseFormat();
+        PeriodInfo         currentPeriodInfo   = mDebateManager.getActivePhaseCurrentPeriodInfo();
 
-            DebatePhaseFormat currentSpeechFormat = mDebateManager.getActivePhaseFormat();
-            PeriodInfo         currentPeriodInfo   = mDebateManager.getActivePhaseCurrentPeriodInfo();
+        // The information at the top of the screen
+        speechNameText.setText(mDebateManager.getActivePhaseName());
+        periodDescriptionText.setText(currentPeriodInfo.getDescription());
 
-            // The information at the top of the screen
-            speechNameText.setText(mDebateManager.getActivePhaseName());
-            periodDescriptionText.setText(currentPeriodInfo.getDescription());
+        // Background colour, this is user-preference dependent
+        Integer backgroundColour = currentPeriodInfo.getBackgroundColor();
+        switch (mBackgroundColourArea) {
+        case TOP_BAR_ONLY:
+            speechNameText.setBackgroundColor(backgroundColour);
+            periodDescriptionText.setBackgroundColor(backgroundColour);
+            break;
+        case WHOLE_SCREEN:
+            // Don't do the whole screen if there is a flash screen in progress
+            if (mFlashScreenSemaphore.tryAcquire()) {
+                mDebateTimerDisplay.setBackgroundColor(backgroundColour);
+                mFlashScreenSemaphore.release();
+            }
+        }
 
-            // Background colour, this is user-preference dependent
-            Integer backgroundColour = currentPeriodInfo.getBackgroundColor();
-            switch (mBackgroundColourArea) {
-            case TOP_BAR_ONLY:
-                speechNameText.setBackgroundColor(backgroundColour);
-                periodDescriptionText.setBackgroundColor(backgroundColour);
-                break;
-            case WHOLE_SCREEN:
-                // Don't do the whole screen if there is a flash screen in progress
-                if (mFlashScreenSemaphore.tryAcquire()) {
-                    mDebateTimerDisplay.setBackgroundColor(backgroundColour);
-                    mFlashScreenSemaphore.release();
-                }
+        long currentSpeechTime = mDebateManager.getActivePhaseCurrentTime();
+
+        // Take count direction into account for display
+        currentSpeechTime = subtractFromSpeechLengthIfCountingDown(currentSpeechTime);
+
+        Resources resources = getResources();
+        int currentTimeTextColor;
+        if (mDebateManager.isOvertime())
+            currentTimeTextColor = resources.getColor(R.color.overtime);
+        else
+            currentTimeTextColor = resources.getColor(android.R.color.primary_text_dark);
+        currentTimeText.setText(secsToText(currentSpeechTime));
+        currentTimeText.setTextColor(currentTimeTextColor);
+
+        // Construct the line that goes at the bottom
+        StringBuilder infoLine = new StringBuilder();
+
+        // First, length...
+        long length = currentSpeechFormat.getLength();
+        String lengthStr;
+        if (length % 60 == 0)
+            lengthStr = String.format(getResources().
+                    getQuantityString(R.plurals.timeInMinutes, (int) (length / 60), length / 60));
+        else
+            lengthStr = secsToText(length);
+
+        int finalTimeTextUnformattedResid = (mDebateManager.isInPrepTime()) ? R.string.prepTimeLength: R.string.speechLength;
+        infoLine.append(String.format(this.getString(finalTimeTextUnformattedResid),
+                lengthStr));
+
+        if (mDebateManager.isInPrepTime() && mDebateManager.isPrepTimeControlled())
+            infoLine.append(getString(R.string.prepTimeControlledIndicator));
+
+        // ...then, if applicable, bells
+        ArrayList<BellInfo> currentSpeechBells = currentSpeechFormat.getBellsSorted();
+        Iterator<BellInfo> currentSpeechBellsIter = currentSpeechBells.iterator();
+
+        if (mDebateManager.isOvertime()) {
+            // show next overtime bell (don't bother with list of bells anymore)
+            Long nextOvertimeBellTime = mDebateManager.getActivePhaseNextOvertimeBellTime();
+            if (nextOvertimeBellTime == null)
+                infoLine.append(getString(R.string.mainScreen_bellsList_noOvertimeBells));
+            else {
+                long timeToDisplay = subtractFromSpeechLengthIfCountingDown(nextOvertimeBellTime);
+                infoLine.append(getString(R.string.mainScreen_bellsList_nextOvertimeBell,
+                        secsToText(timeToDisplay)));
             }
 
-            long currentSpeechTime = mDebateManager.getActivePhaseCurrentTime();
+        } else if (currentSpeechBellsIter.hasNext()) {
+            // Convert the list of bells into a string.
+            StringBuilder bellsStr = new StringBuilder();
 
-            // Take count direction into account for display
-            currentSpeechTime = subtractFromSpeechLengthIfCountingDown(currentSpeechTime);
-
-            Resources resources = getResources();
-            int currentTimeTextColor;
-            if (mDebateManager.isOvertime())
-                currentTimeTextColor = resources.getColor(R.color.overtime);
-            else
-                currentTimeTextColor = resources.getColor(android.R.color.primary_text_dark);
-            currentTimeText.setText(secsToText(currentSpeechTime));
-            currentTimeText.setTextColor(currentTimeTextColor);
-
-            // Construct the line that goes at the bottom
-            StringBuilder infoLine = new StringBuilder();
-
-            // First, length...
-            long length = currentSpeechFormat.getLength();
-            String lengthStr;
-            if (length % 60 == 0)
-                lengthStr = String.format(getResources().
-                        getQuantityString(R.plurals.timeInMinutes, (int) (length / 60), length / 60));
-            else
-                lengthStr = secsToText(length);
-
-            int finalTimeTextUnformattedResid = (mDebateManager.isInPrepTime()) ? R.string.prepTimeLength: R.string.speechLength;
-            infoLine.append(String.format(this.getString(finalTimeTextUnformattedResid),
-                    lengthStr));
-
-            if (mDebateManager.isInPrepTime() && mDebateManager.isPrepTimeControlled())
-                infoLine.append(getString(R.string.prepTimeControlledIndicator));
-
-            // ...then, if applicable, bells
-            ArrayList<BellInfo> currentSpeechBells = currentSpeechFormat.getBellsSorted();
-            Iterator<BellInfo> currentSpeechBellsIter = currentSpeechBells.iterator();
-
-            if (mDebateManager.isOvertime()) {
-                // show next overtime bell (don't bother with list of bells anymore)
-                Long nextOvertimeBellTime = mDebateManager.getActivePhaseNextOvertimeBellTime();
-                if (nextOvertimeBellTime == null)
-                    infoLine.append(getString(R.string.mainScreen_bellsList_noOvertimeBells));
-                else {
-                    long timeToDisplay = subtractFromSpeechLengthIfCountingDown(nextOvertimeBellTime);
-                    infoLine.append(getString(R.string.mainScreen_bellsList_nextOvertimeBell,
-                            secsToText(timeToDisplay)));
-                }
-
-            } else if (currentSpeechBellsIter.hasNext()) {
-                // Convert the list of bells into a string.
-                StringBuilder bellsStr = new StringBuilder();
-
-                while (currentSpeechBellsIter.hasNext()) {
-                    BellInfo bi = currentSpeechBellsIter.next();
-                    long bellTime = subtractFromSpeechLengthIfCountingDown(bi.getBellTime());
-                    bellsStr.append(secsToText(bellTime));
-                    if (bi.isPauseOnBell())
-                        bellsStr.append(getString(R.string.pauseOnBellIndicator));
-                    if (bi.isSilent())
-                        bellsStr.append(getString(R.string.silentBellIndicator));
-                    if (currentSpeechBellsIter.hasNext())
-                        bellsStr.append(", ");
-                }
-
-                infoLine.append(getResources().getQuantityString(R.plurals.mainScreen_bellsList_normal, currentSpeechBells.size(), bellsStr));
-
-            } else {
-                infoLine.append(getString(R.string.mainScreen_bellsList_noBells));
+            while (currentSpeechBellsIter.hasNext()) {
+                BellInfo bi = currentSpeechBellsIter.next();
+                long bellTime = subtractFromSpeechLengthIfCountingDown(bi.getBellTime());
+                bellsStr.append(secsToText(bellTime));
+                if (bi.isPauseOnBell())
+                    bellsStr.append(getString(R.string.pauseOnBellIndicator));
+                if (bi.isSilent())
+                    bellsStr.append(getString(R.string.silentBellIndicator));
+                if (currentSpeechBellsIter.hasNext())
+                    bellsStr.append(", ");
             }
 
-            infoLineText.setText(infoLine.toString());
+            infoLine.append(getResources().getQuantityString(R.plurals.mainScreen_bellsList_normal, currentSpeechBells.size(), bellsStr));
 
         } else {
-            // Blank out all the fields
-            periodDescriptionText.setText(R.string.mainScreen_noDebateLoaded_text);
-            speechNameText.setText("");
-            periodDescriptionText.setBackgroundColor(0);
-            speechNameText.setBackgroundColor(0);
-            currentTimeText.setText("");
-            infoLineText.setText("");
+            infoLine.append(getString(R.string.mainScreen_bellsList_noBells));
         }
+
+        infoLineText.setText(infoLine.toString());
 
         // Update the POI timer button
         updatePoiTimerButton();
