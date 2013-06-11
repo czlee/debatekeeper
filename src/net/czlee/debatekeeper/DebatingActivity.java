@@ -20,6 +20,7 @@ package net.czlee.debatekeeper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -37,6 +38,7 @@ import net.czlee.debatekeeper.debateformat.PeriodInfo;
 import net.czlee.debatekeeper.debateformat.PrepTimeFormat;
 import net.czlee.debatekeeper.debateformat.SpeechFormat;
 import net.czlee.debatekeeper.debatemanager.DebateManager;
+import net.czlee.debatekeeper.debatemanager.DebateManager.DebatePhaseTag;
 
 import org.xml.sax.SAXException;
 
@@ -256,35 +258,41 @@ public class DebatingActivity extends Activity {
      */
     private class DebateTimerDisplayPagerAdapter extends PagerAdapter {
 
+        private final HashMap<DebatePhaseTag, View> mViewsMap = new HashMap<DebatePhaseTag, View>();
+        private static final String NO_DEBATE_LOADED = "no_debate_loaded";
+
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
-            View view = (View) object;
-            Log.i(getClass().getSimpleName(), String.format("Destroying position %d, %s", position, view.toString()));
+            View view = mViewsMap.get(object);
+            if (view == null) {
+                Log.e(getClass().getSimpleName(), String.format("Nothing found to destroy at position %d, %s", position, object.toString()));
+                return;
+            }
+            Log.i(getClass().getSimpleName(), String.format("Destroying position %d, %s, %s", position, object.toString(), view.toString()));
             container.removeView(view);
+            mViewsMap.remove(object);
         }
 
         @Override
         public int getItemPosition(Object object) {
 
-            // TODO I think we'll have to either tag the views, or use different Objects and
-            // correlate them with Views somehow else, in order to implement this function to
-            // give reliable results.
-
             // If it was the "no debate loaded" screen and there is now a debate loaded,
             // then the View no longer exists.  Likewise if there is no debate loaded and
             // there was anything but the "no debate loaded" screen.
-            View v = (View) object;
-            if ((mDebateManager == null) != (v.getId() == R.id.mainScreen_noDebateLoaded))
+            DebatePhaseTag tag = (DebatePhaseTag) object;
+            if ((mDebateManager == null) != (tag.specialTag == NO_DEBATE_LOADED))
                 return POSITION_NONE;
 
             // If it was "no debate loaded" and there is still no debate loaded, it's unchanged.
-            if (mDebateManager == null && v.getId() == R.id.mainScreen_noDebateLoaded)
+            if (mDebateManager == null && tag.specialTag == NO_DEBATE_LOADED)
                 return POSITION_UNCHANGED;
 
-            // Otherwise, we delegate this function to the DebateManager.
-            // TODO this isn't correct, it's meant to return the position for the given object,
-            // not the currently-selected object.
-            int position = mDebateManager.getActivePhaseIndex();
+            // That covers all situations in which mDebateManager could be null. Just to be safe:
+            assert mDebateManager != null;
+
+            // If there's no messy debate format changing or loading, delegate this function to the
+            // DebateManager.
+            int position = mDebateManager.getPhaseIndexForTag((DebatePhaseTag) object);
 
             return position;
         }
@@ -306,14 +314,15 @@ public class DebatingActivity extends Activity {
                 Log.i(getClass().getSimpleName(), "No debate loaded");
                 View v = View.inflate(DebatingActivity.this, R.layout.no_debate_loaded, null);
                 container.addView(v);
-                return v;
+                DebatePhaseTag tag = new DebatePhaseTag();
+                tag.specialTag = NO_DEBATE_LOADED;
+                mViewsMap.put(tag, v);
+                return tag;
             }
 
             // The View for the position in question is the inflated debate_timer_display for
             // the relevant timer (prep time or speech).
             View v = View.inflate(DebatingActivity.this, R.layout.debate_timer_display, null);
-
-            Log.i(getClass().getSimpleName(), String.format("Instantiating position %d, %s", position, v.toString()));
 
             // Set the time picker to 24-hour time
             TimePicker currentTimePicker = (TimePicker) v.findViewById(R.id.debateTimer_currentTimePicker);
@@ -449,19 +458,25 @@ public class DebatingActivity extends Activity {
 
             container.addView(v);
 
-            return v;
+            DebatePhaseTag tag = mDebateManager.getPhaseTagForIndex(position);
+            mViewsMap.put(tag, v);
+
+            Log.i(getClass().getSimpleName(), String.format("Instantiated position %d, %s, %s", position, tag.toString(), v.toString()));
+
+            return tag;
 
         }
 
         @Override
         public void setPrimaryItem(ViewGroup container, int position, Object object) {
-            mDebateTimerDisplay = (View) object;
+            mDebateTimerDisplay = mViewsMap.get(object);
             updateGui();
         }
 
         @Override
         public boolean isViewFromObject(View view, Object object) {
-            return view == object;
+            if (!mViewsMap.containsKey(object)) return false;
+            else return (mViewsMap.get(object) == view);
         }
 
     }

@@ -31,6 +31,7 @@ import net.czlee.debatekeeper.debateformat.SpeechFormat;
 import android.app.Service;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 
 
@@ -75,6 +76,8 @@ public class DebateManager {
     private static final String BUNDLE_SUFFIX_SPEECH_TIMES = ".st";
     private static final String BUNDLE_SUFFIX_PREP_TIME    = ".pt";
 
+    private static final int NO_SUCH_PHASE = PagerAdapter.POSITION_NONE;
+
     /**
      * Constructor.
      * @param context a {@link Context} relating to this DebateManager, probably a {@link Service}.
@@ -113,17 +116,24 @@ public class DebateManager {
     //******************************************************************************************
 
     /**
-     * Used to uniquely identify speeches and prep timers in a way that is independent of timer
+     * Used to uniquely identify speeches and prep timers in a way that is independent of phase
      * index.  The reason we do this is so that we can enable and disable prep time, but still give
      * other classes a means of identifying which speeches before correlate to which speeches after.
-     * We can't just do this using the timer index, as the timer index changes when we add or
-     * remove prep time.  (Timer indices must always number consecutively from zero.)
+     * We can't just do this using the phase index, as the phase index changes when we add or
+     * remove prep time.  (Phase indices must always number consecutively from zero.)
      *
      * Users of this class should treat it as a black box.  It can change in any way to reflect
-     * extensions of this class to support other debate structures.
+     * extensions of this class to support other debate structures.  The exception to this is
+     * the public member <code>noDebate</code>, which is always <code>null</code> for tags returned
+     * by this class, but which user classes may like to use for their own purposes.  As of
+     * 11 June 2013, this field is used by <code>DebatingActivity.DebateTimerDisplayPagerAdapter</code>
+     * to mark tags where no debate is loaded.
      */
-    public class DebatePhaseTag {
-        // TODO
+    public static class DebatePhaseTag {
+        public  String specialTag = null;
+        private DebateFormat format;
+        private DebatePhaseType type;
+        private int index;
     }
 
     public enum DebatePhaseType {
@@ -185,13 +195,7 @@ public class DebateManager {
      * @param timerIndex the new timer index
      */
     public int getActivePhaseIndex() {
-        if (hasPrepTime()) {
-            if (mActivePhaseType == DebatePhaseType.PREP_TIME)
-                return 0;
-            else
-                return mActiveSpeechIndex + 1;
-        }
-        else return mActiveSpeechIndex;
+        return findPhaseIndex(mActivePhaseType, mActiveSpeechIndex);
     }
 
     /**
@@ -288,6 +292,52 @@ public class DebateManager {
             return mDebateFormat.getSpeechName(phaseIndex - 1);
         else
             return mDebateFormat.getSpeechName(phaseIndex);
+    }
+
+    /**
+     * Returns the phase index for the phase referenced by a tag.  If the tag is from a DebateFormat
+     * that is different to this one, always returns <code>NO_SUCH_PHASE</code>.
+     *
+     * <p>Note that while <code>getPhaseIndexForTag(DebatePhaseTag)</code> and
+     * <code>getPhaseTagForIndex(int)</code> are inverses of each other, if the result of one is
+     * passed into the other after the phases are renumbered (e.g. because prep time becomes enabled
+     * or disabled) then the result may not be the original value.</p>
+     *
+     * @param tag the {@link DebatePhaseTag} for the phase
+     * @return the phase index for that tag, or <code>NO_SUCH_PHASE</code> if the phase is not found
+     */
+    public int getPhaseIndexForTag(DebatePhaseTag tag) {
+        if (mDebateFormat != tag.format) {
+            Log.i(getClass().getSimpleName(), String.format("getPhaseIndexForTag - no such phase, tag.format was %s, currently on %s",
+                    (tag.format == null) ? "null" : tag.format.getName(), mDebateFormat.getName()));
+            return NO_SUCH_PHASE;
+        }
+        return findPhaseIndex(tag.type, tag.index);
+    }
+
+    /**
+     * Returns a tag that uniquely identifies a phase of the debate.  The tag will remain the
+     * same even if phases are added or removed or re-ordered.  Currently, this happens when
+     * prep time is enabled or disabled.
+     * @param phaseIndex the phase index for the phase whose tag is to be retrieved
+     * @return a {@link DebatePhaseTag} object being the suitable tag
+     */
+    public DebatePhaseTag getPhaseTagForIndex(int phaseIndex) {
+        DebatePhaseTag tag = new DebatePhaseTag();
+        if (hasPrepTime()) {
+            if (getPhaseFormat(phaseIndex).isPrep()) {
+                tag.type = DebatePhaseType.PREP_TIME;
+                tag.index = 0;
+            } else {
+                tag.type = DebatePhaseType.SPEECH;
+                tag.index = phaseIndex - 1;
+            }
+        } else {
+            tag.type = DebatePhaseType.SPEECH;
+            tag.index = phaseIndex;
+        }
+        tag.format = mDebateFormat;
+        return tag;
     }
 
     /**
@@ -564,7 +614,7 @@ public class DebateManager {
             if (mActivePhaseType == DebatePhaseType.PREP_TIME) {
                 saveSpeech();
                 mPhaseManager.stop();
-                mActivePhaseType    = DebatePhaseType.SPEECH;
+                mActivePhaseType = DebatePhaseType.SPEECH;
                 mActiveSpeechIndex = 0;
                 loadSpeech();
             }
@@ -633,6 +683,34 @@ public class DebateManager {
     private void validatePhaseIndex(int phaseIndex) {
         if (phaseIndex >= mDebateFormat.numberOfSpeeches() + 1)
             throw new IndexOutOfBoundsException(String.format("Position %d out of bounds, with prep time", phaseIndex));
+    }
+
+    /**
+     * Converts a phase type and speech index (which together uniquely identify a phase in a
+     * debate) to a phase index.  Note that phase indices for a given phase can change depending
+     * on whether prep time is enabled.
+     * @param type the {@link DebatePhaseType}
+     * @param speechIndex the index of the speech, if applicable (ignored if not applicable)
+     * @return the appropriate phase index, or <code>NO_SUCH_PHASE</code> =
+     * {@link PagerAdapter}<code>.POSITION_NONE</code> if not applicable
+     */
+    private int findPhaseIndex(DebatePhaseType type, int speechIndex) {
+        if (hasPrepTime()) {
+            switch (type) {
+            case PREP_TIME:
+                return 0;
+            case SPEECH:
+                return speechIndex + 1;
+            }
+        } else {
+            switch (type) {
+            case PREP_TIME:
+                return NO_SUCH_PHASE;
+            case SPEECH:
+                return speechIndex;
+            }
+        }
+        return NO_SUCH_PHASE;
     }
 
 }
