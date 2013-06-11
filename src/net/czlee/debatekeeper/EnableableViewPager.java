@@ -1,3 +1,9 @@
+/*
+ * Adapted from:
+ * http://blog.svpino.com/2011/08/disabling-pagingswiping-on-android.html
+ * http://stackoverflow.com/questions/7814017/disable-viewpager
+ */
+
 package net.czlee.debatekeeper;
 
 import android.content.Context;
@@ -5,11 +11,6 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-/**
- * Adapted from:
- * http://blog.svpino.com/2011/08/disabling-pagingswiping-on-android.html
- * http://stackoverflow.com/questions/7814017/disable-viewpager
- */
 public class EnableableViewPager extends ViewPager {
 
     public interface PagingEnabledIndicator {
