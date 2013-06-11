@@ -27,7 +27,8 @@
         android:layout_alignParentTop="true"
         android:gravity="center_horizontal"
         android:paddingTop="4dip"
-        android:textSize="20dip" />
+        android:textSize="20sp"
+        android:textIsSelectable="true" />
 
     <TextView
         android:id="@+id/debateTimer_periodDescriptionText"
@@ -35,7 +36,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/debateTimer_speechNameText"
         android:gravity="center_horizontal"
-        android:textSize="14dip" />
+        android:textSize="14sp"
+        android:textIsSelectable="true" />
 
     <TextView
         android:id="@+id/debateTimer_currentTime"
@@ -43,15 +45,17 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center"
-        android:textSize="@dimen/currentTime_textSize" />
+        android:textSize="@dimen/currentTime_textSize"
+        android:textIsSelectable="false" />
 
     <TextView
         android:id="@+id/debateTimer_informationLine"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="4dip"
-        android:gravity="center_horizontal" />
+        android:layout_marginBottom="4sp"
+        android:gravity="center_horizontal"
+        android:textIsSelectable="true" />
 
     <TimePicker
         android:id="@+id/debateTimer_currentTimePicker"

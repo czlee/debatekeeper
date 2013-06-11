@@ -22,4 +22,4 @@
     android:layout_centerHorizontal="true"
     android:layout_marginBottom="52dip"
     android:text="@string/mainScreen_poiTimer_buttonText"
-    android:textSize="24dip" />
+    android:textSize="24sp" />
