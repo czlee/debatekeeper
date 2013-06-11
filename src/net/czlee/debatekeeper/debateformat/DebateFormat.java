@@ -156,9 +156,9 @@ public class DebateFormat {
      * @return a SpeechFormat object for that speech, or null if there is no such speech or if
      * the speech has no such format.
      */
-    public SpeechOrPrepFormat getSpeechFormat(int index) {
+    public DebatePhaseFormat getSpeechFormat(int index) {
         String speechType;
-        SpeechOrPrepFormat speechFormat;
+        DebatePhaseFormat speechFormat;
 
         // 1. Retrieve the speech type
         try {

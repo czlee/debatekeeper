@@ -26,12 +26,12 @@ package net.czlee.debatekeeper.debateformat;
  * by the chair to indicate certain events, and all teams are in the room for all
  * preparation.
  *
- * Its functionality is mostly derived from {@link ControlledSpeechOrPrepFormat}.
+ * Its functionality is mostly derived from {@link ControlledDebatePhaseFormat}.
  *
  * @author Chuan-Zheng Lee
  *
  */
-public class PrepTimeControlledFormat extends ControlledSpeechOrPrepFormat
+public class PrepTimeControlledFormat extends ControlledDebatePhaseFormat
         implements PrepTimeFormat {
 
     public PrepTimeControlledFormat(long length) {

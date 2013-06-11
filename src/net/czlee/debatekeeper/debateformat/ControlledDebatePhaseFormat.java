@@ -22,22 +22,22 @@ import java.util.Iterator;
 
 
 /**
- * ControlledSpeechOrPrepFormat is an abstract class providing shared functionality for
+ * <p>ControlledDebatePhaseFormat is an abstract class providing shared functionality for
  * speech and prep time formats that are fully controlled.  Currently, this means all
- * speeches, and prep time for formats like Easters.
+ * speeches, and prep time for formats like Easters.</p>
  *
- * Known subclasses: {@link SpeechFormat}, {@link PrepTimeControlledFormat}
+ * <p>Known subclasses: {@link SpeechFormat}, {@link PrepTimeControlledFormat}</p>
  *
  * @author Chuan-Zheng Lee
  *
  */
-public abstract class ControlledSpeechOrPrepFormat extends GenericSpeechOrPrepFormat {
+public abstract class ControlledDebatePhaseFormat extends GenericDebatePhaseFormat {
 
     protected final long          mLength;
     protected PeriodInfo          mFirstPeriodInfo = new PeriodInfo();
     protected ArrayList<BellInfo> mBells = new ArrayList<BellInfo>();
 
-    public ControlledSpeechOrPrepFormat(long length) {
+    public ControlledDebatePhaseFormat(long length) {
         super();
         this.mLength = length;
     }

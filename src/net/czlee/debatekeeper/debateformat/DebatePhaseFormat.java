@@ -21,18 +21,20 @@ import java.util.ArrayList;
 
 
 /**
- * SpeechOrPrepFormat is an interface for MainTimerManager
+ * <p>DebatePhaseFormat is an interface for DebatePhaseManager.</p>
  *
- * Known direct implementations: {@link GenericSpeechorPrepFormat}
+ * <p>Known direct implementations: {@link GenericSpeechorPrepFormat}</p>
  *
- * Known indirect implementation: {@link ControlledSpeechOrPrepFormat}, {@link PrepTimeSimpleFormat},
- * {@link PrepTimeControlledFormat}, {@link SpeechFormat}
+ * <p>Known direct sub-interfaces: {@link PrepTimeFormat}</p>
+ *
+ * <p>Known indirect implementation: {@link ControlledDebatePhaseFormat}, {@link PrepTimeSimpleFormat},
+ * {@link PrepTimeControlledFormat}, {@link SpeechFormat}</p>
  *
  * @author Chuan-Zheng Lee
  * @since  2013-01-21
  */
 
-public interface SpeechOrPrepFormat {
+public interface DebatePhaseFormat {
 
     /**
      * Returns the length of the speech or prep format in seconds.

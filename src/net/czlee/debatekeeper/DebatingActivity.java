@@ -32,10 +32,10 @@ import net.czlee.debatekeeper.debateformat.DebateFormat;
 import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml;
 import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXmlForSchema1;
 import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXmlForSchema2;
+import net.czlee.debatekeeper.debateformat.DebatePhaseFormat;
 import net.czlee.debatekeeper.debateformat.PeriodInfo;
 import net.czlee.debatekeeper.debateformat.PrepTimeFormat;
 import net.czlee.debatekeeper.debateformat.SpeechFormat;
-import net.czlee.debatekeeper.debateformat.SpeechOrPrepFormat;
 import net.czlee.debatekeeper.debatemanager.DebateManager;
 
 import org.xml.sax.SAXException;
@@ -145,9 +145,9 @@ public class DebatingActivity extends Activity {
         @Override
         public void onClick(View pV) {
             if (mDebateManager == null) return;
-            switch (mDebateManager.getStatus()) {
+            switch (mDebateManager.getTimerStatus()) {
             case STOPPED_BY_USER:
-                mDebateManager.resetSpeaker();
+                mDebateManager.resetActivePhase();
                 break;
             default:
                 break;
@@ -241,7 +241,7 @@ public class DebatingActivity extends Activity {
 
         @Override
         public void onPageSelected(int position) {
-            mDebateManager.setCurrentPosition(position);
+            mDebateManager.setCurrentPhaseIndex(position);
         }
 
     }
@@ -284,7 +284,7 @@ public class DebatingActivity extends Activity {
             // Otherwise, we delegate this function to the DebateManager.
             // TODO this isn't correct, it's meant to return the position for the given object,
             // not the currently-selected object.
-            int position = mDebateManager.getCurrentPosition();
+            int position = mDebateManager.getActivePhaseIndex();
 
             return position;
         }
@@ -292,11 +292,13 @@ public class DebatingActivity extends Activity {
         @Override
         public int getCount() {
             if (mDebateManager == null) return 1;
-            else return mDebateManager.getCount();
+            else return mDebateManager.getNumberOfPhases();
         }
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
+            // TODO generalise this code so it doesn't duplicate updateDebateTimerDisplay()
+
             // Note - the Object returned by this method must return the inflated View, because
             // setPrimaryItem() relies on this correlation in order to set mDebateTimerDisplay.
 
@@ -331,14 +333,14 @@ public class DebatingActivity extends Activity {
             v.setOnClickListener(new DebateTimerDisplayOnClickListener());
             currentTimeText.setOnLongClickListener(new CurrentTimeOnLongClickListener());
 
-            long               time = mDebateManager.getSpeechTime(position);
-            SpeechOrPrepFormat sf   = mDebateManager.getFormat(position);
-            PeriodInfo         pi   = sf.getPeriodInfoForTime(time);
+            long               time = mDebateManager.getPhaseCurrentTime(position);
+            DebatePhaseFormat  dpf  = mDebateManager.getPhaseFormat(position);
+            PeriodInfo         pi   = dpf.getPeriodInfoForTime(time);
 
-            boolean overtime = time > sf.getLength();
+            boolean overtime = time > dpf.getLength();
 
             // The information at the top of the screen
-            speechNameText.setText(mDebateManager.getSpeechName(position));
+            speechNameText.setText(mDebateManager.getPhaseName(position));
             periodDescriptionText.setText(pi.getDescription());
 
             // Background colour, this is user-preference dependent
@@ -353,7 +355,7 @@ public class DebatingActivity extends Activity {
             }
 
             // Take count direction into account for display
-            long timeToShow = subtractFromSpeechLengthIfCountingDown(time, sf);
+            long timeToShow = subtractFromSpeechLengthIfCountingDown(time, dpf);
 
             Resources resources = getResources();
             int timeTextColor;
@@ -368,7 +370,7 @@ public class DebatingActivity extends Activity {
             StringBuilder infoLine = new StringBuilder();
 
             // First, length...
-            long length = sf.getLength();
+            long length = dpf.getLength();
             String lengthStr;
             if (length % 60 == 0)
                 lengthStr = String.format(getResources().
@@ -376,26 +378,26 @@ public class DebatingActivity extends Activity {
             else
                 lengthStr = secsToText(length);
 
-            int finalTimeTextUnformattedResid = (sf.isPrep()) ? R.string.prepTimeLength: R.string.speechLength;
+            int finalTimeTextUnformattedResid = (dpf.isPrep()) ? R.string.prepTimeLength: R.string.speechLength;
             infoLine.append(String.format(getString(finalTimeTextUnformattedResid), lengthStr));
 
-            if (sf.isPrep()) {
-                PrepTimeFormat pt = (PrepTimeFormat) sf;
+            if (dpf.isPrep()) {
+                PrepTimeFormat pt = (PrepTimeFormat) dpf;
                 if (pt.isControlled())
                     infoLine.append(getString(R.string.prepTimeControlledIndicator));
             }
 
             // ...then, if applicable, bells
-            ArrayList<BellInfo> currentSpeechBells = sf.getBellsSorted();
+            ArrayList<BellInfo> currentSpeechBells = dpf.getBellsSorted();
             Iterator<BellInfo> currentSpeechBellsIter = currentSpeechBells.iterator();
 
             if (overtime) {
                 // show next overtime bell (don't bother with list of bells anymore)
-                Long nextOvertimeBellTime = mDebateManager.getNextOvertimeBellTimeAfter(time, position);
+                Long nextOvertimeBellTime = mDebateManager.getPhaseNextOvertimeBellTime(position);
                 if (nextOvertimeBellTime == null)
                     infoLine.append(getString(R.string.mainScreen_bellsList_noOvertimeBells));
                 else {
-                    long timeToDisplay = subtractFromSpeechLengthIfCountingDown(nextOvertimeBellTime, sf);
+                    long timeToDisplay = subtractFromSpeechLengthIfCountingDown(nextOvertimeBellTime, dpf);
                     infoLine.append(getString(R.string.mainScreen_bellsList_nextOvertimeBell,
                             secsToText(timeToDisplay)));
                 }
@@ -406,7 +408,7 @@ public class DebatingActivity extends Activity {
 
                 while (currentSpeechBellsIter.hasNext()) {
                     BellInfo bi = currentSpeechBellsIter.next();
-                    long bellTime = subtractFromSpeechLengthIfCountingDown(bi.getBellTime(), sf);
+                    long bellTime = subtractFromSpeechLengthIfCountingDown(bi.getBellTime(), dpf);
                     bellsStr.append(secsToText(bellTime));
                     if (bi.isPauseOnBell())
                         bellsStr.append(getString(R.string.pauseOnBellIndicator));
@@ -429,8 +431,8 @@ public class DebatingActivity extends Activity {
             // speech has POIs in it.
             boolean displayPoiTimerButton = false;
             if (mPoiTimerEnabled)
-                if (sf.getClass() == SpeechFormat.class)
-                    if (((SpeechFormat) sf).hasPoisAllowedSomewhere())
+                if (dpf.getClass() == SpeechFormat.class)
+                    if (((SpeechFormat) dpf).hasPoisAllowedSomewhere())
                         displayPoiTimerButton = true;
 
             // If it's appropriate to display the button, do so
@@ -526,7 +528,7 @@ public class DebatingActivity extends Activity {
                 startActivityForResult(intent, CHOOSE_STYLE_REQUEST);
                 return;
             }
-            switch (mDebateManager.getStatus()) {
+            switch (mDebateManager.getTimerStatus()) {
             case RUNNING:
                 mDebateManager.stopTimer();
                 break;
@@ -565,7 +567,7 @@ public class DebatingActivity extends Activity {
         @Override
         public void onClick(View pV) {
             if (mDebateManager == null) return;
-            switch (mDebateManager.getStatus()) {
+            switch (mDebateManager.getTimerStatus()) {
             case NOT_STARTED:
             case STOPPED_BY_USER:
                 goToNextSpeech();
@@ -646,7 +648,7 @@ public class DebatingActivity extends Activity {
         // If the timer is stopped AND it's not the first speaker, go back one speaker.
         // Note: We do not just leave this check to goToPreviousSpeaker(), because we want to do
         // other things if it's not in a state in which it could go to the previous speaker.
-        if (!mDebateManager.isFirstItem() && !mDebateManager.isRunning()) {
+        if (!mDebateManager.isInFirstPhase() && !mDebateManager.isRunning()) {
             goToPreviousSpeech();
             return;
 
@@ -698,7 +700,7 @@ public class DebatingActivity extends Activity {
         MenuItem resetDebateItem = menu.findItem(R.id.mainScreen_menuItem_resetDebate);
 
         if (mDebateManager != null) {
-            prevSpeakerItem.setEnabled(!mDebateManager.isFirstItem() && !mDebateManager.isRunning() && !mIsEditingTime);
+            prevSpeakerItem.setEnabled(!mDebateManager.isInFirstPhase() && !mDebateManager.isRunning() && !mIsEditingTime);
             resetDebateItem.setEnabled(true);
         } else {
             prevSpeakerItem.setEnabled(false);
@@ -1120,7 +1122,7 @@ public class DebatingActivity extends Activity {
             return;
         }
 
-        long currentTime = mDebateManager.getCurrentSpeechTime();
+        long currentTime = mDebateManager.getActivePhaseCurrentTime();
 
         // Invert the time if in count-down mode
         currentTime = subtractFromSpeechLengthIfCountingDown(currentTime);
@@ -1173,7 +1175,7 @@ public class DebatingActivity extends Activity {
             long newTime = minutes * 60 + seconds;
             // Invert the time if in count-down mode
             newTime = subtractFromSpeechLengthIfCountingDown(newTime);
-            mDebateManager.setCurrentSpeechTime(newTime);
+            mDebateManager.setActivePhaseCurrentTime(newTime);
         }
 
         mIsEditingTime = false;
@@ -1191,7 +1193,7 @@ public class DebatingActivity extends Activity {
      * some brain-work to do.
      * @return CountDirection.COUNT_UP or CountDirection.COUNT_DOWN
      */
-    private CountDirection getCountDirection(SpeechOrPrepFormat spf) {
+    private CountDirection getCountDirection(DebatePhaseFormat spf) {
         if (spf.isPrep())
             return mPrepTimeCountDirection;
         else
@@ -1355,11 +1357,11 @@ public class DebatingActivity extends Activity {
 
         if (mDebateManager == null) return;
         if (mDebateManager.isRunning()) return;
-        if (mDebateManager.isLastItem()) return;
+        if (mDebateManager.isInLastPhase()) return;
         if (mIsEditingTime) return;
 
-        mDebateManager.goToNextItem();
-        mViewPager.setCurrentItem(mDebateManager.getCurrentPosition());
+        mDebateManager.goToNextPhase();
+        mViewPager.setCurrentItem(mDebateManager.getActivePhaseIndex());
 
         updateGui();
         updateKeepScreenOn();
@@ -1375,11 +1377,11 @@ public class DebatingActivity extends Activity {
 
         if (mDebateManager == null) return;
         if (mDebateManager.isRunning()) return;
-        if (mDebateManager.isFirstItem()) return;
+        if (mDebateManager.isInFirstPhase()) return;
         if (mIsEditingTime) return;
 
-        mDebateManager.goToPreviousItem();
-        mViewPager.setCurrentItem(mDebateManager.getCurrentPosition());
+        mDebateManager.goToPreviousPhase();
+        mViewPager.setCurrentItem(mDebateManager.getActivePhaseIndex());
 
         updateGui();
         updateKeepScreenOn();
@@ -1424,7 +1426,7 @@ public class DebatingActivity extends Activity {
         }
 
         mViewPager.getAdapter().notifyDataSetChanged();
-        mViewPager.setCurrentItem(mDebateManager.getCurrentPosition());
+        mViewPager.setCurrentItem(mDebateManager.getActivePhaseIndex());
         applyPreferences();
         updateGui();
     }
@@ -1565,7 +1567,7 @@ public class DebatingActivity extends Activity {
 
             // If it's the last speaker, don't show a "next speaker" button.
             // Show a "restart debate" button instead.
-            switch (mDebateManager.getStatus()) {
+            switch (mDebateManager.getTimerStatus()) {
             case NOT_STARTED:
                 setButtons(R.string.mainScreen_startTimer_buttonText, R.string.mainScreen_null_buttonText, R.string.mainScreen_nextSpeaker_buttonText);
                 break;
@@ -1599,7 +1601,7 @@ public class DebatingActivity extends Activity {
                 // Disable the [Next Speaker] button if there are no more speakers
                 mLeftControlButton.setEnabled(true);
                 mCentreControlButton.setEnabled(true);
-                mRightControlButton.setEnabled(!mDebateManager.isLastItem());
+                mRightControlButton.setEnabled(!mDebateManager.isInLastPhase());
             }
 
         } else {
@@ -1638,11 +1640,11 @@ public class DebatingActivity extends Activity {
 
         if (mDebateManager != null) {
 
-            SpeechOrPrepFormat currentSpeechFormat = mDebateManager.getCurrentSpeechFormat();
-            PeriodInfo         currentPeriodInfo   = mDebateManager.getCurrentPeriodInfo();
+            DebatePhaseFormat currentSpeechFormat = mDebateManager.getActivePhaseFormat();
+            PeriodInfo         currentPeriodInfo   = mDebateManager.getActivePhaseCurrentPeriodInfo();
 
             // The information at the top of the screen
-            speechNameText.setText(mDebateManager.getCurrentSpeechName());
+            speechNameText.setText(mDebateManager.getActivePhaseName());
             periodDescriptionText.setText(currentPeriodInfo.getDescription());
 
             // Background colour, this is user-preference dependent
@@ -1660,7 +1662,7 @@ public class DebatingActivity extends Activity {
                 }
             }
 
-            long currentSpeechTime = mDebateManager.getCurrentSpeechTime();
+            long currentSpeechTime = mDebateManager.getActivePhaseCurrentTime();
 
             // Take count direction into account for display
             currentSpeechTime = subtractFromSpeechLengthIfCountingDown(currentSpeechTime);
@@ -1699,7 +1701,7 @@ public class DebatingActivity extends Activity {
 
             if (mDebateManager.isOvertime()) {
                 // show next overtime bell (don't bother with list of bells anymore)
-                Long nextOvertimeBellTime = mDebateManager.getNextOvertimeBellTime();
+                Long nextOvertimeBellTime = mDebateManager.getActivePhaseNextOvertimeBellTime();
                 if (nextOvertimeBellTime == null)
                     infoLine.append(getString(R.string.mainScreen_bellsList_noOvertimeBells));
                 else {
@@ -1797,7 +1799,7 @@ public class DebatingActivity extends Activity {
         boolean displayPoiTimerButton = false;
         if (mPoiTimerEnabled)
             if (mDebateManager != null)
-                if (mDebateManager.hasPoisInCurrentSpeech())
+                if (mDebateManager.hasPoisInActivePhase())
                     displayPoiTimerButton = true;
 
         // If it's appropriate to display the button, do so
@@ -1840,11 +1842,11 @@ public class DebatingActivity extends Activity {
      */
     private long subtractFromSpeechLengthIfCountingDown(long time) {
         if (mDebateManager != null)
-            return subtractFromSpeechLengthIfCountingDown(time, mDebateManager.getCurrentSpeechFormat());
+            return subtractFromSpeechLengthIfCountingDown(time, mDebateManager.getActivePhaseFormat());
         return time;
     }
 
-    private long subtractFromSpeechLengthIfCountingDown(long time, SpeechOrPrepFormat sf) {
+    private long subtractFromSpeechLengthIfCountingDown(long time, DebatePhaseFormat sf) {
         if (getCountDirection(sf) == CountDirection.COUNT_DOWN)
             return sf.getLength() - time;
         return time;

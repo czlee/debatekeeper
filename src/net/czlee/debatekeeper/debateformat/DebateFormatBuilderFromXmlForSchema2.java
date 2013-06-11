@@ -452,16 +452,16 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
     }
 
     /**
-     * Populates a {@link ControlledSpeechOrPrepFormat} with the first-period and the bells in
-     * the {@link Element}.  By the time this method is called, the {@link ControlledSpeechOrPrepFormat}
+     * Populates a {@link ControlledDebatePhaseFormat} with the first-period and the bells in
+     * the {@link Element}.  By the time this method is called, the {@link ControlledDebatePhaseFormat}
      * (more likely one of its subclasses) must already exist and have a length associated with it.
      * This method exists mainly to avoid duplicate code to handle the two subclasses of
-     * {@link ControlledSpeechOrPrepFormat} ({@link SpeechFormat} and {@link PrepTimeControlledFormat}).
+     * {@link ControlledDebatePhaseFormat} ({@link SpeechFormat} and {@link PrepTimeControlledFormat}).
      * @param cspf
      * @param element
      * @param length
      */
-    private void populateControlledTimeFormat(ControlledSpeechOrPrepFormat cspf, Element element, String location) {
+    private void populateControlledTimeFormat(ControlledDebatePhaseFormat cspf, Element element, String location) {
 
         // If there is a first period specified, and it is not "#stay", set it accordingly
         String firstPeriod = xu.findAttributeText(element, R.string.xml2attrName_controlledTimeFirstPeriod);

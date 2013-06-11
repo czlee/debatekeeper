@@ -39,7 +39,7 @@ import java.util.Iterator;
  *  @author Chuan-Zheng Lee
  *  @since  2012-06-09
  */
-public class SpeechFormat extends ControlledSpeechOrPrepFormat {
+public class SpeechFormat extends ControlledDebatePhaseFormat {
 
     private String mReference = null;
 

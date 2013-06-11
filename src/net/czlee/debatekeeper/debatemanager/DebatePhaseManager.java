@@ -23,37 +23,42 @@ import java.util.TimerTask;
 import net.czlee.debatekeeper.AlertManager;
 import net.czlee.debatekeeper.debateformat.BellInfo;
 import net.czlee.debatekeeper.debateformat.BellSoundInfo;
+import net.czlee.debatekeeper.debateformat.DebatePhaseFormat;
 import net.czlee.debatekeeper.debateformat.PeriodInfo;
 import net.czlee.debatekeeper.debateformat.SpeechFormat;
-import net.czlee.debatekeeper.debateformat.SpeechOrPrepFormat;
 import android.os.Bundle;
 import android.util.Log;
 
 /**
- * MainTimerManager manages the mechanics of a single speech.  Exactly one instance should exist
- * during a debate.  <code>MainTimerManager</code> can switch between speeches dynamically&mdash;there
- * is no need to destroy and/or re-create this instance in order to start a new speech.
+ * <p>DebatePhaseManager manages the mechanics of a single phase of a debate.  A "phase" of a debate
+ * is a generic term to refer to a part governed by a single timer, e.g. a speech, or a period of
+ * preparation time.</p>
  *
- * MainTimerManager is responsible for:<br>
+ * <p>Exactly one instance of DebatePhaseManager should exist during a debate.  DebatePhaseManager
+ * can switch between various phases dynamically&mdash;there is no need to destroy and/or
+ * re-create this instance in order to load or start a new phase (speech or prep time).  However,
+ * DebatePhaseManager doesn't remember anything about phases that are no longer loaded.  Therefore,
+ * users of DebatePhaseManager will need to take note of the current time if it would like to
+ * save and restore the state of a phase.</p>
+ *
+ * <p>DebatePhaseManager is responsible for:</p>
  *  <ul>
  *  <li> Keeping time
  *  <li> Keeping track of, and setting off, bells.
  *  <li> Keeping track of period information and providing it when asked.
  *  </ul>
  *
- *  MainTimerManager doesn't remember anything about speeches that are no longer loaded.
- *
  * @author Chuan-Zheng Lee
  * @since  2012-06-09
  *
  */
-public class MainTimerManager extends DebateElementManager {
+public class DebatePhaseManager extends DebateElementManager {
 
-    private SpeechOrPrepFormat       mFormat;
-    private String                   mSpeechName;
+    private DebatePhaseFormat        mFormat;
+    private String                   mPhaseName;
     private PeriodInfo               mCurrentPeriodInfo;
     private Timer                    mTimer;
-    private DebatingTimerState       mState = DebatingTimerState.NOT_STARTED;
+    private DebateTimerState         mState = DebateTimerState.NOT_STARTED;
     private long                     mFirstOvertimeBellTime = 30;
     private long                     mOvertimeBellPeriod    = 20;
     protected long mCurrentTime;
@@ -66,14 +71,17 @@ public class MainTimerManager extends DebateElementManager {
      * Constructor.
      * @param am the AlertManager associated with this instance
      */
-    public MainTimerManager(AlertManager am) {
+    public DebatePhaseManager(AlertManager am) {
         super(am);
     }
 
     //******************************************************************************************
     // Public classes
     //******************************************************************************************
-    public enum DebatingTimerState {
+    /**
+     * Enumerated constant for the current state of the debate timer.
+     */
+    public enum DebateTimerState {
         NOT_STARTED,
         RUNNING,
         STOPPED_BY_USER,
@@ -114,7 +122,7 @@ public class MainTimerManager extends DebateElementManager {
      * @param sf The speech format to load
      * @throws IllegalStateException if the timer is currently running
      */
-    public void loadSpeech(SpeechOrPrepFormat sf, String name) {
+    public void loadSpeech(DebatePhaseFormat sf, String name) {
         loadSpeech(sf, name, 0);
     }
 
@@ -124,20 +132,20 @@ public class MainTimerManager extends DebateElementManager {
      * @param seconds The time in seconds to load
      * @throws IllegalStateException if the timer is currently running
      */
-    public void loadSpeech(SpeechOrPrepFormat sf, String name, long seconds) {
-        if (mState == DebatingTimerState.RUNNING)
+    public void loadSpeech(DebatePhaseFormat sf, String name, long seconds) {
+        if (mState == DebateTimerState.RUNNING)
             throw new IllegalStateException("Can't load speech while timer running");
 
         mFormat = sf;
-        mSpeechName = name;
+        mPhaseName = name;
         mCurrentTime = seconds;
 
         if (seconds == 0) {
             mCurrentPeriodInfo = sf.getFirstPeriodInfo();
-            mState = DebatingTimerState.NOT_STARTED;
+            mState = DebateTimerState.NOT_STARTED;
         } else {
             mCurrentPeriodInfo = sf.getPeriodInfoForTime(seconds);
-            mState = DebatingTimerState.STOPPED_BY_USER;
+            mState = DebateTimerState.STOPPED_BY_USER;
         }
     }
 
@@ -150,12 +158,12 @@ public class MainTimerManager extends DebateElementManager {
     public void start() {
         if (mFormat == null)
             return;
-        if (mState == DebatingTimerState.RUNNING)
+        if (mState == DebateTimerState.RUNNING)
             return;
         mTimer = new Timer();
         mTimer.scheduleAtFixedRate(new IncrementTimeTask(), TIMER_DELAY, TIMER_PERIOD);
-        mState = DebatingTimerState.RUNNING;
-        mAlertManager.makeActive(mSpeechName);
+        mState = DebateTimerState.RUNNING;
+        mAlertManager.makeActive(mPhaseName);
     }
 
     /**
@@ -167,7 +175,7 @@ public class MainTimerManager extends DebateElementManager {
             mTimer.cancel();
             mTimer = null;
         }
-        mState = DebatingTimerState.STOPPED_BY_USER;
+        mState = DebateTimerState.STOPPED_BY_USER;
         mAlertManager.makeInactive();
     }
 
@@ -178,13 +186,13 @@ public class MainTimerManager extends DebateElementManager {
         stop();
         mCurrentTime = 0;
         mCurrentPeriodInfo = mFormat.getFirstPeriodInfo();
-        mState = DebatingTimerState.NOT_STARTED;
+        mState = DebateTimerState.NOT_STARTED;
     }
 
     /**
      * @return the current state of the timer
      */
-    public DebatingTimerState getStatus() {
+    public DebateTimerState getStatus() {
         return this.mState;
     }
 
@@ -245,7 +253,7 @@ public class MainTimerManager extends DebateElementManager {
     /**
      * @return the current {@link SpeechFormat}
      */
-    public SpeechOrPrepFormat getFormat() {
+    public DebatePhaseFormat getFormat() {
         return mFormat;
     }
 
@@ -254,7 +262,7 @@ public class MainTimerManager extends DebateElementManager {
      */
     @Override
     public boolean isRunning() {
-        return getStatus() == DebatingTimerState.RUNNING;
+        return getStatus() == DebateTimerState.RUNNING;
     }
 
     /**
@@ -281,8 +289,8 @@ public class MainTimerManager extends DebateElementManager {
         // if the timer is paused by a bell (STOPPED_BY_BELL) then its state will change to either
         // NOT_STARTED or STOPPED_BY_USER, since the user has now intervened so it's not really a
         // pause-by-bell anymore.
-        if (mState != DebatingTimerState.RUNNING)
-            mState = (mCurrentTime == 0) ? DebatingTimerState.NOT_STARTED : DebatingTimerState.STOPPED_BY_USER;
+        if (mState != DebateTimerState.RUNNING)
+            mState = (mCurrentTime == 0) ? DebateTimerState.NOT_STARTED : DebateTimerState.STOPPED_BY_USER;
 
         // restore the appropriate period info
         mCurrentPeriodInfo = mFormat.getPeriodInfoForTime(seconds);
@@ -299,8 +307,8 @@ public class MainTimerManager extends DebateElementManager {
     }
 
     /**
-     * Saves the state of this <code>MainTimerManager</code> to a {@link Bundle}.
-     * @param key A String to uniquely distinguish this <code>MainTimerManager</code> from any other
+     * Saves the state of this <code>DebatePhaseManager</code> to a {@link Bundle}.
+     * @param key A String to uniquely distinguish this <code>DebatePhaseManager</code> from any other
      *        objects that might be stored in the same Bundle.
      * @param bundle The Bundle to which to save this information.
      */
@@ -311,9 +319,9 @@ public class MainTimerManager extends DebateElementManager {
     }
 
     /**
-     * Restores the state of this <code>MainTimerManager</code> from a {@link Bundle}.
+     * Restores the state of this <code>DebatePhaseManager</code> from a {@link Bundle}.
      * <code>loadSpeech()</code> should be called <b>before</b> this is called.
-     * @param key A String to uniquely distinguish this <code>MainTimerManager</code> from any other
+     * @param key A String to uniquely distinguish this <code>DebatePhaseManager</code> from any other
      *        objects that might be stored in the same Bundle.
      * @param bundle The Bundle from which to restore this information.
      */
@@ -322,11 +330,11 @@ public class MainTimerManager extends DebateElementManager {
 
         String stateString = bundle.getString(key + BUNDLE_SUFFIX_STATE);
         if (stateString == null)
-            mState = (mCurrentTime == 0) ? DebatingTimerState.NOT_STARTED : DebatingTimerState.STOPPED_BY_USER;
+            mState = (mCurrentTime == 0) ? DebateTimerState.NOT_STARTED : DebateTimerState.STOPPED_BY_USER;
         else try {
-            mState = DebatingTimerState.valueOf(stateString);
+            mState = DebateTimerState.valueOf(stateString);
         } catch (IllegalArgumentException e) {
-            mState = (mCurrentTime == 0) ? DebatingTimerState.NOT_STARTED : DebatingTimerState.STOPPED_BY_USER;
+            mState = (mCurrentTime == 0) ? DebateTimerState.NOT_STARTED : DebateTimerState.STOPPED_BY_USER;
         }
 
         mCurrentPeriodInfo.restoreState(key + BUNDLE_SUFFIX_PERIOD_INFO, bundle);
@@ -345,7 +353,7 @@ public class MainTimerManager extends DebateElementManager {
             mTimer.cancel();
             mTimer = null;
         }
-        mState = DebatingTimerState.STOPPED_BY_BELL;
+        mState = DebateTimerState.STOPPED_BY_BELL;
         mAlertManager.wakeUpScreenForPause();
     }
 

@@ -80,7 +80,7 @@ public class DebatingTimerService extends Service
     }
 
     /**
-     * This class is passed to the <code>MainTimerManager</code> (indirectly) as a means to trigger a
+     * This class is passed to the <code>DebatePhaseManager</code> (indirectly) as a means to trigger a
      * GUI update in the <code>DebatingActivity</code>.
      */
     public class GuiUpdateBroadcastSender {

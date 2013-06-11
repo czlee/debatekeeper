@@ -31,7 +31,7 @@ import net.czlee.debatekeeper.PrepTimeBellsManager;
  * @since  2013-01-21
  *
  */
-public class PrepTimeSimpleFormat extends GenericSpeechOrPrepFormat implements PrepTimeFormat {
+public class PrepTimeSimpleFormat extends GenericDebatePhaseFormat implements PrepTimeFormat {
 
     protected final long mPrepLength;
     protected PrepTimeBellsManager mBellsManager;
@@ -49,25 +49,16 @@ public class PrepTimeSimpleFormat extends GenericSpeechOrPrepFormat implements P
         this.mBellsManager = manager;
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.PrepTimeFormat#getLength()
-     */
     @Override
     public long getLength() {
         return mPrepLength;
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.PrepTimeFormat#getFirstPeriodInfo()
-     */
     @Override
     public PeriodInfo getFirstPeriodInfo() {
         return new PeriodInfo("", 0, false);
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.PrepTimeFormat#isControlled()
-     */
     @Override
     public boolean isControlled() {
         return false;
