@@ -134,6 +134,10 @@ public class FormatChooserActivity extends FragmentActivity {
      *
      */
     public class FormatChooserActivityBinder {
+        public DetailsButtonOnClickListener getDetailsButtonOnClickListener(String filename) {
+            return new DetailsButtonOnClickListener(filename);
+        }
+
         /**
          * @return the position of the currently checked item.
          */
@@ -145,21 +149,37 @@ public class FormatChooserActivity extends FragmentActivity {
             FormatChooserActivity.this.populateBasicInfo(view, filename);
         }
 
-        public DetailsButtonOnClickListener getDetailsButtonOnClickListener(String filename) {
-            return new DetailsButtonOnClickListener(filename);
+    }
+
+    /**
+     * An {@link AlertDialog} alerting the user to a fatal problem retrieving the styles list,
+     * which then exits this Activity upon dismissal.
+     * @author Chuan-Zheng Lee
+     *
+     */
+    public static class ListIOErrorDialogFragment extends DialogFragment {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final FormatChooserActivity activity = (FormatChooserActivity) getActivity();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            builder.setTitle(R.string.ioErrorDialog_title)
+                   .setMessage(R.string.ioErrorDialog_message)
+                   .setCancelable(false)
+                   .setPositiveButton(R.string.ioErrorDialog_button,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    activity.finish();
+                                }
+                            });
+            return builder.create();
         }
 
     }
 
     public static class MoreDetailsDialogFragment extends DialogFragment {
-
-        static MoreDetailsDialogFragment newInstance(String filename) {
-            MoreDetailsDialogFragment fragment = new MoreDetailsDialogFragment();
-            Bundle args = new Bundle();
-            args.putString(DIALOG_ARGUMENT_FILE_NAME, filename);
-            fragment.setArguments(args);
-            return fragment;
-        }
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -277,19 +297,6 @@ public class FormatChooserActivity extends FragmentActivity {
             ((TextView) view.findViewById(R.id.viewFormat_fileNameValue)).setText(filename);
         }
 
-        private static void populatePrepTimeInfo(View view, DebateFormatInfo dfi) {
-            String prepTimeDescription = dfi.getPrepTimeDescription();
-
-            // If there is prep time, populate the view.
-            if (prepTimeDescription != null)
-                ((TextView) view.findViewById(R.id.viewFormat_prepTimeValue)).setText(
-                        prepTimeDescription);
-
-            // Otherwise, hide the whole row.
-            else
-                view.findViewById(R.id.viewFormat_prepTimeRow).setVisibility(View.GONE);
-        }
-
         /**
          * Populates a table from an ArrayList of String arrays.
          * @param view
@@ -313,34 +320,27 @@ public class FormatChooserActivity extends FragmentActivity {
             }
 
         }
-    }
 
-    /**
-     * An {@link AlertDialog} alerting the user to a fatal problem retrieving the styles list,
-     * which then exits this Activity upon dismissal.
-     * @author Chuan-Zheng Lee
-     *
-     */
-    public static class ListIOErrorDialogFragment extends DialogFragment {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final FormatChooserActivity activity = (FormatChooserActivity) getActivity();
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-            builder.setTitle(R.string.ioErrorDialog_title)
-                   .setMessage(R.string.ioErrorDialog_message)
-                   .setCancelable(false)
-                   .setPositiveButton(R.string.ioErrorDialog_button,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    activity.finish();
-                                }
-                            });
-            return builder.create();
+        static MoreDetailsDialogFragment newInstance(String filename) {
+            MoreDetailsDialogFragment fragment = new MoreDetailsDialogFragment();
+            Bundle args = new Bundle();
+            args.putString(DIALOG_ARGUMENT_FILE_NAME, filename);
+            fragment.setArguments(args);
+            return fragment;
         }
 
+        private static void populatePrepTimeInfo(View view, DebateFormatInfo dfi) {
+            String prepTimeDescription = dfi.getPrepTimeDescription();
+
+            // If there is prep time, populate the view.
+            if (prepTimeDescription != null)
+                ((TextView) view.findViewById(R.id.viewFormat_prepTimeValue)).setText(
+                        prepTimeDescription);
+
+            // Otherwise, hide the whole row.
+            else
+                view.findViewById(R.id.viewFormat_prepTimeRow).setVisibility(View.GONE);
+        }
     }
 
     // ******************************************************************************************
@@ -349,6 +349,13 @@ public class FormatChooserActivity extends FragmentActivity {
 
     private class AllInformationFoundException extends SAXException {
         private static final long serialVersionUID = 3195935815375118010L;
+    }
+
+    private class CancelButtonOnClickListener implements OnClickListener {
+        @Override
+        public void onClick(View v) {
+            FormatChooserActivity.this.finish();
+        }
     }
 
     private class DetailsButtonOnClickListener implements OnClickListener {
@@ -374,6 +381,22 @@ public class FormatChooserActivity extends FragmentActivity {
     private class GetDebateFormatNameXmlContentHandler extends DefaultHandler {
 
         private StringBuilder mNameBuffer = null;
+
+        @Override
+        public void characters(char[] ch, int start, int length) throws SAXException {
+            String str = new String(ch, start, length);
+            if (mNameBuffer == null) return;
+            mNameBuffer = mNameBuffer.append(str);
+        }
+
+        @Override
+        public void endElement(String uri, String localName, String qName) throws SAXException {
+            if (localName.equals(getString(R.string.xml2elemName_name))) {
+                mCurrentStyleName = mNameBuffer.toString();
+                throw new AllInformationFoundException();
+                // We don't need to parse any more once we finish getting the style name
+            }
+        }
 
         @Override
         public void startDocument() throws SAXException {
@@ -406,22 +429,6 @@ public class FormatChooserActivity extends FragmentActivity {
             }
         }
 
-        @Override
-        public void endElement(String uri, String localName, String qName) throws SAXException {
-            if (localName.equals(getString(R.string.xml2elemName_name))) {
-                mCurrentStyleName = mNameBuffer.toString();
-                throw new AllInformationFoundException();
-                // We don't need to parse any more once we finish getting the style name
-            }
-        }
-
-        @Override
-        public void characters(char[] ch, int start, int length) throws SAXException {
-            String str = new String(ch, start, length);
-            if (mNameBuffer == null) return;
-            mNameBuffer = mNameBuffer.append(str);
-        }
-
 
 
     }
@@ -430,13 +437,6 @@ public class FormatChooserActivity extends FragmentActivity {
         @Override
         public void onClick(View v) {
             confirmSelectionAndReturn();
-        }
-    }
-
-    private class CancelButtonOnClickListener implements OnClickListener {
-        @Override
-        public void onClick(View v) {
-            FormatChooserActivity.this.finish();
         }
     }
 
@@ -548,6 +548,103 @@ public class FormatChooserActivity extends FragmentActivity {
     //******************************************************************************************
     // Private methods
     //******************************************************************************************
+
+    /**
+     * Adds a style to the master styles list.
+     * @param filename the file name for this style
+     * @param styleName the name of this style
+     */
+    private void addStyleToList(String filename, String styleName) {
+        mStylesList.add(new DebateFormatListEntry(filename, styleName));
+    }
+
+    /**
+     * Confirms and handles the selection appropriately, and ends the Activity.
+     */
+    private void confirmSelectionAndReturn() {
+        int selectedPosition = mStylesListView.getCheckedItemPosition();
+        if (selectedPosition == getIncomingSelection()) {
+            Toast.makeText(FormatChooserActivity.this,
+                    R.string.formatChooser_toast_formatUnchanged, Toast.LENGTH_SHORT)
+                    .show();
+            FormatChooserActivity.this.finish();
+        } else if (selectedPosition != ListView.INVALID_POSITION) {
+            returnSelectionByPosition(selectedPosition);
+        } else {
+            Toast.makeText(FormatChooserActivity.this, R.string.formatChooser_toast_noSelection,
+                    Toast.LENGTH_SHORT).show();
+            FormatChooserActivity.this.finish();
+        }
+    }
+
+    /**
+     * Parses an XML file to get the {@link DebateFormatInfo} object
+     * @param filename the filename for the debate format XML file
+     * @return a <code>DebateFormatInfo</code> object, or <code>null</code>
+     * @throws IOException if there was an IO problem with the XML file
+     * @throws SAXException if thrown by the XML parser
+     */
+    private DebateFormatInfo getDebateFormatInfo(String filename) throws IOException, SAXException {
+        InputStream is;
+        is = mFilesManager.open(filename);
+
+        // Assume it's a 2.0 schema first.
+        DebateFormatInfoForSchema2 dfi2 = new DebateFormatInfoForSchema2(this, is);
+
+        // If it's not 2.0, check to see if it is 1.0 or 1.1
+        if (!dfi2.isSchemaSupported()) {
+            DebateFormatInfoExtractorForSchema1 dfie = new DebateFormatInfoExtractorForSchema1(this);
+            is.close();
+            is = mFilesManager.open(filename); // open again to try schema 1.0
+            DebateFormatInfo dfi1 = dfie.getDebateFormatInfo(is);
+            if (dfi1.isSchemaSupported()) return dfi1;
+        }
+
+        // If it isn't, keep pretending it was 2.0.
+        return dfi2;
+
+    }
+
+    /**
+     * @param filename a file name
+     * @return an integer representing the location of the file
+     */
+    private int getFileLocation(String filename) {
+        return mFilesManager.getLocation(filename);
+    }
+
+    /**
+     * @return the selection (as an integer) that was passed in the <code>Intent</code> that
+     * started this <code>Activity</code>, or <code>ListView.INVALID_POSITION</code>
+     */
+    private int getIncomingSelection() {
+        Intent data = getIntent();
+        String incomingFilename = data.getStringExtra(EXTRA_XML_FILE_NAME);
+        if (incomingFilename != null) {
+            Iterator<DebateFormatListEntry> entryIterator = mStylesList
+                    .iterator();
+            while (entryIterator.hasNext()) {
+                DebateFormatListEntry se = entryIterator.next();
+                if (incomingFilename.equals(se.getFilename())) {
+                    return mStylesList.indexOf(se);
+                }
+            }
+        }
+        return ListView.INVALID_POSITION;
+    }
+
+    /**
+     * @param view the <code>View</code> to be populated
+     * @param filename the filename of the XML file from which data is to be taken
+     * @throws IOException if there was an IO problem with the XML file
+     * @throws SAXException if thrown by the XML parser
+     */
+    private void populateBasicInfo(View view, String filename) throws IOException, SAXException {
+        DebateFormatInfo dfi = getDebateFormatInfo(filename);
+        if (dfi != null)
+            populateBasicInfo(view, dfi);
+    }
+
     /**
      * Populates the master styles list, <code>mStylesList</code>.  Should be called when this
      * Activity is created.
@@ -593,54 +690,6 @@ public class FormatChooserActivity extends FragmentActivity {
     }
 
     /**
-     * Adds a style to the master styles list.
-     * @param filename the file name for this style
-     * @param styleName the name of this style
-     */
-    private void addStyleToList(String filename, String styleName) {
-        mStylesList.add(new DebateFormatListEntry(filename, styleName));
-    }
-
-    /**
-     * Confirms and handles the selection appropriately, and ends the Activity.
-     */
-    private void confirmSelectionAndReturn() {
-        int selectedPosition = mStylesListView.getCheckedItemPosition();
-        if (selectedPosition == getIncomingSelection()) {
-            Toast.makeText(FormatChooserActivity.this,
-                    R.string.formatChooser_toast_formatUnchanged, Toast.LENGTH_SHORT)
-                    .show();
-            FormatChooserActivity.this.finish();
-        } else if (selectedPosition != ListView.INVALID_POSITION) {
-            returnSelectionByPosition(selectedPosition);
-        } else {
-            Toast.makeText(FormatChooserActivity.this, R.string.formatChooser_toast_noSelection,
-                    Toast.LENGTH_SHORT).show();
-            FormatChooserActivity.this.finish();
-        }
-    }
-
-    /**
-     * @return the selection (as an integer) that was passed in the <code>Intent</code> that
-     * started this <code>Activity</code>, or <code>ListView.INVALID_POSITION</code>
-     */
-    private int getIncomingSelection() {
-        Intent data = getIntent();
-        String incomingFilename = data.getStringExtra(EXTRA_XML_FILE_NAME);
-        if (incomingFilename != null) {
-            Iterator<DebateFormatListEntry> entryIterator = mStylesList
-                    .iterator();
-            while (entryIterator.hasNext()) {
-                DebateFormatListEntry se = entryIterator.next();
-                if (incomingFilename.equals(se.getFilename())) {
-                    return mStylesList.indexOf(se);
-                }
-            }
-        }
-        return ListView.INVALID_POSITION;
-    }
-
-    /**
      * Ends this Activity, returning a result to the activity that called this Activity.
      * @param position the integer position in the styles list of the user-selected position.
      */
@@ -664,69 +713,6 @@ public class FormatChooserActivity extends FragmentActivity {
     }
 
     /**
-     * Parses an XML file to get the {@link DebateFormatInfo} object
-     * @param filename the filename for the debate format XML file
-     * @return a <code>DebateFormatInfo</code> object, or <code>null</code>
-     * @throws IOException if there was an IO problem with the XML file
-     * @throws SAXException if thrown by the XML parser
-     */
-    private DebateFormatInfo getDebateFormatInfo(String filename) throws IOException, SAXException {
-        InputStream is;
-        is = mFilesManager.open(filename);
-
-        // Assume it's a 2.0 schema first.
-        DebateFormatInfoForSchema2 dfi2 = new DebateFormatInfoForSchema2(this, is);
-
-        // If it's not 2.0, check to see if it is 1.0 or 1.1
-        if (!dfi2.isSchemaSupported()) {
-            DebateFormatInfoExtractorForSchema1 dfie = new DebateFormatInfoExtractorForSchema1(this);
-            is.close();
-            is = mFilesManager.open(filename); // open again to try schema 1.0
-            DebateFormatInfo dfi1 = dfie.getDebateFormatInfo(is);
-            if (dfi1.isSchemaSupported()) return dfi1;
-        }
-
-        // If it isn't, keep pretending it was 2.0.
-        return dfi2;
-
-    }
-
-    /**
-     * @param view the <code>View</code> to be populated
-     * @param filename the filename of the XML file from which data is to be taken
-     * @throws IOException if there was an IO problem with the XML file
-     * @throws SAXException if thrown by the XML parser
-     */
-    private void populateBasicInfo(View view, String filename) throws IOException, SAXException {
-        DebateFormatInfo dfi = getDebateFormatInfo(filename);
-        if (dfi != null)
-            populateBasicInfo(view, dfi);
-    }
-
-    /**
-     * @param view the <code>View</code> to be populated
-     * @param is an <code>InputStream> for the XML file from which data is to be taken
-     */
-    private static void populateBasicInfo(View view, DebateFormatInfo dfi) {
-        ((TextView) view.findViewById(R.id.viewFormat_tableCell_regionValue)).setText(
-                concatenate(dfi.getRegions()));
-        ((TextView) view.findViewById(R.id.viewFormat_tableCell_levelValue)).setText(
-                concatenate(dfi.getLevels()));
-        ((TextView) view.findViewById(R.id.viewFormat_tableCell_usedAtValue)).setText(
-                concatenate(dfi.getUsedAts()));
-        ((TextView) view.findViewById(R.id.viewFormat_tableCell_descValue)).setText(
-                dfi.getDescription());
-    }
-
-    /**
-     * @param filename a file name
-     * @return an integer representing the location of the file
-     */
-    private int getFileLocation(String filename) {
-        return mFilesManager.getLocation(filename);
-    }
-
-    /**
      * Concatenates a list of <code>String</code>s with line breaks delimiting.
      * @param list An <code>ArrayList</code> of <code>String</code>s.
      * @return the result, a single <code>String</code>
@@ -744,4 +730,19 @@ public class FormatChooserActivity extends FragmentActivity {
             str = str.concat(iterator.next());
         }
         return str;
+    }
+
+    /**
+     * @param view the <code>View</code> to be populated
+     * @param is an <code>InputStream> for the XML file from which data is to be taken
+     */
+    private static void populateBasicInfo(View view, DebateFormatInfo dfi) {
+        ((TextView) view.findViewById(R.id.viewFormat_tableCell_regionValue)).setText(
+                concatenate(dfi.getRegions()));
+        ((TextView) view.findViewById(R.id.viewFormat_tableCell_levelValue)).setText(
+                concatenate(dfi.getLevels()));
+        ((TextView) view.findViewById(R.id.viewFormat_tableCell_usedAtValue)).setText(
+                concatenate(dfi.getUsedAts()));
+        ((TextView) view.findViewById(R.id.viewFormat_tableCell_descValue)).setText(
+                dfi.getDescription());
     }}
