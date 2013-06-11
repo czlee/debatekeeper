@@ -35,13 +35,14 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import android.annotation.TargetApi;
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.util.Xml;
 import android.util.Xml.Encoding;
@@ -70,7 +71,7 @@ import android.widget.Toast;
  * @author Chuan-Zheng Lee
  *
  */
-public class FormatChooserActivity extends Activity {
+public class FormatChooserActivity extends FragmentActivity {
 
     private FormatXmlFilesManager mFilesManager;
 
@@ -82,9 +83,10 @@ public class FormatChooserActivity extends Activity {
 
     private String DEBATING_TIMER_URI;
 
-    private static final int DIALOG_IO_ERROR = 0;
-    private static final int DIALOG_MORE_DETAILS = 1;
-    private static final String BUNDLE_FILE_NAME = "fn";
+    private static final String DIALOG_ARGUMENT_FILE_NAME = "fn";
+    private static final String DIALOG_TAG_MORE_DETAILS = "md";
+    private static final String DIALOG_TAG_LIST_IO_ERROR = "io";
+
     public  static final int RESULT_ERROR = RESULT_FIRST_USER;
 
     public static final String CURRENT_SCHEMA_VERSION = "2.0";
@@ -149,6 +151,197 @@ public class FormatChooserActivity extends Activity {
 
     }
 
+    public static class MoreDetailsDialogFragment extends DialogFragment {
+
+        static MoreDetailsDialogFragment newInstance(String filename) {
+            MoreDetailsDialogFragment fragment = new MoreDetailsDialogFragment();
+            Bundle args = new Bundle();
+            args.putString(DIALOG_ARGUMENT_FILE_NAME, filename);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            String filename = getArguments().getString(DIALOG_ARGUMENT_FILE_NAME);
+            return getMoreDetailsDialog(filename);
+        }
+
+        /**
+         * Returns an {@link AlertDialog} with an error message explaining why the "more details" Dialog
+         * for a given debate format couldn't be populated.
+         * @param filename the file name of the debate format XML file to which this Dialog should
+         * relate
+         * @param e
+         * @return the {@link AlertDialog}
+         */
+        private AlertDialog getBlankDetailsDialog(String filename, Exception e) {
+            FormatChooserActivity activity = (FormatChooserActivity) getActivity();
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            builder.setTitle(R.string.blankDetailsDialog_title)
+                   .setCancelable(true)
+                   .setMessage(getString(R.string.blankDetailsDialog_text, filename, e.getMessage()))
+                   .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+            return builder.create();
+        }
+
+        /**
+         * Returns an {@link AlertDialog} with information about a debate format, populated from the
+         * debate format XML file.
+         * @param filename the file name of the debate format XML file to which this Dialog should
+         * relate
+         * @return the {@link AlertDialog}
+         */
+        private AlertDialog getMoreDetailsDialog(String filename) {
+            FormatChooserActivity activity = (FormatChooserActivity) getActivity();
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            View view = View.inflate(activity, R.layout.view_format_full, null);
+
+            DebateFormatInfo dfi;
+            try {
+                dfi = activity.getDebateFormatInfo(filename);
+            } catch (IOException e) {
+                return getBlankDetailsDialog(filename, e);
+            } catch (SAXException e) {
+                return getBlankDetailsDialog(filename, e);
+            }
+
+            String schemaVersion = null;
+            if (dfi != null) schemaVersion = dfi.getSchemaVersion();
+
+            populateFileInfo(view, filename, schemaVersion);
+
+            if (dfi != null) {
+                FormatChooserActivity.populateBasicInfo(view, dfi);
+                populatePrepTimeInfo(view, dfi);
+                populateTwoColumnTable(view, R.id.viewFormat_table_speechTypes, R.layout.speech_type_row,
+                        dfi.getSpeechFormatDescriptions());
+                populateTwoColumnTable(view, R.id.viewFormat_table_speeches, R.layout.speech_row,
+                        dfi.getSpeeches());
+                builder.setTitle(dfi.getName());
+            } else {
+                builder.setTitle(filename);
+            }
+
+            builder.setCancelable(true);
+
+            AlertDialog dialog = builder.create();
+            dialog.setView(view, 0, 10, 10, 15);
+            return dialog;
+
+        }
+
+        /**
+         * Populates a View with information about a given file
+         * @param view the View to populate
+         * @param filename the file name
+         */
+        private void populateFileInfo(View view, String filename, String schemaVersion) {
+
+            FormatChooserActivity activity = (FormatChooserActivity) getActivity();
+
+            // Display its location if it's not a built-in file
+            if (activity.getFileLocation(filename) == FormatXmlFilesManager.LOCATION_USER_DEFINED) {
+                TextView fileLocationText = (TextView) view.findViewById(R.id.viewFormat_fileLocationValue);
+                fileLocationText.setText(getString(R.string.viewFormat_fileLocationValue_userDefined));
+                fileLocationText.setVisibility(View.VISIBLE);
+            }
+
+            // Display its schema version if it's not the current version
+            if (schemaVersion != null) {
+                int comparison = 0;
+                String schemaVersionTextValue = null;
+                try {
+                    comparison = XmlUtilities.compareSchemaVersions(schemaVersion, CURRENT_SCHEMA_VERSION);
+                } catch (IllegalSchemaVersionException e) {
+                    schemaVersionTextValue = getString(R.string.viewFormat_unrecognisedSchemaVersion, schemaVersion);
+                }
+                if (schemaVersionTextValue == null) {
+                    if (comparison > 0)
+                        schemaVersionTextValue = getString(R.string.viewFormat_futureSchemaVersion, schemaVersion);
+                    else if (comparison < 0)
+                        schemaVersionTextValue = getString(R.string.viewFormat_outdatedSchemaVersion, schemaVersion);
+                }
+                if (schemaVersionTextValue != null) {
+                    TextView schemaVersionText = (TextView) view.findViewById(R.id.viewFormat_schemaVersionValue);
+                    schemaVersionText.setText(schemaVersionTextValue);
+                    schemaVersionText.setVisibility(View.VISIBLE);
+                }
+            }
+
+            ((TextView) view.findViewById(R.id.viewFormat_fileNameValue)).setText(filename);
+        }
+
+        private static void populatePrepTimeInfo(View view, DebateFormatInfo dfi) {
+            String prepTimeDescription = dfi.getPrepTimeDescription();
+
+            // If there is prep time, populate the view.
+            if (prepTimeDescription != null)
+                ((TextView) view.findViewById(R.id.viewFormat_prepTimeValue)).setText(
+                        prepTimeDescription);
+
+            // Otherwise, hide the whole row.
+            else
+                view.findViewById(R.id.viewFormat_prepTimeRow).setVisibility(View.GONE);
+        }
+
+        /**
+         * Populates a table from an ArrayList of String arrays.
+         * @param view
+         * @param tableResid A resource ID pointing to a <code>TableLayout</code>
+         * @param rowResid A resource ID pointing to a <code>TableRow</code> <b>layout file</b>.
+         * (Not the <code>TableRow</code> itself.)
+         * TableRow must have at least two TextView elements, which must have IDs "text1" and "text2".
+         * @param list the list of String arrays.  Each array must have two elements.
+         */
+        private void populateTwoColumnTable(View view, int tableResid, int rowResid, ArrayList<String[]> list) {
+            TableLayout table = (TableLayout) view.findViewById(tableResid);
+
+            Iterator<String[]> iterator = list.iterator();
+
+            while (iterator.hasNext()) {
+                String[] rowText = iterator.next();
+                TableRow row = (TableRow) View.inflate(getActivity(), rowResid, null);
+                ((TextView) row.findViewById(R.id.text1)).setText(rowText[0].concat(" "));
+                ((TextView) row.findViewById(R.id.text2)).setText(rowText[1].concat(" "));
+                table.addView(row);
+            }
+
+        }
+    }
+
+    /**
+     * An {@link AlertDialog} alerting the user to a fatal problem retrieving the styles list,
+     * which then exits this Activity upon dismissal.
+     * @author Chuan-Zheng Lee
+     *
+     */
+    public static class ListIOErrorDialogFragment extends DialogFragment {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final FormatChooserActivity activity = (FormatChooserActivity) getActivity();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            builder.setTitle(R.string.ioErrorDialog_title)
+                   .setMessage(R.string.ioErrorDialog_message)
+                   .setCancelable(false)
+                   .setPositiveButton(R.string.ioErrorDialog_button,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    activity.finish();
+                                }
+                            });
+            return builder.create();
+        }
+
+    }
 
     // ******************************************************************************************
     // Private classes
@@ -160,17 +353,16 @@ public class FormatChooserActivity extends Activity {
 
     private class DetailsButtonOnClickListener implements OnClickListener {
 
-        private final Bundle bundleForDialog;
+        private final String filename;
 
         public DetailsButtonOnClickListener(String filename) {
-            bundleForDialog = new Bundle();
-            bundleForDialog.putString(BUNDLE_FILE_NAME, filename);
+            this.filename = filename;
         }
 
         @Override
         public void onClick(View v) {
-            removeDialog(DIALOG_MORE_DETAILS);
-            showDialog(DIALOG_MORE_DETAILS, bundleForDialog);
+            DialogFragment fragment = MoreDetailsDialogFragment.newInstance(filename);
+            fragment.show(getSupportFragmentManager(), DIALOG_TAG_MORE_DETAILS);
         }
 
     }
@@ -330,7 +522,8 @@ public class FormatChooserActivity extends Activity {
             populateStylesLists();
         } catch (IOException e) {
             e.printStackTrace();
-            this.showDialog(DIALOG_IO_ERROR);
+            ListIOErrorDialogFragment fragment = new ListIOErrorDialogFragment();
+            fragment.show(getSupportFragmentManager(), DIALOG_TAG_LIST_IO_ERROR);
         }
 
         mStylesArrayAdapter = new DebateFormatEntryArrayAdapter(this, mStylesList,
@@ -349,19 +542,6 @@ public class FormatChooserActivity extends Activity {
         if (incomingSelection != ListView.INVALID_POSITION) {
             mStylesListView.setItemChecked(incomingSelection, true);
             mStylesListView.smoothScrollToPosition(incomingSelection);
-        }
-    }
-
-    @Override
-    protected Dialog onCreateDialog(int id, Bundle bundle) {
-        switch (id) {
-        case DIALOG_IO_ERROR:
-            return getIOErrorAlert();
-        case DIALOG_MORE_DETAILS:
-            String filename = bundle.getString(BUNDLE_FILE_NAME);
-            return getMoreDetailsDialog(filename);
-        default:
-            return super.onCreateDialog(id);
         }
     }
 
@@ -484,92 +664,6 @@ public class FormatChooserActivity extends Activity {
     }
 
     /**
-     * @return An AlertDialog alerting the user to a fatal problem retrieving the styles list,
-     * which then exits this Activity upon dismissal.
-     */
-    private AlertDialog getIOErrorAlert() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.ioErrorDialog_title)
-                .setMessage(R.string.ioErrorDialog_message)
-                .setCancelable(false)
-                .setPositiveButton(R.string.ioErrorDialog_button,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                FormatChooserActivity.this.finish();
-                            }
-                        });
-        return builder.create();
-    }
-
-    /**
-     * Returns an AlertDialog with information about a debate format, populated from the
-     * debate format XML file.
-     * @param filename the file name of the debate format XML file to which this Dialog should
-     * relate
-     * @return the AlertDialog
-     */
-    private AlertDialog getMoreDetailsDialog(String filename) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = View.inflate(this, R.layout.view_format_full, null);
-
-        DebateFormatInfo dfi;
-        try {
-            dfi = getDebateFormatInfo(filename);
-        } catch (IOException e) {
-            return getBlankDetailsDialog(filename, e);
-        } catch (SAXException e) {
-            return getBlankDetailsDialog(filename, e);
-        }
-
-        String schemaVersion = null;
-        if (dfi != null) schemaVersion = dfi.getSchemaVersion();
-
-        populateFileInfo(view, filename, schemaVersion);
-
-        if (dfi != null) {
-            populateBasicInfo(view, dfi);
-            populatePrepTimeInfo(view, dfi);
-            populateTwoColumnTable(view, R.id.viewFormat_table_speechTypes, R.layout.speech_type_row,
-                    dfi.getSpeechFormatDescriptions());
-            populateTwoColumnTable(view, R.id.viewFormat_table_speeches, R.layout.speech_row,
-                    dfi.getSpeeches());
-            builder.setTitle(dfi.getName());
-        } else {
-            builder.setTitle(filename);
-        }
-
-        builder.setCancelable(true);
-
-        AlertDialog dialog = builder.create();
-        dialog.setView(view, 0, 10, 10, 15);
-        return dialog;
-
-    }
-
-    /**
-     * Returns an AlertDialog with an error message explaining why the "more details" Dialog
-     * for a given debate format couldn't be populated.
-     * @param filename the file name of the debate format XML file to which this Dialog should
-     * relate
-     * @param e
-     * @return the AlertDialog
-     */
-    private AlertDialog getBlankDetailsDialog(String filename, Exception e) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.blankDetailsDialog_title)
-               .setCancelable(true)
-               .setMessage(getString(R.string.blankDetailsDialog_text, filename, e.getMessage()))
-               .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-        return builder.create();
-    }
-
-    /**
      * Parses an XML file to get the {@link DebateFormatInfo} object
      * @param filename the filename for the debate format XML file
      * @return a <code>DebateFormatInfo</code> object, or <code>null</code>
@@ -613,7 +707,7 @@ public class FormatChooserActivity extends Activity {
      * @param view the <code>View</code> to be populated
      * @param is an <code>InputStream> for the XML file from which data is to be taken
      */
-    private void populateBasicInfo(View view, DebateFormatInfo dfi) {
+    private static void populateBasicInfo(View view, DebateFormatInfo dfi) {
         ((TextView) view.findViewById(R.id.viewFormat_tableCell_regionValue)).setText(
                 concatenate(dfi.getRegions()));
         ((TextView) view.findViewById(R.id.viewFormat_tableCell_levelValue)).setText(
@@ -625,79 +719,11 @@ public class FormatChooserActivity extends Activity {
     }
 
     /**
-     * Populates a View with information about a given file
-     * @param view the View to populate
-     * @param filename the file name
+     * @param filename a file name
+     * @return an integer representing the location of the file
      */
-    private void populateFileInfo(View view, String filename, String schemaVersion) {
-
-        // Display its location if it's not a built-in file
-        if (mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_USER_DEFINED) {
-            TextView fileLocationText = (TextView) view.findViewById(R.id.viewFormat_fileLocationValue);
-            fileLocationText.setText(getString(R.string.viewFormat_fileLocationValue_userDefined));
-            fileLocationText.setVisibility(View.VISIBLE);
-        }
-
-        // Display its schema version if it's not the current version
-        if (schemaVersion != null) {
-            int comparison = 0;
-            String schemaVersionTextValue = null;
-            try {
-                comparison = XmlUtilities.compareSchemaVersions(schemaVersion, CURRENT_SCHEMA_VERSION);
-            } catch (IllegalSchemaVersionException e) {
-                schemaVersionTextValue = getString(R.string.viewFormat_unrecognisedSchemaVersion, schemaVersion);
-            }
-            if (schemaVersionTextValue == null) {
-                if (comparison > 0)
-                    schemaVersionTextValue = getString(R.string.viewFormat_futureSchemaVersion, schemaVersion);
-                else if (comparison < 0)
-                    schemaVersionTextValue = getString(R.string.viewFormat_outdatedSchemaVersion, schemaVersion);
-            }
-            if (schemaVersionTextValue != null) {
-                TextView schemaVersionText = (TextView) view.findViewById(R.id.viewFormat_schemaVersionValue);
-                schemaVersionText.setText(schemaVersionTextValue);
-                schemaVersionText.setVisibility(View.VISIBLE);
-            }
-        }
-
-        ((TextView) view.findViewById(R.id.viewFormat_fileNameValue)).setText(filename);
-    }
-
-    private void populatePrepTimeInfo(View view, DebateFormatInfo dfi) {
-        String prepTimeDescription = dfi.getPrepTimeDescription();
-
-        // If there is prep time, populate the view.
-        if (prepTimeDescription != null)
-            ((TextView) view.findViewById(R.id.viewFormat_prepTimeValue)).setText(
-                    prepTimeDescription);
-
-        // Otherwise, hide the whole row.
-        else
-            view.findViewById(R.id.viewFormat_prepTimeRow).setVisibility(View.GONE);
-    }
-
-    /**
-     * Populates a table from an ArrayList of String arrays.
-     * @param view
-     * @param tableResid A resource ID pointing to a <code>TableLayout</code>
-     * @param rowResid A resource ID pointing to a <code>TableRow</code> <b>layout file</b>.
-     * (Not the <code>TableRow</code> itself.)
-     * TableRow must have at least two TextView elements, which must have IDs "text1" and "text2".
-     * @param list the list of String arrays.  Each array must have two elements.
-     */
-    private void populateTwoColumnTable(View view, int tableResid, int rowResid, ArrayList<String[]> list) {
-        TableLayout table = (TableLayout) view.findViewById(tableResid);
-
-        Iterator<String[]> iterator = list.iterator();
-
-        while (iterator.hasNext()) {
-            String[] rowText = iterator.next();
-            TableRow row = (TableRow) View.inflate(this, rowResid, null);
-            ((TextView) row.findViewById(R.id.text1)).setText(rowText[0].concat(" "));
-            ((TextView) row.findViewById(R.id.text2)).setText(rowText[1].concat(" "));
-            table.addView(row);
-        }
-
+    private int getFileLocation(String filename) {
+        return mFilesManager.getLocation(filename);
     }
 
     /**
