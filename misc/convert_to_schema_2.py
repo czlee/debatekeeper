@@ -121,6 +121,8 @@ class Period(object):
         self.original_ref = element.get("ref")
         self.description = element.get("desc")
         self.bgcolor = element.get("bgcolor")
+        if self.bgcolor == "#stay": # The new format doesn't allow '#stay'.
+            self.bgcolor = None
         self.pois_allowed = element.get("poisallowed")
 
         # This is used to ensure uniqueness for schema 2.0
