@@ -364,7 +364,7 @@ public class DebateManager {
      */
     public void goToNextPhase() {
         if (isInLastPhase()) return;
-        setCurrentPhaseIndex(getActivePhaseIndex() + 1);
+        setActivePhaseIndex(getActivePhaseIndex() + 1);
     }
 
     /**
@@ -373,7 +373,7 @@ public class DebateManager {
      */
     public void goToPreviousPhase() {
         if (isInFirstPhase()) return;
-        setCurrentPhaseIndex(getActivePhaseIndex() - 1);
+        setActivePhaseIndex(getActivePhaseIndex() - 1);
     }
 
     /**
@@ -535,24 +535,13 @@ public class DebateManager {
     }
 
     /**
-     * Sets a broadcast sender for this speech manager.
-     * <code>DebateManager</code> will call <code>sendBroadcast()</code> on the broadcast sender
-     * when the timer counts up/down.
-     * @param sender the {@link GuiUpdateBroadcastSender}
-     */
-    public void setBroadcastSender(GuiUpdateBroadcastSender sender) {
-        this.mPhaseManager.setBroadcastSender(sender);
-        this.mPoiManager.setBroadcastSender(sender);
-    }
-
-    /**
      * <p>Instructs the {@link DebateManager} to switch to the phase with the given phase index.
      * Does nothing if the new phase index is the same as the old phase index.</p>
      * <p>The phase indices number consecutively starting from 0.  Note that phase indices don't
      * necessarily correlate with speeches if, for example, whether prep time is enabled changes.</p>
      * @param phaseIndex the new timer index
      */
-    public void setCurrentPhaseIndex(int phaseIndex) {
+    public void setActivePhaseIndex(int phaseIndex) {
         if (phaseIndex == getActivePhaseIndex()) return; // do nothing if no change
 
         validatePhaseIndex(phaseIndex);
@@ -574,6 +563,17 @@ public class DebateManager {
 
         loadSpeech();
 
+    }
+
+    /**
+     * Sets a broadcast sender for this speech manager.
+     * <code>DebateManager</code> will call <code>sendBroadcast()</code> on the broadcast sender
+     * when the timer counts up/down.
+     * @param sender the {@link GuiUpdateBroadcastSender}
+     */
+    public void setBroadcastSender(GuiUpdateBroadcastSender sender) {
+        this.mPhaseManager.setBroadcastSender(sender);
+        this.mPoiManager.setBroadcastSender(sender);
     }
 
     /**

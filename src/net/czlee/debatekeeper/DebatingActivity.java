@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 
 import net.czlee.debatekeeper.AlertManager.FlashScreenListener;
 import net.czlee.debatekeeper.AlertManager.FlashScreenMode;
-import net.czlee.debatekeeper.EnableableViewPager.PagingEnabledIndicator;
 import net.czlee.debatekeeper.debateformat.BellInfo;
 import net.czlee.debatekeeper.debateformat.DebateFormat;
 import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml;
@@ -63,7 +62,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -231,19 +230,12 @@ public class DebatingActivity extends Activity {
 
     }
 
-    private class DebateTimerDisplayOnPageChangeListener implements OnPageChangeListener {
-
-        @Override
-        public void onPageScrollStateChanged(int state) {
-        }
-
-        @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        }
+    private class DebateTimerDisplayOnPageChangeListener extends SimpleOnPageChangeListener {
 
         @Override
         public void onPageSelected(int position) {
-            mDebateManager.setCurrentPhaseIndex(position);
+            mDebateManager.setActivePhaseIndex(position);
+            updateControls();
         }
 
     }
@@ -477,22 +469,6 @@ public class DebatingActivity extends Activity {
         public boolean isViewFromObject(View view, Object object) {
             if (!mViewsMap.containsKey(object)) return false;
             else return (mViewsMap.get(object) == view);
-        }
-
-    }
-
-    private class DebateTimerPagingEnabledIndicator implements PagingEnabledIndicator {
-
-        @Override
-        public boolean isPagingEnabled() {
-
-            // This seems counter-intuitive, but we enable paging if there is no debate loaded,
-            // as there is only one page anyway, and this way the "scrolled to the limit"
-            // indicators appear on the screen.
-            if (mDebateManager == null) return true;
-
-            // Otherwise paging is enabled if and only if the timer is not running.
-            else return !mDebateManager.isRunning();
         }
 
     }
@@ -762,7 +738,6 @@ public class DebatingActivity extends Activity {
         mViewPager = (EnableableViewPager) findViewById(R.id.mainScreen_debateTimerViewPager);
         mViewPager.setAdapter(new DebateTimerDisplayPagerAdapter());
         mViewPager.setOnPageChangeListener(new DebateTimerDisplayOnPageChangeListener());
-        mViewPager.setPagingEnabledIndicator(new DebateTimerPagingEnabledIndicator());
 
         //
         // OnClickListeners
@@ -1558,6 +1533,19 @@ public class DebatingActivity extends Activity {
         mLeftControlButton.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, leftControlButtonWeight));
     }
 
+    /**
+     * Enables or disables all of the control buttons (except for the "Bell" button).  If
+     * <code>mDebateManager</code> is <code>null</code>, this does nothing.
+     * @param enable <code>true</code> to enable, <code>false</code> to disable
+     */
+    private void setButtonsEnable(boolean enable) {
+        if (mDebateManager == null) return;
+        mLeftControlButton.setEnabled(enable);
+        mCentreControlButton.setEnabled(enable);
+        // Disable the [Next Speaker] button if there are no more speakers
+        mRightControlButton.setEnabled(enable && !mDebateManager.isInLastPhase());
+    }
+
     private void setXmlFileName(String filename) {
         mFormatXmlFileName = filename;
         SharedPreferences sp = getPreferences(MODE_PRIVATE);
@@ -1598,38 +1586,26 @@ public class DebatingActivity extends Activity {
             case STOPPED_BY_USER:
                 setButtons(R.string.mainScreen_resumeTimerAfterUserStop_buttonText, R.string.mainScreen_resetTimer_buttonText, R.string.mainScreen_nextSpeaker_buttonText);
                 break;
-            default:
-                break;
             }
 
-            if (mIsEditingTime) {
-                // Show the time picker, not the text
-                currentTimeText.setVisibility(View.GONE);
-                currentTimePicker.setVisibility(View.VISIBLE);
+            currentTimeText  .setVisibility((mIsEditingTime) ? View.GONE : View.VISIBLE);
+            currentTimePicker.setVisibility((mIsEditingTime) ? View.VISIBLE : View.GONE);
 
-                // Disable all control buttons
-                mLeftControlButton.setEnabled(false);
-                mCentreControlButton.setEnabled(false);
-                mRightControlButton.setEnabled(false);
-            } else {
-                // Show the time as text, not the picker
-                currentTimeText.setVisibility(View.VISIBLE);
-                currentTimePicker.setVisibility(View.GONE);
-
-                // Disable the [Next Speaker] button if there are no more speakers
-                mLeftControlButton.setEnabled(true);
-                mCentreControlButton.setEnabled(true);
-                mRightControlButton.setEnabled(!mDebateManager.isInLastPhase());
-            }
+            setButtonsEnable(!mIsEditingTime);
+            mViewPager.setPagingEnabled(!mIsEditingTime && !mDebateManager.isRunning());
 
         } else {
             // If no debate is loaded, show only one control button, which leads the user to
-            // choose a style.
-            // (Keep the play bell button enabled.)
+            // choose a style. (Keep the play bell button enabled.)
             setButtons(R.string.mainScreen_noDebateLoaded_buttonText, R.string.mainScreen_null_buttonText, R.string.mainScreen_null_buttonText);
             mLeftControlButton.setEnabled(true);
             mCentreControlButton.setEnabled(false);
             mRightControlButton.setEnabled(false);
+
+            // This seems counter-intuitive, but we enable paging if there is no debate loaded,
+            // as there is only one page anyway, and this way the "scrolled to the limit"
+            // indicators appear on the screen.
+            mViewPager.setPagingEnabled(true);
         }
 
         // Show or hide the [Bell] button

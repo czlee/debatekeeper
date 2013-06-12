@@ -13,11 +13,7 @@ import android.view.MotionEvent;
 
 public class EnableableViewPager extends ViewPager {
 
-    public interface PagingEnabledIndicator {
-        public abstract boolean isPagingEnabled();
-    }
-
-    private PagingEnabledIndicator mPagingEnabledIndicator;
+    private boolean mPagingEnabled = true;
 
     public EnableableViewPager(Context context) {
         super(context);
@@ -29,27 +25,20 @@ public class EnableableViewPager extends ViewPager {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (this.isPagingEnabled())
+        if (mPagingEnabled)
             return super.onTouchEvent(event);
         return false;
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
-        if (this.isPagingEnabled())
+        if (mPagingEnabled)
             return super.onInterceptTouchEvent(event);
         return false;
     }
 
-    public void setPagingEnabledIndicator(PagingEnabledIndicator indicator) {
-        this.mPagingEnabledIndicator = indicator;
-    }
-
-    private boolean isPagingEnabled() {
-        if (mPagingEnabledIndicator != null)
-            return mPagingEnabledIndicator.isPagingEnabled();
-        else
-            return true;
+    public void setPagingEnabled(boolean enable) {
+        this.mPagingEnabled = enable;
     }
 
 }
