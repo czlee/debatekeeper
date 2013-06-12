@@ -74,7 +74,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -99,9 +98,17 @@ public class DebatingActivity extends Activity {
     private EnableableViewPager mViewPager;
 
     private Button    mLeftControlButton;
+    private Button    mLeftCentreControlButton;
     private Button    mCentreControlButton;
     private Button    mRightControlButton;
     private Button    mPlayBellButton;
+
+    private final ControlButtonSpec CONTROL_BUTTON_START_TIMER  = new ControlButtonSpec(R.string.mainScreen_controlButton_startTimer_text,  new ControlButtonStartTimerOnClickListener());
+    private final ControlButtonSpec CONTROL_BUTTON_STOP_TIMER   = new ControlButtonSpec(R.string.mainScreen_controlButton_stopTimer_text,   new ControlButtonStopTimerOnClickListener());
+    private final ControlButtonSpec CONTROL_BUTTON_CHOOSE_STYLE = new ControlButtonSpec(R.string.mainScreen_controlButton_chooseStyle_text, new ControlButtonChooseStyleOnClickListener());
+    private final ControlButtonSpec CONTROL_BUTTON_RESET_TIMER  = new ControlButtonSpec(R.string.mainScreen_controlButton_resetTimer_text,  new ControlButtonResetActiveDebatePhaseOnClickListener());
+    private final ControlButtonSpec CONTROL_BUTTON_RESUME_TIMER = new ControlButtonSpec(R.string.mainScreen_controlButton_resumeTimer_text, new ControlButtonStartTimerOnClickListener());
+    private final ControlButtonSpec CONTROL_BUTTON_NEXT_PHASE   = new ControlButtonSpec(R.string.mainScreen_controlButton_nextPhase_text,   new ControlButtonNextDebatePhaseOnClickListener());
 
     private DebateManager         mDebateManager;
     private Bundle                mLastStateBundle;
@@ -142,20 +149,102 @@ public class DebatingActivity extends Activity {
     // Private classes
     //******************************************************************************************
 
-    private class CentreControlButtonOnClickListener implements View.OnClickListener {
+    private enum BackgroundColourArea {
+        // These must match the values string array in the preference.xml file.
+        // (We can pull strings from the resource automatically,
+        // but we can't assign them to enums automatically.)
+        DISABLED     ("disabled"),
+        TOP_BAR_ONLY ("topBarOnly"),
+        WHOLE_SCREEN ("wholeScreen");
+
+        private final String key;
+
+        private BackgroundColourArea(String key) {
+            this.key = key;
+        }
+
+        public static BackgroundColourArea toEnum(String key) {
+            BackgroundColourArea[] values = BackgroundColourArea.values();
+            for (int i = 0; i < values.length; i++)
+                if (key.equals(values[i].key))
+                    return values[i];
+            throw new IllegalArgumentException(String.format("There is no enumerated constant '%s'", key));
+        }
+    }
+
+    private class ControlButtonSpec {
+        int textResid;
+        View.OnClickListener onClickListener;
+
+        private ControlButtonSpec(int textResid, View.OnClickListener onClickListener) {
+            this.textResid = textResid;
+            this.onClickListener = onClickListener;
+        }
+    }
+
+    private class ControlButtonChooseStyleOnClickListener implements View.OnClickListener {
         @Override
-        public void onClick(View pV) {
-            if (mDebateManager == null) return;
-            switch (mDebateManager.getTimerStatus()) {
-            case STOPPED_BY_USER:
-                mDebateManager.resetActivePhase();
-                break;
-            default:
-                break;
-            }
+        public void onClick(View v) {
+            Intent intent = new Intent(DebatingActivity.this, FormatChooserActivity.class);
+            startActivityForResult(intent, CHOOSE_STYLE_REQUEST);
+        }
+    }
+
+    private class ControlButtonNextDebatePhaseOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            goToNextSpeech();
             updateGui();
         }
     }
+
+    private class ControlButtonResetActiveDebatePhaseOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            mDebateManager.resetActivePhase();
+            updateGui();
+        }
+    }
+
+    private class ControlButtonStartTimerOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            mDebateManager.startTimer();
+            updateGui();
+        }
+    }
+
+    private class ControlButtonStopTimerOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            mDebateManager.stopTimer();
+            updateGui();
+        }
+    }
+
+    private enum CountDirection {
+
+        // These must match the values string array in the preference.xml file.
+        // (We can pull strings from the resource automatically,
+        // but we can't assign them to enums automatically.)
+        COUNT_UP   ("alwaysUp"),
+        COUNT_DOWN ("alwaysDown");
+
+        private final String key;
+
+        private CountDirection(String key) {
+            this.key = key;
+        }
+
+        public static CountDirection toEnum(String key) {
+            CountDirection[] values = CountDirection.values();
+            for (int i = 0; i < values.length; i++)
+                if (key.equals(values[i].key))
+                    return values[i];
+            throw new IllegalArgumentException(String.format("There is no enumerated constant '%s'", key));
+        }
+
+    };
 
     private class CurrentTimeOnLongClickListener implements OnLongClickListener {
 
@@ -165,60 +254,6 @@ public class DebatingActivity extends Activity {
             return true;
         }
 
-    }
-
-    private class DebatingTimerFlashScreenListener implements FlashScreenListener {
-
-        private void flashScreen(final int colour) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    findViewById(R.id.mainScreen_rootView).setBackgroundColor(colour);
-                }
-            });
-        }
-
-        @Override
-        public boolean begin() {
-            try {
-                return mFlashScreenSemaphore.tryAcquire(2, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                return false; // Don't bother with the flash screen any more
-            }
-        }
-
-        @Override
-        public void flashScreenOn(int colour) {
-
-            // First, if the whole screen is coloured, remove the colouring.
-            // It will be restored by updateGui() in done().
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (mBackgroundColourArea == BackgroundColourArea.WHOLE_SCREEN) {
-                        // Log.v(this.getClass().getSimpleName(), "removing background colour on " + Thread.currentThread().toString());
-                        mDebateTimerDisplay.setBackgroundColor(0);
-                    }
-                }
-            });
-            flashScreen(colour);
-        }
-
-        @Override
-        public void flashScreenOff() {
-            flashScreen(mNormalBackgroundColour);
-        }
-
-        @Override
-        public void done() {
-            mFlashScreenSemaphore.release();
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    updateGui();
-                }
-            });
-        }
     }
 
     private class DebateTimerDisplayOnClickListener implements OnClickListener {
@@ -266,6 +301,12 @@ public class DebatingActivity extends Activity {
         }
 
         @Override
+        public int getCount() {
+            if (mDebateManager == null) return 1;
+            else return mDebateManager.getNumberOfPhases();
+        }
+
+        @Override
         public int getItemPosition(Object object) {
 
             // If it was the "no debate loaded" screen and there is now a debate loaded,
@@ -287,12 +328,6 @@ public class DebatingActivity extends Activity {
             int position = mDebateManager.getPhaseIndexForTag((DebatePhaseTag) object);
 
             return position;
-        }
-
-        @Override
-        public int getCount() {
-            if (mDebateManager == null) return 1;
-            else return mDebateManager.getNumberOfPhases();
         }
 
         @Override
@@ -460,17 +495,71 @@ public class DebatingActivity extends Activity {
         }
 
         @Override
-        public void setPrimaryItem(ViewGroup container, int position, Object object) {
-            mDebateTimerDisplay = mViewsMap.get(object);
-            updateGui();
-        }
-
-        @Override
         public boolean isViewFromObject(View view, Object object) {
             if (!mViewsMap.containsKey(object)) return false;
             else return (mViewsMap.get(object) == view);
         }
 
+        @Override
+        public void setPrimaryItem(ViewGroup container, int position, Object object) {
+            mDebateTimerDisplay = mViewsMap.get(object);
+            updateGui();
+        }
+
+    }
+
+    private class DebatingTimerFlashScreenListener implements FlashScreenListener {
+
+        @Override
+        public boolean begin() {
+            try {
+                return mFlashScreenSemaphore.tryAcquire(2, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                return false; // Don't bother with the flash screen any more
+            }
+        }
+
+        @Override
+        public void done() {
+            mFlashScreenSemaphore.release();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    updateGui();
+                }
+            });
+        }
+
+        @Override
+        public void flashScreenOff() {
+            flashScreen(mNormalBackgroundColour);
+        }
+
+        @Override
+        public void flashScreenOn(int colour) {
+
+            // First, if the whole screen is coloured, remove the colouring.
+            // It will be restored by updateGui() in done().
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mBackgroundColourArea == BackgroundColourArea.WHOLE_SCREEN) {
+                        // Log.v(this.getClass().getSimpleName(), "removing background colour on " + Thread.currentThread().toString());
+                        mDebateTimerDisplay.setBackgroundColor(0);
+                    }
+                }
+            });
+            flashScreen(colour);
+        }
+
+        private void flashScreen(final int colour) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    findViewById(R.id.mainScreen_rootView).setBackgroundColor(colour);
+                }
+            });
+        }
     }
 
     /**
@@ -489,48 +578,24 @@ public class DebatingActivity extends Activity {
         public void onServiceDisconnected(ComponentName arg0) {
             mDebateManager = null;
         }
-    };
+    }
 
     private class FatalXmlError extends Exception {
 
         private static final long serialVersionUID = -1774973645180296278L;
 
-        public FatalXmlError(String detailMessage, Throwable throwable) {
-            super(detailMessage, throwable);
-        }
-
         public FatalXmlError(String detailMessage) {
             super(detailMessage);
+        }
+
+        public FatalXmlError(String detailMessage, Throwable throwable) {
+            super(detailMessage, throwable);
         }
     }
 
     private final class GuiUpdateBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            updateGui();
-        }
-    }
-
-    private class LeftControlButtonOnClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View pV) {
-            if (mDebateManager == null) {
-                Intent intent = new Intent(DebatingActivity.this, FormatChooserActivity.class);
-                startActivityForResult(intent, CHOOSE_STYLE_REQUEST);
-                return;
-            }
-            switch (mDebateManager.getTimerStatus()) {
-            case RUNNING:
-                mDebateManager.stopTimer();
-                break;
-            case NOT_STARTED:
-            case STOPPED_BY_BELL:
-            case STOPPED_BY_USER:
-                mDebateManager.startTimer();
-                break;
-            default:
-                break;
-            }
             updateGui();
         }
     }
@@ -552,69 +617,6 @@ public class DebatingActivity extends Activity {
                     mDebateManager.startPoiTimer();
             }
         }
-    }
-
-    private class RightControlButtonOnClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View pV) {
-            if (mDebateManager == null) return;
-            switch (mDebateManager.getTimerStatus()) {
-            case NOT_STARTED:
-            case STOPPED_BY_USER:
-                goToNextSpeech();
-                break;
-            default:
-                break;
-            }
-            updateGui();
-        }
-    }
-
-    private enum BackgroundColourArea {
-        // These must match the values string array in the preference.xml file.
-        // (We can pull strings from the resource automatically,
-        // but we can't assign them to enums automatically.)
-        DISABLED     ("disabled"),
-        TOP_BAR_ONLY ("topBarOnly"),
-        WHOLE_SCREEN ("wholeScreen");
-
-        private final String key;
-
-        private BackgroundColourArea(String key) {
-            this.key = key;
-        }
-
-        public static BackgroundColourArea toEnum(String key) {
-            BackgroundColourArea[] values = BackgroundColourArea.values();
-            for (int i = 0; i < values.length; i++)
-                if (key.equals(values[i].key))
-                    return values[i];
-            throw new IllegalArgumentException(String.format("There is no enumerated constant '%s'", key));
-        }
-    }
-
-    private enum CountDirection {
-
-        // These must match the values string array in the preference.xml file.
-        // (We can pull strings from the resource automatically,
-        // but we can't assign them to enums automatically.)
-        COUNT_UP   ("alwaysUp"),
-        COUNT_DOWN ("alwaysDown");
-
-        private final String key;
-
-        private CountDirection(String key) {
-            this.key = key;
-        }
-
-        public static CountDirection toEnum(String key) {
-            CountDirection[] values = CountDirection.values();
-            for (int i = 0; i < values.length; i++)
-                if (key.equals(values[i].key))
-                    return values[i];
-            throw new IllegalArgumentException(String.format("There is no enumerated constant '%s'", key));
-        }
-
     }
 
     //******************************************************************************************
@@ -728,10 +730,11 @@ public class DebatingActivity extends Activity {
 
         mFilesManager = new FormatXmlFilesManager(this);
 
-        mLeftControlButton   = (Button) findViewById(R.id.mainScreen_leftControlButton);
-        mCentreControlButton = (Button) findViewById(R.id.mainScreen_centreControlButton);
-        mRightControlButton  = (Button) findViewById(R.id.mainScreen_rightControlButton);
-        mPlayBellButton      = (Button) findViewById(R.id.mainScreen_playBellButton);
+        mLeftControlButton       = (Button) findViewById(R.id.mainScreen_leftControlButton);
+        mLeftCentreControlButton = (Button) findViewById(R.id.mainScreen_leftCentreControlButton);
+        mCentreControlButton     = (Button) findViewById(R.id.mainScreen_centreControlButton);
+        mRightControlButton      = (Button) findViewById(R.id.mainScreen_rightControlButton);
+        mPlayBellButton          = (Button) findViewById(R.id.mainScreen_playBellButton);
 
         //
         // ViewPager
@@ -741,10 +744,7 @@ public class DebatingActivity extends Activity {
 
         //
         // OnClickListeners
-        mLeftControlButton  .setOnClickListener(new LeftControlButtonOnClickListener());
-        mCentreControlButton.setOnClickListener(new CentreControlButtonOnClickListener());
-        mRightControlButton .setOnClickListener(new RightControlButtonOnClickListener());
-        mPlayBellButton     .setOnClickListener(new PlayBellButtonOnClickListener());
+        mPlayBellButton.setOnClickListener(new PlayBellButtonOnClickListener());
 
         mLastStateBundle = savedInstanceState; // This could be null
 
@@ -804,6 +804,12 @@ public class DebatingActivity extends Activity {
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle bundle) {
+        if (mDebateManager != null)
+            mDebateManager.saveState(BUNDLE_SUFFIX_DEBATE_MANAGER, bundle);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         restoreBinder();
@@ -824,12 +830,6 @@ public class DebatingActivity extends Activity {
             }
         }
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mGuiUpdateBroadcastReceiver);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle bundle) {
-        if (mDebateManager != null)
-            mDebateManager.saveState(BUNDLE_SUFFIX_DEBATE_MANAGER, bundle);
     }
 
 
@@ -1092,6 +1092,42 @@ public class DebatingActivity extends Activity {
     }
 
     /**
+     * Finishes editing the current time and restores the GUI to its prior state.
+     * @param save true if the edited time should become the new current time, false if it should
+     * be discarded.
+     */
+    private void editCurrentTimeFinish(boolean save) {
+
+        TimePicker currentTimePicker = (TimePicker) mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTimePicker);
+
+        if (currentTimePicker == null) {
+            Log.e("editCurrentTimeFinish", "currentTimePicker was null");
+            return;
+        }
+
+        currentTimePicker.clearFocus();
+
+        // Hide the keyboard
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(currentTimePicker.getWindowToken(), 0);
+
+        if (save && mDebateManager != null && mIsEditingTime) {
+            // We're using this in hours and minutes, not minutes and seconds
+            int minutes = currentTimePicker.getCurrentHour();
+            int seconds = currentTimePicker.getCurrentMinute();
+            long newTime = minutes * 60 + seconds;
+            // Invert the time if in count-down mode
+            newTime = subtractFromSpeechLengthIfCountingDown(newTime);
+            mDebateManager.setActivePhaseCurrentTime(newTime);
+        }
+
+        mIsEditingTime = false;
+
+        updateGui();
+
+    }
+
+    /**
      * Displays the time picker to edit the current time.
      * Does nothing if there is no debate loaded or if the timer is running.
      */
@@ -1135,42 +1171,6 @@ public class DebatingActivity extends Activity {
 
         // If we had to limit the time, display a helpful/apologetic message informing the user
         // of how to discard their changes, since they can't recover the time.
-
-    }
-
-    /**
-     * Finishes editing the current time and restores the GUI to its prior state.
-     * @param save true if the edited time should become the new current time, false if it should
-     * be discarded.
-     */
-    private void editCurrentTimeFinish(boolean save) {
-
-        TimePicker currentTimePicker = (TimePicker) mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTimePicker);
-
-        if (currentTimePicker == null) {
-            Log.e("editCurrentTimeFinish", "currentTimePicker was null");
-            return;
-        }
-
-        currentTimePicker.clearFocus();
-
-        // Hide the keyboard
-        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(currentTimePicker.getWindowToken(), 0);
-
-        if (save && mDebateManager != null && mIsEditingTime) {
-            // We're using this in hours and minutes, not minutes and seconds
-            int minutes = currentTimePicker.getCurrentHour();
-            int seconds = currentTimePicker.getCurrentMinute();
-            long newTime = minutes * 60 + seconds;
-            // Invert the time if in count-down mode
-            newTime = subtractFromSpeechLengthIfCountingDown(newTime);
-            mDebateManager.setActivePhaseCurrentTime(newTime);
-        }
-
-        mIsEditingTime = false;
-
-        updateGui();
 
     }
 
@@ -1456,20 +1456,6 @@ public class DebatingActivity extends Activity {
     }
 
     /**
-     * Shows the currently-queued dialog if there is one; does nothing otherwise.  Dialogs that
-     * could block other dialogs must call this method on dismissal.
-     */
-    private void showQueuedDialog() {
-        if (mDialogWaiting) {
-            showDialog(mDialogIdWaiting, mDialogBundleInWaiting);
-            mDialogBlocking = false;
-            mDialogWaiting = false;
-            mDialogIdWaiting = -1;
-            mDialogBundleInWaiting = null;
-        }
-    }
-
-    /**
      * Resets the background colour to the default.
      * This should be called whenever the background colour preference is changed, as <code>updateGui()</code>
      * doesn't automatically do this (for efficiency). You should call <code>updateGui()</code> as immediately as
@@ -1508,29 +1494,40 @@ public class DebatingActivity extends Activity {
     }
 
     /**
-     *  Sets the text and visibility of a single button
+     *  Sets up a single button
      */
-    private void setButton(Button button, int resid) {
-        button.setText(resid);
-        int visibility = (resid == R.string.mainScreen_null_buttonText) ? View.GONE : View.VISIBLE;
-        button.setVisibility(visibility);
+    private void setButton(Button button, ControlButtonSpec spec) {
+        if (spec == null)
+            button.setVisibility(View.GONE);
+        else {
+            button.setText(spec.textResid);
+            button.setOnClickListener(spec.onClickListener);
+            button.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
-     *  Sets the text, visibility and "weight" of all buttons
-     * @param leftResid
-     * @param centreResid
-     * @param rightResid
+     * Sets up the buttons according to the {@link ControlButtonSpec}s specified.  If the centre
+     * button is blank and the left and right are not, a "left-centre" button is used in place
+     * of the left button; <i>i.e.</i> the left button has "double weight" of sorts.
+     * @param left the {@link ControlButtonSpec} for the left button
+     * @param centre the {@link ControlButtonSpec} for the centre button
+     * @param right the {@link ControlButtonSpec} for the right button
      */
-    private void setButtons(int leftResid, int centreResid, int rightResid) {
-        setButton(mLeftControlButton, leftResid);
-        setButton(mCentreControlButton, centreResid);
-        setButton(mRightControlButton, rightResid);
+    private void setButtons(ControlButtonSpec left, ControlButtonSpec centre, ControlButtonSpec right) {
 
-        // If there are exactly two buttons, make the weight of the left button double,
-        // so that it fills two-thirds of the width of the screen.
-        float leftControlButtonWeight = (float) ((centreResid == R.string.mainScreen_null_buttonText && rightResid != R.string.mainScreen_null_buttonText) ? 2.0 : 1.0);
-        mLeftControlButton.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, leftControlButtonWeight));
+
+        if (left != null && centre == null && right != null) {
+            setButton(mLeftCentreControlButton, left);
+            setButton(mLeftControlButton, null);
+            setButton(mCentreControlButton, null);
+        } else {
+            setButton(mLeftCentreControlButton, null);
+            setButton(mLeftControlButton, left);
+            setButton(mCentreControlButton, centre);
+        }
+
+        setButton(mRightControlButton, right);
     }
 
     /**
@@ -1541,6 +1538,7 @@ public class DebatingActivity extends Activity {
     private void setButtonsEnable(boolean enable) {
         if (mDebateManager == null) return;
         mLeftControlButton.setEnabled(enable);
+        mLeftCentreControlButton.setEnabled(enable);
         mCentreControlButton.setEnabled(enable);
         // Disable the [Next Speaker] button if there are no more speakers
         mRightControlButton.setEnabled(enable && !mDebateManager.isInLastPhase());
@@ -1555,11 +1553,44 @@ public class DebatingActivity extends Activity {
     }
 
     /**
+     * Shows the currently-queued dialog if there is one; does nothing otherwise.  Dialogs that
+     * could block other dialogs must call this method on dismissal.
+     */
+    private void showQueuedDialog() {
+        if (mDialogWaiting) {
+            showDialog(mDialogIdWaiting, mDialogBundleInWaiting);
+            mDialogBlocking = false;
+            mDialogWaiting = false;
+            mDialogIdWaiting = -1;
+            mDialogBundleInWaiting = null;
+        }
+    }
+
+    /**
+     * Returns the number of seconds that would be displayed, taking into account the count
+     * direction.  If the overall count direction is <code>COUNT_DOWN</code> and there is a speech
+     * format ready, it returns (speechLength - time).  Otherwise, it just returns time.
+     * @param time the time that is wished to be formatted (in seconds)
+     * @return the time that would be displayed (as an integer, number of seconds)
+     */
+    private long subtractFromSpeechLengthIfCountingDown(long time) {
+        if (mDebateManager != null)
+            return subtractFromSpeechLengthIfCountingDown(time, mDebateManager.getActivePhaseFormat());
+        return time;
+    }
+
+    private long subtractFromSpeechLengthIfCountingDown(long time, DebatePhaseFormat sf) {
+        if (getCountDirection(sf) == CountDirection.COUNT_DOWN)
+            return sf.getLength() - time;
+        return time;
+    }
+
+    /**
      *  Updates the buttons according to the current status of the debate
      *  The buttons are allocated as follows:
-     *  When at startOfSpeaker: [Start] [Next Speaker]
+     *  When at start:          [Start] [Next]
      *  When running:           [Stop]
-     *  When stopped by user:   [Resume] [Restart] [Next Speaker]
+     *  When stopped by user:   [Resume] [Restart] [Next]
      *  When stopped by alarm:  [Resume]
      *  The [Bell] button always is on the right of any of the above three buttons.
      */
@@ -1575,16 +1606,16 @@ public class DebatingActivity extends Activity {
             // Show a "restart debate" button instead.
             switch (mDebateManager.getTimerStatus()) {
             case NOT_STARTED:
-                setButtons(R.string.mainScreen_startTimer_buttonText, R.string.mainScreen_null_buttonText, R.string.mainScreen_nextSpeaker_buttonText);
+                setButtons(CONTROL_BUTTON_START_TIMER, null, CONTROL_BUTTON_NEXT_PHASE);
                 break;
             case RUNNING:
-                setButtons(R.string.mainScreen_stopTimer_buttonText, R.string.mainScreen_null_buttonText, R.string.mainScreen_null_buttonText);
+                setButtons(CONTROL_BUTTON_STOP_TIMER, null, null);
                 break;
             case STOPPED_BY_BELL:
-                setButtons(R.string.mainScreen_resumeTimerAfterAlarm_buttonText, R.string.mainScreen_null_buttonText, R.string.mainScreen_null_buttonText);
+                setButtons(CONTROL_BUTTON_RESUME_TIMER, null, null);
                 break;
             case STOPPED_BY_USER:
-                setButtons(R.string.mainScreen_resumeTimerAfterUserStop_buttonText, R.string.mainScreen_resetTimer_buttonText, R.string.mainScreen_nextSpeaker_buttonText);
+                setButtons(CONTROL_BUTTON_RESUME_TIMER, CONTROL_BUTTON_RESET_TIMER, CONTROL_BUTTON_NEXT_PHASE);
                 break;
             }
 
@@ -1597,7 +1628,7 @@ public class DebatingActivity extends Activity {
         } else {
             // If no debate is loaded, show only one control button, which leads the user to
             // choose a style. (Keep the play bell button enabled.)
-            setButtons(R.string.mainScreen_noDebateLoaded_buttonText, R.string.mainScreen_null_buttonText, R.string.mainScreen_null_buttonText);
+            setButtons(CONTROL_BUTTON_CHOOSE_STYLE, null, null);
             mLeftControlButton.setEnabled(true);
             mCentreControlButton.setEnabled(false);
             mRightControlButton.setEnabled(false);
@@ -1742,6 +1773,21 @@ public class DebatingActivity extends Activity {
     }
 
     /**
+     * Updates the GUI (in the general case).
+     */
+    private void updateGui() {
+        updateDebateTimerDisplay();
+        updateControls();
+
+        if (mDebateManager != null) {
+            this.setTitle(getString(R.string.activityName_Debating_withFormat, mDebateManager.getDebateFormatName()));
+        } else {
+            setTitle(R.string.activityName_Debating_withoutFormat);
+        }
+
+    }
+
+    /**
      * Sets the "keep screen on" setting according to whether it is prep time or a speech.
      * This method should be called whenever (a) we switch between speeches and prep time,
      * and (b) the user preference is applied again.
@@ -1760,21 +1806,6 @@ public class DebatingActivity extends Activity {
         }
 
         am.setKeepScreenOn(mKeepScreenOn);
-    }
-
-    /**
-     * Updates the GUI (in the general case).
-     */
-    private void updateGui() {
-        updateDebateTimerDisplay();
-        updateControls();
-
-        if (mDebateManager != null) {
-            this.setTitle(getString(R.string.activityName_Debating_withFormat, mDebateManager.getDebateFormatName()));
-        } else {
-            setTitle(R.string.activityName_Debating_withoutFormat);
-        }
-
     }
 
     private void updatePlayBellButton() {
@@ -1823,24 +1854,5 @@ public class DebatingActivity extends Activity {
         } else {
             return String.format("+%02d:%02d", -time / 60, -time % 60);
         }
-    }
-
-    /**
-     * Returns the number of seconds that would be displayed, taking into account the count
-     * direction.  If the overall count direction is <code>COUNT_DOWN</code> and there is a speech
-     * format ready, it returns (speechLength - time).  Otherwise, it just returns time.
-     * @param time the time that is wished to be formatted (in seconds)
-     * @return the time that would be displayed (as an integer, number of seconds)
-     */
-    private long subtractFromSpeechLengthIfCountingDown(long time) {
-        if (mDebateManager != null)
-            return subtractFromSpeechLengthIfCountingDown(time, mDebateManager.getActivePhaseFormat());
-        return time;
-    }
-
-    private long subtractFromSpeechLengthIfCountingDown(long time, DebatePhaseFormat sf) {
-        if (getCountDirection(sf) == CountDirection.COUNT_DOWN)
-            return sf.getLength() - time;
-        return time;
     }
 }

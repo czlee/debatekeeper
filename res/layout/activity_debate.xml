@@ -30,18 +30,22 @@
 
         <Button
             android:id="@+id/mainScreen_leftControlButton"
-            style="@style/ControlButton"
-            android:text="@string/mainScreen_startTimer_buttonText" />
+            style="@style/ControlButton" />
 
         <Button
             android:id="@+id/mainScreen_centreControlButton"
+            style="@style/ControlButton" />
+
+        <Button
+            android:id="@+id/mainScreen_leftCentreControlButton"
             style="@style/ControlButton"
-            android:text="@string/mainScreen_resetTimer_buttonText" />
+            android:layout_weight="2"
+            android:layout_width="0dip"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/mainScreen_rightControlButton"
-            style="@style/ControlButton"
-            android:text="@string/mainScreen_nextSpeaker_buttonText" />
+            style="@style/ControlButton" />
 
         <Button
             android:id="@+id/mainScreen_playBellButton"

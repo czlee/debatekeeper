@@ -27,13 +27,12 @@
     <string name="app_marketUri">market://details?id=net.czlee.debatekeeper</string>
     
     <!-- Buttons -->
-    <string name="mainScreen_startTimer_buttonText">Start</string>
-    <string name="mainScreen_stopTimer_buttonText">Stop</string>
-    <string name="mainScreen_resumeTimerAfterAlarm_buttonText">Resume</string>
-    <string name="mainScreen_resumeTimerAfterUserStop_buttonText">Resume</string>
-    <string name="mainScreen_resetTimer_buttonText">Reset</string>
-    <string name="mainScreen_nextSpeaker_buttonText">Next</string>
-    <string name="mainScreen_null_buttonText">&lt;None></string>
+    <string name="mainScreen_controlButton_startTimer_text">Start</string>
+    <string name="mainScreen_controlButton_stopTimer_text">Stop</string>
+    <string name="mainScreen_controlButton_resumeTimer_text">Resume</string>
+    <string name="mainScreen_controlButton_resetTimer_text">Reset</string>
+    <string name="mainScreen_controlButton_nextPhase_text">Next</string>
+    <string name="mainScreen_controlButton_chooseStyle_text">Choose style</string>
     <string name="mainScreen_playBell_buttonText">Bell</string>
     <string name="mainScreen_poiTimer_buttonText">POI</string>
     
@@ -61,7 +60,6 @@
     
     <string name="mainScreen_toast_resetDebate">All timers in debate reset</string>
     <string name="mainScreen_noDebateLoaded_text">No debate loaded</string>
-    <string name="mainScreen_noDebateLoaded_buttonText">Choose style</string>
     
     <string name="prepTime_title">Preparation time</string>
     
