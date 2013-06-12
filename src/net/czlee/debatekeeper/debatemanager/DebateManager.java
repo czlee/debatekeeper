@@ -124,7 +124,7 @@ public class DebateManager {
      *
      * Users of this class should treat it as a black box.  It can change in any way to reflect
      * extensions of this class to support other debate structures.  The exception to this is
-     * the public member <code>noDebate</code>, which is always <code>null</code> for tags returned
+     * the public member <code>specialTag</code>, which is always <code>null</code> for tags returned
      * by this class, but which user classes may like to use for their own purposes.  As of
      * 11 June 2013, this field is used by <code>DebatingActivity.DebateTimerDisplayPagerAdapter</code>
      * to mark tags where no debate is loaded.
