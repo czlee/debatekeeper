@@ -181,6 +181,14 @@ public class FormatChooserActivity extends FragmentActivity {
 
     public static class MoreDetailsDialogFragment extends DialogFragment {
 
+        static MoreDetailsDialogFragment newInstance(String filename) {
+            MoreDetailsDialogFragment fragment = new MoreDetailsDialogFragment();
+            Bundle args = new Bundle();
+            args.putString(DIALOG_ARGUMENT_FILE_NAME, filename);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             String filename = getArguments().getString(DIALOG_ARGUMENT_FILE_NAME);
@@ -319,14 +327,6 @@ public class FormatChooserActivity extends FragmentActivity {
                 table.addView(row);
             }
 
-        }
-
-        static MoreDetailsDialogFragment newInstance(String filename) {
-            MoreDetailsDialogFragment fragment = new MoreDetailsDialogFragment();
-            Bundle args = new Bundle();
-            args.putString(DIALOG_ARGUMENT_FILE_NAME, filename);
-            fragment.setArguments(args);
-            return fragment;
         }
 
         private static void populatePrepTimeInfo(View view, DebateFormatInfo dfi) {

@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -60,6 +61,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
@@ -88,7 +91,7 @@ import android.widget.Toast;
  * @since  2012-04-05
  *
  */
-public class DebatingActivity extends Activity {
+public class DebatingActivity extends FragmentActivity {
 
     private View             mDebateTimerDisplay;
     private boolean          mIsEditingTime = false;
@@ -122,24 +125,25 @@ public class DebatingActivity extends Activity {
     private boolean              mKeepScreenOn;
     private boolean              mPrepTimeKeepScreenOn;
 
-    private boolean              mDialogBlocking        = false;
-    private boolean              mDialogWaiting         = false;
-    private int                  mDialogIdWaiting       = -1;
-    private Bundle               mDialogBundleInWaiting = null;
+    private boolean              mDialogBlocking          = false;
+    private boolean              mDialogWaiting           = false;
+    private DialogFragment       mDialogFragmentInWaiting = null;
+    private String               mDialogTagInWaiting      = null;
 
     private static final String BUNDLE_SUFFIX_DEBATE_MANAGER     = "dm";
     private static final String PREFERENCE_XML_FILE_NAME         = "xmlfn";
     private static final String DO_NOT_SHOW_POI_TIMER_DIALOG     = "dnspoi";
-    private static final String DIALOG_BUNDLE_FATAL_MESSAGE      = "fm";
-    private static final String DIALOG_BUNDLE_XML_ERROR_LOG      = "xel";
-    private static final String DIALOG_BUNDLE_SCHEMA_USED        = "used";
-    private static final String DIALOG_BUNDLE_SCHEMA_SUPPORTED   = "supp";
+    private static final String DIALOG_ARGUMENT_FATAL_MESSAGE    = "fm";
+    private static final String DIALOG_ARGUMENT_XML_ERROR_LOG    = "xel";
+    private static final String DIALOG_ARGUMENT_SCHEMA_USED      = "used";
+    private static final String DIALOG_ARGUMENT_SCHEMA_SUPPORTED = "supp";
+    private static final String DIALOG_ARGUMENT_FILE_NAME        = "fn";
+    private static final String DIALOG_TAG_SCHEMA_TOO_NEW        = "toonew";
+    private static final String DIALOG_TAG_ERRORS_WITH_XML       = "errors";
+    private static final String DIALOG_TAG_FATAL_PROBLEM         = "fatal";
+    private static final String DIALOG_TAG_POI_TIMER_INFO        = "poiinfo";
 
     private static final int    CHOOSE_STYLE_REQUEST      = 0;
-    private static final int    DIALOG_XML_FILE_FATAL     = 0;
-    private static final int    DIALOG_XML_FILE_ERRORS    = 1;
-    private static final int    DIALOG_POI_TIMERS_INFO    = 2;
-    private static final int    DIALOG_XML_SCHEMA_TOO_NEW = 3;
 
     private DebatingTimerService.DebatingTimerServiceBinder mBinder;
     private final BroadcastReceiver mGuiUpdateBroadcastReceiver = new GuiUpdateBroadcastReceiver();
@@ -580,6 +584,207 @@ public class DebatingActivity extends Activity {
         }
     }
 
+    public static class DialogErrorsWithXmlFileFragment extends DialogFragment {
+
+        static DialogErrorsWithXmlFileFragment newInstance(ArrayList<String> errorLog, String filename) {
+            DialogErrorsWithXmlFileFragment fragment = new DialogErrorsWithXmlFileFragment();
+            Bundle args = new Bundle();
+            args.putStringArrayList(DIALOG_ARGUMENT_XML_ERROR_LOG, errorLog);
+            args.putString(DIALOG_ARGUMENT_FILE_NAME, filename);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+            StringBuilder errorMessage = new StringBuilder(getString(R.string.errorsinXmlFileDialog_message_prefix));
+
+            Bundle args = getArguments();
+
+            ArrayList<String> errorLog = args.getStringArrayList(DIALOG_ARGUMENT_XML_ERROR_LOG);
+            Iterator<String> errorIterator = errorLog.iterator();
+
+            while (errorIterator.hasNext()) {
+                errorMessage.append("\n");
+                errorMessage.append(errorIterator.next());
+            }
+
+            errorMessage.append(getString(R.string.dialogs_fileName_suffix, args.getString(DIALOG_ARGUMENT_FILE_NAME)));
+
+            builder.setTitle(R.string.errorsinXmlFileDialog_title)
+                   .setMessage(errorMessage)
+                   .setCancelable(true)
+                   .setPositiveButton(R.string.errorsinXmlFileDialog_button, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+
+            return builder.create();
+        }
+
+    }
+
+    public static class DialogFatalProblemWithXmlFileFragment extends DialogFragment {
+
+        static DialogFatalProblemWithXmlFileFragment newInstance(String message, String filename) {
+            DialogFatalProblemWithXmlFileFragment fragment = new DialogFatalProblemWithXmlFileFragment();
+            Bundle args = new Bundle();
+            args.putString(DIALOG_ARGUMENT_FATAL_MESSAGE, message);
+            args.putString(DIALOG_ARGUMENT_FILE_NAME, filename);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            Bundle args = getArguments();
+
+            StringBuilder errorMessage = new StringBuilder(args.getString(DIALOG_ARGUMENT_FATAL_MESSAGE));
+            errorMessage.append(getString(R.string.fatalProblemWithXmlFileDialog_message_suffix));
+            errorMessage.append(getString(R.string.dialogs_fileName_suffix, args.getString(DIALOG_ARGUMENT_FILE_NAME)));
+
+            builder.setTitle(R.string.fatalProblemWithXmlFileDialog_title)
+                   .setMessage(errorMessage)
+                   .setCancelable(true)
+                   .setPositiveButton(R.string.fatalProblemWithXmlFileDialog_button, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(getActivity(), FormatChooserActivity.class);
+                            startActivityForResult(intent, CHOOSE_STYLE_REQUEST);
+                        }
+                    })
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            getActivity().finish();
+                        }
+                    });
+
+            return builder.create();
+        }
+
+    }
+
+    public static class DialogPoiTimerInfoFragment extends DialogFragment {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final Activity activity = getActivity();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+            View content = activity.getLayoutInflater().inflate(R.layout.poi_timer_dialog, null);
+            final CheckBox doNotShowAgain = (CheckBox) content.findViewById(R.id.poiTimerInfoDialog_dontShow);
+
+            builder.setTitle(R.string.poiTimerInfoDialog_title)
+                   .setView(content)
+                   .setCancelable(true)
+                   .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Take note of "do not show again" setting
+                            SharedPreferences prefs = activity.getPreferences(MODE_PRIVATE);
+                            Editor editor = prefs.edit();
+                            editor.putBoolean(DO_NOT_SHOW_POI_TIMER_DIALOG, doNotShowAgain.isChecked());
+                            editor.commit();
+                            dialog.dismiss();
+                        }
+                    })
+                   .setNeutralButton(R.string.poiTimerInfoDialog_button_learnMore, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Uri uri = Uri.parse(getString(R.string.poiTimer_moreInfoUrl));
+                            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                            startActivity(intent);
+                        }
+                    })
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            dialog.dismiss();
+                        }
+                    });
+
+            return builder.create();
+        }
+
+    }
+
+    public static class DialogSchemaTooNewFragment extends DialogFragment {
+
+        static DialogSchemaTooNewFragment newInstance(String schemaUsed, String schemaSupported, String filename) {
+            DialogSchemaTooNewFragment fragment = new DialogSchemaTooNewFragment();
+            Bundle args = new Bundle();
+            args.putString(DIALOG_ARGUMENT_SCHEMA_USED, schemaUsed);
+            args.putString(DIALOG_ARGUMENT_SCHEMA_SUPPORTED, schemaSupported);
+            args.putString(DIALOG_ARGUMENT_FILE_NAME, filename);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final DebatingActivity activity = (DebatingActivity) getActivity();
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            Bundle args = getArguments();
+
+            activity.mDialogBlocking = true;
+
+            String schemaUsed      = args.getString(DIALOG_ARGUMENT_SCHEMA_USED);
+            String schemaSupported = args.getString(DIALOG_ARGUMENT_SCHEMA_SUPPORTED);
+
+            String appVersion;
+            try {
+                appVersion = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0).versionName;
+            } catch (NameNotFoundException e) {
+                appVersion = "unknown";
+            }
+
+            StringBuilder message = new StringBuilder(getString(R.string.schemaTooNewDialog_message, schemaUsed, schemaSupported, appVersion));
+
+            message.append(getString(R.string.dialogs_fileName_suffix, args.getString(DIALOG_ARGUMENT_FILE_NAME)));
+
+            builder.setTitle(R.string.schemaTooNewDialog_title)
+                   .setMessage(message)
+                   .setCancelable(false)
+                   .setPositiveButton(R.string.schemaTooNewDialog_button_upgrade, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Open Google Play to upgrade
+                            Uri uri = Uri.parse(getString(R.string.app_marketUri));
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(uri);
+                            startActivity(intent);
+                        }
+                    })
+                .setNegativeButton(R.string.schemaTooNewDialog_button_ignore, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // To ignore, just dismiss the dialog and return to whatever was happening before
+                        dialog.dismiss();
+                    }
+                });
+
+            AlertDialog dialog = builder.create();
+
+            // This method is only supported for AlertDialog.Builder from API level 17 onwards,
+            // so we have to call it on the AlertDialog directly.
+            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    activity.showQueuedDialog();
+                }
+            });
+
+            return dialog;
+        }
+    }
+
     private class FatalXmlError extends Exception {
 
         private static final long serialVersionUID = -1774973645180296278L;
@@ -765,21 +970,6 @@ public class DebatingActivity extends Activity {
         Intent intent = new Intent(this, DebatingTimerService.class);
         startService(intent);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    @Override
-    protected Dialog onCreateDialog(int id, Bundle args) {
-        switch (id) {
-        case DIALOG_XML_FILE_FATAL:
-            return getDialogFatalProblemWithXmlFile(args);
-        case DIALOG_XML_FILE_ERRORS:
-            return getDialogErrorsWithXmlFile(args);
-        case DIALOG_POI_TIMERS_INFO:
-            return getDialogPoiTimerInfo();
-        case DIALOG_XML_SCHEMA_TOO_NEW:
-            return getDialogSchemaTooNew(args);
-        }
-        return super.onCreateDialog(id, args);
     }
 
     @Override
@@ -1070,11 +1260,8 @@ public class DebatingActivity extends Activity {
         // If the schema still isn't supported (even after possibly having been replaced by
         // schema 1.0), prompt the user to upgrade the app.
         if (dfbfx.isSchemaTooNew()) {
-            Bundle bundle = new Bundle();
-            bundle.putString(DIALOG_BUNDLE_SCHEMA_SUPPORTED, dfbfx.getSupportedSchemaVersion());
-            bundle.putString(DIALOG_BUNDLE_SCHEMA_USED, dfbfx.getSchemaVersion());
-            removeDialog(DIALOG_XML_SCHEMA_TOO_NEW);
-            showDialog(DIALOG_XML_SCHEMA_TOO_NEW, bundle);
+            DialogFragment fragment = DialogSchemaTooNewFragment.newInstance(dfbfx.getSchemaVersion(), dfbfx.getSupportedSchemaVersion(), mFormatXmlFileName);
+            fragment.show(getSupportFragmentManager(), DIALOG_TAG_SCHEMA_TOO_NEW);
         }
 
         if (df.numberOfSpeeches() == 0)
@@ -1082,10 +1269,8 @@ public class DebatingActivity extends Activity {
                     R.string.fatalProblemWithXmlFileDialog_message_noSpeeches));
 
         if (dfbfx.hasErrors()) {
-            Bundle bundle = new Bundle();
-            bundle.putStringArrayList(DIALOG_BUNDLE_XML_ERROR_LOG, dfbfx.getErrorLog());
-            removeDialog(DIALOG_XML_FILE_ERRORS);
-            queueDialog(DIALOG_XML_FILE_ERRORS, bundle);
+            DialogFragment fragment = DialogErrorsWithXmlFileFragment.newInstance(dfbfx.getErrorLog(), mFormatXmlFileName);
+            queueDialog(fragment, DIALOG_TAG_ERRORS_WITH_XML);
         }
 
         return df;
@@ -1190,154 +1375,6 @@ public class DebatingActivity extends Activity {
             return mCountDirection;
     }
 
-    private Dialog getDialogErrorsWithXmlFile(Bundle bundle) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        StringBuilder errorMessage = new StringBuilder(getString(R.string.errorsinXmlFileDialog_message_prefix));
-
-        ArrayList<String> errorLog = bundle.getStringArrayList(DIALOG_BUNDLE_XML_ERROR_LOG);
-        Iterator<String> errorIterator = errorLog.iterator();
-
-        while (errorIterator.hasNext()) {
-            errorMessage.append("\n");
-            errorMessage.append(errorIterator.next());
-        }
-
-        errorMessage.append(getString(R.string.dialogs_fileName_suffix, mFormatXmlFileName));
-
-        builder.setTitle(R.string.errorsinXmlFileDialog_title)
-               .setMessage(errorMessage)
-               .setCancelable(true)
-               .setPositiveButton(R.string.errorsinXmlFileDialog_button, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-
-        return builder.create();
-    }
-
-    private Dialog getDialogFatalProblemWithXmlFile(Bundle bundle) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        StringBuilder errorMessage = new StringBuilder(bundle.getString(DIALOG_BUNDLE_FATAL_MESSAGE));
-        errorMessage.append(getString(R.string.fatalProblemWithXmlFileDialog_message_suffix));
-        errorMessage.append(getString(R.string.dialogs_fileName_suffix, mFormatXmlFileName));
-
-        builder.setTitle(R.string.fatalProblemWithXmlFileDialog_title)
-               .setMessage(errorMessage)
-               .setCancelable(true)
-               .setPositiveButton(R.string.fatalProblemWithXmlFileDialog_button, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(DebatingActivity.this, FormatChooserActivity.class);
-                        startActivityForResult(intent, CHOOSE_STYLE_REQUEST);
-                    }
-                })
-                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        DebatingActivity.this.finish();
-                    }
-                });
-
-        return builder.create();
-    }
-
-    private Dialog getDialogPoiTimerInfo() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        View content = getLayoutInflater().inflate(R.layout.poi_timer_dialog, null);
-        final CheckBox doNotShowAgain = (CheckBox) content.findViewById(R.id.poiTimerInfoDialog_dontShow);
-
-        builder.setTitle(R.string.poiTimerInfoDialog_title)
-               .setView(content)
-               .setCancelable(true)
-               .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Take note of "do not show again" setting
-                        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
-                        Editor editor = prefs.edit();
-                        editor.putBoolean(DO_NOT_SHOW_POI_TIMER_DIALOG, doNotShowAgain.isChecked());
-                        editor.commit();
-                        dialog.dismiss();
-                    }
-                })
-               .setNeutralButton(R.string.poiTimerInfoDialog_button_learnMore, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Uri uri = Uri.parse(getString(R.string.poiTimer_moreInfoUrl));
-                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                        startActivity(intent);
-                    }
-                })
-                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        dialog.dismiss();
-                    }
-                });
-
-        return builder.create();
-
-    }
-
-    private Dialog getDialogSchemaTooNew(Bundle bundle) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        mDialogBlocking = true;
-
-        String schemaUsed      = bundle.getString(DIALOG_BUNDLE_SCHEMA_USED);
-        String schemaSupported = bundle.getString(DIALOG_BUNDLE_SCHEMA_SUPPORTED);
-
-        String appVersion;
-        try {
-            appVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-        } catch (NameNotFoundException e) {
-            appVersion = "unknown";
-        }
-
-        StringBuilder message = new StringBuilder(getString(R.string.schemaTooNewDialog_message, schemaUsed, schemaSupported, appVersion));
-
-        message.append(getString(R.string.dialogs_fileName_suffix, mFormatXmlFileName));
-
-        builder.setTitle(R.string.schemaTooNewDialog_title)
-               .setMessage(message)
-               .setCancelable(false)
-               .setPositiveButton(R.string.schemaTooNewDialog_button_upgrade, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Open Google Play to upgrade
-                        Uri uri = Uri.parse(getString(R.string.app_marketUri));
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(uri);
-                        startActivity(intent);
-                    }
-                })
-            .setNegativeButton(R.string.schemaTooNewDialog_button_ignore, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // To ignore, just dismiss the dialog and return to whatever was happening before
-                    dialog.dismiss();
-                }
-            });
-
-        AlertDialog dialog = builder.create();
-
-        // This method is only supported for AlertDialog.Builder from API level 17 onwards,
-        // so we have to call it on the AlertDialog directly.
-        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                showQueuedDialog();
-            }
-        });
-
-        return dialog;
-    }
-
     /**
      * Goes to the next speech.
      * Does nothing if there is no debate loaded, if the current speech is the last speech, if
@@ -1391,10 +1428,8 @@ public class DebatingActivity extends Activity {
             try {
                 df = buildDebateFromXml(mFormatXmlFileName);
             } catch (FatalXmlError e) {
-                removeDialog(DIALOG_XML_FILE_FATAL);
-                Bundle bundle = new Bundle();
-                bundle.putString(DIALOG_BUNDLE_FATAL_MESSAGE, e.getMessage());
-                queueDialog(DIALOG_XML_FILE_FATAL, bundle);
+                DialogFragment fragment = DialogFatalProblemWithXmlFileFragment.newInstance(e.getMessage(), mFormatXmlFileName);
+                queueDialog(fragment, DIALOG_TAG_FATAL_PROBLEM);
 
                 // We still need to notify of a data set change when there ends up being no
                 // debate format
@@ -1416,7 +1451,7 @@ public class DebatingActivity extends Activity {
             if (!prefs.getBoolean(DO_NOT_SHOW_POI_TIMER_DIALOG, false))
                 if (df.hasPoisAllowedSomewhere())
                     if (mPoiTimerEnabled)
-                        showDialog(DIALOG_POI_TIMERS_INFO);
+                        new DialogPoiTimerInfoFragment().show(getSupportFragmentManager(), DIALOG_TAG_POI_TIMER_INFO);
         }
 
         mViewPager.getAdapter().notifyDataSetChanged();
@@ -1444,15 +1479,15 @@ public class DebatingActivity extends Activity {
      * @param id the dialog ID that would be passed to showDialog()
      * @param args the {@link Bundle} that would be passed to showDialog()
      */
-    private void queueDialog(int id, Bundle args) {
+    private void queueDialog(DialogFragment fragment, String tag) {
         if (!mDialogBlocking) {
-            showDialog(id, args);
+            fragment.show(getSupportFragmentManager(), tag);
             return;
         }
 
-        mDialogWaiting = true;
-        mDialogIdWaiting = id;
-        mDialogBundleInWaiting = args;
+        mDialogWaiting           = true;
+        mDialogFragmentInWaiting = fragment;
+        mDialogTagInWaiting      = tag;
     }
 
     /**
@@ -1558,11 +1593,11 @@ public class DebatingActivity extends Activity {
      */
     private void showQueuedDialog() {
         if (mDialogWaiting) {
-            showDialog(mDialogIdWaiting, mDialogBundleInWaiting);
+            mDialogFragmentInWaiting.show(getSupportFragmentManager(), mDialogTagInWaiting);
             mDialogBlocking = false;
             mDialogWaiting = false;
-            mDialogIdWaiting = -1;
-            mDialogBundleInWaiting = null;
+            mDialogFragmentInWaiting = null;
+            mDialogTagInWaiting = null;
         }
     }
 
@@ -1850,9 +1885,9 @@ public class DebatingActivity extends Activity {
 
     private static String secsToText(long time) {
         if (time >= 0) {
-            return String.format("%02d:%02d", time / 60, time % 60);
+            return String.format(Locale.US, "%02d:%02d", time / 60, time % 60);
         } else {
-            return String.format("+%02d:%02d", -time / 60, -time % 60);
+            return String.format(Locale.US, "+%02d:%02d", -time / 60, -time % 60);
         }
     }
 }

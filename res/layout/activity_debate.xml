@@ -61,28 +61,5 @@
         android:layout_height="fill_parent"
         android:layout_above="@id/mainScreen_controlButtons"
         android:layout_alignParentTop="true" />
-        
-    <!--
-    <ViewFlipper
-        android:id="@+id/debateTimerDisplayFlipper"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_above="@id/mainScreen_controlButtons"
-        android:layout_alignParentTop="true"
-        android:orientation="vertical" >
-
-        <include
-            android:id="@+id/debateTimerDisplay0"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            layout="@layout/debate_timer_display" />
-        
-		<include
-            android:id="@+id/debateTimerDisplay1"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            layout="@layout/debate_timer_display" />
-        
-    </ViewFlipper>-->
 
 </RelativeLayout>
