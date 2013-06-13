@@ -566,6 +566,10 @@ public class DebatingActivity extends FragmentActivity {
             // the relevant timer (prep time or speech).
             View v = View.inflate(DebatingActivity.this, R.layout.debate_timer_display, null);
 
+            // OnTouchListeners
+            v.setOnClickListener(new DebateTimerDisplayOnClickListener());
+            ((TextView) v.findViewById(R.id.debateTimer_currentTime)).setOnLongClickListener(new CurrentTimeOnLongClickListener());
+
             // Set the time picker to 24-hour time
             TimePicker currentTimePicker = (TimePicker) v.findViewById(R.id.debateTimer_currentTimePicker);
             currentTimePicker.setIs24HourView(true);
@@ -574,129 +578,14 @@ public class DebatingActivity extends FragmentActivity {
             Button poiTimerButton = (Button) v.findViewById(R.id.debateTimer_poiTimerButton);
             poiTimerButton.setOnClickListener(new PoiButtonOnClickListener());
 
-            // Populate the text fields
-            TextView periodDescriptionText = (TextView) v.findViewById(R.id.debateTimer_periodDescriptionText);
-            TextView speechNameText        = (TextView) v.findViewById(R.id.debateTimer_speechNameText);
-            TextView currentTimeText       = (TextView) v.findViewById(R.id.debateTimer_currentTime);
-            TextView infoLineText          = (TextView) v.findViewById(R.id.debateTimer_informationLine);
-
-            // OnTouchListeners
-            v.setOnClickListener(new DebateTimerDisplayOnClickListener());
-            currentTimeText.setOnLongClickListener(new CurrentTimeOnLongClickListener());
-
+            // Update the debate timer display
             long               time = mDebateManager.getPhaseCurrentTime(position);
             DebatePhaseFormat  dpf  = mDebateManager.getPhaseFormat(position);
             PeriodInfo         pi   = dpf.getPeriodInfoForTime(time);
 
-            boolean overtime = time > dpf.getLength();
-
-            // The information at the top of the screen
-            speechNameText.setText(mDebateManager.getPhaseName(position));
-            periodDescriptionText.setText(pi.getDescription());
-
-            // Background colour, this is user-preference dependent
-            Integer backgroundColour = pi.getBackgroundColor();
-            switch (mBackgroundColourArea) {
-            case TOP_BAR_ONLY:
-                speechNameText.setBackgroundColor(backgroundColour);
-                periodDescriptionText.setBackgroundColor(backgroundColour);
-                break;
-            case WHOLE_SCREEN:
-                v.setBackgroundColor(backgroundColour);
-            }
-
-            // Take count direction into account for display
-            long timeToShow = subtractFromSpeechLengthIfCountingDown(time, dpf);
-
-            Resources resources = getResources();
-            int timeTextColor;
-            if (overtime)
-                timeTextColor = resources.getColor(R.color.overtime);
-            else
-                timeTextColor = resources.getColor(android.R.color.primary_text_dark);
-            currentTimeText.setText(secsToText(timeToShow));
-            currentTimeText.setTextColor(timeTextColor);
-
-            // Construct the line that goes at the bottom
-            StringBuilder infoLine = new StringBuilder();
-
-            // First, length...
-            long length = dpf.getLength();
-            String lengthStr;
-            if (length % 60 == 0)
-                lengthStr = String.format(getResources().
-                        getQuantityString(R.plurals.timeInMinutes, (int) (length / 60), length / 60));
-            else
-                lengthStr = secsToText(length);
-
-            int finalTimeTextUnformattedResid = (dpf.isPrep()) ? R.string.prepTimeLength: R.string.speechLength;
-            infoLine.append(String.format(getString(finalTimeTextUnformattedResid), lengthStr));
-
-            if (dpf.isPrep()) {
-                PrepTimeFormat pt = (PrepTimeFormat) dpf;
-                if (pt.isControlled())
-                    infoLine.append(getString(R.string.prepTimeControlledIndicator));
-            }
-
-            // ...then, if applicable, bells
-            ArrayList<BellInfo> currentSpeechBells = dpf.getBellsSorted();
-            Iterator<BellInfo> currentSpeechBellsIter = currentSpeechBells.iterator();
-
-            if (overtime) {
-                // show next overtime bell (don't bother with list of bells anymore)
-                Long nextOvertimeBellTime = mDebateManager.getPhaseNextOvertimeBellTime(position);
-                if (nextOvertimeBellTime == null)
-                    infoLine.append(getString(R.string.mainScreen_bellsList_noOvertimeBells));
-                else {
-                    long timeToDisplay = subtractFromSpeechLengthIfCountingDown(nextOvertimeBellTime, dpf);
-                    infoLine.append(getString(R.string.mainScreen_bellsList_nextOvertimeBell,
-                            secsToText(timeToDisplay)));
-                }
-
-            } else if (currentSpeechBellsIter.hasNext()) {
-                // Convert the list of bells into a string.
-                StringBuilder bellsStr = new StringBuilder();
-
-                while (currentSpeechBellsIter.hasNext()) {
-                    BellInfo bi = currentSpeechBellsIter.next();
-                    long bellTime = subtractFromSpeechLengthIfCountingDown(bi.getBellTime(), dpf);
-                    bellsStr.append(secsToText(bellTime));
-                    if (bi.isPauseOnBell())
-                        bellsStr.append(getString(R.string.pauseOnBellIndicator));
-                    if (bi.isSilent())
-                        bellsStr.append(getString(R.string.silentBellIndicator));
-                    if (currentSpeechBellsIter.hasNext())
-                        bellsStr.append(", ");
-                }
-
-                infoLine.append(getResources().getQuantityString(R.plurals.mainScreen_bellsList_normal, currentSpeechBells.size(), bellsStr));
-
-            } else {
-                infoLine.append(getString(R.string.mainScreen_bellsList_noBells));
-            }
-
-            infoLineText.setText(infoLine.toString());
-
-            // Determine whether or not we display the POI timer button
-            // Display only when user has POI timer enabled, and a debate is loaded and the current
-            // speech has POIs in it.
-            boolean displayPoiTimerButton = false;
-            if (mPoiTimerEnabled)
-                if (dpf.getClass() == SpeechFormat.class)
-                    if (((SpeechFormat) dpf).hasPoisAllowedSomewhere())
-                        displayPoiTimerButton = true;
-
-            // If it's appropriate to display the button, do so
-            // It'll always be disabled as the timer is never running when switching pages
-            if (displayPoiTimerButton) {
-                poiTimerButton.setVisibility(View.VISIBLE);
-                poiTimerButton.setText(R.string.mainScreen_poiTimer_buttonText);
-                poiTimerButton.setEnabled(false);
-
-                // Otherwise, hide the button
-            } else {
-                poiTimerButton.setVisibility(View.GONE);
-            }
+            updateDebateTimerDisplay(v, dpf, pi,
+                    mDebateManager.getPhaseName(position), time,
+                    mDebateManager.getPhaseNextOvertimeBellTime(position));
 
             container.addView(v);
 
@@ -1714,40 +1603,55 @@ public class DebatingActivity extends FragmentActivity {
     }
 
     /**
-     * Updates the debate timer display (including speech name, period name, etc.
-     * The view should be the <code>RelativeLayout</code> in debate_timer_display.xml.
+     * Updates the debate timer display with the current active debate phase information.
      */
     private void updateDebateTimerDisplay() {
-
-        // Make sure it makes sense to run this method now
-
-        if (mDebateTimerDisplay == null) {
-            Log.w("updateDebateTimerDisplay", "mDebateTimerDisplay was null");
-            return;
-        }
-        if (mDebateTimerDisplay.getId() != R.id.debateTimer_root) {
-            Log.w("updateDebateTimerDisplay", "mDebateTimerDisplay was not the debate timer display");
-            return;
-        }
-
         if (mDebateManager == null) {
             Log.w("updateDebateTimerDisplay", "mDebateManager was null");
             mViewPager.getAdapter().notifyDataSetChanged();
             return;
         }
 
+        updateDebateTimerDisplay(mDebateTimerDisplay,
+                mDebateManager.getActivePhaseFormat(),
+                mDebateManager.getActivePhaseCurrentPeriodInfo(),
+                mDebateManager.getActivePhaseName(),
+                mDebateManager.getActivePhaseCurrentTime(),
+                mDebateManager.getActivePhaseNextOvertimeBellTime());
+    }
+
+    /**
+     * Updates a debate timer display with relevant information.
+     * @param debateTimerDisplay a {@link View} which should be the <code>RelativeLayout</code> in debate_timer_display.xml.
+     * @param dpf the {@link DebatePhaseFormat} to be displayed
+     * @param currentPeriodInfo the {@link PeriodInfo} to be displayed, should be the current one
+     * @param phaseName the name of the debate phase
+     * @param time the current time in the debate phase
+     * @param nextOvertimeBellTime the next overbell time in the debate phase
+     */
+    private void updateDebateTimerDisplay(View debateTimerDisplay, DebatePhaseFormat dpf,
+            PeriodInfo currentPeriodInfo, String phaseName, long time, Long nextOvertimeBellTime) {
+
+        // Make sure it makes sense to run this method now
+
+        if (debateTimerDisplay == null) {
+            Log.w("updateDebateTimerDisplay", "debateTimerDisplay was null");
+            return;
+        }
+        if (debateTimerDisplay.getId() != R.id.debateTimer_root) {
+            Log.w("updateDebateTimerDisplay", "debateTimerDisplay was not the debate timer display");
+            return;
+        }
+
         // If it passed all those checks, populate the timer display
 
-        TextView periodDescriptionText = (TextView) mDebateTimerDisplay.findViewById(R.id.debateTimer_periodDescriptionText);
-        TextView speechNameText        = (TextView) mDebateTimerDisplay.findViewById(R.id.debateTimer_speechNameText);
-        TextView currentTimeText       = (TextView) mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTime);
-        TextView infoLineText          = (TextView) mDebateTimerDisplay.findViewById(R.id.debateTimer_informationLine);
-
-        DebatePhaseFormat currentSpeechFormat = mDebateManager.getActivePhaseFormat();
-        PeriodInfo         currentPeriodInfo   = mDebateManager.getActivePhaseCurrentPeriodInfo();
+        TextView periodDescriptionText = (TextView) debateTimerDisplay.findViewById(R.id.debateTimer_periodDescriptionText);
+        TextView speechNameText        = (TextView) debateTimerDisplay.findViewById(R.id.debateTimer_speechNameText);
+        TextView currentTimeText       = (TextView) debateTimerDisplay.findViewById(R.id.debateTimer_currentTime);
+        TextView infoLineText          = (TextView) debateTimerDisplay.findViewById(R.id.debateTimer_informationLine);
 
         // The information at the top of the screen
-        speechNameText.setText(mDebateManager.getActivePhaseName());
+        speechNameText.setText(phaseName);
         periodDescriptionText.setText(currentPeriodInfo.getDescription());
 
         // Background colour, this is user-preference dependent
@@ -1760,30 +1664,30 @@ public class DebatingActivity extends FragmentActivity {
         case WHOLE_SCREEN:
             // Don't do the whole screen if there is a flash screen in progress
             if (mFlashScreenSemaphore.tryAcquire()) {
-                mDebateTimerDisplay.setBackgroundColor(backgroundColour);
+                debateTimerDisplay.setBackgroundColor(backgroundColour);
                 mFlashScreenSemaphore.release();
             }
         }
 
-        long currentSpeechTime = mDebateManager.getActivePhaseCurrentTime();
-
         // Take count direction into account for display
-        currentSpeechTime = subtractFromSpeechLengthIfCountingDown(currentSpeechTime);
+        long timeToShow = subtractFromSpeechLengthIfCountingDown(time, dpf);
+
+        boolean overtime = time > dpf.getLength();
 
         Resources resources = getResources();
         int currentTimeTextColor;
-        if (mDebateManager.isOvertime())
+        if (overtime)
             currentTimeTextColor = resources.getColor(R.color.overtime);
         else
             currentTimeTextColor = resources.getColor(android.R.color.primary_text_dark);
-        currentTimeText.setText(secsToText(currentSpeechTime));
+        currentTimeText.setText(secsToText(timeToShow));
         currentTimeText.setTextColor(currentTimeTextColor);
 
         // Construct the line that goes at the bottom
         StringBuilder infoLine = new StringBuilder();
 
         // First, length...
-        long length = currentSpeechFormat.getLength();
+        long length = dpf.getLength();
         String lengthStr;
         if (length % 60 == 0)
             lengthStr = String.format(getResources().
@@ -1791,24 +1695,26 @@ public class DebatingActivity extends FragmentActivity {
         else
             lengthStr = secsToText(length);
 
-        int finalTimeTextUnformattedResid = (mDebateManager.isInPrepTime()) ? R.string.prepTimeLength: R.string.speechLength;
+        int finalTimeTextUnformattedResid = (dpf.isPrep()) ? R.string.prepTimeLength: R.string.speechLength;
         infoLine.append(String.format(this.getString(finalTimeTextUnformattedResid),
                 lengthStr));
 
-        if (mDebateManager.isInPrepTime() && mDebateManager.isPrepTimeControlled())
-            infoLine.append(getString(R.string.prepTimeControlledIndicator));
+        if (dpf.isPrep()) {
+            PrepTimeFormat ptf = (PrepTimeFormat) dpf;
+            if (ptf.isControlled())
+                infoLine.append(getString(R.string.prepTimeControlledIndicator));
+        }
 
         // ...then, if applicable, bells
-        ArrayList<BellInfo> currentSpeechBells = currentSpeechFormat.getBellsSorted();
+        ArrayList<BellInfo> currentSpeechBells = dpf.getBellsSorted();
         Iterator<BellInfo> currentSpeechBellsIter = currentSpeechBells.iterator();
 
-        if (mDebateManager.isOvertime()) {
+        if (overtime) {
             // show next overtime bell (don't bother with list of bells anymore)
-            Long nextOvertimeBellTime = mDebateManager.getActivePhaseNextOvertimeBellTime();
             if (nextOvertimeBellTime == null)
                 infoLine.append(getString(R.string.mainScreen_bellsList_noOvertimeBells));
             else {
-                long timeToDisplay = subtractFromSpeechLengthIfCountingDown(nextOvertimeBellTime);
+                long timeToDisplay = subtractFromSpeechLengthIfCountingDown(nextOvertimeBellTime, dpf);
                 infoLine.append(getString(R.string.mainScreen_bellsList_nextOvertimeBell,
                         secsToText(timeToDisplay)));
             }
@@ -1819,7 +1725,7 @@ public class DebatingActivity extends FragmentActivity {
 
             while (currentSpeechBellsIter.hasNext()) {
                 BellInfo bi = currentSpeechBellsIter.next();
-                long bellTime = subtractFromSpeechLengthIfCountingDown(bi.getBellTime());
+                long bellTime = subtractFromSpeechLengthIfCountingDown(bi.getBellTime(), dpf);
                 bellsStr.append(secsToText(bellTime));
                 if (bi.isPauseOnBell())
                     bellsStr.append(getString(R.string.pauseOnBellIndicator));
@@ -1838,7 +1744,7 @@ public class DebatingActivity extends FragmentActivity {
         infoLineText.setText(infoLine.toString());
 
         // Update the POI timer button
-        updatePoiTimerButton();
+        updatePoiTimerButton(debateTimerDisplay, dpf);
 
     }
 
@@ -1869,7 +1775,7 @@ public class DebatingActivity extends FragmentActivity {
         AlertManager am = mBinder.getAlertManager();
 
         if (mDebateManager != null) {
-            if (mDebateManager.isInPrepTime()) {
+            if (mDebateManager.getActivePhaseFormat().isPrep()) {
                 am.setKeepScreenOn(mPrepTimeKeepScreenOn);
                 return;
             }
@@ -1883,23 +1789,34 @@ public class DebatingActivity extends FragmentActivity {
             mPlayBellButton.setVisibility((mBinder.getAlertManager().isSilentMode()) ? View.GONE : View.VISIBLE);
     }
 
-    private void updatePoiTimerButton() {
-        Button poiButton = (Button) mDebateTimerDisplay.findViewById(R.id.debateTimer_poiTimerButton);
+    /**
+     * @param debateTimerDisplay the {@link View} to be updated
+     * @param dpf the {@link DebatePhaseFormat} relevant for this <code>debateTimerDisplay</code>
+     */
+    private void updatePoiTimerButton(View debateTimerDisplay, DebatePhaseFormat dpf) {
+        Button poiButton = (Button) debateTimerDisplay.findViewById(R.id.debateTimer_poiTimerButton);
 
         // Determine whether or not we display the POI timer button
         // Display only when user has POI timer enabled, and a debate is loaded and the current
         // speech has POIs in it.
         boolean displayPoiTimerButton = false;
         if (mPoiTimerEnabled)
-            if (mDebateManager != null)
-                if (mDebateManager.hasPoisInActivePhase())
+            if (dpf.getClass() == SpeechFormat.class)
+                if (((SpeechFormat) dpf).hasPoisAllowedSomewhere())
                     displayPoiTimerButton = true;
 
         // If it's appropriate to display the button, do so
         if (displayPoiTimerButton) {
             poiButton.setVisibility(View.VISIBLE);
 
-            if (mDebateManager.isPoisActive()) {
+            // Determine whether POIs are active
+            boolean poisActive = false;
+            if (mDebateManager != null)
+                if (mDebateManager.isPoisActive())
+                    poisActive = true;
+
+            // If POIs are currently active, enable the button
+            if (poisActive) {
                 poiButton.setEnabled(mDebateManager.isRunning());
 
                 Long poiTime = mDebateManager.getCurrentPoiTime();
@@ -1907,6 +1824,8 @@ public class DebatingActivity extends FragmentActivity {
                     poiButton.setText(R.string.mainScreen_poiTimer_buttonText);
                 else
                     poiButton.setText(poiTime.toString());
+
+            // Otherwise, disable it
             } else {
                 poiButton.setText(R.string.mainScreen_poiTimer_buttonText);
                 poiButton.setEnabled(false);

@@ -27,7 +27,6 @@ import net.czlee.debatekeeper.debateformat.DebateFormat;
 import net.czlee.debatekeeper.debateformat.DebatePhaseFormat;
 import net.czlee.debatekeeper.debateformat.PeriodInfo;
 import net.czlee.debatekeeper.debateformat.PrepTimeSimpleFormat;
-import net.czlee.debatekeeper.debateformat.SpeechFormat;
 import android.app.Service;
 import android.content.Context;
 import android.os.Bundle;
@@ -377,18 +376,6 @@ public class DebateManager {
     }
 
     /**
-     * @return <code>true</code> if if POIs are allowed somewhere in the currently active phase,
-     * <code>false</code> otherwise.
-     */
-    public boolean hasPoisInActivePhase() {
-        DebatePhaseFormat spf = mPhaseManager.getFormat();
-        if (spf.getClass() == SpeechFormat.class)
-            return ((SpeechFormat) spf).hasPoisAllowedSomewhere();
-        else
-            return false;
-    }
-
-    /**
      * @return <code>true</code> if the active phase is the first phase, <code>false</code>
      * otherwise
      */
@@ -405,21 +392,6 @@ public class DebateManager {
     }
 
     /**
-     * @return <code>true</code> if the active phase is prep time, <code>false</code> otherwise
-     */
-    public boolean isInPrepTime() {
-        return mActivePhaseType == DebatePhaseType.PREP_TIME;
-    }
-
-    /**
-     * Checks if the active phase is in overtime.
-     * @return <code>true</code> is the active phase is in overtime, <code>false</code> otherwise.
-     */
-    public boolean isOvertime() {
-        return mPhaseManager.isOvertime();
-    }
-
-    /**
      * @return <code>true</code> if the POI timer is running, <code>false</code> otherwise.
      */
     public boolean isPoiRunning() {
@@ -433,15 +405,6 @@ public class DebateManager {
      */
     public boolean isPoisActive() {
         return mPhaseManager.getCurrentPeriodInfo().isPoisAllowed() || mPoiManager.isRunning();
-    }
-
-    /**
-     * @return <code>true</code> if the prep time is controlled (this does not depend on whether
-     * the active phase is prep time).  If there is no prep time, returns <code>false</code>.
-     */
-    public boolean isPrepTimeControlled() {
-        if (!hasPrepTime()) return false;
-        return mDebateFormat.getPrepFormat().isControlled();
     }
 
     /**

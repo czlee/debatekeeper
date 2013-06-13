@@ -266,16 +266,6 @@ public class DebatePhaseManager extends DebateElementManager {
     }
 
     /**
-     * Checks whether the speech is in overtime.
-     * @return <code>true</code> if the current time exceeds the speech length,
-     * <code>false</code> otherwise.
-     * <code>false</code> if the current time and speech length are equal
-     */
-    public boolean isOvertime() {
-        return mCurrentTime > mFormat.getLength();
-    }
-
-    /**
      * Sets the current time.
      * This method will set the time even if the timer is currently running.
      * @param seconds the new time in seconds
