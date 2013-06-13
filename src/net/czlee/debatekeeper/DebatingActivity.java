@@ -151,6 +151,216 @@ public class DebatingActivity extends FragmentActivity {
     private final ServiceConnection mConnection = new DebatingTimerServiceConnection();
 
     //******************************************************************************************
+    // Public classes
+    //******************************************************************************************
+
+    public static class DialogErrorsWithXmlFileFragment extends DialogFragment {
+
+        static DialogErrorsWithXmlFileFragment newInstance(ArrayList<String> errorLog, String filename) {
+            DialogErrorsWithXmlFileFragment fragment = new DialogErrorsWithXmlFileFragment();
+            Bundle args = new Bundle();
+            args.putStringArrayList(DIALOG_ARGUMENT_XML_ERROR_LOG, errorLog);
+            args.putString(DIALOG_ARGUMENT_FILE_NAME, filename);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+            StringBuilder errorMessage = new StringBuilder(getString(R.string.errorsinXmlFileDialog_message_prefix));
+
+            Bundle args = getArguments();
+
+            ArrayList<String> errorLog = args.getStringArrayList(DIALOG_ARGUMENT_XML_ERROR_LOG);
+            Iterator<String> errorIterator = errorLog.iterator();
+
+            while (errorIterator.hasNext()) {
+                errorMessage.append("\n");
+                errorMessage.append(errorIterator.next());
+            }
+
+            errorMessage.append(getString(R.string.dialogs_fileName_suffix, args.getString(DIALOG_ARGUMENT_FILE_NAME)));
+
+            builder.setTitle(R.string.errorsinXmlFileDialog_title)
+                   .setMessage(errorMessage)
+                   .setCancelable(true)
+                   .setPositiveButton(R.string.errorsinXmlFileDialog_button, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+
+            return builder.create();
+        }
+
+    }
+
+    public static class DialogFatalProblemWithXmlFileFragment extends DialogFragment {
+
+        static DialogFatalProblemWithXmlFileFragment newInstance(String message, String filename) {
+            DialogFatalProblemWithXmlFileFragment fragment = new DialogFatalProblemWithXmlFileFragment();
+            Bundle args = new Bundle();
+            args.putString(DIALOG_ARGUMENT_FATAL_MESSAGE, message);
+            args.putString(DIALOG_ARGUMENT_FILE_NAME, filename);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final FragmentActivity activity = getActivity();
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            Bundle args = getArguments();
+
+            StringBuilder errorMessage = new StringBuilder(args.getString(DIALOG_ARGUMENT_FATAL_MESSAGE));
+            errorMessage.append(getString(R.string.fatalProblemWithXmlFileDialog_message_suffix));
+            errorMessage.append(getString(R.string.dialogs_fileName_suffix, args.getString(DIALOG_ARGUMENT_FILE_NAME)));
+
+            builder.setTitle(R.string.fatalProblemWithXmlFileDialog_title)
+                   .setMessage(errorMessage)
+                   .setCancelable(true)
+                   .setPositiveButton(R.string.fatalProblemWithXmlFileDialog_button, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(activity, FormatChooserActivity.class);
+
+                            // We want to start this from the Activity, not from this Fragment,
+                            // as the Fragment won't be active when it comes back.  See:
+                            // http://stackoverflow.com/questions/10564474/wrong-requestcode-in-onactivityresult
+                            activity.startActivityForResult(intent, CHOOSE_STYLE_REQUEST);
+                        }
+                    })
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            activity.finish();
+                        }
+                    });
+
+            return builder.create();
+        }
+
+    }
+
+    public static class DialogPoiTimerInfoFragment extends DialogFragment {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final Activity activity = getActivity();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+            View content = activity.getLayoutInflater().inflate(R.layout.poi_timer_dialog, null);
+            final CheckBox doNotShowAgain = (CheckBox) content.findViewById(R.id.poiTimerInfoDialog_dontShow);
+
+            builder.setTitle(R.string.poiTimerInfoDialog_title)
+                   .setView(content)
+                   .setCancelable(true)
+                   .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Take note of "do not show again" setting
+                            SharedPreferences prefs = activity.getPreferences(MODE_PRIVATE);
+                            Editor editor = prefs.edit();
+                            editor.putBoolean(DO_NOT_SHOW_POI_TIMER_DIALOG, doNotShowAgain.isChecked());
+                            editor.commit();
+                            dialog.dismiss();
+                        }
+                    })
+                   .setNeutralButton(R.string.poiTimerInfoDialog_button_learnMore, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Uri uri = Uri.parse(getString(R.string.poiTimer_moreInfoUrl));
+                            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                            startActivity(intent);
+                        }
+                    })
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            dialog.dismiss();
+                        }
+                    });
+
+            return builder.create();
+        }
+
+    }
+
+    public static class DialogSchemaTooNewFragment extends DialogFragment {
+
+        static DialogSchemaTooNewFragment newInstance(String schemaUsed, String schemaSupported, String filename) {
+            DialogSchemaTooNewFragment fragment = new DialogSchemaTooNewFragment();
+            Bundle args = new Bundle();
+            args.putString(DIALOG_ARGUMENT_SCHEMA_USED, schemaUsed);
+            args.putString(DIALOG_ARGUMENT_SCHEMA_SUPPORTED, schemaSupported);
+            args.putString(DIALOG_ARGUMENT_FILE_NAME, filename);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final DebatingActivity activity = (DebatingActivity) getActivity();
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            Bundle args = getArguments();
+
+            activity.mDialogBlocking = true;
+
+            String schemaUsed      = args.getString(DIALOG_ARGUMENT_SCHEMA_USED);
+            String schemaSupported = args.getString(DIALOG_ARGUMENT_SCHEMA_SUPPORTED);
+
+            String appVersion;
+            try {
+                appVersion = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0).versionName;
+            } catch (NameNotFoundException e) {
+                appVersion = "unknown";
+            }
+
+            StringBuilder message = new StringBuilder(getString(R.string.schemaTooNewDialog_message, schemaUsed, schemaSupported, appVersion));
+
+            message.append(getString(R.string.dialogs_fileName_suffix, args.getString(DIALOG_ARGUMENT_FILE_NAME)));
+
+            builder.setTitle(R.string.schemaTooNewDialog_title)
+                   .setMessage(message)
+                   .setCancelable(false)
+                   .setPositiveButton(R.string.schemaTooNewDialog_button_upgrade, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Open Google Play to upgrade
+                            Uri uri = Uri.parse(getString(R.string.app_marketUri));
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(uri);
+                            startActivity(intent);
+                        }
+                    })
+                .setNegativeButton(R.string.schemaTooNewDialog_button_ignore, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // To ignore, just dismiss the dialog and return to whatever was happening before
+                        dialog.dismiss();
+                    }
+                });
+
+            AlertDialog dialog = builder.create();
+
+            // This method is only supported for AlertDialog.Builder from API level 17 onwards,
+            // so we have to call it on the AlertDialog directly.
+            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    activity.showQueuedDialog();
+                }
+            });
+
+            return dialog;
+        }
+    }
+
+    //******************************************************************************************
     // Private classes
     //******************************************************************************************
 
@@ -582,212 +792,6 @@ public class DebatingActivity extends FragmentActivity {
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
             mDebateManager = null;
-        }
-    }
-
-    public static class DialogErrorsWithXmlFileFragment extends DialogFragment {
-
-        static DialogErrorsWithXmlFileFragment newInstance(ArrayList<String> errorLog, String filename) {
-            DialogErrorsWithXmlFileFragment fragment = new DialogErrorsWithXmlFileFragment();
-            Bundle args = new Bundle();
-            args.putStringArrayList(DIALOG_ARGUMENT_XML_ERROR_LOG, errorLog);
-            args.putString(DIALOG_ARGUMENT_FILE_NAME, filename);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-            StringBuilder errorMessage = new StringBuilder(getString(R.string.errorsinXmlFileDialog_message_prefix));
-
-            Bundle args = getArguments();
-
-            ArrayList<String> errorLog = args.getStringArrayList(DIALOG_ARGUMENT_XML_ERROR_LOG);
-            Iterator<String> errorIterator = errorLog.iterator();
-
-            while (errorIterator.hasNext()) {
-                errorMessage.append("\n");
-                errorMessage.append(errorIterator.next());
-            }
-
-            errorMessage.append(getString(R.string.dialogs_fileName_suffix, args.getString(DIALOG_ARGUMENT_FILE_NAME)));
-
-            builder.setTitle(R.string.errorsinXmlFileDialog_title)
-                   .setMessage(errorMessage)
-                   .setCancelable(true)
-                   .setPositiveButton(R.string.errorsinXmlFileDialog_button, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-
-            return builder.create();
-        }
-
-    }
-
-    public static class DialogFatalProblemWithXmlFileFragment extends DialogFragment {
-
-        static DialogFatalProblemWithXmlFileFragment newInstance(String message, String filename) {
-            DialogFatalProblemWithXmlFileFragment fragment = new DialogFatalProblemWithXmlFileFragment();
-            Bundle args = new Bundle();
-            args.putString(DIALOG_ARGUMENT_FATAL_MESSAGE, message);
-            args.putString(DIALOG_ARGUMENT_FILE_NAME, filename);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final FragmentActivity activity = getActivity();
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-            Bundle args = getArguments();
-
-            StringBuilder errorMessage = new StringBuilder(args.getString(DIALOG_ARGUMENT_FATAL_MESSAGE));
-            errorMessage.append(getString(R.string.fatalProblemWithXmlFileDialog_message_suffix));
-            errorMessage.append(getString(R.string.dialogs_fileName_suffix, args.getString(DIALOG_ARGUMENT_FILE_NAME)));
-
-            builder.setTitle(R.string.fatalProblemWithXmlFileDialog_title)
-                   .setMessage(errorMessage)
-                   .setCancelable(true)
-                   .setPositiveButton(R.string.fatalProblemWithXmlFileDialog_button, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(activity, FormatChooserActivity.class);
-
-                            // We want to start this from the Activity, not from this Fragment,
-                            // as the Fragment won't be active when it comes back.  See:
-                            // http://stackoverflow.com/questions/10564474/wrong-requestcode-in-onactivityresult
-                            activity.startActivityForResult(intent, CHOOSE_STYLE_REQUEST);
-                        }
-                    })
-                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            activity.finish();
-                        }
-                    });
-
-            return builder.create();
-        }
-
-    }
-
-    public static class DialogPoiTimerInfoFragment extends DialogFragment {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final Activity activity = getActivity();
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-
-            View content = activity.getLayoutInflater().inflate(R.layout.poi_timer_dialog, null);
-            final CheckBox doNotShowAgain = (CheckBox) content.findViewById(R.id.poiTimerInfoDialog_dontShow);
-
-            builder.setTitle(R.string.poiTimerInfoDialog_title)
-                   .setView(content)
-                   .setCancelable(true)
-                   .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Take note of "do not show again" setting
-                            SharedPreferences prefs = activity.getPreferences(MODE_PRIVATE);
-                            Editor editor = prefs.edit();
-                            editor.putBoolean(DO_NOT_SHOW_POI_TIMER_DIALOG, doNotShowAgain.isChecked());
-                            editor.commit();
-                            dialog.dismiss();
-                        }
-                    })
-                   .setNeutralButton(R.string.poiTimerInfoDialog_button_learnMore, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Uri uri = Uri.parse(getString(R.string.poiTimer_moreInfoUrl));
-                            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                            startActivity(intent);
-                        }
-                    })
-                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            dialog.dismiss();
-                        }
-                    });
-
-            return builder.create();
-        }
-
-    }
-
-    public static class DialogSchemaTooNewFragment extends DialogFragment {
-
-        static DialogSchemaTooNewFragment newInstance(String schemaUsed, String schemaSupported, String filename) {
-            DialogSchemaTooNewFragment fragment = new DialogSchemaTooNewFragment();
-            Bundle args = new Bundle();
-            args.putString(DIALOG_ARGUMENT_SCHEMA_USED, schemaUsed);
-            args.putString(DIALOG_ARGUMENT_SCHEMA_SUPPORTED, schemaSupported);
-            args.putString(DIALOG_ARGUMENT_FILE_NAME, filename);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final DebatingActivity activity = (DebatingActivity) getActivity();
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-            Bundle args = getArguments();
-
-            activity.mDialogBlocking = true;
-
-            String schemaUsed      = args.getString(DIALOG_ARGUMENT_SCHEMA_USED);
-            String schemaSupported = args.getString(DIALOG_ARGUMENT_SCHEMA_SUPPORTED);
-
-            String appVersion;
-            try {
-                appVersion = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0).versionName;
-            } catch (NameNotFoundException e) {
-                appVersion = "unknown";
-            }
-
-            StringBuilder message = new StringBuilder(getString(R.string.schemaTooNewDialog_message, schemaUsed, schemaSupported, appVersion));
-
-            message.append(getString(R.string.dialogs_fileName_suffix, args.getString(DIALOG_ARGUMENT_FILE_NAME)));
-
-            builder.setTitle(R.string.schemaTooNewDialog_title)
-                   .setMessage(message)
-                   .setCancelable(false)
-                   .setPositiveButton(R.string.schemaTooNewDialog_button_upgrade, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Open Google Play to upgrade
-                            Uri uri = Uri.parse(getString(R.string.app_marketUri));
-                            Intent intent = new Intent(Intent.ACTION_VIEW);
-                            intent.setData(uri);
-                            startActivity(intent);
-                        }
-                    })
-                .setNegativeButton(R.string.schemaTooNewDialog_button_ignore, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // To ignore, just dismiss the dialog and return to whatever was happening before
-                        dialog.dismiss();
-                    }
-                });
-
-            AlertDialog dialog = builder.create();
-
-            // This method is only supported for AlertDialog.Builder from API level 17 onwards,
-            // so we have to call it on the AlertDialog directly.
-            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    activity.showQueuedDialog();
-                }
-            });
-
-            return dialog;
         }
     }
 
