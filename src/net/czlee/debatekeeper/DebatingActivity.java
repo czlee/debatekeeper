@@ -308,8 +308,6 @@ public class DebatingActivity extends FragmentActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             Bundle args = getArguments();
 
-            activity.mDialogBlocking = true;
-
             String schemaUsed      = args.getString(DIALOG_ARGUMENT_SCHEMA_USED);
             String schemaSupported = args.getString(DIALOG_ARGUMENT_SCHEMA_SUPPORTED);
 
@@ -347,16 +345,12 @@ public class DebatingActivity extends FragmentActivity {
 
             AlertDialog dialog = builder.create();
 
-            // This method is only supported for AlertDialog.Builder from API level 17 onwards,
-            // so we have to call it on the AlertDialog directly.
-            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    activity.showQueuedDialog();
-                }
-            });
-
             return dialog;
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            ((DebatingActivity) getActivity()).showQueuedDialog();
         }
     }
 
@@ -1161,7 +1155,7 @@ public class DebatingActivity extends FragmentActivity {
         // schema 1.0), prompt the user to upgrade the app.
         if (dfbfx.isSchemaTooNew()) {
             DialogFragment fragment = DialogSchemaTooNewFragment.newInstance(dfbfx.getSchemaVersion(), dfbfx.getSupportedSchemaVersion(), mFormatXmlFileName);
-            showDialog(fragment, DIALOG_TAG_SCHEMA_TOO_NEW);
+            showBlockingDialog(fragment, DIALOG_TAG_SCHEMA_TOO_NEW);
         }
 
         if (df.numberOfSpeeches() == 0)
@@ -1487,6 +1481,11 @@ public class DebatingActivity extends FragmentActivity {
         editor.commit();
     }
 
+
+    private void showBlockingDialog(DialogFragment fragment, String tag) {
+        mDialogBlocking = true;
+        showDialog(fragment, tag);
+    }
 
     /**
      * Shows the dialog given, allowing state loss as a workaround for a bug in Android
