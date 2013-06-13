@@ -63,6 +63,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
@@ -1268,7 +1269,7 @@ public class DebatingActivity extends FragmentActivity {
         // schema 1.0), prompt the user to upgrade the app.
         if (dfbfx.isSchemaTooNew()) {
             DialogFragment fragment = DialogSchemaTooNewFragment.newInstance(dfbfx.getSchemaVersion(), dfbfx.getSupportedSchemaVersion(), mFormatXmlFileName);
-            fragment.show(getSupportFragmentManager(), DIALOG_TAG_SCHEMA_TOO_NEW);
+            showDialog(fragment, DIALOG_TAG_SCHEMA_TOO_NEW);
         }
 
         if (df.numberOfSpeeches() == 0)
@@ -1458,7 +1459,7 @@ public class DebatingActivity extends FragmentActivity {
             if (!prefs.getBoolean(DO_NOT_SHOW_POI_TIMER_DIALOG, false))
                 if (df.hasPoisAllowedSomewhere())
                     if (mPoiTimerEnabled)
-                        new DialogPoiTimerInfoFragment().show(getSupportFragmentManager(), DIALOG_TAG_POI_TIMER_INFO);
+                        showDialog(new DialogPoiTimerInfoFragment(), DIALOG_TAG_POI_TIMER_INFO);
         }
 
         mViewPager.getAdapter().notifyDataSetChanged();
@@ -1488,7 +1489,7 @@ public class DebatingActivity extends FragmentActivity {
      */
     private void queueDialog(DialogFragment fragment, String tag) {
         if (!mDialogBlocking) {
-            fragment.show(getSupportFragmentManager(), tag);
+            showDialog(fragment, tag);
             return;
         }
 
@@ -1594,13 +1595,34 @@ public class DebatingActivity extends FragmentActivity {
         editor.commit();
     }
 
+
+    /**
+     * Shows the dialog given, allowing state loss as a workaround for a bug in Android
+     * (possibly issue #7132432)
+     *
+     * <p>For more information see:</p>
+     * <ul>
+     * <li>https://github.com/android/platform_frameworks_support/commit/4ccc001f3f883190ac8d900c4f69d71fda94690e</li>
+     * <li>http://stackoverflow.com/questions/12105064/actions-in-onactivityresult-and-error-can-not-perform-this-action-after-onsavei</li>
+     * <li>http://stackoverflow.com/questions/14262312/java-lang-illegalstateexception-can-not-perform-this-action-after-onsaveinstanc</li>
+     * </ul>
+     *
+     * @param fragment a {@link DialogFragment} instance
+     * @param tag the tag for the fragment
+     */
+    private void showDialog(DialogFragment fragment, String tag) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.add(fragment, tag);
+        ft.commitAllowingStateLoss();
+    }
+
     /**
      * Shows the currently-queued dialog if there is one; does nothing otherwise.  Dialogs that
      * could block other dialogs must call this method on dismissal.
      */
     private void showQueuedDialog() {
         if (mDialogWaiting) {
-            mDialogFragmentInWaiting.show(getSupportFragmentManager(), mDialogTagInWaiting);
+            showDialog(mDialogFragmentInWaiting, mDialogTagInWaiting);
             mDialogBlocking = false;
             mDialogWaiting = false;
             mDialogFragmentInWaiting = null;
