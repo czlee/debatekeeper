@@ -641,7 +641,8 @@ public class DebatingActivity extends FragmentActivity {
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            final FragmentActivity activity = getActivity();
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             Bundle args = getArguments();
 
             StringBuilder errorMessage = new StringBuilder(args.getString(DIALOG_ARGUMENT_FATAL_MESSAGE));
@@ -654,14 +655,18 @@ public class DebatingActivity extends FragmentActivity {
                    .setPositiveButton(R.string.fatalProblemWithXmlFileDialog_button, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(getActivity(), FormatChooserActivity.class);
-                            startActivityForResult(intent, CHOOSE_STYLE_REQUEST);
+                            Intent intent = new Intent(activity, FormatChooserActivity.class);
+
+                            // We want to start this from the Activity, not from this Fragment,
+                            // as the Fragment won't be active when it comes back.  See:
+                            // http://stackoverflow.com/questions/10564474/wrong-requestcode-in-onactivityresult
+                            activity.startActivityForResult(intent, CHOOSE_STYLE_REQUEST);
                         }
                     })
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
-                            getActivity().finish();
+                            activity.finish();
                         }
                     });
 
@@ -914,6 +919,8 @@ public class DebatingActivity extends FragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i(getClass().getSimpleName(), "request code was 0x" + Integer.toHexString(requestCode));
+
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == CHOOSE_STYLE_REQUEST && resultCode == RESULT_OK) {
