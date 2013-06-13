@@ -958,6 +958,8 @@ public class DebatingActivity extends FragmentActivity {
         mViewPager = (EnableableViewPager) findViewById(R.id.mainScreen_debateTimerViewPager);
         mViewPager.setAdapter(new DebateTimerDisplayPagerAdapter());
         mViewPager.setOnPageChangeListener(new DebateTimerDisplayOnPageChangeListener());
+        mViewPager.setPageMargin(1);
+        mViewPager.setPageMarginDrawable(R.drawable.divider);
 
         //
         // OnClickListeners
