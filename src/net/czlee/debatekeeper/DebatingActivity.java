@@ -510,7 +510,6 @@ public class DebatingActivity extends FragmentActivity {
                 Log.e(getClass().getSimpleName(), String.format("Nothing found to destroy at position %d, %s", position, object.toString()));
                 return;
             }
-            Log.i(getClass().getSimpleName(), String.format("Destroying position %d, %s, %s", position, object.toString(), view.toString()));
             container.removeView(view);
             mViewsMap.remove(object);
         }
@@ -591,8 +590,6 @@ public class DebatingActivity extends FragmentActivity {
 
             DebatePhaseTag tag = mDebateManager.getPhaseTagForIndex(position);
             mViewsMap.put(tag, v);
-
-            Log.i(getClass().getSimpleName(), String.format("Instantiated position %d, %s, %s", position, tag.toString(), v.toString()));
 
             return tag;
 
