@@ -49,7 +49,9 @@ public abstract class GenericDebatePhaseFormat implements DebatePhaseFormat {
     protected abstract ArrayList<BellInfo> getBells();
 
     @Override
-    public abstract PeriodInfo getFirstPeriodInfo();
+    public PeriodInfo getFirstPeriodInfo() {
+        return new PeriodInfo("", null, false);
+    }
 
     @Override
     public BellInfo getBellAtTime(long seconds) {

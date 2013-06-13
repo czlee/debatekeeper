@@ -53,7 +53,7 @@ public abstract class ControlledDebatePhaseFormat extends GenericDebatePhaseForm
 
     @Override
     public PeriodInfo getFirstPeriodInfo() {
-        PeriodInfo pi = new PeriodInfo("", 0, false);
+        PeriodInfo pi = super.getFirstPeriodInfo();
         pi.update(mFirstPeriodInfo);
         return pi;
     }

@@ -20,4 +20,6 @@
     <color name="overtime">#ffff7878</color>
     <color name="overtimeDuringInvert">#33ff0000</color>
 
+    <color name="prepTimeBackgroundColour">#ff3A1552</color>
+    
 </resources>

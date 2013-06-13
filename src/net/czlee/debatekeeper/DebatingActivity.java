@@ -1624,13 +1624,13 @@ public class DebatingActivity extends FragmentActivity {
      * Updates a debate timer display with relevant information.
      * @param debateTimerDisplay a {@link View} which should be the <code>RelativeLayout</code> in debate_timer_display.xml.
      * @param dpf the {@link DebatePhaseFormat} to be displayed
-     * @param currentPeriodInfo the {@link PeriodInfo} to be displayed, should be the current one
+     * @param pi the {@link PeriodInfo} to be displayed, should be the current one
      * @param phaseName the name of the debate phase
      * @param time the current time in the debate phase
-     * @param nextOvertimeBellTime the next overbell time in the debate phase
+     * @param nextOvertimeBellTime the next overtime bell in the debate phase
      */
     private void updateDebateTimerDisplay(View debateTimerDisplay, DebatePhaseFormat dpf,
-            PeriodInfo currentPeriodInfo, String phaseName, long time, Long nextOvertimeBellTime) {
+            PeriodInfo pi, String phaseName, long time, Long nextOvertimeBellTime) {
 
         // Make sure it makes sense to run this method now
 
@@ -1652,10 +1652,15 @@ public class DebatingActivity extends FragmentActivity {
 
         // The information at the top of the screen
         speechNameText.setText(phaseName);
-        periodDescriptionText.setText(currentPeriodInfo.getDescription());
+        periodDescriptionText.setText(pi.getDescription());
 
         // Background colour, this is user-preference dependent
-        Integer backgroundColour = currentPeriodInfo.getBackgroundColor();
+        Integer backgroundColour = pi.getBackgroundColor();
+
+        if (backgroundColour == null) {
+            backgroundColour = getResources().getColor((dpf.isPrep()) ? R.color.prepTimeBackgroundColour : android.R.color.background_dark);
+        }
+
         switch (mBackgroundColourArea) {
         case TOP_BAR_ONLY:
             speechNameText.setBackgroundColor(backgroundColour);

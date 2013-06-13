@@ -55,11 +55,6 @@ public class PrepTimeSimpleFormat extends GenericDebatePhaseFormat implements Pr
     }
 
     @Override
-    public PeriodInfo getFirstPeriodInfo() {
-        return new PeriodInfo("", 0, false);
-    }
-
-    @Override
     public boolean isControlled() {
         return false;
     }

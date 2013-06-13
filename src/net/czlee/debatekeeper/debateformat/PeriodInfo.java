@@ -142,7 +142,8 @@ public class PeriodInfo {
      */
     public void saveState(String key, Bundle bundle) {
         bundle.putString(key + BUNDLE_SUFFIX_DESC, mDescription);
-        bundle.putInt(key + BUNDLE_SUFFIX_BGCOLOR, mBackgroundColor);
+        if (mBackgroundColor != null)
+            bundle.putInt(key + BUNDLE_SUFFIX_BGCOLOR, mBackgroundColor);
         bundle.putBoolean(key + BUNDLE_SUFFIX_POIS_ALLOWED, mPoisAllowed);
     }
 
@@ -155,7 +156,10 @@ public class PeriodInfo {
     public void restoreState(String key, Bundle bundle) {
         String description = bundle.getString(key + BUNDLE_SUFFIX_DESC);
         if (description != null) mDescription = description;
-        mBackgroundColor = bundle.getInt(key + BUNDLE_SUFFIX_BGCOLOR);
+        if (bundle.containsKey(key + BUNDLE_SUFFIX_BGCOLOR))
+            mBackgroundColor = bundle.getInt(key + BUNDLE_SUFFIX_BGCOLOR);
+        else
+            mBackgroundColor = null;
         mPoisAllowed = bundle.getBoolean(key + BUNDLE_SUFFIX_POIS_ALLOWED, false);
     }
 

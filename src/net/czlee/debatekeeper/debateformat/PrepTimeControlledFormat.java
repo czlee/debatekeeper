@@ -38,9 +38,6 @@ public class PrepTimeControlledFormat extends ControlledDebatePhaseFormat
         super(length);
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.PrepTimeFormat#isControlled()
-     */
     @Override
     public boolean isControlled() {
         return true;
@@ -50,4 +47,5 @@ public class PrepTimeControlledFormat extends ControlledDebatePhaseFormat
     public boolean isPrep() {
         return true;
     }
+
 }
