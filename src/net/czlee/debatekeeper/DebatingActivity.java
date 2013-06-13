@@ -350,6 +350,7 @@ public class DebatingActivity extends FragmentActivity {
 
         @Override
         public void onDismiss(DialogInterface dialog) {
+            super.onDismiss(dialog);
             ((DebatingActivity) getActivity()).showQueuedDialog();
         }
     }
@@ -1154,7 +1155,7 @@ public class DebatingActivity extends FragmentActivity {
         // If the schema still isn't supported (even after possibly having been replaced by
         // schema 1.0), prompt the user to upgrade the app.
         if (dfbfx.isSchemaTooNew()) {
-            DialogFragment fragment = DialogSchemaTooNewFragment.newInstance(dfbfx.getSchemaVersion(), dfbfx.getSupportedSchemaVersion(), mFormatXmlFileName);
+            DialogFragment fragment = DialogSchemaTooNewFragment.newInstance(dfbfx.getSchemaVersion(), dfbfx.getSupportedSchemaVersion(), filename);
             showBlockingDialog(fragment, DIALOG_TAG_SCHEMA_TOO_NEW);
         }
 
