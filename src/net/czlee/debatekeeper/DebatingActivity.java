@@ -102,6 +102,7 @@ public class DebatingActivity extends FragmentActivity {
     private static final int COLOUR_TRANSPARENT = 0;
 
     private EnableableViewPager mViewPager;
+    private boolean             mChangingPages;
 
     private Button    mLeftControlButton;
     private Button    mLeftCentreControlButton;
@@ -482,6 +483,15 @@ public class DebatingActivity extends FragmentActivity {
 
         @Override
         public void onPageSelected(int position) {
+            // Log.d(TAG, "onPageSelected for position " + position);
+
+            // Enable the lock that prevents updateGui() from running while pages are changing.
+            // This is necessary to prevent updateGui() from updating the wrong view after this
+            // method is run (and the active phase index changed) and before
+            // DebateTimerDisplayPagerAdapter#setPrimaryItem() is called (and the view pointer
+            // updated).
+            mChangingPages = true;
+
             if (mDebateManager != null)
                 mDebateManager.setActivePhaseIndex(position);
             updateControls();
@@ -547,12 +557,9 @@ public class DebatingActivity extends FragmentActivity {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            // TODO generalise this code so it doesn't duplicate updateDebateTimerDisplay()
-
-            // Note - the Object returned by this method must return the inflated View, because
-            // setPrimaryItem() relies on this correlation in order to set mDebateTimerDisplay.
 
             if (mDebateManager == null) {
+                // Load the "no debate loaded" screen.
                 Log.i(TAG, "No debate loaded");
                 View v = View.inflate(DebatingActivity.this, R.layout.no_debate_loaded, null);
                 container.addView(v);
@@ -589,6 +596,7 @@ public class DebatingActivity extends FragmentActivity {
 
             container.addView(v);
 
+            // Retrieve a tag and take note of it.
             DebatePhaseTag tag = mDebateManager.getPhaseTagForIndex(position);
             mViewsMap.put(tag, v);
 
@@ -598,14 +606,33 @@ public class DebatingActivity extends FragmentActivity {
 
         @Override
         public boolean isViewFromObject(View view, Object object) {
+            // TODO make the equality comparison more intelligent (it currently just compares
+            // for exact object equality).
             if (!mViewsMap.containsKey(object)) return false;
             else return (mViewsMap.get(object) == view);
         }
 
         @Override
         public void setPrimaryItem(ViewGroup container, int position, Object object) {
+
+            // Log.d(TAG, "setPrimaryItem for position " + position);
+            View original = mDebateTimerDisplay;
+
+            // Note: There is no guarantee that mDebateTimerDisplay will in fact be a debate
+            // timer display - it is just whatever view is currently being displayed.  Therefore,
+            // other methods should check that mDebateTimerDisplay is in fact a debate timer
+            // display (by comparing its ID to R.id.debateTimer_root) before working on it.
             mDebateTimerDisplay = mViewsMap.get(object);
-            updateGui();
+
+            // Disable the lock that prevents updateGui() from running while the pages are
+            // changing.
+            mChangingPages = false;
+
+            // This method seems to be called multiple times on each update.
+            // To save unnecessary work (i.e. for performance), only run (the relatively-intensive)
+            // updateGui if mDebateTimerDisplay has actually changed.
+            if (original != mDebateTimerDisplay)
+                updateGui();
         }
 
     }
@@ -1798,6 +1825,13 @@ public class DebatingActivity extends FragmentActivity {
      * Updates the GUI (in the general case).
      */
     private void updateGui() {
+        if (mChangingPages) {
+            Log.d(TAG, "Changing pages, don't do updateGui");
+            return;
+        }
+
+        // Log.d(TAG, "updateGui");
+
         updateDebateTimerDisplay();
         updateControls();
 
