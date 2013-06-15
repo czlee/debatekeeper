@@ -31,6 +31,7 @@
 	</period-type>
 	<period-type ref="overtime">
 		<name>Overtime</name>
+		<display></display>
 		<default-bgcolor>#770000</default-bgcolor>
 	</period-type>
 </period-types>
