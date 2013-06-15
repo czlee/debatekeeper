@@ -98,8 +98,15 @@ public class PeriodInfo {
         return mDescription;
     }
 
+    /**
+     * @return the background colour, with the alpha value always set to <code>0xff</code>.
+     */
     public Integer getBackgroundColor() {
-        return mBackgroundColor;
+        // Always set the alpha value to 0xFF.
+        if (mBackgroundColor != null)
+            return mBackgroundColor | 0xff000000;
+        else
+            return null;
     }
 
     public boolean isPoisAllowed() {

@@ -100,7 +100,7 @@ public class DebatingActivity extends FragmentActivity {
     private View             mDebateTimerDisplay;
     private boolean          mIsEditingTime = false;
     private final Semaphore  mFlashScreenSemaphore = new Semaphore(1, true);
-    private final int        mNormalBackgroundColour = 0;
+    private static final int COLOUR_TRANSPARENT = 0;
 
     private EnableableViewPager mViewPager;
     private int                 mViewPagerScrollState;
@@ -644,7 +644,7 @@ public class DebatingActivity extends FragmentActivity {
 
         @Override
         public void flashScreenOff() {
-            flashScreen(mNormalBackgroundColour);
+            flashScreen(COLOUR_TRANSPARENT);
         }
 
         @Override
@@ -657,7 +657,7 @@ public class DebatingActivity extends FragmentActivity {
                 public void run() {
                     if (mBackgroundColourArea == BackgroundColourArea.WHOLE_SCREEN) {
                         // Log.v(TAG, "removing background colour on " + Thread.currentThread().toString());
-                        mDebateTimerDisplay.setBackgroundColor(0);
+                        mDebateTimerDisplay.setBackgroundColor(COLOUR_TRANSPARENT);
                     }
                 }
             });
@@ -1409,11 +1409,11 @@ public class DebatingActivity extends FragmentActivity {
         if (mDebateTimerDisplay == null || mDebateManager == null) return;
         if (mDebateTimerDisplay.getId() != R.id.debateTimer_root) return;
         View v = mDebateTimerDisplay;
-        v.setBackgroundColor(mNormalBackgroundColour);
+        v.setBackgroundColor(COLOUR_TRANSPARENT);
         View speechNameText = v.findViewById(R.id.debateTimer_speechNameText);
         View periodDescriptionText = v.findViewById(R.id.debateTimer_periodDescriptionText);
-        speechNameText.setBackgroundColor(mNormalBackgroundColour);
-        periodDescriptionText.setBackgroundColor(mNormalBackgroundColour);
+        speechNameText.setBackgroundColor(COLOUR_TRANSPARENT);
+        periodDescriptionText.setBackgroundColor(COLOUR_TRANSPARENT);
     }
 
     private void resetDebate() {
@@ -1693,9 +1693,10 @@ public class DebatingActivity extends FragmentActivity {
         Resources resources = getResources();
         int currentTimeTextColor;
         if (overtime)
-            currentTimeTextColor = resources.getColor(R.color.overtime);
+            currentTimeTextColor = resources.getColor(R.color.overtimeTextColour);
         else
             currentTimeTextColor = resources.getColor(android.R.color.primary_text_dark);
+
         currentTimeText.setText(secsToText(timeToShow));
         currentTimeText.setTextColor(currentTimeTextColor);
 
