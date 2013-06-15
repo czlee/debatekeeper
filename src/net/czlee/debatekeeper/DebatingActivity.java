@@ -102,7 +102,6 @@ public class DebatingActivity extends FragmentActivity {
     private static final int COLOUR_TRANSPARENT = 0;
 
     private EnableableViewPager mViewPager;
-    private int                 mViewPagerScrollState;
 
     private Button    mLeftControlButton;
     private Button    mLeftCentreControlButton;
@@ -486,11 +485,6 @@ public class DebatingActivity extends FragmentActivity {
             if (mDebateManager != null)
                 mDebateManager.setActivePhaseIndex(position);
             updateControls();
-        }
-
-        @Override
-        public void onPageScrollStateChanged(int state) {
-            mViewPagerScrollState = state;
         }
 
     }
