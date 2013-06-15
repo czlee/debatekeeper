@@ -66,7 +66,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
 import android.util.Log;
 import android.view.Menu;
@@ -424,11 +423,6 @@ public class DebatingActivity extends FragmentActivity {
     private class ControlButtonStartTimerOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            // Don't do anything if in the middle of a ViewPager drag.
-            // This doesn't always work - there is a race condition with the OnPageChangeListener
-            // but it works some of the time, which is better than none of the time.
-            if (mViewPagerScrollState == ViewPager.SCROLL_STATE_DRAGGING) return;
-
             mDebateManager.startTimer();
             updateGui();
         }
