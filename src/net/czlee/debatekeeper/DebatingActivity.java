@@ -1626,6 +1626,7 @@ public class DebatingActivity extends FragmentActivity {
             currentTimePicker.setVisibility((mIsEditingTime) ? View.VISIBLE : View.GONE);
 
             setButtonsEnable(!mIsEditingTime);
+            currentTimeText.setLongClickable(!mDebateManager.isRunning());
             mViewPager.setPagingEnabled(!mIsEditingTime && !mDebateManager.isRunning());
 
         } else {
