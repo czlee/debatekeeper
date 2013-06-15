@@ -1102,6 +1102,10 @@ public class DebatingActivity extends FragmentActivity {
             mDebateManager.setOvertimeBells(firstOvertimeBell, overtimeBellPeriod);
             mDebateManager.setPrepTimeEnabled(prepTimerEnabled);
             applyPrepTimeBells();
+
+            // This is necessary if the debate structure has changed, i.e. if prep time has been
+            // enabled or disabled.
+            mViewPager.getAdapter().notifyDataSetChanged();
         } else {
             Log.v(TAG, "Couldn't restore overtime bells, mDebateManager doesn't yet exist");
         }
