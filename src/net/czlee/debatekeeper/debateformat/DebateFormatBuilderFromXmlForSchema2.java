@@ -70,6 +70,8 @@ import android.util.Log;
  */
 public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilderFromXml {
 
+    private static final String TAG = "DebateFormatBuilderFromXmlForSchema2";
+
     private final DocumentBuilderFactory mDocumentBuilderFactory;
     private final PeriodInfoManager      mPeriodInfoManager;
     private final Context                mContext;
@@ -273,7 +275,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
             builder = mDocumentBuilderFactory.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
-            Log.wtf(this.getClass().getSimpleName(), "Error creating document builder");
+            Log.wtf(TAG, "Error creating document builder");
             // After this, the app is pretty much guaranteed to crash.
             return null;
         }

@@ -39,6 +39,8 @@ import android.util.Xml.Encoding;
  */
 public class DebateFormatInfoExtractorForSchema1 {
 
+    private static final String TAG = "DebateFormatInfoExtractorForSchema1";
+
     private final Context          mContext;
     private final String           DEBATING_TIMER_URI;
     private DebateFormatInfoForSchema1 mDfi;
@@ -97,7 +99,7 @@ public class DebateFormatInfoExtractorForSchema1 {
             if (getCurrentSecondLevelContext() == DebateFormatXmlSecondLevelContext.INFO) {
                 if (localName.equals(mThirdLevelInfoContext)) {
                     if (mCharactersBuffer == null) {
-                        Log.e(this.getClass().getSimpleName(), "In a third level context but mCharactersBuffer is empty");
+                        Log.e(TAG, "In a third level context but mCharactersBuffer is empty");
                         return;
                     }
                     // <region>

@@ -73,6 +73,8 @@ import android.widget.Toast;
  */
 public class FormatChooserActivity extends FragmentActivity {
 
+    private static final String TAG = "FormatChooserActivity";
+
     private FormatXmlFilesManager mFilesManager;
 
     private ListView mStylesListView;
@@ -665,8 +667,7 @@ public class FormatChooserActivity extends FragmentActivity {
             try {
                 is = mFilesManager.open(filename);
             } catch (IOException e) {
-                Log.e(this.getClass().getSimpleName(),
-                        String.format("Couldn't find file: %s", filename));
+                Log.e(TAG, "Couldn't find file: "+ filename);
                 continue;
             }
 
@@ -694,18 +695,16 @@ public class FormatChooserActivity extends FragmentActivity {
      * @param position the integer position in the styles list of the user-selected position.
      */
     private void returnSelectionByPosition(int position) {
-        Log.v(this.getClass().getSimpleName(),
-                String.format("Picked item %d", position));
+        Log.v(TAG, "Picked item " + position);
 
         Intent intent = new Intent();
 
         if (position >= mStylesList.size()) {
             setResult(RESULT_ERROR);
-            Log.e(this.getClass().getSimpleName(),
-                    String.format("No item associated with that"));
+            Log.e(TAG, "No item associated with that");
         } else {
             String filename = mStylesList.get(position).getFilename();
-            Log.v(this.getClass().getSimpleName(), String.format("File name is %s", filename));
+            Log.v(TAG, "File name is " + filename);
             intent.putExtra(EXTRA_XML_FILE_NAME, filename);
             setResult(RESULT_OK, intent);
         }

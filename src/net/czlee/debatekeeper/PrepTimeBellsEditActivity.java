@@ -156,7 +156,7 @@ public class PrepTimeBellsEditActivity extends FragmentActivity {
 
             } else {
 
-                Log.e(getClass().getSimpleName(), "Unrecognised tag: " + getTag());
+                Log.e("DialogAddOrEditBellFragment", "Unrecognised tag: " + getTag());
 
                 title = getString(R.string.prepTimeBellsEditor_addBellDialog_title);
                 confirmButtonText = getString(R.string.prepTimeBellsEditor_addBellDialog_confirmButton);

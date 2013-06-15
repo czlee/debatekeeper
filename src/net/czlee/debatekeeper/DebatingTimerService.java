@@ -44,6 +44,9 @@ import android.util.Log;
  */
 public class DebatingTimerService extends Service
 {
+
+    private static final String TAG = "DebatingTimerService";
+
     public static final String UPDATE_GUI_BROADCAST_ACTION = "net.czlee.debatekeeper.update";
     private final IBinder mBinder = new DebatingTimerServiceBinder();
     private DebateManager mDebateManager;
@@ -110,7 +113,7 @@ public class DebatingTimerService extends Service
         // We don't do anything with intent.  If we ever do, be sure to check
         // for the possibility that intent could be null!
 
-        Log.v(this.getClass().getSimpleName(), String.format("The service is starting: %d", startId));
+        Log.v(TAG, "The service is starting: " + startId);
 
         return START_STICKY;
     }
@@ -124,7 +127,7 @@ public class DebatingTimerService extends Service
             mDebateManager = null;
         }
 
-        Log.v(this.getClass().getSimpleName(), "The service is shutting down now!");
+        Log.v(TAG, "The service is shutting down now!");
     }
 
     @Override

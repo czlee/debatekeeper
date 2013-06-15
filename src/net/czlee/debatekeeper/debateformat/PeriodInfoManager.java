@@ -51,6 +51,8 @@ import android.util.Log;
  */
 public class PeriodInfoManager {
 
+    private static final String TAG = "PeriodInfoManager";
+
     private final Resources mResources;
     private final ArrayList<String> mLastElementErrors = new ArrayList<String>();
     private final HashMap<String, PeriodInfo> mBuiltInPeriodInfos = new HashMap<String, PeriodInfo>();
@@ -154,7 +156,7 @@ public class PeriodInfoManager {
             is = assets.open(BUILT_IN_PERIODS_FILE);
         } catch (IOException e) {
             e.printStackTrace();
-            Log.wtf(this.getClass().getSimpleName(), "Error opening global periods file");
+            Log.wtf(TAG, "Error opening global periods file");
             return;
         }
 
@@ -165,7 +167,7 @@ public class PeriodInfoManager {
             builder = dbf.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
-            Log.wtf(this.getClass().getSimpleName(), "Error creating document builder");
+            Log.wtf(TAG, "Error creating document builder");
             return;
         }
 
@@ -174,11 +176,11 @@ public class PeriodInfoManager {
         try {
             doc = builder.parse(is);
         } catch (SAXException e) {
-            Log.wtf(this.getClass().getSimpleName(), "SAX error parsing global periods file");
+            Log.wtf(TAG, "SAX error parsing global periods file");
             e.printStackTrace();
             return;
         } catch (IOException e) {
-            Log.wtf(this.getClass().getSimpleName(), "IO error parsing global periods file");
+            Log.wtf(TAG, "IO error parsing global periods file");
             e.printStackTrace();
             return;
         }
@@ -196,7 +198,7 @@ public class PeriodInfoManager {
                 pi = createPeriodInfoFromElement(periodType);
             } catch (PeriodInfoException e) {
                 // this should never happen
-                Log.e(this.getClass().getSimpleName(), e.getMessage());
+                Log.e(TAG, e.getMessage());
                 continue;
             }
 
@@ -204,7 +206,7 @@ public class PeriodInfoManager {
             if (reference != null)
                 mBuiltInPeriodInfos.put(reference, pi);
             else
-                Log.e(this.getClass().getSimpleName(), "A global period didn't have a reference");
+                Log.e(TAG, "A global period didn't have a reference");
         }
 
     }

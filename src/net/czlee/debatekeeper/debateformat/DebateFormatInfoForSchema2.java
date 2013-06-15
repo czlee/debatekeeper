@@ -20,6 +20,7 @@ package net.czlee.debatekeeper.debateformat;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -48,6 +49,8 @@ import android.util.Log;
  * @since  2013-06-05
  */
 public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
+
+    private static final String TAG = "DebateFormatInfoForSchema2";
 
     private final Context mContext;
     private final XmlUtilities xu;
@@ -307,7 +310,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
-            Log.wtf(this.getClass().getSimpleName(), "Error creating document builder");
+            Log.wtf(TAG, "Error creating document builder");
             // After this, the app is pretty much guaranteed to crash.
             return null;
         }
@@ -367,7 +370,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
     }
 
     private static String secsToText(long time) {
-        return String.format("%02d:%02d", time / 60, time % 60);
+        return String.format(Locale.US, "%02d:%02d", time / 60, time % 60);
     }
 }
 

@@ -22,10 +22,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.Locale;
 
 import net.czlee.debatekeeper.debateformat.BellInfo;
 import net.czlee.debatekeeper.debateformat.PrepTimeSimpleFormat;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -53,6 +53,8 @@ import android.util.Log;
  * @since  2013-01-27
  */
 public class PrepTimeBellsManager {
+
+    private static final String TAG = "PrepTimeBellsManager";
 
     public  static final String KEY_TYPE                         = "type";
     public  static final String KEY_TIME                         = "time";
@@ -327,8 +329,8 @@ public class PrepTimeBellsManager {
             if (proportion == 1) return mContext.getString(R.string.prepTimeBellDescription_atFinish);
             Double percentage = proportion * 100;
             String percentageStr;
-            if (percentage == Math.round(percentage)) percentageStr = String.format("%d", Math.round(percentage));
-            else percentageStr = String.format("%.1f", percentage);
+            if (percentage == Math.round(percentage)) percentageStr = String.format(Locale.getDefault(), "%d", Math.round(percentage));
+            else percentageStr = String.format(Locale.getDefault(), "%.1f", percentage);
             return mContext.getString(R.string.prepTimeBellDescription_proportional,
                     percentageStr);
         }
@@ -552,7 +554,7 @@ public class PrepTimeBellsManager {
             // If the file was empty, then load the default: a single bell at the end.
             PrepTimeBellFromFinish bell = new PrepTimeBellFromFinish(0);
             mBellSpecs.add(bell);
-            Log.i(this.getClass().getSimpleName(), "No file found, loaded default");
+            Log.i(TAG, "No file found, loaded default");
             return;
         }
 
@@ -571,7 +573,7 @@ public class PrepTimeBellsManager {
 
             // If no type found, that's an error.  Skip.
             if (type.equals("")) {
-                Log.e(this.getClass().getSimpleName(), indexStr + ": No type found");
+                Log.e(TAG, indexStr + ": No type found");
                 continue;
             }
 
@@ -585,12 +587,12 @@ public class PrepTimeBellsManager {
                 } else if (type.equals(VALUE_TYPE_PROPORTIONAL)) {
                     bell = new PrepTimeBellProportional(prefs, index);
                 } else {
-                    Log.e(this.getClass().getSimpleName(), indexStr + ": Unrecognised type: " + type);
+                    Log.e(TAG, indexStr + ": Unrecognised type: " + type);
                     continue;
                 }
-                Log.v(this.getClass().getSimpleName(), indexStr + ": Found a " + type);
+                Log.v(TAG, indexStr + ": Found a " + type);
             } catch (PrepTimeBellConstructorException e) {
-                Log.e(this.getClass().getSimpleName(), e.getLocalizedMessage());
+                Log.e(TAG, e.getLocalizedMessage());
                 continue;
             }
 
@@ -650,7 +652,7 @@ public class PrepTimeBellsManager {
 
         // If no type found, that's an error.  Skip.
         if (type == null) {
-            Log.e(this.getClass().getSimpleName(), "Create from bundle: No type found");
+            Log.e(TAG, "createFromBundle: No type found");
             return null;
         }
 
@@ -664,12 +666,12 @@ public class PrepTimeBellsManager {
             } else if (type.equals(VALUE_TYPE_PROPORTIONAL)) {
                 bell = new PrepTimeBellProportional(bundle);
             } else {
-                Log.e(this.getClass().getSimpleName(), "Create from bundle: Unrecognised type: " + type);
+                Log.e(TAG, "createFromBundle: Unrecognised type: " + type);
                 return null;
             }
-            Log.v(this.getClass().getSimpleName(), "Create from bundle: Found a " + type);
+            Log.v(TAG, "createFromBundle: Found a " + type);
         } catch (PrepTimeBellConstructorException e) {
-            Log.e(this.getClass().getSimpleName(), e.getLocalizedMessage());
+            Log.e(TAG, e.getLocalizedMessage());
             return null;
         }
 
@@ -677,7 +679,7 @@ public class PrepTimeBellsManager {
     }
 
     private static String secsToText(long time) {
-        return String.format("%02d:%02d", time / 60, time % 60);
+        return String.format(Locale.US, "%02d:%02d", time / 60, time % 60);
     }
 
 }

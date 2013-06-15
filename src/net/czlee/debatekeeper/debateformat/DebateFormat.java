@@ -38,6 +38,8 @@ import android.util.Log;
  */
 public class DebateFormat {
 
+    private static final String TAG = "DebateFormat";
+
     private String                               mName = "";
     private PrepTimeFormat                       mPrepTimeFormat;
     private final HashMap<String, SpeechFormat>  mSpeechFormats;
@@ -128,7 +130,6 @@ public class DebateFormat {
     public void addSpeech(String name, String formatRef) throws NoSuchFormatException {
         // The speech type must already exist.
         if (!mSpeechFormats.containsKey(formatRef)) {
-//            Log.e(this.getClass().getSimpleName(),  // or the line below
             throw new NoSuchFormatException(
                     String.format("Added a speech with non-existent format ref '%s'", formatRef));
         }
@@ -164,8 +165,7 @@ public class DebateFormat {
         try {
             speechType = mSpeechSpecs.get(index).type;
         } catch (IndexOutOfBoundsException e) {
-            Log.e(this.getClass().getSimpleName(),
-                    String.format("Attempted to retrieve speech format for index %d", index));
+            Log.e(TAG, "Attempted to retrieve speech format for index " + index);
             return null;
         }
 
@@ -173,8 +173,7 @@ public class DebateFormat {
         speechFormat = mSpeechFormats.get(speechType);
 
         if (speechFormat == null) {
-            Log.e(this.getClass().getSimpleName(),
-                    String.format("No speech format for key '%s'", speechType));
+            Log.e(TAG, "No speech format for key " + speechType);
         }
 
         return speechFormat;
@@ -189,8 +188,7 @@ public class DebateFormat {
         try {
             return mSpeechSpecs.get(index).name;
         } catch (IndexOutOfBoundsException e) {
-            Log.e(this.getClass().getSimpleName(),
-                    String.format("Attempted to retrieve speech name for index %d", index));
+            Log.e(TAG, "Attempted to retrieve speech name for index " + index);
             return null;
         }
     }

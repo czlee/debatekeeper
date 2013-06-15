@@ -95,6 +95,8 @@ import android.widget.Toast;
  */
 public class DebatingActivity extends FragmentActivity {
 
+    private static final String TAG = "DebatingActivity";
+
     private View             mDebateTimerDisplay;
     private boolean          mIsEditingTime = false;
     private final Semaphore  mFlashScreenSemaphore = new Semaphore(1, true);
@@ -507,6 +509,8 @@ public class DebatingActivity extends FragmentActivity {
      */
     private class DebateTimerDisplayPagerAdapter extends PagerAdapter {
 
+        private static final String TAG = "DebateTimerDisplayPagerAdapter";
+
         private final HashMap<DebatePhaseTag, View> mViewsMap = new HashMap<DebatePhaseTag, View>();
         private static final String NO_DEBATE_LOADED = "no_debate_loaded";
 
@@ -514,7 +518,7 @@ public class DebatingActivity extends FragmentActivity {
         public void destroyItem(ViewGroup container, int position, Object object) {
             View view = mViewsMap.get(object);
             if (view == null) {
-                Log.e(getClass().getSimpleName(), String.format("Nothing found to destroy at position %d, %s", position, object.toString()));
+                Log.e(TAG, "Nothing found to destroy at position " + position + " - " + object.toString());
                 return;
             }
             container.removeView(view);
@@ -559,7 +563,7 @@ public class DebatingActivity extends FragmentActivity {
             // setPrimaryItem() relies on this correlation in order to set mDebateTimerDisplay.
 
             if (mDebateManager == null) {
-                Log.i(getClass().getSimpleName(), "No debate loaded");
+                Log.i(TAG, "No debate loaded");
                 View v = View.inflate(DebatingActivity.this, R.layout.no_debate_loaded, null);
                 container.addView(v);
                 DebatePhaseTag tag = new DebatePhaseTag();
@@ -652,7 +656,7 @@ public class DebatingActivity extends FragmentActivity {
                 @Override
                 public void run() {
                     if (mBackgroundColourArea == BackgroundColourArea.WHOLE_SCREEN) {
-                        // Log.v(this.getClass().getSimpleName(), "removing background colour on " + Thread.currentThread().toString());
+                        // Log.v(TAG, "removing background colour on " + Thread.currentThread().toString());
                         mDebateTimerDisplay.setBackgroundColor(0);
                     }
                 }
@@ -817,14 +821,12 @@ public class DebatingActivity extends FragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i(getClass().getSimpleName(), "request code was 0x" + Integer.toHexString(requestCode));
-
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == CHOOSE_STYLE_REQUEST && resultCode == RESULT_OK) {
             String filename = data.getStringExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME);
             if (filename != null) {
-                Log.v(this.getClass().getSimpleName(), String.format("Got file name %s", filename));
+                Log.v(TAG, "Got file name " + filename);
                 setXmlFileName(filename);
                 resetDebateWithoutToast();
             }
@@ -894,9 +896,9 @@ public class DebatingActivity extends FragmentActivity {
         if (!keepRunning) {
             Intent intent = new Intent(this, DebatingTimerService.class);
             stopService(intent);
-            Log.i(this.getClass().getSimpleName(), "Timer is not running, stopped service");
+            Log.i(TAG, "Timer is not running, stopped service");
         } else {
-            Log.i(this.getClass().getSimpleName(), "Timer is running, keeping service alive");
+            Log.i(TAG, "Timer is running, keeping service alive");
         }
     }
 
@@ -946,6 +948,8 @@ public class DebatingActivity extends FragmentActivity {
         FlashScreenMode flashScreenMode, poiFlashScreenMode;
 
         Resources res = getResources();
+
+        final String TAG = "applyPreferences";
 
         try {
 
@@ -1001,8 +1005,7 @@ public class DebatingActivity extends FragmentActivity {
                 String newValue = (userCountDirectionValue.equals("generallyUp")) ? "alwaysUp" : "alwaysDown";
                 editor.putString(res.getString(R.string.pref_countDirection_key), newValue);
                 editor.commit();
-                Log.w(this.getClass().getSimpleName(),
-                        String.format("countDirection: replaced %s with %s", userCountDirectionValue, newValue));
+                Log.i(TAG, "countDirection: replaced " + userCountDirectionValue + " with " + newValue);
                 userCountDirectionValue = newValue;
             }
             mCountDirection = CountDirection.toEnum(userCountDirectionValue);
@@ -1042,8 +1045,7 @@ public class DebatingActivity extends FragmentActivity {
                 editor.putString(res.getString(R.string.pref_flashScreenMode_key), flashStringModePrefValue);
                 editor.remove(res.getString(R.string.pref_flashScreenBool_key));
                 editor.commit();
-                Log.w(this.getClass().getSimpleName(),
-                        String.format("flashScreenMode: replaced boolean preference with list preference: %s", flashStringModePrefValue));
+                Log.i(TAG, "flashScreenMode: replaced boolean preference with list preference: " + flashStringModePrefValue);
 
             } else {
                 // List preference.
@@ -1055,7 +1057,7 @@ public class DebatingActivity extends FragmentActivity {
             }
 
         } catch (ClassCastException e) {
-            Log.e(this.getClass().getSimpleName(), "applyPreferences: caught ClassCastException!");
+            Log.e(TAG, "caught ClassCastException!");
             return;
         }
 
@@ -1064,7 +1066,7 @@ public class DebatingActivity extends FragmentActivity {
             mDebateManager.setPrepTimeEnabled(prepTimerEnabled);
             applyPrepTimeBells();
         } else {
-            Log.i(this.getClass().getSimpleName(), "applyPreferences: Couldn't restore overtime bells, mDebateManager doesn't yet exist");
+            Log.v(TAG, "Couldn't restore overtime bells, mDebateManager doesn't yet exist");
         }
 
         if (mBinder != null) {
@@ -1083,9 +1085,9 @@ public class DebatingActivity extends FragmentActivity {
 
             this.updateKeepScreenOn();
 
-            Log.v(this.getClass().getSimpleName(), "applyPreferences: successfully applied");
+            Log.v(TAG, "successfully applied");
         } else {
-            Log.i(this.getClass().getSimpleName(), "applyPreferences: Couldn't restore AlertManager preferences; mBinder doesn't yet exist");
+            Log.v(TAG, "Couldn't restore AlertManager preferences; mBinder doesn't yet exist");
         }
 
     }
@@ -1193,7 +1195,7 @@ public class DebatingActivity extends FragmentActivity {
         TimePicker currentTimePicker = (TimePicker) mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTimePicker);
 
         if (currentTimePicker == null) {
-            Log.e("editCurrentTimeFinish", "currentTimePicker was null");
+            Log.e(TAG, "editCurrentTimeFinish: currentTimePicker was null");
             return;
         }
 
@@ -1236,7 +1238,7 @@ public class DebatingActivity extends FragmentActivity {
         TimePicker currentTimePicker = (TimePicker) mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTimePicker);
 
         if (currentTimePicker == null) {
-            Log.e("editCurrentTimeStart", "currentTimePicker was null");
+            Log.e(TAG, "editCurrentTimeFinish: currentTimePicker was null");
             return;
         }
 
@@ -1324,7 +1326,7 @@ public class DebatingActivity extends FragmentActivity {
 
     private void initialiseDebate() {
         if (mFormatXmlFileName == null) {
-            Log.w(this.getClass().getSimpleName(), "Tried to initialise debate with null file");
+            Log.w(TAG, "Tried to initialise debate with null file");
             return;
         }
 

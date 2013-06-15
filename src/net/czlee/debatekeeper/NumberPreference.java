@@ -32,8 +32,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.NumberPicker;
 import android.widget.NumberPicker.OnValueChangeListener;
 
-import net.czlee.debatekeeper.R;
-
 /**
  * NumberPreference implements a preference using a number picker.
  *
@@ -46,6 +44,8 @@ import net.czlee.debatekeeper.R;
  */
 @TargetApi(11)
 public class NumberPreference extends DialogPreference {
+
+    private static final String TAG = "NumberPreference";
 
     private NumberPicker mPicker;
     private Context mContext;
@@ -101,13 +101,13 @@ public class NumberPreference extends DialogPreference {
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 View invisibleButton = view.findViewById(R.id.numberPreference_invisibleButton);
                 boolean result = invisibleButton.requestFocusFromTouch();
-                if (!result) Log.d(this.getClass().getSimpleName(), "Couldn't pull focus to invisible button");
+                if (!result) Log.d(TAG, "Couldn't pull focus to invisible button");
                 try {
                     View focus = getDialog().getWindow().getCurrentFocus();
                     if (focus != null)
                         imm.hideSoftInputFromWindow(focus.getWindowToken(), 0);
                     else
-                        Log.d(this.getClass().getSimpleName(), "Nothing had focus");
+                        Log.d(TAG, "Nothing had focus");
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }

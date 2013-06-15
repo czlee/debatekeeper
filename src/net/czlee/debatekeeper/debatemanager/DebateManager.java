@@ -57,6 +57,8 @@ import android.util.Log;
  */
 public class DebateManager {
 
+    private static final String TAG = "DebateManager";
+
     private final DebateFormat        mDebateFormat;
     private final DebatePhaseManager  mPhaseManager;
     private final PoiManager          mPoiManager;
@@ -307,7 +309,7 @@ public class DebateManager {
      */
     public int getPhaseIndexForTag(DebatePhaseTag tag) {
         if (mDebateFormat != tag.format) {
-            Log.i(getClass().getSimpleName(), String.format("getPhaseIndexForTag - no such phase, tag.format was %s, currently on %s",
+            Log.i(TAG, String.format("getPhaseIndexForTag - no such phase, tag.format was %s, currently on %s",
                     (tag.format == null) ? "null" : tag.format.getName(), mDebateFormat.getName()));
             return NO_SUCH_PHASE;
         }
@@ -439,11 +441,11 @@ public class DebateManager {
         // Restore the current item type
         String itemTypeValue = bundle.getString(key + BUNDLE_SUFFIX_ITEM_TYPE);
         if (itemTypeValue == null)
-            Log.e(this.getClass().getSimpleName(), "No item type found");
+            Log.e(TAG, "restoreState: No item type found");
         else try {
             mActivePhaseType = DebatePhaseType.toEnum(itemTypeValue);
         } catch (IllegalArgumentException e) {
-            Log.e(this.getClass().getSimpleName(), "Invalid item type: " + itemTypeValue);
+            Log.e(TAG, "restoreState: Invalid item type: " + itemTypeValue);
         }
 
         // Restore the current speech

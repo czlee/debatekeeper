@@ -54,6 +54,8 @@ import android.util.Log;
  */
 public class DebatePhaseManager extends DebateElementManager {
 
+    private static final String TAG = "DebatePhaseManager";
+
     private DebatePhaseFormat        mFormat;
     private String                   mPhaseName;
     private PeriodInfo               mCurrentPeriodInfo;
@@ -352,7 +354,7 @@ public class DebatePhaseManager extends DebateElementManager {
      * @param bi the {@link BellInfo} to be handled
      */
     private void handleBell(BellInfo bi) {
-        Log.v(this.getClass().getSimpleName(), String.format("bell at %s", mCurrentTime));
+        Log.v(TAG, "bell at " + mCurrentTime);
         if (bi.isPauseOnBell())
             pause();
         mCurrentPeriodInfo.update(bi.getNextPeriodInfo());
@@ -392,7 +394,7 @@ public class DebatePhaseManager extends DebateElementManager {
      * Does an overtime bell.
      */
     private void doOvertimeBell() {
-        Log.v(this.getClass().getSimpleName(), String.format("overtime bell at %s", mCurrentTime));
+        Log.v(TAG, "overtime bell at %s" + mCurrentTime);
         mAlertManager.playBell(new BellSoundInfo(3));
     }
 

@@ -21,7 +21,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import net.czlee.debatekeeper.debateformat.BellSoundInfo;
-
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.util.Log;
@@ -39,6 +38,8 @@ import android.util.Log;
  * @since  2012-05-12
  */
 public class BellRepeater {
+
+    private static final String TAG = "BellRepeater";
 
     private enum BellRepeaterState {
         INITIAL,
@@ -108,7 +109,7 @@ public class BellRepeater {
                     public void onCompletion(MediaPlayer mp) {
                         // The MediaPlayer coming here should be the same one as mMediaPlayer in the BellRepeater class
                         if (mp != mMediaPlayer){
-                            Log.e(this.getClass().getSimpleName(), "OnCompletionListener mp wasn't the same as mMediaPlayer!");
+                            Log.e(TAG, "OnCompletionListener mp wasn't the same as mMediaPlayer!");
                         }
                         mMediaPlayer.release();
                         mMediaPlayer = null;
@@ -159,10 +160,10 @@ public class BellRepeater {
 
                 @Override
                 public boolean onError(MediaPlayer mp, int what, int extra) {
-                    Log.e("BellRepeater", "The media player went into an errored state! Releasing.");
+                    Log.e(TAG, "The media player went into an errored state! Releasing.");
                     // The MediaPlayer coming here should be the same one as mMediaPlayer in the BellRepeater class
                     if (mp != mMediaPlayer){
-                        Log.e(this.getClass().getSimpleName(), "OnErrorListener mp wasn't the same as mMediaPlayer!");
+                        Log.e(TAG, "OnErrorListener mp wasn't the same as mMediaPlayer!");
                     }
                     mMediaPlayer.release();
                     mMediaPlayer = null;
