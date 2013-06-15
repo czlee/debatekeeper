@@ -135,7 +135,8 @@ public class DebatingActivity extends FragmentActivity {
     private DialogFragment       mDialogFragmentInWaiting = null;
     private String               mDialogTagInWaiting      = null;
 
-    private static final String BUNDLE_SUFFIX_DEBATE_MANAGER     = "dm";
+    private static final String BUNDLE_KEY_DEBATE_MANAGER        = "dm";
+    private static final String BUNDLE_KEY_XML_FILE_NAME         = "xmlfn";
     private static final String PREFERENCE_XML_FILE_NAME         = "xmlfn";
     private static final String DO_NOT_SHOW_POI_TIMER_DIALOG     = "dnspoi";
     private static final String DIALOG_ARGUMENT_FATAL_MESSAGE    = "fm";
@@ -924,8 +925,9 @@ public class DebatingActivity extends FragmentActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle bundle) {
+        bundle.putString(BUNDLE_KEY_XML_FILE_NAME, mFormatXmlFileName);
         if (mDebateManager != null)
-            mDebateManager.saveState(BUNDLE_SUFFIX_DEBATE_MANAGER, bundle);
+            mDebateManager.saveState(BUNDLE_KEY_DEBATE_MANAGER, bundle);
     }
 
     @Override
@@ -1382,11 +1384,14 @@ public class DebatingActivity extends FragmentActivity {
 
             mDebateManager = mBinder.createDebateManager(df);
 
-            // We only restore the state if there wasn't an existing debate, i.e.
-            // if the service wasn't already running.  Also, only do this once (so set it
-            // to null once restored).
+            // We only restore the state if there wasn't an existing debate, i.e. if the service
+            // wasn't already running, and if the debate format stored in the saved instance state
+            // matches the debate format we're using now.  Also, only do this once (so set it to
+            // null once restored).
             if (mLastStateBundle != null) {
-                mDebateManager.restoreState(BUNDLE_SUFFIX_DEBATE_MANAGER, mLastStateBundle);
+                String xmlFileName = mLastStateBundle.getString(BUNDLE_KEY_XML_FILE_NAME);
+                if (xmlFileName.equals(mFormatXmlFileName))
+                    mDebateManager.restoreState(BUNDLE_KEY_DEBATE_MANAGER, mLastStateBundle);
                 mLastStateBundle = null;
             }
 
@@ -1397,8 +1402,8 @@ public class DebatingActivity extends FragmentActivity {
                         showDialog(new DialogPoiTimerInfoFragment(), DIALOG_TAG_POI_TIMER_INFO);
         }
 
+        mViewPager.setCurrentItem(mDebateManager.getActivePhaseIndex(), false);
         mViewPager.getAdapter().notifyDataSetChanged();
-        mViewPager.setCurrentItem(mDebateManager.getActivePhaseIndex());
         applyPreferences();
         updateGui();
     }
