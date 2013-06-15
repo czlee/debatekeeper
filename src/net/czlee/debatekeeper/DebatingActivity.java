@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -37,6 +36,7 @@ import net.czlee.debatekeeper.debateformat.DebatePhaseFormat;
 import net.czlee.debatekeeper.debateformat.PeriodInfo;
 import net.czlee.debatekeeper.debateformat.PrepTimeFormat;
 import net.czlee.debatekeeper.debateformat.SpeechFormat;
+import net.czlee.debatekeeper.debateformat.XmlUtilities;
 import net.czlee.debatekeeper.debatemanager.DebateManager;
 import net.czlee.debatekeeper.debatemanager.DebateManager.DebatePhaseTag;
 
@@ -1697,7 +1697,7 @@ public class DebatingActivity extends FragmentActivity {
         else
             currentTimeTextColor = resources.getColor(android.R.color.primary_text_dark);
 
-        currentTimeText.setText(secsToText(timeToShow));
+        currentTimeText.setText(secsToTextSigned(timeToShow));
         currentTimeText.setTextColor(currentTimeTextColor);
 
         // Construct the line that goes at the bottom
@@ -1710,7 +1710,7 @@ public class DebatingActivity extends FragmentActivity {
             lengthStr = String.format(getResources().
                     getQuantityString(R.plurals.timeInMinutes, (int) (length / 60), length / 60));
         else
-            lengthStr = secsToText(length);
+            lengthStr = XmlUtilities.secsToText(length);
 
         int finalTimeTextUnformattedResid = (dpf.isPrep()) ? R.string.prepTimeLength: R.string.speechLength;
         infoLine.append(String.format(this.getString(finalTimeTextUnformattedResid),
@@ -1733,7 +1733,7 @@ public class DebatingActivity extends FragmentActivity {
             else {
                 long timeToDisplay = subtractFromSpeechLengthIfCountingDown(nextOvertimeBellTime, dpf);
                 infoLine.append(getString(R.string.mainScreen_bellsList_nextOvertimeBell,
-                        secsToText(timeToDisplay)));
+                        secsToTextSigned(timeToDisplay)));
             }
 
         } else if (currentSpeechBellsIter.hasNext()) {
@@ -1743,7 +1743,7 @@ public class DebatingActivity extends FragmentActivity {
             while (currentSpeechBellsIter.hasNext()) {
                 BellInfo bi = currentSpeechBellsIter.next();
                 long bellTime = subtractFromSpeechLengthIfCountingDown(bi.getBellTime(), dpf);
-                bellsStr.append(secsToText(bellTime));
+                bellsStr.append(XmlUtilities.secsToText(bellTime));
                 if (bi.isPauseOnBell())
                     bellsStr.append(getString(R.string.pauseOnBellIndicator));
                 if (bi.isSilent())
@@ -1854,11 +1854,17 @@ public class DebatingActivity extends FragmentActivity {
         }
     }
 
-    private static String secsToText(long time) {
-        if (time >= 0) {
-            return String.format(Locale.US, "%02d:%02d", time / 60, time % 60);
-        } else {
-            return String.format(Locale.US, "+%02d:%02d", -time / 60, -time % 60);
-        }
+    /**
+     * Converts a number of seconds to a String in the format 00:00, or +00:00 if the time
+     * given is negative.  (Note: A <i>plus</i> sign is used for <i>negative</i> numbers; this
+     * indicates overtime.)
+     * @param time a time in seconds
+     * @return the String
+     */
+    private static String secsToTextSigned(long time) {
+        if (time >= 0)
+            return XmlUtilities.secsToText(time);
+        else
+            return "+" + XmlUtilities.secsToText(-time);
     }
 }

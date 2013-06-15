@@ -105,7 +105,7 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
                 long minutes = length / 60;
                 description = mContext.getResources().getQuantityString(R.plurals.viewFormat_timeDescription_lengthInMinutesOnly, (int) minutes, minutes);
             } else
-                description = mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, secsToText(length));
+                description = mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, XmlUtilities.secsToText(length));
 
             if (controlled)
                 description += mContext.getString(R.string.viewFormat_timeDescription_controlledPrepSuffix);
@@ -165,7 +165,7 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
                 long minutes = length / 60;
                 description = mContext.getResources().getQuantityString(R.plurals.viewFormat_timeDescription_lengthInMinutesOnly, (int) minutes, minutes);
             } else
-                description = mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, secsToText(length));
+                description = mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, XmlUtilities.secsToText(length));
 
             if (getBells().size() > 0) {
                 String bellsDesc = getBellsString();
@@ -196,7 +196,7 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
 
             while (iterator.hasNext()) {
                 MiniBellInfo bi = iterator.next();
-                str.append(secsToText(bi.getTime()));
+                str.append(XmlUtilities.secsToText(bi.getTime()));
                 if (bi.isPause())
                     str.append(mContext.getString(R.string.pauseOnBellIndicator));
 
@@ -458,11 +458,4 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
         this.schemaVersion = schemaVersion;
     }
 
-    // ******************************************************************************************
-    // Private methods
-    // ******************************************************************************************
-
-    private static String secsToText(long time) {
-        return String.format("%02d:%02d", time / 60, time % 60);
-    }
 }

@@ -26,6 +26,7 @@ import java.util.Locale;
 
 import net.czlee.debatekeeper.debateformat.BellInfo;
 import net.czlee.debatekeeper.debateformat.PrepTimeSimpleFormat;
+import net.czlee.debatekeeper.debateformat.XmlUtilities;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -208,7 +209,7 @@ public class PrepTimeBellsManager {
         @Override
         public String toString() {
             if (time == 0) return mContext.getString(R.string.prepTimeBellDescription_atFinish);
-            return mContext.getString(R.string.prepTimeBellDescription_beforeFinish, secsToText(time));
+            return mContext.getString(R.string.prepTimeBellDescription_beforeFinish, XmlUtilities.secsToText(time));
         }
 
         @Override
@@ -250,7 +251,7 @@ public class PrepTimeBellsManager {
         @Override
         public String toString() {
             if (time == 0) return mContext.getString(R.string.prepTimeBellDescription_atStart);
-            return mContext.getString(R.string.prepTimeBellDescription_afterStart, secsToText(time));
+            return mContext.getString(R.string.prepTimeBellDescription_afterStart, XmlUtilities.secsToText(time));
         }
 
         @Override
@@ -676,10 +677,6 @@ public class PrepTimeBellsManager {
         }
 
         return bell;
-    }
-
-    private static String secsToText(long time) {
-        return String.format(Locale.US, "%02d:%02d", time / 60, time % 60);
     }
 
 }

@@ -17,6 +17,8 @@
 
 package net.czlee.debatekeeper.debateformat;
 
+import java.util.Locale;
+
 import net.czlee.debatekeeper.R;
 
 import org.w3c.dom.Element;
@@ -200,6 +202,15 @@ public class XmlUtilities {
             throw new NumberFormatException();
         }
         return seconds;
+    }
+
+    /**
+     * Converts a number of seconds to a String in the format 00:00
+     * @param time a time in seconds
+     * @return the String
+     */
+    public static String secsToText(long time) {
+        return String.format(Locale.US, "%02d:%02d", time / 60, time % 60);
     }
 
     /**

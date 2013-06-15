@@ -216,7 +216,7 @@ public class DebateFormatBuilderForSchema1 {
             while (biIterator.hasNext()) {
                 BellInfo checkBi = biIterator.next();
                 if (checkBi.getBellTime() == bellTime) {
-                    String timeStr = secsToText(bellTime);
+                    String timeStr = XmlUtilities.secsToText(bellTime);
                     throw new DebateFormatBuilderException(R.string.dfb1error_bellDuplicate, timeStr);
                 }
             }
@@ -330,7 +330,7 @@ public class DebateFormatBuilderForSchema1 {
 
             // Check that the bell isn't after the finish time
             if (bellTime > mLength) {
-                String timeStr = secsToText(bellTime);
+                String timeStr = XmlUtilities.secsToText(bellTime);
                 throw new DebateFormatBuilderException(R.string.dfb1error_bellAfterFinishTime, timeStr);
             }
 
@@ -839,10 +839,6 @@ public class DebateFormatBuilderForSchema1 {
             throws DebateFormatBuilderException {
 
         sec.addBellInfo(bi, periodInfoRef);
-    }
-
-    private static String secsToText(long time) {
-        return String.format("%02d:%02d", time / 60, time % 60);
     }
 
     /**

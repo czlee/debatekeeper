@@ -20,7 +20,6 @@ package net.czlee.debatekeeper.debateformat;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -341,7 +340,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
                     continue; // if we couldn't interpret the time, ignore it
                 }
             }
-            bellsList.append(secsToText(time));
+            bellsList.append(XmlUtilities.secsToText(time));
             boolean pauseOnBell;
             try {
                 pauseOnBell = xu.isAttributeTrue(element, R.string.xml2attrName_bell_pauseOnBell);
@@ -366,11 +365,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             long minutes = length / 60;
             return mContext.getResources().getQuantityString(R.plurals.viewFormat_timeDescription_lengthInMinutesOnly, (int) minutes, minutes);
         } else
-            return mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, secsToText(length));
-    }
-
-    private static String secsToText(long time) {
-        return String.format(Locale.US, "%02d:%02d", time / 60, time % 60);
+            return mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, XmlUtilities.secsToText(length));
     }
 }
 
