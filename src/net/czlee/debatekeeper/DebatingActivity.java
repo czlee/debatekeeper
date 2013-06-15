@@ -606,8 +606,6 @@ public class DebatingActivity extends FragmentActivity {
 
         @Override
         public boolean isViewFromObject(View view, Object object) {
-            // TODO make the equality comparison more intelligent (it currently just compares
-            // for exact object equality).
             if (!mViewsMap.containsKey(object)) return false;
             else return (mViewsMap.get(object) == view);
         }
