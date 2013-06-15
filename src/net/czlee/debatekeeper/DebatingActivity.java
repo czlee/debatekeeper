@@ -488,7 +488,8 @@ public class DebatingActivity extends FragmentActivity {
 
         @Override
         public void onPageSelected(int position) {
-            mDebateManager.setActivePhaseIndex(position);
+            if (mDebateManager != null)
+                mDebateManager.setActivePhaseIndex(position);
             updateControls();
         }
 
@@ -650,15 +651,34 @@ public class DebatingActivity extends FragmentActivity {
         @Override
         public void flashScreenOn(int colour) {
 
-            // First, if the whole screen is coloured, remove the colouring.
-            // It will be restored by updateGui() in done().
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+
+                    // We need to figure out how to colour the text.
+                    // Basically we want to colour the text to whatever the background colour is now.
+                    // So the whole screen is coloured, it'll be the current background colour for
+                    // the current period.  If not, it'll be black (make sure we don't make the
+                    // text transparent though!).
+                    int invertedTextColour;
+
+                    // If the whole screen is coloured, remove the colouring.
+                    // It will be restored by updateGui() in done().
                     if (mBackgroundColourArea == BackgroundColourArea.WHOLE_SCREEN) {
-                        // Log.v(TAG, "removing background colour on " + Thread.currentThread().toString());
+                        if (mDebateManager != null)
+                            invertedTextColour = getBackgroundColorFromPeriodInfo(mDebateManager.getActivePhaseFormat(), mDebateManager.getActivePhaseCurrentPeriodInfo());
+                        else
+                            invertedTextColour = getResources().getColor(android.R.color.black);
                         mDebateTimerDisplay.setBackgroundColor(COLOUR_TRANSPARENT);
+                    } else {
+                        invertedTextColour = getResources().getColor(android.R.color.black);
                     }
+
+                    // Colour the text in.
+                    // The original colour will be restored by updateGui() in done().
+                    TextView currentTimeText = (TextView) mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTime);
+                    if (currentTimeText != null)
+                        currentTimeText.setTextColor(invertedTextColour);
                 }
             });
             flashScreen(colour);
@@ -1277,11 +1297,25 @@ public class DebatingActivity extends FragmentActivity {
      * some brain-work to do.
      * @return CountDirection.COUNT_UP or CountDirection.COUNT_DOWN
      */
-    private CountDirection getCountDirection(DebatePhaseFormat spf) {
-        if (spf.isPrep())
+    private CountDirection getCountDirection(DebatePhaseFormat dpf) {
+        if (dpf.isPrep())
             return mPrepTimeCountDirection;
         else
             return mCountDirection;
+    }
+
+    /**
+     * @param dpf the {@link DebatePhaseFormat}
+     * @param pi the current {@link PeriodInfo}
+     * @return the appropriate background colour
+     */
+    private int getBackgroundColorFromPeriodInfo(DebatePhaseFormat dpf, PeriodInfo pi) {
+        Integer backgroundColour = pi.getBackgroundColor();
+
+        if (backgroundColour == null)
+            backgroundColour = getResources().getColor((dpf.isPrep()) ? R.color.prepTimeBackgroundColour : android.R.color.background_dark);
+
+        return backgroundColour;
     }
 
     /**
@@ -1665,12 +1699,8 @@ public class DebatingActivity extends FragmentActivity {
         speechNameText.setText(phaseName);
         periodDescriptionText.setText(pi.getDescription());
 
-        // Background colour, this is user-preference dependent
-        Integer backgroundColour = pi.getBackgroundColor();
-
-        if (backgroundColour == null) {
-            backgroundColour = getResources().getColor((dpf.isPrep()) ? R.color.prepTimeBackgroundColour : android.R.color.background_dark);
-        }
+        // Background colour
+        Integer backgroundColour = getBackgroundColorFromPeriodInfo(dpf, pi);
 
         switch (mBackgroundColourArea) {
         case TOP_BAR_ONLY:
@@ -1698,7 +1728,12 @@ public class DebatingActivity extends FragmentActivity {
             currentTimeTextColor = resources.getColor(android.R.color.primary_text_dark);
 
         currentTimeText.setText(secsToTextSigned(timeToShow));
-        currentTimeText.setTextColor(currentTimeTextColor);
+
+        // Don't bother with the text colour if there is a flash screen in progress
+        if (mFlashScreenSemaphore.tryAcquire()) {
+            currentTimeText.setTextColor(currentTimeTextColor);
+            mFlashScreenSemaphore.release();
+        }
 
         // Construct the line that goes at the bottom
         StringBuilder infoLine = new StringBuilder();
