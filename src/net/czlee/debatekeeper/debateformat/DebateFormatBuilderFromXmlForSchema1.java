@@ -780,10 +780,11 @@ public class DebateFormatBuilderFromXmlForSchema1 implements DebateFormatBuilder
     // Private methods
     //******************************************************************************************
 
-    private void addToErrorLog(String message) {
+    private void logXmlError(String message) {
         String bullet = "• ";
         String line   = bullet.concat(message);
         mErrorLog.add(line);
+        Log.e("logXmlError(1)", message);
     }
 
     /**
@@ -791,8 +792,7 @@ public class DebateFormatBuilderFromXmlForSchema1 implements DebateFormatBuilder
      * @param e the Exception
      */
     private void logXmlError(Exception e) {
-        addToErrorLog(e.getMessage());
-        Log.e("logXmlError", e.getMessage());
+        logXmlError(e.getMessage());
     }
 
     /**
@@ -800,8 +800,7 @@ public class DebateFormatBuilderFromXmlForSchema1 implements DebateFormatBuilder
      * @param resId the resource ID of the string resource
      */
     private void logXmlError(int resId) {
-        addToErrorLog(mContext.getString(resId));
-        Log.e("logXmlError", mContext.getString(resId));
+        logXmlError(mContext.getString(resId));
     }
 
     /**
@@ -811,8 +810,7 @@ public class DebateFormatBuilderFromXmlForSchema1 implements DebateFormatBuilder
      * @param formatArgs arguments to pass to <code>String.format</code>
      */
     private void logXmlError(int resId, Object... formatArgs) {
-        addToErrorLog(mContext.getString(resId, formatArgs));
-        Log.e("logXmlError", mContext.getString(resId, formatArgs));
+        logXmlError(mContext.getString(resId, formatArgs));
     }
 
 }

@@ -504,7 +504,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
         String bullet = "• ";
         String line   = bullet.concat(message);
         mErrorLog.add(line);
-        Log.e("logXmlError", message);
+        Log.e("logXmlError(2)", message);
     }
 
     /**
