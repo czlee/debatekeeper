@@ -11,7 +11,7 @@
     <period-type ref="canadian.lo-rebuttal">
       <name>Canadian: Rebuttal time</name>
       <display>Rebuttal time</display>
-      <default-bgcolor>#770000ff</default-bgcolor>
+      <default-bgcolor>#0C2F6E</default-bgcolor>
     </period-type>
   </period-types>
   <speech-types>
