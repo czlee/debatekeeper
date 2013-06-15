@@ -357,6 +357,12 @@ public class DebatePhaseManager extends DebateElementManager {
         Log.v(TAG, "bell at " + mCurrentTime);
         if (bi.isPauseOnBell())
             pause();
+
+        // It's important that the PeriodInfo update comes before triggering the alert in
+        // AlertManager, to avoid a race condition between updating the PeriodInfo (which
+        // affects the background colour) and reading the PeriodInfo for the screen flash.
+        // (The screen flash will be on a different thread to this function, which is on a
+        // TimerTask.)
         mCurrentPeriodInfo.update(bi.getNextPeriodInfo());
         mAlertManager.triggerAlert(bi.getBellSoundInfo());
     }
