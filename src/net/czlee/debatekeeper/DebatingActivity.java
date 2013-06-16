@@ -753,6 +753,7 @@ public class DebatingActivity extends FragmentActivity {
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
             mDebateManager = null;
+            mViewPager.getAdapter().notifyDataSetChanged();
         }
     }
 
