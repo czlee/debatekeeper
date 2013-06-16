@@ -678,13 +678,20 @@ public class DebatingActivity extends FragmentActivity {
 
                     // If the whole screen is coloured, remove the colouring.
                     // It will be restored by updateGui() in done().
-                    if (mBackgroundColourArea == BackgroundColourArea.WHOLE_SCREEN) {
+                    switch (mBackgroundColourArea) {
+                    case WHOLE_SCREEN:
                         if (mDebateManager != null)
                             invertedTextColour = getBackgroundColorFromPeriodInfo(mDebateManager.getActivePhaseFormat(), mDebateManager.getActivePhaseCurrentPeriodInfo());
                         else
                             invertedTextColour = getResources().getColor(android.R.color.black);
                         mDebateTimerDisplay.setBackgroundColor(COLOUR_TRANSPARENT);
-                    } else {
+                        break;
+                    case TOP_BAR_ONLY:
+                        mDebateTimerDisplay.findViewById(R.id.debateTimer_speechNameText).setBackgroundColor(COLOUR_TRANSPARENT);
+                        mDebateTimerDisplay.findViewById(R.id.debateTimer_periodDescriptionText).setBackgroundColor(COLOUR_TRANSPARENT);
+                        // keep going
+                    case DISABLED:
+                    default:
                         invertedTextColour = getResources().getColor(android.R.color.black);
                     }
 
