@@ -639,16 +639,20 @@ public class DebatingActivity extends FragmentActivity {
 
         @Override
         public boolean begin() {
+            boolean result;
             try {
-                return mFlashScreenSemaphore.tryAcquire(2, TimeUnit.SECONDS);
+                result = mFlashScreenSemaphore.tryAcquire(2, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 return false; // Don't bother with the flash screen any more
             }
+            if (result) Log.d("DebatingTimerFlashScreenListener", "acquired mFlashScreenSemaphore, available: " + mFlashScreenSemaphore.availablePermits());
+            return result;
         }
 
         @Override
         public void done() {
             mFlashScreenSemaphore.release();
+            Log.d("DebatingTimerFlashScreenListener", "released mFlashScreenSemaphore, available: " + mFlashScreenSemaphore.availablePermits());
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -1740,6 +1744,7 @@ public class DebatingActivity extends FragmentActivity {
         case WHOLE_SCREEN:
             // Don't do the whole screen if there is a flash screen in progress
             if (mFlashScreenSemaphore.tryAcquire()) {
+                Log.d("updateDebateTimerDisplay", "got mFlashScreenSemaphore, available: " + mFlashScreenSemaphore.availablePermits());
                 debateTimerDisplay.setBackgroundColor(backgroundColour);
                 mFlashScreenSemaphore.release();
             }
