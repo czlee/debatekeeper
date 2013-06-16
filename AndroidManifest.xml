@@ -19,7 +19,7 @@
     package="net.czlee.debatekeeper"
     android:installLocation="auto"
     android:versionCode="15"
-    android:versionName="0.11-dev" >
+    android:versionName="0.11-test" >
 
     <uses-sdk
         android:minSdkVersion="8"
