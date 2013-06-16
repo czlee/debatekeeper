@@ -708,9 +708,6 @@ public class DebateFormatBuilderFromXmlForSchema1 implements DebateFormatBuilder
     //******************************************************************************************
     // Public methods
     //******************************************************************************************
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml#buildDebateFromXml(java.io.InputStream)
-     */
     @Override
     public DebateFormat buildDebateFromXml(InputStream is)
             throws IOException, SAXException {
@@ -718,17 +715,11 @@ public class DebateFormatBuilderFromXmlForSchema1 implements DebateFormatBuilder
         return mDfb.getDebateFormat();
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml#hasErrors()
-     */
     @Override
     public boolean hasErrors() {
         return mErrorLog.size() > 0;
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml#isSchemaSupported()
-     */
     @Override
     public boolean isSchemaSupported() {
         if (mSchemaVersion == null)
@@ -752,25 +743,16 @@ public class DebateFormatBuilderFromXmlForSchema1 implements DebateFormatBuilder
         }
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml#getErrorLog()
-     */
     @Override
     public ArrayList<String> getErrorLog() {
         return mErrorLog;
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml#getSchemaVersion()
-     */
     @Override
     public String getSchemaVersion() {
         return mSchemaVersion;
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml#getSupportedSchemaVersion()
-     */
     @Override
     public String getSupportedSchemaVersion() {
         return MAXIMUM_SCHEMA_VERSION;

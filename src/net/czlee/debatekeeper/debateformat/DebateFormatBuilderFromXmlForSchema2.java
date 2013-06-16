@@ -98,12 +98,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
     //******************************************************************************************
     // Public methods
     //******************************************************************************************
-    /**
-     * @param is an {@link InputStream} being the XML file to parse into a {@link DebateFormat}
-     * @return the completed {@link DebateFormat}
-     * @throws IOException if there was an IO error with the <code>InputStream</code>
-     * @throws SAXException if thrown by the XML parser
-     */
+
     @Override
     public DebateFormat buildDebateFromXml(InputStream is)
             throws SAXException, IOException {
