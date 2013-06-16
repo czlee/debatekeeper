@@ -353,18 +353,20 @@ public class AlertManager
         if (mPoiVibrateEnabled)
             mVibrator.vibrate(POI_VIBRATE_TIME);
 
-        switch (mPoiFlashScreenMode) {
-        case SOLID_FLASH:
-            if (mFlashScreenListener.begin())
-                startSingleFlashScreen(MAX_BELL_SCREEN_FLASH_TIME, POI_FLASH_COLOUR, true);
-            break;
-        case STROBE_FLASH:
-            if (mFlashScreenListener.begin())
-                startSingleStrobeFlashScreen(MAX_BELL_SCREEN_FLASH_TIME, POI_FLASH_COLOUR, true);
-            break;
-        case OFF:
-            // Do nothing
-            break;
+        if (mFlashScreenListener != null) {
+            switch (mPoiFlashScreenMode) {
+            case SOLID_FLASH:
+                if (mFlashScreenListener.begin())
+                    startSingleFlashScreen(MAX_BELL_SCREEN_FLASH_TIME, POI_FLASH_COLOUR, true);
+                break;
+            case STROBE_FLASH:
+                if (mFlashScreenListener.begin())
+                    startSingleStrobeFlashScreen(MAX_BELL_SCREEN_FLASH_TIME, POI_FLASH_COLOUR, true);
+                break;
+            case OFF:
+                // Do nothing
+                break;
+            }
         }
     }
 
@@ -416,6 +418,8 @@ public class AlertManager
         final long  repeatPeriod = bsi.getRepeatPeriod();
         final int   timesToPlay  = bsi.getTimesToPlay();
         if (timesToPlay == 0) return; // Do nothing if the number of bells is zero
+
+        if (mFlashScreenListener == null) return;
 
         // Try to acquire a semaphore; if we can't, return immediately and don't bother
         // with the flash screen
