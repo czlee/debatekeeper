@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -633,6 +634,29 @@ public class DebatingActivity extends FragmentActivity {
                 updateGui();
         }
 
+        /**
+         * Refreshes all the background colours known to this {@link PagerAdapter}.
+         * This should be called when a background colour user preference is changed, in a way
+         * that requires all of the background colours in all {@link View}s known to be refreshed.
+         * Before calling this method, <code>DebatingActivity.resetBackgroundColoursToTransparent()</code>
+         * should be called to reset all of the other background colours to transparent.
+         */
+        public void refreshBackgroundColours() {
+            if (mDebateManager == null) return;
+            Iterator<Entry<DebatePhaseTag, View>> iterator = mViewsMap.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Entry<DebatePhaseTag, View> entry = iterator.next();
+                int phaseIndex = mDebateManager.getPhaseIndexForTag(entry.getKey());
+                DebatePhaseFormat dpf = mDebateManager.getPhaseFormat(phaseIndex);
+                long time = mDebateManager.getPhaseCurrentTime(phaseIndex);
+                PeriodInfo pi = dpf.getPeriodInfoForTime(time);
+                int backgroundColour = getBackgroundColorFromPeriodInfo(dpf, pi);
+                boolean overtime = time > dpf.getLength();
+                int timeTextColour = getResources().getColor((overtime) ? R.color.overtimeTextColour : android.R.color.primary_text_dark);
+                updateDebateTimerDisplayColours(entry.getValue(), timeTextColour, backgroundColour);
+            }
+        }
+
     }
 
     private class DebatingTimerFlashScreenListener implements FlashScreenListener {
@@ -1057,10 +1081,16 @@ public class DebatingActivity extends FragmentActivity {
             mPrepTimeCountDirection = CountDirection.toEnum(userPrepTimeCountDirectionValue);
 
             // List preference: Background colour area
+            BackgroundColourArea oldBackgroundColourArea = mBackgroundColourArea;
             backgroundColourAreaValue = prefs.getString(res.getString(R.string.pref_backgroundColourArea_key),
                     res.getString(R.string.prefDefault_backgroundColourArea));
             mBackgroundColourArea = BackgroundColourArea.toEnum(backgroundColourAreaValue);
-            resetBackgroundColour();
+            if (oldBackgroundColourArea != mBackgroundColourArea) {
+                Log.v(TAG, "background colour preference changed - refreshing");
+                resetBackgroundColoursToTransparent();
+                ((DebateTimerDisplayPagerAdapter) mViewPager.getAdapter()).refreshBackgroundColours();
+            }
+
 
             // List preference: Flash screen mode
             //  - Backwards compatibility measure
@@ -1106,6 +1136,11 @@ public class DebatingActivity extends FragmentActivity {
             mDebateManager.setOvertimeBells(firstOvertimeBell, overtimeBellPeriod);
             mDebateManager.setPrepTimeEnabled(prepTimerEnabled);
             applyPrepTimeBells();
+
+            // This is necessary if the debate structure has changed, i.e. if prep time has been
+            // enabled or disabled.
+            mViewPager.getAdapter().notifyDataSetChanged();
+
         } else {
             Log.v(TAG, "Couldn't restore overtime bells, mDebateManager doesn't yet exist");
         }
@@ -1131,10 +1166,6 @@ public class DebatingActivity extends FragmentActivity {
             Log.v(TAG, "Couldn't restore AlertManager preferences; mBinder doesn't yet exist");
         }
 
-        // This is necessary if the debate structure has changed, i.e. if prep time has been
-        // enabled or disabled, or if the background colour preference has been changed (as then
-        // the adjacent views need to be redrawn).
-        mViewPager.getAdapter().notifyDataSetChanged();
     }
 
     private void applyPrepTimeBells() {
@@ -1467,15 +1498,17 @@ public class DebatingActivity extends FragmentActivity {
      * doesn't automatically do this (for efficiency). You should call <code>updateGui()</code> as immediately as
      * practicable after calling this.
      */
-    private void resetBackgroundColour() {
-        if (mDebateTimerDisplay == null || mDebateManager == null) return;
-        if (mDebateTimerDisplay.getId() != R.id.debateTimer_root) return;
-        View v = mDebateTimerDisplay;
-        v.setBackgroundColor(COLOUR_TRANSPARENT);
-        View speechNameText = v.findViewById(R.id.debateTimer_speechNameText);
-        View periodDescriptionText = v.findViewById(R.id.debateTimer_periodDescriptionText);
-        speechNameText.setBackgroundColor(COLOUR_TRANSPARENT);
-        periodDescriptionText.setBackgroundColor(COLOUR_TRANSPARENT);
+    private void resetBackgroundColoursToTransparent() {
+        for (int i = 0; i < mViewPager.getChildCount(); i++) {
+            View v = mViewPager.getChildAt(i);
+            if (v.getId() == R.id.debateTimer_root) {
+                v.setBackgroundColor(COLOUR_TRANSPARENT);
+                View speechNameText = v.findViewById(R.id.debateTimer_speechNameText);
+                View periodDescriptionText = v.findViewById(R.id.debateTimer_periodDescriptionText);
+                speechNameText.setBackgroundColor(COLOUR_TRANSPARENT);
+                periodDescriptionText.setBackgroundColor(COLOUR_TRANSPARENT);
+            }
+        }
     }
 
     private void resetDebate() {
