@@ -653,21 +653,39 @@ public class DebatingActivity extends FragmentActivity {
         public void done() {
             mFlashScreenSemaphore.release();
             Log.d("DebatingTimerFlashScreenListener", "released mFlashScreenSemaphore, available: " + mFlashScreenSemaphore.availablePermits());
+        }
+
+        @Override
+        public void flashScreenOff() {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    updateGui();
+                    // Restore the original colours
+                    // It takes a bit of brain-work to figure out what they should be.  We actually
+                    // do this brain-work because the correct colours should be considered volatile
+                    // - this timer can happen at any time so there is no guarantee they haven't
+                    // changed since the last time we checked.
+                    int textColour, backgroundColour;
+                    if (mDebateManager != null) {
+                        DebatePhaseFormat dpf = mDebateManager.getActivePhaseFormat();
+                        boolean overtime = mDebateManager.getActivePhaseCurrentTime() > dpf.getLength();
+                        textColour = getResources().getColor((overtime) ? R.color.overtimeTextColour : android.R.color.primary_text_dark);
+                        backgroundColour = getBackgroundColorFromPeriodInfo(dpf, mDebateManager.getActivePhaseCurrentPeriodInfo());
+                    } else {
+                        textColour = getResources().getColor(android.R.color.primary_text_dark);
+                        backgroundColour = COLOUR_TRANSPARENT;
+                    }
+
+                    updateDebateTimerDisplayColours(mDebateTimerDisplay, textColour, backgroundColour);
+
+                    // Set the background colour of the root view to be transparent again.
+                    findViewById(R.id.mainScreen_rootView).setBackgroundColor(COLOUR_TRANSPARENT);
                 }
             });
         }
 
         @Override
-        public void flashScreenOff() {
-            flashScreen(COLOUR_TRANSPARENT);
-        }
-
-        @Override
-        public void flashScreenOn(int colour) {
+        public void flashScreenOn(final int colour) {
 
             runOnUiThread(new Runnable() {
                 @Override
@@ -679,40 +697,17 @@ public class DebatingActivity extends FragmentActivity {
                     // the current period.  If not, it'll be black (make sure we don't make the
                     // text transparent though!).
                     int invertedTextColour;
-
-                    // If the whole screen is coloured, remove the colouring.
-                    // It will be restored by updateGui() in done().
-                    switch (mBackgroundColourArea) {
-                    case WHOLE_SCREEN:
-                        if (mDebateManager != null)
-                            invertedTextColour = getBackgroundColorFromPeriodInfo(mDebateManager.getActivePhaseFormat(), mDebateManager.getActivePhaseCurrentPeriodInfo());
-                        else
-                            invertedTextColour = getResources().getColor(android.R.color.black);
-                        mDebateTimerDisplay.setBackgroundColor(COLOUR_TRANSPARENT);
-                        break;
-                    case TOP_BAR_ONLY:
-                        mDebateTimerDisplay.findViewById(R.id.debateTimer_speechNameText).setBackgroundColor(COLOUR_TRANSPARENT);
-                        mDebateTimerDisplay.findViewById(R.id.debateTimer_periodDescriptionText).setBackgroundColor(COLOUR_TRANSPARENT);
-                        // keep going
-                    case DISABLED:
-                    default:
+                    if (mBackgroundColourArea == BackgroundColourArea.WHOLE_SCREEN && mDebateManager != null)
+                        invertedTextColour = getBackgroundColorFromPeriodInfo(mDebateManager.getActivePhaseFormat(), mDebateManager.getActivePhaseCurrentPeriodInfo());
+                    else
                         invertedTextColour = getResources().getColor(android.R.color.black);
-                    }
 
-                    // Colour the text in.
-                    // The original colour will be restored by updateGui() in done().
-                    TextView currentTimeText = (TextView) mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTime);
-                    if (currentTimeText != null)
-                        currentTimeText.setTextColor(invertedTextColour);
-                }
-            });
-            flashScreen(colour);
-        }
+                    // So we invert the text colour and set all background colours to transparent.
+                    // Everything will be restored by flashScreenOff().
+                    updateDebateTimerDisplayColours(mDebateTimerDisplay, invertedTextColour, COLOUR_TRANSPARENT);;
 
-        private void flashScreen(final int colour) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+                    // Having completed preparations, set the background colour of the root view to
+                    // flash the screen.
                     findViewById(R.id.mainScreen_rootView).setBackgroundColor(colour);
                 }
             });
@@ -1111,10 +1106,6 @@ public class DebatingActivity extends FragmentActivity {
             mDebateManager.setOvertimeBells(firstOvertimeBell, overtimeBellPeriod);
             mDebateManager.setPrepTimeEnabled(prepTimerEnabled);
             applyPrepTimeBells();
-
-            // This is necessary if the debate structure has changed, i.e. if prep time has been
-            // enabled or disabled.
-            mViewPager.getAdapter().notifyDataSetChanged();
         } else {
             Log.v(TAG, "Couldn't restore overtime bells, mDebateManager doesn't yet exist");
         }
@@ -1140,6 +1131,10 @@ public class DebatingActivity extends FragmentActivity {
             Log.v(TAG, "Couldn't restore AlertManager preferences; mBinder doesn't yet exist");
         }
 
+        // This is necessary if the debate structure has changed, i.e. if prep time has been
+        // enabled or disabled, or if the background colour preference has been changed (as then
+        // the adjacent views need to be redrawn).
+        mViewPager.getAdapter().notifyDataSetChanged();
     }
 
     private void applyPrepTimeBells() {
@@ -1701,7 +1696,7 @@ public class DebatingActivity extends FragmentActivity {
 
     /**
      * Updates a debate timer display with relevant information.
-     * @param debateTimerDisplay a {@link View} which should be the <code>RelativeLayout</code> in debate_timer_display.xml.
+     * @param debateTimerDisplay a {@link View} which should normally be the <code>RelativeLayout</code> in debate_timer_display.xml.
      * @param dpf the {@link DebatePhaseFormat} to be displayed
      * @param pi the {@link PeriodInfo} to be displayed, should be the current one
      * @param phaseName the name of the debate phase
@@ -1733,41 +1728,33 @@ public class DebatingActivity extends FragmentActivity {
         speechNameText.setText(phaseName);
         periodDescriptionText.setText(pi.getDescription());
 
-        // Background colour
-        Integer backgroundColour = getBackgroundColorFromPeriodInfo(dpf, pi);
-
-        switch (mBackgroundColourArea) {
-        case TOP_BAR_ONLY:
-            speechNameText.setBackgroundColor(backgroundColour);
-            periodDescriptionText.setBackgroundColor(backgroundColour);
-            break;
-        case WHOLE_SCREEN:
-            // Don't do the whole screen if there is a flash screen in progress
-            if (mFlashScreenSemaphore.tryAcquire()) {
-                Log.d("updateDebateTimerDisplay", "got mFlashScreenSemaphore, available: " + mFlashScreenSemaphore.availablePermits());
-                debateTimerDisplay.setBackgroundColor(backgroundColour);
-                mFlashScreenSemaphore.release();
-            }
-        }
-
         // Take count direction into account for display
         long timeToShow = subtractFromSpeechLengthIfCountingDown(time, dpf);
 
-        boolean overtime = time > dpf.getLength();
-
-        Resources resources = getResources();
-        int currentTimeTextColor;
-        if (overtime)
-            currentTimeTextColor = resources.getColor(R.color.overtimeTextColour);
-        else
-            currentTimeTextColor = resources.getColor(android.R.color.primary_text_dark);
-
         currentTimeText.setText(secsToTextSigned(timeToShow));
 
-        // Don't bother with the text colour if there is a flash screen in progress
-        if (mFlashScreenSemaphore.tryAcquire()) {
-            currentTimeText.setTextColor(currentTimeTextColor);
-            mFlashScreenSemaphore.release();
+        boolean overtime = time > dpf.getLength();
+
+        // Colours
+        int currentTimeTextColor = getResources().getColor((overtime) ? R.color.overtimeTextColour : android.R.color.primary_text_dark);
+        int backgroundColour     = getBackgroundColorFromPeriodInfo(dpf, pi);
+
+        // If we're updating the current display (as opposed to an inactive debate phase), then
+        // don't update colours if there is a flash screen in progress.
+        boolean displayIsActive = debateTimerDisplay == mDebateTimerDisplay;
+        boolean semaphoreAcquired;
+        if (displayIsActive) semaphoreAcquired = mFlashScreenSemaphore.tryAcquire();
+        else semaphoreAcquired = false;
+
+        // Comment these out when not debugging the semaphore
+        if (semaphoreAcquired) Log.d("updateDebateTimerDisplay", "got mFlashScreenSemaphore, available: " + mFlashScreenSemaphore.availablePermits());
+        else if (displayIsActive) Log.d("updateDebateTimerDisplay", "no mFlashScreenSemaphore permits available");
+        else Log.d("updateDebateTimerDisplay", "don't need mFlashScreenSemaphore - not looking at active display");
+
+        // If not current display, or we got the semaphore, we're good to go.  If not, don't bother.
+        if (!displayIsActive || semaphoreAcquired) {
+            updateDebateTimerDisplayColours(debateTimerDisplay, currentTimeTextColor, backgroundColour);
+            if (semaphoreAcquired) mFlashScreenSemaphore.release();
         }
 
         // Construct the line that goes at the bottom
@@ -1833,6 +1820,33 @@ public class DebatingActivity extends FragmentActivity {
         // Update the POI timer button
         updatePoiTimerButton(debateTimerDisplay, dpf);
 
+    }
+
+    /**
+     * @param view a {@link View} which should often be the <code>RelativeLayout</code> in debate_timer_display.xml,
+     * except in cases where no debate is loaded or something like that.
+     * @param timeTextColour the text colour to use for the current time
+     * @param backgroundColour the colour to use for the background
+     */
+    private void updateDebateTimerDisplayColours(View view, int timeTextColour, int backgroundColour) {
+
+        boolean viewIsDebateTimerDisplay = view.getId() == R.id.debateTimer_root;
+
+        switch (mBackgroundColourArea) {
+        case TOP_BAR_ONLY:
+            if (viewIsDebateTimerDisplay) {
+                // These would only be expected to exist if the view given is the debate timer display
+                view.findViewById(R.id.debateTimer_speechNameText).setBackgroundColor(backgroundColour);
+                view.findViewById(R.id.debateTimer_periodDescriptionText).setBackgroundColor(backgroundColour);
+            }
+            break;
+        case WHOLE_SCREEN:
+            view.setBackgroundColor(backgroundColour);
+        }
+
+        // This would only be expected to exist if the view given is the debate timer display
+        if (viewIsDebateTimerDisplay)
+            ((TextView) view.findViewById(R.id.debateTimer_currentTime)).setTextColor(timeTextColour);
     }
 
     /**

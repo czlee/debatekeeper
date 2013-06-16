@@ -356,11 +356,11 @@ public class AlertManager
         switch (mPoiFlashScreenMode) {
         case SOLID_FLASH:
             if (mFlashScreenListener.begin())
-                startSingleFlashScreen(MAX_BELL_SCREEN_FLASH_TIME, POI_FLASH_COLOUR);
+                startSingleFlashScreen(MAX_BELL_SCREEN_FLASH_TIME, POI_FLASH_COLOUR, true);
             break;
         case STROBE_FLASH:
             if (mFlashScreenListener.begin())
-                startSingleStrobeFlashScreen(MAX_BELL_SCREEN_FLASH_TIME, POI_FLASH_COLOUR);
+                startSingleStrobeFlashScreen(MAX_BELL_SCREEN_FLASH_TIME, POI_FLASH_COLOUR, true);
             break;
         case OFF:
             // Do nothing
@@ -442,17 +442,18 @@ public class AlertManager
                 if (flashTime > MAX_BELL_SCREEN_FLASH_TIME)
                     flashTime = MAX_BELL_SCREEN_FLASH_TIME;
 
-                if (++timesSoFar >= timesToPlay) {
+                final boolean lastFlash = ++timesSoFar >= timesToPlay;
+                if (lastFlash) {
                     flashTime = MAX_BELL_SCREEN_FLASH_TIME;
                     this.cancel();
                 }
 
                 switch (mFlashScreenMode) {
                 case SOLID_FLASH:
-                    startSingleFlashScreen(flashTime, colour);
+                    startSingleFlashScreen(flashTime, colour, lastFlash);
                     break;
                 case STROBE_FLASH:
-                    startSingleStrobeFlashScreen(flashTime, colour);
+                    startSingleStrobeFlashScreen(flashTime, colour, lastFlash);
                     break;
                 case OFF:
                     // Do nothing
@@ -464,19 +465,10 @@ public class AlertManager
     }
 
     /**
-     * Flashes the screen once.
+     * Flashes the screen once.  The most atomic flash screen action.
      * @param flashTime how long in milliseconds to flash the screen for
      * @param colour colour to flash screen
-     */
-    private void startSingleFlashScreen(long flashTime, final int colour) {
-        startSingleFlashScreen(flashTime, colour, true);
-    }
-
-    /**
-     * Flashes the screen once.
-     * @param flashTime how long in milliseconds to flash the screen for
-     * @param colour colour to flash screen
-     * @param lastFlash <code>true</code> if the GUI should be reset after this
+     * @param lastFlash <code>true</code> if the GUI should be reset after this single flash
      */
     private void startSingleFlashScreen(long flashTime, final int colour, final boolean lastFlash) {
         if (mFlashScreenListener == null) return;
@@ -498,7 +490,14 @@ public class AlertManager
      * Runs a strobe flash
      * @param numberOfStrobes The number of strobes to do.
      */
-    private void startSingleStrobeFlashScreen(long flashTime, final int colour) {
+    /**
+     * Starts a single strobe flash, i.e., one rapid period of flashing.  So in a double strobe
+     * bell, there are two of these.
+     * @param flashTime how long in milliseconds the strobe flash should last
+     * @param colour colour to flash screen
+     * @param lastFlash <code>true</code> if the GUI should be reset after this strobe flash
+     */
+    private void startSingleStrobeFlashScreen(long flashTime, final int colour, final boolean lastFlash) {
         Timer strobeTimer = new Timer();
 
         int numberOfStrobes = (int) (flashTime / STROBE_PERIOD);
@@ -521,7 +520,9 @@ public class AlertManager
                 if (++timesSoFar < numStrobes) {
                     startSingleFlashScreen(STROBE_PERIOD * 2 / 3, colour, false);
                 } else {
-                    startSingleFlashScreen(STROBE_PERIOD * 2 / 3, colour, true);
+                    // If it's the last flash in this strobe *and* this strobe was the last strobe
+                    // flash in the sequence, then pass true to lastFlash of startSingleFlashScreen.
+                    startSingleFlashScreen(STROBE_PERIOD * 2 / 3, colour, lastFlash);
                     this.cancel();
                 }
             }
