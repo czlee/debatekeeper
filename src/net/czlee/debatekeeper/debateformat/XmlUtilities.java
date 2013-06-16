@@ -230,6 +230,19 @@ public class XmlUtilities {
         return 0;
     }
 
+    /**
+     * @param version
+     * @return <code>true</code> if the string is a valid version, <code>false</code> otherwise
+     */
+    public static boolean isValidSchemaVersion(String version) {
+        try {
+            versionToIntArray(version);
+            return true;
+        } catch (IllegalSchemaVersionException e) {
+            return false;
+        }
+    }
+
     //******************************************************************************************
     // Private methods
     //******************************************************************************************

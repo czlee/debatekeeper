@@ -112,14 +112,10 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
 
         if (mSchemaVersion == null)
             logXmlError(R.string.xmlError_rootNoSchemaVersion);
-        else {
-            try {
-                if (!isSchemaSupported())
-                    logXmlError(R.string.xmlError_rootNewSchemaVersion, mSchemaVersion, MAXIMUM_SCHEMA_VERSION);
-            } catch (IllegalArgumentException e) {
-                logXmlError(R.string.xmlError_rootInvalidSchemaVersion, mSchemaVersion);
-            }
-        }
+        else if (!XmlUtilities.isValidSchemaVersion(mSchemaVersion))
+            logXmlError(R.string.xmlError_rootInvalidSchemaVersion, mSchemaVersion);
+        else if (!isSchemaSupported())
+            logXmlError(R.string.xmlError_rootNewSchemaVersion, mSchemaVersion, MAXIMUM_SCHEMA_VERSION);
 
         // 1. <name> - mandatory
         String name = xu.findElementText(root, R.string.xml2elemName_name);

@@ -187,17 +187,12 @@ public class DebateFormatBuilderFromXmlForSchema1 implements DebateFormatBuilder
                 }
 
                 mSchemaVersion = getValue(atts, R.string.xml1attrName_root_schemaVersion);
-                if (mSchemaVersion == null) {
+                if (mSchemaVersion == null)
                     logXmlError(R.string.xmlError_rootNoSchemaVersion);
-                } else {
-                    try {
-                        if (!isSchemaSupported())
-                            logXmlError(R.string.xmlError_rootNewSchemaVersion, mSchemaVersion, MAXIMUM_SCHEMA_VERSION);
-                    } catch (IllegalArgumentException e) {
-                        logXmlError(R.string.xmlError_rootInvalidSchemaVersion, mSchemaVersion);
-                    }
-                }
-
+                else if (!XmlUtilities.isValidSchemaVersion(mSchemaVersion))
+                    logXmlError(R.string.xmlError_rootInvalidSchemaVersion, mSchemaVersion);
+                else if (!isSchemaSupported())
+                    logXmlError(R.string.xmlError_rootNewSchemaVersion, mSchemaVersion, MAXIMUM_SCHEMA_VERSION);
 
                 mDfb.setDebateFormatName(name);
                 mIsInRootContext = true;
