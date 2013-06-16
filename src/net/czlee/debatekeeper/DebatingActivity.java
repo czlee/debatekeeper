@@ -981,7 +981,6 @@ public class DebatingActivity extends FragmentActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(mGuiUpdateBroadcastReceiver,
                 new IntentFilter(DebatingTimerService.UPDATE_GUI_BROADCAST_ACTION));
 
-        applyPreferences();
         updateGui();
     }
 
@@ -1531,6 +1530,10 @@ public class DebatingActivity extends FragmentActivity {
                 am.activityStart();
             }
         }
+
+        // Always apply preferences after restoring the binder, as some of the preferences
+        // apply to the binder.
+        applyPreferences();
     }
 
     /**
