@@ -50,7 +50,9 @@ public abstract class GenericDebatePhaseFormat implements DebatePhaseFormat {
 
     @Override
     public PeriodInfo getFirstPeriodInfo() {
-        return new PeriodInfo("", null, false);
+        // The description is blank, not null - it needs to remove any previous description
+        // that may have been there.
+        return new PeriodInfo(null, null, "", null, false);
     }
 
     @Override

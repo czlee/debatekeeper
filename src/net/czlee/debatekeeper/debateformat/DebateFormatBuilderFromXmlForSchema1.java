@@ -550,7 +550,7 @@ public class DebateFormatBuilderFromXmlForSchema1 implements DebateFormatBuilder
                 }
 
                 // 5. We now have enough information to make the PeriodInfo
-                PeriodInfo pi = new PeriodInfo(description, backgroundColor, poisAllowed);
+                PeriodInfo pi = new PeriodInfo(description, backgroundColor, poisAllowed, true);
 
                 // Finally, add the period
                 try {
