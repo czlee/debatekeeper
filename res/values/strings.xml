@@ -89,7 +89,7 @@
     <string name="errorsinXmlFileDialog_button">OK</string>
     <string name="errorsinXmlFileDialog_message_prefix">"There are a few problems with this debate format file. I'll try to work with it, but it probably won't work properly. The problems are:\n"</string>
 
-    <string name="schemaTooNewDialog_title">Upgrade app?</string>
+    <string name="schemaTooNewDialog_title">Update app?</string>
     <string name="schemaTooNewDialog_button_upgrade">Check for updates</string>
     <string name="schemaTooNewDialog_button_ignore">Ignore</string>
     <string name="schemaTooNewDialog_message">This debate style file uses a schema (%1$s) newer than supported (%2$s) by this app version (%3$s). Check for updates on Google Play?</string>
