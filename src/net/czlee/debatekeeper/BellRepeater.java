@@ -230,6 +230,11 @@ public class BellRepeater {
     // Private methods
     //******************************************************************************************
 
+    /**
+     * Tries to acquire the semaphore lock, timing out after two seconds.  Methods that call this
+     * method must call <code>releaseSemaphore()</code> when done.
+     * @return <code>true</code> if the semaphore was acquired, <code>false</code> otherwise.
+     */
     private boolean tryAcquireSemaphore() {
         try {
             if (mSemaphore.tryAcquire(2, TimeUnit.SECONDS)) return true;
@@ -243,6 +248,10 @@ public class BellRepeater {
         }
     }
 
+    /**
+     * Releases the semaphore lock.  Methods that <code>tryAcquireSemaphore()</code> must call this method
+     * when done.
+     */
     private void releaseSemaphore() {
         mSemaphore.release();
     }
