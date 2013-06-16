@@ -488,9 +488,8 @@ public class AlertManager
             @Override
             public void run() {
                 mFlashScreenListener.flashScreenOff();
-                if (lastFlash) {
+                if (lastFlash)
                     mFlashScreenListener.done();
-                }
             }
         }, flashTime);
     }
