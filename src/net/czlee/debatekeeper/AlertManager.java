@@ -57,7 +57,7 @@ public class AlertManager
 
     // System services
     private final NotificationManager   mNotificationManager;
-    private final PendingIntent         mIntentStartingHostActivity;
+    private final PendingIntent         mIntentForOngoingNotification;
     private final PowerManager          mPowerManager;
     private final Vibrator              mVibrator;
     private       PowerManager.WakeLock mWakeLock;
@@ -90,14 +90,21 @@ public class AlertManager
 
         mService = debatingTimerService;
 
-        // Retrieve the notification manager
+        // System services
         mNotificationManager = (NotificationManager) debatingTimerService.getSystemService(
                 Context.NOTIFICATION_SERVICE);
-
-        mIntentStartingHostActivity = PendingIntent.getActivity(debatingTimerService,
-                0, new Intent(debatingTimerService, DebatingActivity.class), 0);
         mVibrator = (Vibrator) debatingTimerService.getSystemService(Context.VIBRATOR_SERVICE);
         mPowerManager = (PowerManager) mService.getSystemService(Context.POWER_SERVICE);
+
+        // Create a PendingIntent for the notification we raise while the timer is running.
+        Intent intent = new Intent(debatingTimerService, DebatingActivity.class);
+        // This flag prevents the activity from having multiple instances on the back stack,
+        // so that when the user presses the notification while already in Debatekeeper, pressing
+        // back won't make the user go through several instances of Debatekeeper on the back stack.
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        mIntentForOngoingNotification = PendingIntent.getActivity(debatingTimerService,
+                0, intent, 0);
 
         // Set up defaults
         Resources res = mService.getResources();
@@ -228,7 +235,7 @@ public class AlertManager
                    .setTicker(mService.getText(R.string.notification_tickerText))
                    .setContentTitle(mService.getText(R.string.notification_title))
                    .setContentText(speechName)
-                   .setContentIntent(mIntentStartingHostActivity);
+                   .setContentIntent(mIntentForOngoingNotification);
 
             mNotification = builder.getNotification();
             mService.startForeground(NOTIFICATION_ID, mNotification);
