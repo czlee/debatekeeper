@@ -19,6 +19,8 @@ package net.czlee.debatekeeper;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import net.czlee.debatekeeper.debateformat.BellSoundInfo;
 import android.content.Context;
@@ -56,6 +58,8 @@ public class BellRepeater {
     private       int               mRepetitionsSoFar = 0;
     private       Timer             mTimer            = null;
 
+    private final Semaphore         mSemaphore = new Semaphore(1, true);
+
     //******************************************************************************************
     // Private classes
     //******************************************************************************************
@@ -68,6 +72,9 @@ public class BellRepeater {
          */
         @Override
         public void run() {
+
+            if (!tryAcquireSemaphore()) return;
+
             switch (mState) {
             case PREPARED:
                 mState = BellRepeaterState.PLAYING;
@@ -83,6 +90,7 @@ public class BellRepeater {
             case STOPPED:
                 // In theory this shouldn't happen, because the timer should be cancelled.
                 // But just in case, do nothing.
+                releaseSemaphore();
                 return;
             default:
                 break;
@@ -120,6 +128,8 @@ public class BellRepeater {
 
                 mTimer.cancel();
             }
+
+            releaseSemaphore();
         }
 
     }
@@ -150,6 +160,8 @@ public class BellRepeater {
 
         if (mState == BellRepeaterState.INITIAL) {
 
+            if (!tryAcquireSemaphore()) return;
+
             // Initialise the MediaPlayer
             mMediaPlayer = MediaPlayer.create(mContext, mSoundInfo.getSoundResid());
             // Set to maximum volume possible (it's really soft!)
@@ -162,11 +174,12 @@ public class BellRepeater {
                 public boolean onError(MediaPlayer mp, int what, int extra) {
                     Log.e(TAG, "The media player went into an errored state! Releasing.");
                     // The MediaPlayer coming here should be the same one as mMediaPlayer in the BellRepeater class
-                    if (mp != mMediaPlayer){
+                    if (mp != mMediaPlayer)
                         Log.e(TAG, "OnErrorListener mp wasn't the same as mMediaPlayer!");
-                    }
+                    if (!tryAcquireSemaphore()) return false;
                     mMediaPlayer.release();
                     mMediaPlayer = null;
+                    releaseSemaphore();
                     return false;
                 }
             });
@@ -177,6 +190,8 @@ public class BellRepeater {
             mTimer.schedule(new BellRepeatTask(), 0, mSoundInfo.getRepeatPeriod());
 
             mState = BellRepeaterState.PREPARED;
+
+            releaseSemaphore();
         }
     }
 
@@ -185,6 +200,9 @@ public class BellRepeater {
      * Can be called repeatedly; has no effect if already stopped.
      */
     public void stop() {
+
+        if (!tryAcquireSemaphore()) return;
+
         mState = BellRepeaterState.STOPPED;
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
@@ -195,6 +213,8 @@ public class BellRepeater {
         if (mTimer != null) {
             mTimer.cancel();
         }
+
+        releaseSemaphore();
     }
 
     /**
@@ -204,6 +224,27 @@ public class BellRepeater {
     // does count.
     public boolean isPlaying(){
         return mState == BellRepeaterState.PREPARED || mState == BellRepeaterState.PLAYING;
+    }
+
+    //******************************************************************************************
+    // Private methods
+    //******************************************************************************************
+
+    private boolean tryAcquireSemaphore() {
+        try {
+            if (mSemaphore.tryAcquire(2, TimeUnit.SECONDS)) return true;
+            else {
+                Log.e(TAG, "Could not acquire semaphore");
+                return false;
+            }
+        } catch (InterruptedException e) {
+            Log.e(TAG, "Interrupted while acquiring semaphore");
+            return false;
+        }
+    }
+
+    private void releaseSemaphore() {
+        mSemaphore.release();
     }
 
 }
