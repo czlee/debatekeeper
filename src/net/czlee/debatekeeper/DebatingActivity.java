@@ -669,14 +669,12 @@ public class DebatingActivity extends FragmentActivity {
             } catch (InterruptedException e) {
                 return false; // Don't bother with the flash screen any more
             }
-            if (result) Log.d("DebatingTimerFlashScreenListener", "acquired mFlashScreenSemaphore, available: " + mFlashScreenSemaphore.availablePermits());
             return result;
         }
 
         @Override
         public void done() {
             mFlashScreenSemaphore.release();
-            Log.d("DebatingTimerFlashScreenListener", "released mFlashScreenSemaphore, available: " + mFlashScreenSemaphore.availablePermits());
         }
 
         @Override
@@ -1783,11 +1781,6 @@ public class DebatingActivity extends FragmentActivity {
         boolean semaphoreAcquired;
         if (displayIsActive) semaphoreAcquired = mFlashScreenSemaphore.tryAcquire();
         else semaphoreAcquired = false;
-
-        // Comment these out when not debugging the semaphore
-        if (semaphoreAcquired) Log.d("updateDebateTimerDisplay", "got mFlashScreenSemaphore, available: " + mFlashScreenSemaphore.availablePermits());
-        else if (displayIsActive) Log.d("updateDebateTimerDisplay", "no mFlashScreenSemaphore permits available");
-        else Log.d("updateDebateTimerDisplay", "don't need mFlashScreenSemaphore - not looking at active display");
 
         // If not current display, or we got the semaphore, we're good to go.  If not, don't bother.
         if (!displayIsActive || semaphoreAcquired) {
