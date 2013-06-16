@@ -38,7 +38,7 @@
     <string name="viewFormat_fileLocationValue_userDefined">Custom user file</string>
     <string name="viewFormat_outdatedSchemaVersion">Uses an outdated schema (version %1$s)</string>
     <string name="viewFormat_futureSchemaVersion">Schema not supported (version %1$s)</string>
-    <string name="viewFormat_unrecognisedSchemaVersion">Unrecognised schema version \"%1$s\"</string>
+    <string name="viewFormat_invalidSchemaVersion">Invalid schema version \"%1$s\"</string>
     <string name="viewFormat_prepTimeLabel">Prep time</string>
     <string name="viewFormat_showDetails_buttonText">More</string>
 

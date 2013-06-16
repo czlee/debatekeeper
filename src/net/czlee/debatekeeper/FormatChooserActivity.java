@@ -289,7 +289,7 @@ public class FormatChooserActivity extends FragmentActivity {
                 try {
                     comparison = XmlUtilities.compareSchemaVersions(schemaVersion, CURRENT_SCHEMA_VERSION);
                 } catch (IllegalSchemaVersionException e) {
-                    schemaVersionTextValue = getString(R.string.viewFormat_unrecognisedSchemaVersion, schemaVersion);
+                    schemaVersionTextValue = getString(R.string.viewFormat_invalidSchemaVersion, schemaVersion);
                 }
                 if (schemaVersionTextValue == null) {
                     if (comparison > 0)
