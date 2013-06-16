@@ -19,7 +19,8 @@
     android:id="@+id/mainScreen_rootView"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@android:color/black" >
 
     <LinearLayout
         android:id="@+id/mainScreen_controlButtons"

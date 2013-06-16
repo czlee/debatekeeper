@@ -690,20 +690,21 @@ public class DebatingActivity extends FragmentActivity {
                     // - this timer can happen at any time so there is no guarantee they haven't
                     // changed since the last time we checked.
                     int textColour, backgroundColour;
+                    Resources resources = getResources();
                     if (mDebateManager != null) {
                         DebatePhaseFormat dpf = mDebateManager.getActivePhaseFormat();
                         boolean overtime = mDebateManager.getActivePhaseCurrentTime() > dpf.getLength();
-                        textColour = getResources().getColor((overtime) ? R.color.overtimeTextColour : android.R.color.primary_text_dark);
+                        textColour = resources.getColor((overtime) ? R.color.overtimeTextColour : android.R.color.primary_text_dark);
                         backgroundColour = getBackgroundColorFromPeriodInfo(dpf, mDebateManager.getActivePhaseCurrentPeriodInfo());
                     } else {
-                        textColour = getResources().getColor(android.R.color.primary_text_dark);
+                        textColour = resources.getColor(android.R.color.primary_text_dark);
                         backgroundColour = COLOUR_TRANSPARENT;
                     }
 
                     updateDebateTimerDisplayColours(mDebateTimerDisplay, textColour, backgroundColour);
 
-                    // Set the background colour of the root view to be transparent again.
-                    findViewById(R.id.mainScreen_rootView).setBackgroundColor(COLOUR_TRANSPARENT);
+                    // Set the background colour of the root view to be black again.
+                    findViewById(R.id.mainScreen_rootView).setBackgroundColor(resources.getColor(android.R.color.black));
                 }
             });
         }
