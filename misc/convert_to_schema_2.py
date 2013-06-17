@@ -3,6 +3,9 @@
 try:
     import lxml.etree as ET
 except ImportError:
+    print("This script won't format the output file nicely. To get the script")
+    print("to work better install python-lxml. On a Linux machine:")
+    print(" $ sudo apt-get install python-lxml")
     import xml.etree.ElementTree as ET
 import optparse
 
