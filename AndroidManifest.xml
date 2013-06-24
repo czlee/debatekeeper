@@ -47,7 +47,17 @@
             android:label="@string/activityName_GlobalSettings" />
         <activity
             android:name=".FormatChooserActivity"
-            android:label="@string/activityName_FormatChooser" />
+            android:label="@string/activityLabel_importStyle" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/xml" />
+                <!-- We don't use application/xml since other applications are unlikely to
+                declare intent filters for this, and we want the user to be able to choose
+                how to open the file in case it's not a Debatekeeper file. -->
+                <data android:mimeType="text/plain" android:pathPattern=".*\\.xml" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".PrepTimeBellsEditActivity"
             android:label="@string/activityName_PrepTimeBellsEdit" />

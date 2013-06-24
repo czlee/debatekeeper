@@ -23,6 +23,7 @@
     <string name="activityName_GlobalSettings">Settings</string>
     <string name="activityName_FormatChooser">Choose style</string>
     <string name="activityName_PrepTimeBellsEdit">Prep timer bells</string>
+    <string name="activityLabel_importStyle">Debate style import</string>
 
     <string name="app_marketUri">market://details?id=net.czlee.debatekeeper</string>
     

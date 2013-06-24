@@ -511,6 +511,8 @@ public class FormatChooserActivity extends FragmentActivity {
         setContentView(R.layout.activity_format_chooser);
         DEBATING_TIMER_URI = getString(R.string.xml_uri);
 
+        setTitle(R.string.activityName_FormatChooser);
+
         mFilesManager = new FormatXmlFilesManager(this);
 
         // Set the action bar
@@ -551,6 +553,16 @@ public class FormatChooserActivity extends FragmentActivity {
         if (incomingSelection != ListView.INVALID_POSITION) {
             mStylesListView.setItemChecked(incomingSelection, true);
             mStylesListView.smoothScrollToPosition(incomingSelection);
+        }
+
+        // Deal with the incoming intent, if any
+        Intent intent = getIntent();
+        if (intent.getAction() == Intent.ACTION_VIEW) {
+            Log.i(TAG, "mime type: " + intent.getType());
+            Log.i(TAG, "data: " + intent.getDataString());
+            // TODO check for the <debate-format> element, show a dialog, and if the user agrees
+            // then copy the file to the /debatekeeper directory, checking for overwrites
+            // (including overriding built-in styles).
         }
     }
 
