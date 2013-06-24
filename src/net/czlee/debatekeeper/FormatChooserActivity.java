@@ -17,6 +17,7 @@
 
 package net.czlee.debatekeeper;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -461,6 +463,8 @@ public class FormatChooserActivity extends FragmentActivity {
         public void onItemClick(AdapterView<?> parent, View view, int position,
                 long id) {
             mStylesArrayAdapter.notifyDataSetChanged();
+
+
         }
     }
 
@@ -489,6 +493,9 @@ public class FormatChooserActivity extends FragmentActivity {
             break;
         case R.id.formatChooser_actionBar_ok:
             confirmSelectionAndReturn();
+            break;
+        case R.id.formatChooser_actionBar_share:
+            shareCurrentSelection();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -564,18 +571,37 @@ public class FormatChooserActivity extends FragmentActivity {
      * Confirms and handles the selection appropriately, and ends the Activity.
      */
     private void confirmSelectionAndReturn() {
-        int selectedPosition = mStylesListView.getCheckedItemPosition();
-        if (selectedPosition == getIncomingSelection()) {
+        String filename = getSelectedFilename();
+
+        // TODO Make sure this method always goes to DebatingActivity, as it might have
+        // launched from a file being opened
+
+        if (filename == null) {
+
+            // Nothing was selected, so just make a Toast to say so and exit.
+            // (In theory, it might be that it was an invalid selection without a file name, but
+            // this should never happen.)
+            Toast.makeText(FormatChooserActivity.this, R.string.formatChooser_toast_noSelection,
+                    Toast.LENGTH_SHORT).show();
+            FormatChooserActivity.this.finish();
+
+        } else if (filename.equals(getIncomingFilename())) {
+
+            // Nothing has changed, so just make a Toast to say so and exit.
             Toast.makeText(FormatChooserActivity.this,
                     R.string.formatChooser_toast_formatUnchanged, Toast.LENGTH_SHORT)
                     .show();
             FormatChooserActivity.this.finish();
-        } else if (selectedPosition != ListView.INVALID_POSITION) {
-            returnSelectionByPosition(selectedPosition);
+
         } else {
-            Toast.makeText(FormatChooserActivity.this, R.string.formatChooser_toast_noSelection,
-                    Toast.LENGTH_SHORT).show();
+
+            // Return the filename to DebatingActivity
+            Log.v(TAG, "Returning file " + filename);
+            Intent intent = new Intent();
+            intent.putExtra(EXTRA_XML_FILE_NAME, filename);
+            setResult(RESULT_OK, intent);
             FormatChooserActivity.this.finish();
+
         }
     }
 
@@ -616,23 +642,54 @@ public class FormatChooserActivity extends FragmentActivity {
     }
 
     /**
-     * @return the selection (as an integer) that was passed in the <code>Intent</code> that
+     * @return the selection (as an integer) that was passed in the {@link Intent} that
      * started this <code>Activity</code>, or <code>ListView.INVALID_POSITION</code>
      */
     private int getIncomingSelection() {
-        Intent data = getIntent();
-        String incomingFilename = data.getStringExtra(EXTRA_XML_FILE_NAME);
+        String incomingFilename = getIncomingFilename();
         if (incomingFilename != null) {
-            Iterator<DebateFormatListEntry> entryIterator = mStylesList
-                    .iterator();
+            Iterator<DebateFormatListEntry> entryIterator = mStylesList.iterator();
             while (entryIterator.hasNext()) {
                 DebateFormatListEntry se = entryIterator.next();
-                if (incomingFilename.equals(se.getFilename())) {
+                if (incomingFilename.equals(se.getFilename()))
                     return mStylesList.indexOf(se);
-                }
             }
         }
         return ListView.INVALID_POSITION;
+    }
+
+    /**
+     * @return the filename that was passed in the {@link Intent} that started this
+     * <code>Activity</code>, or <code>null</code> if no filename was passed in
+     */
+    private String getIncomingFilename() {
+        Intent data = getIntent();
+        String incomingFilename = data.getStringExtra(EXTRA_XML_FILE_NAME);
+        return incomingFilename;
+    }
+
+    /**
+     * @return the name of the currently-selected file, or <code>null</code> if nothing
+     * is selected or if the currently-selected item appears to be out of range
+     */
+    private String getSelectedFilename() {
+        int selectedPosition = mStylesListView.getCheckedItemPosition();
+
+        // Do nothing if nothing is selected.
+        if (selectedPosition == ListView.INVALID_POSITION) {
+            Log.i(TAG, "Nothing was selected");
+            return null;
+        }
+
+        if (selectedPosition >= mStylesList.size()) {
+            Log.e(TAG, "Item " + selectedPosition + " does not exist");
+            return null;
+        }
+
+        String filename = mStylesList.get(selectedPosition).getFilename();
+
+        return filename;
+
     }
 
     /**
@@ -691,24 +748,50 @@ public class FormatChooserActivity extends FragmentActivity {
     }
 
     /**
-     * Ends this Activity, returning a result to the activity that called this Activity.
-     * @param position the integer position in the styles list of the user-selected position.
+     * Creates and initiates an {@link Intent} that shares the currently-selected file.  If no
+     * file is selected, it does nothing.  If there is an error, it shows a Toast and then does
+     * nothing.
      */
-    private void returnSelectionByPosition(int position) {
-        Log.v(TAG, "Picked item " + position);
+    private void shareCurrentSelection() {
+
+        String filename = getSelectedFilename();
+
+        // Do nothing if not file name is selected
+        if (filename == null) {
+            Toast.makeText(this, R.string.formatChooser_toast_shareCannotFind, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Do nothing if it is a built-in file, or if it is not found.
+        switch (getFileLocation(filename)) {
+        case FormatXmlFilesManager.LOCATION_ASSETS:
+            Log.e(TAG, "File " + filename + " is not user-defined");
+            Toast.makeText(this, R.string.formatChooser_toast_shareBuiltIn, Toast.LENGTH_SHORT).show();
+            return;
+        case FormatXmlFilesManager.LOCATION_NOT_FOUND:
+            Log.e(TAG, "File " + filename + " not found");
+            Toast.makeText(this, R.string.formatChooser_toast_shareCannotFind, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        File file = mFilesManager.getFile(filename);
+
+        // Do nothing if the file was not found.
+        if (file == null) {
+            Log.e(TAG, "Could not get File object for " + filename);
+            Toast.makeText(this, R.string.formatChooser_toast_shareCannotFind, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Log.v(TAG, "Sharing item " + filename);
+
+        Uri uri = Uri.fromFile(file);
 
         Intent intent = new Intent();
-
-        if (position >= mStylesList.size()) {
-            setResult(RESULT_ERROR);
-            Log.e(TAG, "No item associated with that");
-        } else {
-            String filename = mStylesList.get(position).getFilename();
-            Log.v(TAG, "File name is " + filename);
-            intent.putExtra(EXTRA_XML_FILE_NAME, filename);
-            setResult(RESULT_OK, intent);
-        }
-        FormatChooserActivity.this.finish();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.setType("application/xml");
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        startActivity(Intent.createChooser(intent, getString(R.string.formatChooser_shareChooser_title)));
     }
 
     /**

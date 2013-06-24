@@ -20,12 +20,13 @@
     <item
         android:id="@+id/formatChooser_actionBar_ok"
         android:icon="@drawable/ic_action_confirm"
-        android:showAsAction="always" android:title="@string/formatChooser_actionBar_confirmName">
+        android:showAsAction="always" android:title="@string/formatChooser_actionBar_confirmName" android:orderInCategory="1">
     </item>
     <item
         android:id="@+id/formatChooser_actionBar_cancel"
         android:icon="@drawable/ic_action_cancel"
-        android:showAsAction="always" android:title="@android:string/cancel">
+        android:showAsAction="always" android:title="@android:string/cancel" android:orderInCategory="2">
     </item>
+    <item android:id="@+id/formatChooser_actionBar_share" android:title="@string/formatChooser_actionBar_shareName" android:icon="@drawable/ic_action_share" android:showAsAction="ifRoom" android:orderInCategory="0"></item>
 
 </menu>

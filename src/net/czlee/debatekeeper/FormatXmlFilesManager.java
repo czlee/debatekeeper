@@ -85,6 +85,26 @@ public class FormatXmlFilesManager {
     }
 
     /**
+     * Returns a <code>File</code> object for the given filename.
+     * @param filename the name of the file to get a <code>File</code> object for
+     * @return a <code>File</code> if the file exists, or <code>null</code> if it does not.
+     */
+    public File getFile(String filename) {
+
+        // See if we can find the directory...
+        File userFilesDirectory = getUserFilesDirectory();
+        if (userFilesDirectory == null)
+            return null;
+
+        // Then see if we can find the file...
+        File xmlFile = new File(userFilesDirectory, filename);
+        if (!xmlFile.isFile())
+            return null;
+
+        return xmlFile;
+    }
+
+    /**
      * Returns a list of all files available in the relevant locations.
      * @return an array of Strings, each being an existent file name (but not necessarily a valid
      * XML file)
@@ -176,15 +196,9 @@ public class FormatXmlFilesManager {
      */
     private InputStream openFromRoot(String filename) {
 
-        // See if we can find the directory...
-        File userFilesDirectory = getUserFilesDirectory();
-        if (userFilesDirectory == null)
-            return null;
+        File xmlFile = getFile(filename);
 
-        // Then see if we can find the file...
-        File xmlFile = new File(userFilesDirectory, filename);
-        if (!xmlFile.isFile())
-            return null;
+        if (xmlFile == null) return null;
 
         // Then see if we can open it...
         FileInputStream fis;

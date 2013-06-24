@@ -26,9 +26,14 @@
 
     <string name="formatChooser_toast_noSelection">No style selected</string>
     <string name="formatChooser_toast_formatUnchanged">Style not changed</string>
+    <string name="formatChooser_toast_shareBuiltIn">"You can't share built-in formats"</string>
+    <string name="formatChooser_toast_shareCannotFind">"Could not find this format"</string>
     
     <string name="formatChooser_actionBar_confirmName">Confirm</string>
-
+    <string name="formatChooser_actionBar_shareName">Share</string>
+    
+    <string name="formatChooser_shareChooser_title">Send via…</string>
+    
     <string name="viewFormat_regionLabel">Region</string>
     <string name="viewFormat_levelLabel">Level</string>
     <string name="viewFormat_usedAtLabel">Used at</string>
