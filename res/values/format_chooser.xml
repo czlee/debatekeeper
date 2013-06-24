@@ -26,8 +26,7 @@
 
     <string name="formatChooser_toast_noSelection">No style selected</string>
     <string name="formatChooser_toast_formatUnchanged">Style not changed</string>
-    <string name="formatChooser_toast_shareBuiltIn">"You can't share built-in formats"</string>
-    <string name="formatChooser_toast_shareCannotFind">"Could not find this format"</string>
+    <string name="formatChooser_toast_shareBuiltIn">"You can't share built-in styles"</string>
     
     <string name="formatChooser_actionBar_confirmName">Confirm</string>
     <string name="formatChooser_actionBar_shareName">Share</string>

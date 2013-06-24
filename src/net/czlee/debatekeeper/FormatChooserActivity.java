@@ -459,12 +459,13 @@ public class FormatChooserActivity extends FragmentActivity {
     }
 
     private class StylesListViewOnItemClickListener implements OnItemClickListener {
+        @TargetApi(Build.VERSION_CODES.HONEYCOMB)
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position,
                 long id) {
             mStylesArrayAdapter.notifyDataSetChanged();
-
-
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+                invalidateOptionsMenu();
         }
     }
 
@@ -498,6 +499,14 @@ public class FormatChooserActivity extends FragmentActivity {
             shareCurrentSelection();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        MenuItem shareItem = menu.findItem(R.id.formatChooser_actionBar_share);
+        shareItem.setEnabled(getSelectedFilename() != null);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     //******************************************************************************************
@@ -770,7 +779,7 @@ public class FormatChooserActivity extends FragmentActivity {
 
         // Do nothing if not file name is selected
         if (filename == null) {
-            Toast.makeText(this, R.string.formatChooser_toast_shareCannotFind, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.formatChooser_toast_noSelection, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -782,7 +791,7 @@ public class FormatChooserActivity extends FragmentActivity {
             return;
         case FormatXmlFilesManager.LOCATION_NOT_FOUND:
             Log.e(TAG, "File " + filename + " not found");
-            Toast.makeText(this, R.string.formatChooser_toast_shareCannotFind, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.formatChooser_toast_noSelection, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -791,7 +800,7 @@ public class FormatChooserActivity extends FragmentActivity {
         // Do nothing if the file was not found.
         if (file == null) {
             Log.e(TAG, "Could not get File object for " + filename);
-            Toast.makeText(this, R.string.formatChooser_toast_shareCannotFind, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.formatChooser_toast_noSelection, Toast.LENGTH_SHORT).show();
             return;
         }
 
