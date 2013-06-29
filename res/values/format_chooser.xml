@@ -25,11 +25,16 @@
     <string name="blankDetailsDialog_text">"There's a problem with this debate format's XML file (%1$s).\n\nIn more detail:\n%2$s"</string>
 
     <string name="formatChooser_toast_noSelection">No style selected</string>
+    <string name="formatChooser_toast_notFound">File not found</string>
     <string name="formatChooser_toast_formatUnchanged">Style not changed</string>
     <string name="formatChooser_toast_shareBuiltIn">"You can't share built-in styles"</string>
+    <string name="formatChooser_toast_deleteBuiltIn">"You can't delete built-in styles"</string>
+    <string name="formatChooser_toast_deleted">Deleted file %1$s</string>
+    <string name="formatChooser_toast_errorDeleting">Could not delete file %1$s</string>
     
-    <string name="formatChooser_actionBar_confirmName">Confirm</string>
-    <string name="formatChooser_actionBar_shareName">Share</string>
+    <string name="formatChooser_actionBar_confirm_title">Confirm</string>
+    <string name="formatChooser_actionBar_share_title">Share</string>
+    <string name="formatChooser_actionBar_delete_title">Delete</string>
     
     <string name="formatChooser_shareChooser_title">Send via…</string>
     

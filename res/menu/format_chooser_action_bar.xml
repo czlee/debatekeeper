@@ -13,20 +13,37 @@
  * GNU General Public Licence for more details.
  *
  * You should have received a copy of the GNU General Public Licence
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
         android:id="@+id/formatChooser_actionBar_ok"
         android:icon="@drawable/ic_action_confirm"
-        android:showAsAction="always" android:title="@string/formatChooser_actionBar_confirmName" android:orderInCategory="1">
+        android:orderInCategory="11"
+        android:showAsAction="always"
+        android:title="@string/formatChooser_actionBar_confirm_title">
     </item>
     <item
         android:id="@+id/formatChooser_actionBar_cancel"
         android:icon="@drawable/ic_action_cancel"
-        android:showAsAction="always" android:title="@android:string/cancel" android:orderInCategory="2">
+        android:orderInCategory="12"
+        android:showAsAction="always"
+        android:title="@android:string/cancel">
     </item>
-    <item android:id="@+id/formatChooser_actionBar_share" android:title="@string/formatChooser_actionBar_shareName" android:icon="@drawable/ic_action_share" android:showAsAction="ifRoom" android:orderInCategory="0"></item>
+    <item
+        android:id="@+id/formatChooser_actionBar_share"
+        android:icon="@drawable/ic_action_share"
+        android:orderInCategory="0"
+        android:showAsAction="ifRoom"
+        android:title="@string/formatChooser_actionBar_share_title">
+    </item>
+    <item
+        android:id="@+id/formatChooser_actionBar_delete"
+        android:icon="@drawable/ic_action_delete"
+        android:orderInCategory="1"
+        android:showAsAction="ifRoom"
+        android:title="@string/formatChooser_actionBar_delete_title">
+    </item>
 
 </menu>

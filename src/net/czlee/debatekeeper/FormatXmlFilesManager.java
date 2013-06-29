@@ -55,6 +55,7 @@ import android.os.Environment;
  */
 public class FormatXmlFilesManager {
 
+    private final Context      mContext;
     private final AssetManager mAssets;
     private static final String XML_FILE_ROOT_DIRECTORY_NAME = "debatekeeper";
     private static final String ASSETS_PATH                  = "formats";
@@ -64,7 +65,8 @@ public class FormatXmlFilesManager {
     public static final int LOCATION_NOT_FOUND    = -1;
 
     public FormatXmlFilesManager(Context context) {
-        mAssets = context.getAssets();
+        mContext = context;
+        mAssets  = context.getAssets();
     }
 
     //******************************************************************************************
@@ -72,7 +74,7 @@ public class FormatXmlFilesManager {
     //******************************************************************************************
 
     /**
-     * Opens the file given by 'filename' and returns an <code>InputStream</code> for the file.
+     * Opens a file and returns an <code>InputStream</code> for the file.
      * @param filename the name of the file
      * @return the <code>InputStream</code> for the file
      * @throws IOException if the file can't be found or there is a problem with the file.
@@ -82,6 +84,27 @@ public class FormatXmlFilesManager {
         if (is != null)
             return is;
         return openFromAssets(filename);
+    }
+
+    /**
+     * Deletes a file, if it is a built-in asset file.
+     * <p>Note that this method does <i>not</i> throw IOException on failure.
+     * Callers must check the return value.  However, it does throw an
+     * {@link IllegalArgumentException} if the file isn't a user-defined file, including if
+     * it couldn't be found.</p>
+     * @param filename the file to delete
+     * @return <code>true</code> if the file was deleted, <code>false</code> otherwise
+     * @throws IllegalArgumentException if the file isn't user-defined
+     */
+    public boolean delete(String filename) {
+
+        if (getLocation(filename) != LOCATION_USER_DEFINED)
+            throw new IllegalArgumentException("Tried to delete a file that isn't user-defined");
+
+        File file = getFile(filename);
+
+        return file.delete();
+
     }
 
     /**

@@ -497,6 +497,9 @@ public class FormatChooserActivity extends FragmentActivity {
             break;
         case R.id.formatChooser_actionBar_share:
             shareCurrentSelection();
+            break;
+        case R.id.formatChooser_actionBar_delete:
+            deleteCurrentSelection();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -538,13 +541,7 @@ public class FormatChooserActivity extends FragmentActivity {
         if (cancelButton != null) cancelButton.setOnClickListener(new CancelButtonOnClickListener());
 
         // Populate mStylesList
-        try {
-            populateStylesLists();
-        } catch (IOException e) {
-            e.printStackTrace();
-            ListIOErrorDialogFragment fragment = new ListIOErrorDialogFragment();
-            fragment.show(getSupportFragmentManager(), DIALOG_TAG_LIST_IO_ERROR);
-        }
+        populateStylesLists();
 
         mStylesArrayAdapter = new DebateFormatEntryArrayAdapter(this, mStylesList,
                 new FormatChooserActivityBinder());
@@ -627,6 +624,55 @@ public class FormatChooserActivity extends FragmentActivity {
     }
 
     /**
+     * Deletes the currently-selected file after prompting the user.
+     */
+    private void deleteCurrentSelection() {
+        DebateFormatListEntry entry = getSelectedEntry();
+        String filename = entry.getFilename();
+
+        if (filename == null) {
+            Toast.makeText(FormatChooserActivity.this, R.string.formatChooser_toast_noSelection,
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        switch (mFilesManager.getLocation(filename)) {
+        case FormatXmlFilesManager.LOCATION_ASSETS:
+            Toast.makeText(FormatChooserActivity.this, R.string.formatChooser_toast_deleteBuiltIn,
+                    Toast.LENGTH_SHORT).show();
+            return;
+        case FormatXmlFilesManager.LOCATION_NOT_FOUND:
+            Toast.makeText(FormatChooserActivity.this, R.string.formatChooser_toast_notFound,
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // TODO prompt the user, requires dialog
+
+        boolean result = mFilesManager.delete(filename);
+
+        if (result) {
+            Log.v(TAG, "Deleted " + filename);
+            Toast.makeText(FormatChooserActivity.this,
+                    getString(R.string.formatChooser_toast_deleted, filename),
+                    Toast.LENGTH_SHORT).show();
+
+            // Re-populate the styles lists
+            boolean removed = mStylesList.remove(entry);
+            if (!removed)
+                Log.v(TAG, "Could not remove " + filename + " from list");
+            mStylesArrayAdapter.notifyDataSetChanged();
+
+        } else {
+            Log.e(TAG, "Could not delete " + filename);
+            Toast.makeText(FormatChooserActivity.this,
+                    getString(R.string.formatChooser_toast_errorDeleting, filename),
+                    Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    /**
      * Parses an XML file to get the {@link DebateFormatInfo} object
      * @param filename the filename for the debate format XML file
      * @return a <code>DebateFormatInfo</code> object, or <code>null</code>
@@ -689,11 +735,7 @@ public class FormatChooserActivity extends FragmentActivity {
         return incomingFilename;
     }
 
-    /**
-     * @return the name of the currently-selected file, or <code>null</code> if nothing
-     * is selected or if the currently-selected item appears to be out of range
-     */
-    private String getSelectedFilename() {
+    private DebateFormatListEntry getSelectedEntry() {
         int selectedPosition = mStylesListView.getCheckedItemPosition();
 
         // Do nothing if nothing is selected.
@@ -707,9 +749,20 @@ public class FormatChooserActivity extends FragmentActivity {
             return null;
         }
 
-        String filename = mStylesList.get(selectedPosition).getFilename();
+        return mStylesList.get(selectedPosition);
+    }
 
-        return filename;
+    /**
+     * @return the name of the currently-selected file, or <code>null</code> if nothing
+     * is selected or if the currently-selected item appears to be out of range
+     */
+    private String getSelectedFilename() {
+        DebateFormatListEntry entry = getSelectedEntry();
+
+        if (entry != null)
+            return entry.getFilename();
+        else
+            return null;
 
     }
 
@@ -732,8 +785,17 @@ public class FormatChooserActivity extends FragmentActivity {
      * hope to populate the StylesLists.  Note that this does <b>not</b> include an error
      * opening a single specific file.
      */
-    private void populateStylesLists() throws IOException {
-        String[] fileList = mFilesManager.list();
+    private void populateStylesLists() {
+        String[] fileList;
+
+        try {
+            fileList = mFilesManager.list();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+            ListIOErrorDialogFragment fragment = new ListIOErrorDialogFragment();
+            fragment.show(getSupportFragmentManager(), DIALOG_TAG_LIST_IO_ERROR);
+            return;
+        }
 
         for (int i = 0; i < fileList.length; i++) {
             String filename = fileList[i];
@@ -760,6 +822,9 @@ public class FormatChooserActivity extends FragmentActivity {
                     addStyleToList(filename, mCurrentStyleName);
 
             } catch (SAXException e) {
+                mCurrentStyleName = null;
+                continue;
+            } catch (IOException e) {
                 mCurrentStyleName = null;
                 continue;
             }
@@ -810,7 +875,7 @@ public class FormatChooserActivity extends FragmentActivity {
 
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
-        intent.setType("application/xml");
+        intent.setType("text/xml");
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         startActivity(Intent.createChooser(intent, getString(R.string.formatChooser_shareChooser_title)));
     }
