@@ -20,8 +20,10 @@ package net.czlee.debatekeeper;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashSet;
 
 import android.content.Context;
@@ -87,6 +89,40 @@ public class FormatXmlFilesManager {
     }
 
     /**
+     * Copies the given file to the user-defined XML files directory.
+     * <p><b>Note that this overwrites the existing file if there is one.</b></p>
+     * @param file the file to copy
+     * @throws IOException if there was an error dealing with any of the files
+     */
+    public void copy(File source) throws IOException {
+
+        // Check we can write to external storage
+        if (!isExternalStorageWriteable())
+            throw new IOException();
+
+        // Figure out where to copy the file to
+        String filename = source.getName();
+        File userFilesDirectory = getOrCreateUserFilesDirectory();
+        if (userFilesDirectory == null)
+            throw new IOException();
+
+        File destination = new File(userFilesDirectory, filename);
+
+        // Open the files
+        InputStream in = new FileInputStream(source);
+        OutputStream out = new FileOutputStream(destination);
+
+        // Copy the file over
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0)
+            out.write(buf, 0, len);
+        in.close();
+        out.close();
+
+    }
+
+    /**
      * Deletes a file, if it is a built-in asset file.
      * <p>Note that this method does <i>not</i> throw IOException on failure.
      * Callers must check the return value.  However, it does throw an
@@ -97,6 +133,9 @@ public class FormatXmlFilesManager {
      * @throws IllegalArgumentException if the file isn't user-defined
      */
     public boolean delete(String filename) {
+
+        if (!isExternalStorageWriteable())
+            return false;
 
         if (getLocation(filename) != LOCATION_USER_DEFINED)
             throw new IllegalArgumentException("Tried to delete a file that isn't user-defined");
@@ -194,6 +233,38 @@ public class FormatXmlFilesManager {
         if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state))
             return true;
         return false;
+    }
+
+    private boolean isExternalStorageWriteable() {
+        String state = Environment.getExternalStorageState();
+        return Environment.MEDIA_MOUNTED.equals(state);
+    }
+
+    /**
+     * @return the user files directory, or <code>null</code> if it does not exist and could not
+     * be created or is not a directory.  If this method returns something non-null, you can assume
+     * it is a directory.
+     */
+    private File getOrCreateUserFilesDirectory() {
+
+        // Can't do anything if we can't read external storage.
+        if (!isExternalStorageReadable())
+            return null;
+
+        File root = Environment.getExternalStorageDirectory();
+        File userFilesDirectory = new File(root, XML_FILE_ROOT_DIRECTORY_NAME);
+
+        // If it's already a directory, bingo!
+        if (userFilesDirectory.isDirectory()) return userFilesDirectory;
+
+        // If there's nothing where the directory is supposed to be, and we can write to external
+        // storage, attempt to create the directory.
+        if (!userFilesDirectory.exists() && isExternalStorageWriteable()) {
+            boolean result = userFilesDirectory.mkdirs();
+            if (result) return userFilesDirectory;
+        }
+
+        return null;
     }
 
     /**

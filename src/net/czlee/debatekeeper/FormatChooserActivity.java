@@ -81,7 +81,7 @@ public class FormatChooserActivity extends FragmentActivity {
     private FormatXmlFilesManager mFilesManager;
 
     private ListView mStylesListView;
-    private String   mCurrentStyleName = null;
+    private String mCurrentStyleName = null;
 
     private DebateFormatEntryArrayAdapter mStylesArrayAdapter;
     private final ArrayList<DebateFormatListEntry> mStylesList = new ArrayList<DebateFormatListEntry>();
@@ -595,22 +595,20 @@ public class FormatChooserActivity extends FragmentActivity {
         mStylesListView.setAdapter(mStylesArrayAdapter);
         mStylesListView.setOnItemClickListener(new StylesListViewOnItemClickListener());
 
-        // Select and scroll to the incoming selection (if existent)
-        int incomingSelection = getIncomingSelection();
-        if (incomingSelection != ListView.INVALID_POSITION) {
-            mStylesListView.setItemChecked(incomingSelection, true);
-            mStylesListView.smoothScrollToPosition(incomingSelection);
-        }
-
         // Deal with the incoming intent, if any
         Intent intent = getIntent();
         if (intent.getAction() == Intent.ACTION_VIEW) {
-            Log.i(TAG, "mime type: " + intent.getType());
-            Log.i(TAG, "data: " + intent.getDataString());
-            // TODO check for the <debate-format> element, show a dialog, and if the user agrees
-            // then copy the file to the /debatekeeper directory, checking for overwrites
-            // (including overriding built-in styles).
+            importIncomingFile(intent);
+
+        // If not, select and scroll to the incoming selection (if existent)
+        } else {
+            int incomingSelection = getIncomingSelection();
+            if (incomingSelection != ListView.INVALID_POSITION) {
+                mStylesListView.setItemChecked(incomingSelection, true);
+                mStylesListView.smoothScrollToPosition(incomingSelection);
+            }
         }
+
     }
 
     //******************************************************************************************
@@ -618,12 +616,55 @@ public class FormatChooserActivity extends FragmentActivity {
     //******************************************************************************************
 
     /**
-     * Adds a style to the master styles list.
+     * Adds a style to the master styles list from a file name.
+     * <p>Note: This does <b>not</b> throw an exception if it encounters an error. Callers must
+     * check the return value if they care about whether the file was successfully added.</p>
      * @param filename the file name for this style
-     * @param styleName the name of this style
+     * @return <code>true</code> if the file was successfully added, <code>false</code> if not
      */
-    private void addStyleToList(String filename, String styleName) {
-        mStylesList.add(new DebateFormatListEntry(filename, styleName));
+    private boolean addFileToStylesList(String filename) {
+        InputStream is;
+
+        if (!filename.endsWith(".xml"))
+            return false;
+
+        try {
+            is = mFilesManager.open(filename);
+        } catch (IOException e) {
+            Log.e(TAG, "Couldn't find file: "+ filename);
+            return false;
+        }
+
+        try {
+            Xml.parse(is, Encoding.UTF_8,
+                    new GetDebateFormatNameXmlContentHandler());
+
+        } catch (AllInformationFoundException e) {
+
+            // This exception means the XML parsing was successful - we just
+            // use it to stop the parser.
+            if (mCurrentStyleName != null) {
+
+                mStylesList.add(new DebateFormatListEntry(filename, mCurrentStyleName));
+
+                // We won't need this value any more so delete it so we don't ever get confused.
+                mCurrentStyleName = null;
+
+                return true;
+            }
+            else return false;
+
+        } catch (SAXException e) {
+            mCurrentStyleName = null;
+            return false;
+
+        } catch (IOException e) {
+            mCurrentStyleName = null;
+            return false;
+        }
+
+        return false;
+
     }
 
     /**
@@ -757,15 +798,7 @@ public class FormatChooserActivity extends FragmentActivity {
      */
     private int getIncomingSelection() {
         String incomingFilename = getIncomingFilename();
-        if (incomingFilename != null) {
-            Iterator<DebateFormatListEntry> entryIterator = mStylesList.iterator();
-            while (entryIterator.hasNext()) {
-                DebateFormatListEntry se = entryIterator.next();
-                if (incomingFilename.equals(se.getFilename()))
-                    return mStylesList.indexOf(se);
-            }
-        }
-        return ListView.INVALID_POSITION;
+        return getPositionOfFilename(incomingFilename);
     }
 
     /**
@@ -807,6 +840,67 @@ public class FormatChooserActivity extends FragmentActivity {
     }
 
     /**
+     * @param filename
+     * @return
+     */
+    private int getPositionOfFilename(String filename) {
+        if (filename != null) {
+            Iterator<DebateFormatListEntry> entryIterator = mStylesList.iterator();
+            while (entryIterator.hasNext()) {
+                DebateFormatListEntry se = entryIterator.next();
+                if (filename.equals(se.getFilename()))
+                    return mStylesList.indexOf(se);
+            }
+        }
+        return ListView.INVALID_POSITION;
+    }
+
+    private void importIncomingFile(Intent intent) {
+        Log.i(TAG, "mime type: " + intent.getType());
+        Log.i(TAG, "data: " + intent.getDataString());
+
+        // TODO check for the <debate-format> element, show a dialog, and if the user agrees
+        // then copy the file to the /debatekeeper directory, checking for overwrites
+        // (including overriding built-in styles).
+
+        Uri uri = intent.getData();
+        File file = new File(uri.getPath());
+        String filename = file.getName();
+
+        try {
+            mFilesManager.copy(file);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            Toast.makeText(this, "Failed to import " + filename + ", type " + intent.getType(), Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        Toast.makeText(this, "Successfully imported " + filename + ", type " + intent.getType(), Toast.LENGTH_LONG).show();
+
+        // Remove the existing entry, if there is one
+        DebateFormatListEntry entry = getEntryForFilename(filename);
+        if (entry != null) {
+            boolean removed = mStylesList.remove(entry);
+            if (!removed)
+                Log.v(TAG, "Could not remove " + filename + " from list");
+        }
+
+        // Add the new entry
+        addFileToStylesList(filename);
+        mStylesArrayAdapter.notifyDataSetChanged();
+        mStylesArrayAdapter.sort(new StyleEntryComparatorByStyleName());
+
+        // Select the newly-imported file
+        int selection = getPositionOfFilename(filename);
+        if (selection != ListView.INVALID_POSITION) {
+            mStylesListView.setItemChecked(selection, true);
+            mStylesListView.smoothScrollToPosition(selection);
+        }
+
+    }
+
+    /**
      * @param view the <code>View</code> to be populated
      * @param filename the filename of the XML file from which data is to be taken
      * @throws IOException if there was an IO problem with the XML file
@@ -839,36 +933,7 @@ public class FormatChooserActivity extends FragmentActivity {
 
         for (int i = 0; i < fileList.length; i++) {
             String filename = fileList[i];
-            InputStream is;
-
-            if (!filename.endsWith(".xml"))
-                continue;
-
-            try {
-                is = mFilesManager.open(filename);
-            } catch (IOException e) {
-                Log.e(TAG, "Couldn't find file: "+ filename);
-                continue;
-            }
-
-            try {
-                Xml.parse(is, Encoding.UTF_8,
-                        new GetDebateFormatNameXmlContentHandler());
-
-            } catch (AllInformationFoundException e) {
-                // This exception means the XML parsing was successful - we just
-                // use it to stop the parser.
-                if (mCurrentStyleName != null)
-                    addStyleToList(filename, mCurrentStyleName);
-
-            } catch (SAXException e) {
-                mCurrentStyleName = null;
-                continue;
-            } catch (IOException e) {
-                mCurrentStyleName = null;
-                continue;
-            }
-
+            addFileToStylesList(filename);
         }
 
     }
