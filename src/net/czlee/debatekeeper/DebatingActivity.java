@@ -174,7 +174,7 @@ public class DebatingActivity extends FragmentActivity {
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-            StringBuilder errorMessage = new StringBuilder(getString(R.string.errorsinXmlFileDialog_message_prefix));
+            StringBuilder errorMessage = new StringBuilder(getString(R.string.dialog_errorsinXmlFile_message_prefix));
 
             Bundle args = getArguments();
 
@@ -188,10 +188,10 @@ public class DebatingActivity extends FragmentActivity {
 
             errorMessage.append(getString(R.string.dialogs_fileName_suffix, args.getString(DIALOG_ARGUMENT_FILE_NAME)));
 
-            builder.setTitle(R.string.errorsinXmlFileDialog_title)
+            builder.setTitle(R.string.dialog_errorsinXmlFile_title)
                    .setMessage(errorMessage)
                    .setCancelable(true)
-                   .setPositiveButton(R.string.errorsinXmlFileDialog_button, new DialogInterface.OnClickListener() {
+                   .setPositiveButton(R.string.dialog_errorsinXmlFile_button, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -221,13 +221,13 @@ public class DebatingActivity extends FragmentActivity {
             Bundle args = getArguments();
 
             StringBuilder errorMessage = new StringBuilder(args.getString(DIALOG_ARGUMENT_FATAL_MESSAGE));
-            errorMessage.append(getString(R.string.fatalProblemWithXmlFileDialog_message_suffix));
+            errorMessage.append(getString(R.string.dialog_fatalProblemWithXmlFile_message_suffix));
             errorMessage.append(getString(R.string.dialogs_fileName_suffix, args.getString(DIALOG_ARGUMENT_FILE_NAME)));
 
-            builder.setTitle(R.string.fatalProblemWithXmlFileDialog_title)
+            builder.setTitle(R.string.dialog_fatalProblemWithXmlFile_title)
                    .setMessage(errorMessage)
                    .setCancelable(true)
-                   .setPositiveButton(R.string.fatalProblemWithXmlFileDialog_button, new DialogInterface.OnClickListener() {
+                   .setPositiveButton(R.string.dialog_fatalProblemWithXmlFile_button, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Intent intent = new Intent(activity, FormatChooserActivity.class);
@@ -259,9 +259,9 @@ public class DebatingActivity extends FragmentActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
             View content = activity.getLayoutInflater().inflate(R.layout.poi_timer_dialog, null);
-            final CheckBox doNotShowAgain = (CheckBox) content.findViewById(R.id.poiTimerInfoDialog_dontShow);
+            final CheckBox doNotShowAgain = (CheckBox) content.findViewById(R.id.dialog_poiTimerInfo_dontShow);
 
-            builder.setTitle(R.string.poiTimerInfoDialog_title)
+            builder.setTitle(R.string.dialog_poiTimerInfo_title)
                    .setView(content)
                    .setCancelable(true)
                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -275,7 +275,7 @@ public class DebatingActivity extends FragmentActivity {
                             dialog.dismiss();
                         }
                     })
-                   .setNeutralButton(R.string.poiTimerInfoDialog_button_learnMore, new DialogInterface.OnClickListener() {
+                   .setNeutralButton(R.string.dialog_poiTimerInfo_button_learnMore, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Uri uri = Uri.parse(getString(R.string.poiTimer_moreInfoUrl));
@@ -323,14 +323,14 @@ public class DebatingActivity extends FragmentActivity {
                 appVersion = "unknown";
             }
 
-            StringBuilder message = new StringBuilder(getString(R.string.schemaTooNewDialog_message, schemaUsed, schemaSupported, appVersion));
+            StringBuilder message = new StringBuilder(getString(R.string.dialog_schemaTooNew_message, schemaUsed, schemaSupported, appVersion));
 
             message.append(getString(R.string.dialogs_fileName_suffix, args.getString(DIALOG_ARGUMENT_FILE_NAME)));
 
-            builder.setTitle(R.string.schemaTooNewDialog_title)
+            builder.setTitle(R.string.dialog_schemaTooNew_title)
                    .setMessage(message)
                    .setCancelable(false)
-                   .setPositiveButton(R.string.schemaTooNewDialog_button_upgrade, new DialogInterface.OnClickListener() {
+                   .setPositiveButton(R.string.dialog_schemaTooNew_button_upgrade, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             // Open Google Play to upgrade
@@ -340,7 +340,7 @@ public class DebatingActivity extends FragmentActivity {
                             startActivity(intent);
                         }
                     })
-                .setNegativeButton(R.string.schemaTooNewDialog_button_ignore, new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.dialog_schemaTooNew_button_ignore, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // To ignore, just dismiss the dialog and return to whatever was happening before
@@ -1196,7 +1196,7 @@ public class DebatingActivity extends FragmentActivity {
         try {
             is = mFilesManager.open(filename);
         } catch (IOException e) {
-            throw new FatalXmlError(getString(R.string.fatalProblemWithXmlFileDialog_message_cannotFind, filename), e);
+            throw new FatalXmlError(getString(R.string.dialog_fatalProblemWithXmlFile_message_cannotFind, filename), e);
         }
 
         dfbfx = new DebateFormatBuilderFromXmlForSchema2(this);
@@ -1205,10 +1205,10 @@ public class DebatingActivity extends FragmentActivity {
         try {
             df = dfbfx.buildDebateFromXml(is);
         } catch (IOException e) {
-            throw new FatalXmlError(getString(R.string.fatalProblemWithXmlFileDialog_message_cannotRead), e);
+            throw new FatalXmlError(getString(R.string.dialog_fatalProblemWithXmlFile_message_cannotRead), e);
         } catch (SAXException e) {
             throw new FatalXmlError(getString(
-                    R.string.fatalProblemWithXmlFileDialog_message_badXml, e.getMessage()), e);
+                    R.string.dialog_fatalProblemWithXmlFile_message_badXml, e.getMessage()), e);
         }
 
         // If the schema wasn't supported, try schema 1.0 to see if it works
@@ -1221,16 +1221,16 @@ public class DebatingActivity extends FragmentActivity {
                 is.close();
                 is = mFilesManager.open(filename);
             } catch (IOException e) {
-                throw new FatalXmlError(getString(R.string.fatalProblemWithXmlFileDialog_message_cannotFind), e);
+                throw new FatalXmlError(getString(R.string.dialog_fatalProblemWithXmlFile_message_cannotFind), e);
             }
 
             try {
                 df1 = dfbfx1.buildDebateFromXml(is);
             } catch (IOException e) {
-                throw new FatalXmlError(getString(R.string.fatalProblemWithXmlFileDialog_message_cannotRead), e);
+                throw new FatalXmlError(getString(R.string.dialog_fatalProblemWithXmlFile_message_cannotRead), e);
             } catch (SAXException e) {
                 throw new FatalXmlError(getString(
-                        R.string.fatalProblemWithXmlFileDialog_message_badXml, e.getMessage()), e);
+                        R.string.dialog_fatalProblemWithXmlFile_message_badXml, e.getMessage()), e);
             }
 
             // If it's looking good, replace.
@@ -1250,7 +1250,7 @@ public class DebatingActivity extends FragmentActivity {
 
         if (df.numberOfSpeeches() == 0)
             throw new FatalXmlError(getString(
-                    R.string.fatalProblemWithXmlFileDialog_message_noSpeeches));
+                    R.string.dialog_fatalProblemWithXmlFile_message_noSpeeches));
 
         if (dfbfx.hasErrors()) {
             DialogFragment fragment = DialogErrorsWithXmlFileFragment.newInstance(dfbfx.getErrorLog(), mFormatXmlFileName);

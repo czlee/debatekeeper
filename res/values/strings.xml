@@ -76,29 +76,29 @@
     <!-- Dialogs -->
     <string name="dialogs_fileName_suffix">\n\n[File: %1$s]</string>
     
-    <string name="fatalProblemWithXmlFileDialog_title">Oh no!</string>
-    <string name="fatalProblemWithXmlFileDialog_button">Choose style</string>
-    <string name="fatalProblemWithXmlFileDialog_message_noSpeeches">"There are no speeches in this debate style file."</string>
-    <string name="fatalProblemWithXmlFileDialog_message_cannotRead">"I've hit a problem opening this debate style file."</string>
-    <string name="fatalProblemWithXmlFileDialog_message_cannotFind">"I've hit a problem opening this debate style file."</string>
-    <string name="fatalProblemWithXmlFileDialog_message_badXml">"There's a problem with the XML in this debate style file. The error was:\n\n%1$s\n"</string>
-    <string name="fatalProblemWithXmlFileDialog_message_suffix">"\nPlease choose another style."</string>
-    <string name="fatalProblemWithXmlFileDialog_noSchemaVersion_suffix">"No schema version was specified; please ask the author of this XML file to specify one.\n"</string>
-    <string name="fatalProblemWithXmlFileDialog_schemaTooNew_suffix">"This schema version (%1$s) isn't supported.  You might need to update this app.\n"</string>
+    <string name="dialog_fatalProblemWithXmlFile_title">Oh no!</string>
+    <string name="dialog_fatalProblemWithXmlFile_button">Choose style</string>
+    <string name="dialog_fatalProblemWithXmlFile_message_noSpeeches">"There are no speeches in this debate style file."</string>
+    <string name="dialog_fatalProblemWithXmlFile_message_cannotRead">"I've hit a problem opening this debate style file."</string>
+    <string name="dialog_fatalProblemWithXmlFile_message_cannotFind">"I've hit a problem opening this debate style file."</string>
+    <string name="dialog_fatalProblemWithXmlFile_message_badXml">"There's a problem with the XML in this debate style file. The error was:\n\n%1$s\n"</string>
+    <string name="dialog_fatalProblemWithXmlFile_message_suffix">"\nPlease choose another style."</string>
+    <string name="dialog_fatalProblemWithXmlFile_noSchemaVersion_suffix">"No schema version was specified; please ask the author of this XML file to specify one.\n"</string>
+    <string name="dialog_fatalProblemWithXmlFile_schemaTooNew_suffix">"This schema version (%1$s) isn't supported.  You might need to update this app.\n"</string>
 
-    <string name="errorsinXmlFileDialog_title">Warning</string>
-    <string name="errorsinXmlFileDialog_button">OK</string>
-    <string name="errorsinXmlFileDialog_message_prefix">"There are a few problems with this debate format file. I'll try to work with it, but it probably won't work properly. The problems are:\n"</string>
+    <string name="dialog_errorsinXmlFile_title">Warning</string>
+    <string name="dialog_errorsinXmlFile_button">OK</string>
+    <string name="dialog_errorsinXmlFile_message_prefix">"There are a few problems with this debate format file. I'll try to work with it, but it probably won't work properly. The problems are:\n"</string>
 
-    <string name="schemaTooNewDialog_title">Update app?</string>
-    <string name="schemaTooNewDialog_button_upgrade">Check for updates</string>
-    <string name="schemaTooNewDialog_button_ignore">Ignore</string>
-    <string name="schemaTooNewDialog_message">This debate style file uses a schema (%1$s) newer than supported (%2$s) by this app version (%3$s). Check for updates on Google Play?</string>
+    <string name="dialog_schemaTooNew_title">Update app?</string>
+    <string name="dialog_schemaTooNew_button_upgrade">Check for updates</string>
+    <string name="dialog_schemaTooNew_button_ignore">Ignore</string>
+    <string name="dialog_schemaTooNew_message">This debate style file uses a schema (%1$s) newer than supported (%2$s) by this app version (%3$s). Check for updates on Google Play?</string>
     
     <!-- POI timer -->
-	<string name="poiTimerInfoDialog_title">About the POI timer</string>
-	<string name="poiTimerInfoDialog_message">The <b>POI</b> button starts a 15-second countdown.\n\nIf you don\'t want to use it, you can hide it under <b>Settings &gt; Show POIs timer</b>.</string>
-	<string name="poiTimerInfoDialog_dontShow">Do not show this again</string>
-	<string name="poiTimerInfoDialog_button_learnMore">Learn more</string>
+	<string name="dialog_poiTimerInfo_title">About the POI timer</string>
+	<string name="dialog_poiTimerInfo_message">The <b>POI</b> button starts a 15-second countdown.\n\nIf you don\'t want to use it, you can hide it under <b>Settings &gt; Show POIs timer</b>.</string>
+	<string name="dialog_poiTimerInfo_dontShow">Do not show this again</string>
+	<string name="dialog_poiTimerInfo_button_learnMore">Learn more</string>
 	<string name="poiTimer_moreInfoUrl">http://tryingtoreason.wordpress.com/debatekeeper/points-of-information/</string>
 </resources>

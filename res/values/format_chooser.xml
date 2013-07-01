@@ -17,12 +17,12 @@
 -->
 <resources>
 
-    <string name="ioErrorDialog_title">Oh no!</string>
-    <string name="ioErrorDialog_message">I couldn\'t find the debate style files.</string>
-    <string name="ioErrorDialog_button">Go back</string>
+    <string name="formatChooser_dialog_ioError_title">Oh no!</string>
+    <string name="formatChooser_dialog_ioError_message">I couldn\'t find the debate style files.</string>
+    <string name="formatChooser_dialog_ioError_button">Go back</string>
 
-    <string name="blankDetailsDialog_title">"Sorry!"</string>
-    <string name="blankDetailsDialog_text">"There's a problem with this debate format's XML file (%1$s).\n\nIn more detail:\n%2$s"</string>
+    <string name="formatChooser_dialog_blankDetails_title">"Sorry!"</string>
+    <string name="formatChooser_dialog_blankDetails_text">"There's a problem with this debate format's XML file (%1$s).\n\nIn more detail:\n%2$s"</string>
 
     <string name="formatChooser_toast_noSelection">No style selected</string>
     <string name="formatChooser_toast_notFound">File not found</string>
