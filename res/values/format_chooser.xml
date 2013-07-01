@@ -24,6 +24,9 @@
     <string name="formatChooser_dialog_blankDetails_title">"Sorry!"</string>
     <string name="formatChooser_dialog_blankDetails_text">"There's a problem with this debate format's XML file (%1$s).\n\nIn more detail:\n%2$s"</string>
 
+    <string name="formatChooser_dialog_confirmDelete_message">Delete %1$s?</string>
+    <string name="formatChooser_dialog_confirmDelete_buttonPositive">Delete</string>
+    
     <string name="formatChooser_toast_noSelection">No style selected</string>
     <string name="formatChooser_toast_notFound">File not found</string>
     <string name="formatChooser_toast_formatUnchanged">Style not changed</string>
