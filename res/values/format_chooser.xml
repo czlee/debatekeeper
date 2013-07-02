@@ -30,10 +30,14 @@
     <string name="formatChooser_toast_noSelection">No style selected</string>
     <string name="formatChooser_toast_notFound">File not found</string>
     <string name="formatChooser_toast_formatUnchanged">Style not changed</string>
-    <string name="formatChooser_toast_shareBuiltIn">"You can't share built-in styles"</string>
-    <string name="formatChooser_toast_deleteBuiltIn">"You can't delete built-in styles"</string>
-    <string name="formatChooser_toast_deleted">Deleted file %1$s</string>
-    <string name="formatChooser_toast_errorDeleting">Could not delete file %1$s</string>
+    <string name="formatChooser_toast_share_builtIn">"You can't share built-in styles"</string>
+    <string name="formatChooser_toast_delete_builtIn">"You can't delete built-in styles"</string>
+    <string name="formatChooser_toast_delete_successful">Deleted file %1$s</string>
+    <string name="formatChooser_toast_import_errorDeleting">Could not delete file %1$s</string>
+    <string name="formatChooser_toast_import_errorResolving">There was an error opening the file</string>
+    <string name="formatChooser_toast_import_errorReading">Error reading file %1$s</string>
+    <string name="formatChooser_toast_import_successful">Imported file %1$s</string>
+    <string name="formatChooser_toast_import_noFileName">Could not find file name, using %1$s</string>
     
     <string name="formatChooser_actionBar_confirm_title">Confirm</string>
     <string name="formatChooser_actionBar_share_title">Share</string>

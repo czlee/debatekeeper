@@ -18,6 +18,7 @@
 package net.czlee.debatekeeper;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -41,9 +42,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -714,29 +717,25 @@ public class FormatChooserActivity extends FragmentActivity {
         boolean result = mFilesManager.delete(filename);
 
         if (result) {
-            Log.v(TAG, "Deleted " + filename);
-            Toast.makeText(FormatChooserActivity.this,
-                    getString(R.string.formatChooser_toast_deleted, filename),
-                    Toast.LENGTH_SHORT).show();
+            showFileManagementMessage(Log.VERBOSE, R.string.formatChooser_toast_delete_successful, filename);
 
             DebateFormatListEntry entry = getEntryForFilename(filename);
 
             // Re-populate the styles lists
-            if (entry != null) {
-                boolean removed = mStylesList.remove(entry);
-                if (!removed)
-                    Log.v(TAG, "Could not remove " + filename + " from list");
-                mStylesArrayAdapter.notifyDataSetChanged();
+            if (getFileLocation(filename) == FormatXmlFilesManager.LOCATION_NOT_FOUND) {
+                if (entry != null) {
+                    boolean removed = mStylesList.remove(entry);
+                    if (!removed)
+                        Log.v(TAG, "Could not remove " + filename + " from list");
+                    mStylesArrayAdapter.notifyDataSetChanged();
+                }
+                else Log.e(TAG, "Entry for " + filename + " not found");
             }
+            else Log.v(TAG, filename + " is still in the files list, not removing entry");
 
-            else Log.e(TAG, "Entry for " + filename + " not found");
-
-        } else {
-            Log.e(TAG, "Could not delete " + filename);
-            Toast.makeText(FormatChooserActivity.this,
-                    getString(R.string.formatChooser_toast_errorDeleting, filename),
-                    Toast.LENGTH_SHORT).show();
         }
+
+        else showFileManagementMessage(Log.ERROR, R.string.formatChooser_toast_import_errorDeleting, filename);
 
     }
 
@@ -766,6 +765,50 @@ public class FormatChooserActivity extends FragmentActivity {
         // If it isn't, keep pretending it was 2.0.
         return dfi2;
 
+    }
+
+    private String getDestinationFilenameFromUri(Uri uri) {
+        String filename = null;
+        String scheme = uri.getScheme();
+
+        if (scheme.equals("file")) {
+            // Just retrieve the file name
+            File file = new File(uri.getPath());
+            String name = file.getName();
+            if (name.length() > 0)
+                filename = name;
+
+        } else if (scheme.equals("content")) {
+            // Try to find a display name for it
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            cursor.moveToFirst();
+            int nameIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
+            if (nameIndex >= 0)
+                filename = cursor.getString(nameIndex);
+
+        }
+
+        else Log.v(TAG, "Unrecognised scheme: " + scheme);
+
+        // TODO prompt the user to enter a file name if all else fails
+        if (filename == null) {
+            filename = "no_name";
+            showFileManagementMessage(Log.ERROR, R.string.formatChooser_toast_import_noFileName, filename);
+        }
+
+        // If it doesn't end in the .xml extension, make it end in one
+        if (!filename.endsWith(".xml")) {
+
+            // Do this by stripping the current extension if there is one...
+            int lastIndex = filename.lastIndexOf(".");
+            if (lastIndex > 0) filename = filename.substring(0, lastIndex);
+
+            // ...and then adding .xml.
+            filename = filename + ".xml";
+
+        }
+
+        return filename;
     }
 
     /**
@@ -864,19 +907,29 @@ public class FormatChooserActivity extends FragmentActivity {
         // (including overriding built-in styles).
 
         Uri uri = intent.getData();
-        File file = new File(uri.getPath());
-        String filename = file.getName();
-
+        InputStream in;
         try {
-            mFilesManager.copy(file);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+            in = getContentResolver().openInputStream(uri);
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
-            Toast.makeText(this, "Failed to import " + filename + ", type " + intent.getType(), Toast.LENGTH_LONG).show();
+            showFileManagementMessage(Log.ERROR, R.string.formatChooser_toast_import_errorResolving);
+            Log.e(TAG, "Could not resolve file " + uri.toString());
             return;
         }
 
-        Toast.makeText(this, "Successfully imported " + filename + ", type " + intent.getType(), Toast.LENGTH_LONG).show();
+        String filename = getDestinationFilenameFromUri(uri);
+
+        // TODO check that the file is a valid format file before importing
+
+        try {
+            mFilesManager.copy(in, filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showFileManagementMessage(Log.ERROR, R.string.formatChooser_toast_import_errorReading, filename);
+            return;
+        }
+
+        showFileManagementMessage(Log.INFO, R.string.formatChooser_toast_import_successful, filename);
 
         // Remove the existing entry, if there is one
         DebateFormatListEntry entry = getEntryForFilename(filename);
@@ -954,7 +1007,7 @@ public class FormatChooserActivity extends FragmentActivity {
 
         switch (mFilesManager.getLocation(filename)) {
         case FormatXmlFilesManager.LOCATION_ASSETS:
-            Toast.makeText(FormatChooserActivity.this, R.string.formatChooser_toast_deleteBuiltIn,
+            Toast.makeText(FormatChooserActivity.this, R.string.formatChooser_toast_delete_builtIn,
                     Toast.LENGTH_SHORT).show();
             return;
         case FormatXmlFilesManager.LOCATION_NOT_FOUND:
@@ -986,12 +1039,12 @@ public class FormatChooserActivity extends FragmentActivity {
         // Do nothing if it is a built-in file, or if it is not found.
         switch (getFileLocation(filename)) {
         case FormatXmlFilesManager.LOCATION_ASSETS:
-            Log.e(TAG, "File " + filename + " is not user-defined");
-            Toast.makeText(this, R.string.formatChooser_toast_shareBuiltIn, Toast.LENGTH_SHORT).show();
+            Log.w(TAG, "File " + filename + " is not user-defined");
+            Toast.makeText(this, R.string.formatChooser_toast_share_builtIn, Toast.LENGTH_SHORT).show();
             return;
         case FormatXmlFilesManager.LOCATION_NOT_FOUND:
             Log.e(TAG, "File " + filename + " not found");
-            Toast.makeText(this, R.string.formatChooser_toast_noSelection, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.formatChooser_toast_notFound, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -1000,7 +1053,7 @@ public class FormatChooserActivity extends FragmentActivity {
         // Do nothing if the file was not found.
         if (file == null) {
             Log.e(TAG, "Could not get File object for " + filename);
-            Toast.makeText(this, R.string.formatChooser_toast_noSelection, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.formatChooser_toast_notFound, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -1013,6 +1066,12 @@ public class FormatChooserActivity extends FragmentActivity {
         intent.setType("text/xml");
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         startActivity(Intent.createChooser(intent, getString(R.string.formatChooser_shareChooser_title)));
+    }
+
+    private void showFileManagementMessage(int priority, int resid, Object... formatArgs) {
+        String string = getString(resid, formatArgs);
+        Toast.makeText(this, string, Toast.LENGTH_SHORT).show();
+        Log.println(priority, TAG, string);
     }
 
     /**

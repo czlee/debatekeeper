@@ -89,27 +89,26 @@ public class FormatXmlFilesManager {
     }
 
     /**
-     * Copies the given file to the user-defined XML files directory.
+     * Copies all data from the given stream to a file in the user-defined XML files directory.
      * <p><b>Note that this overwrites the existing file if there is one.</b></p>
-     * @param file the file to copy
+     * @param in an {@link InputStream}
+     * @param destinationName the name of the destination file
      * @throws IOException if there was an error dealing with any of the files
      */
-    public void copy(File source) throws IOException {
+    public void copy(InputStream in, String destinationName) throws IOException {
 
         // Check we can write to external storage
         if (!isExternalStorageWriteable())
             throw new IOException();
 
         // Figure out where to copy the file to
-        String filename = source.getName();
         File userFilesDirectory = getOrCreateUserFilesDirectory();
         if (userFilesDirectory == null)
             throw new IOException();
 
-        File destination = new File(userFilesDirectory, filename);
+        File destination = new File(userFilesDirectory, destinationName);
 
         // Open the files
-        InputStream in = new FileInputStream(source);
         OutputStream out = new FileOutputStream(destination);
 
         // Copy the file over
