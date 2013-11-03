@@ -16,10 +16,14 @@
       <name>Easters: Choose side</name>
       <display>Choose side</display>
     </period-type>
+    <period-type ref="easters.prep">
+      <name>Easters: Prepare debate</name>
+      <display></display>
+    </period-type>
   </period-types>
   <prep-time-controlled length="7:00" first-period="easters.moot">
     <bell time="1:00" number="1" pause-on-bell="true" next-period="easters.side"/>
-    <bell time="2:00" number="1" pause-on-bell="true" next-period="normal"/>
+    <bell time="2:00" number="1" pause-on-bell="true" next-period="easters.prep"/>
     <bell time="finish" number="2" next-period="overtime"/>
   </prep-time-controlled>
   <speech-types>
