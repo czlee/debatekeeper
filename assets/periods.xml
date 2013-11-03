@@ -19,7 +19,6 @@
 <period-types>
 	<period-type ref="normal">
 		<name>Normal</name>
-		<display></display>
 		<default-bgcolor>#000000</default-bgcolor>
 	</period-type>
 	<period-type ref="pois-allowed" pois-allowed="true">
