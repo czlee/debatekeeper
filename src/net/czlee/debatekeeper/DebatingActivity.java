@@ -1873,6 +1873,9 @@ public class DebatingActivity extends FragmentActivity {
             break;
         case WHOLE_SCREEN:
             view.setBackgroundColor(backgroundColour);
+            break;
+        case DISABLED:
+        	// Do nothing
         }
 
         // This would only be expected to exist if the view given is the debate timer display
