@@ -29,9 +29,5 @@
         android:id="@+id/mainScreen_menuItem_settings"
         android:orderInCategory="3"
         android:title="@string/mainScreen_menuItem_settings" android:icon="@drawable/ic_menu_preferences"/>
-    <item
-        android:id="@+id/mainScreen_menuItem_prevSpeaker"
-        android:orderInCategory="2"
-        android:title="@string/mainScreen_menuItem_prevSpeaker" android:icon="@drawable/ic_menu_back"/>
 
 </menu>

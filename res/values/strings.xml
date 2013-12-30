@@ -69,7 +69,6 @@
     <!-- Menu -->
     <string name="mainScreen_menuItem_resetDebate">Reset debate</string>
     <string name="mainScreen_menuItem_settings">Settings</string>
-    <string name="mainScreen_menuItem_prevSpeaker">Previous</string>
     <string name="mainScreen_menuItem_chooseFormat">Debate styles</string>
 
     <!-- Dialogs -->

@@ -841,9 +841,6 @@ public class DebatingActivity extends FragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         editCurrentTimeFinish(false);
         switch (item.getItemId()) {
-        case R.id.mainScreen_menuItem_prevSpeaker:
-            goToPreviousSpeech();
-            return true;
         case R.id.mainScreen_menuItem_chooseFormat:
             Intent getStyleIntent = new Intent(this, FormatChooserActivity.class);
             getStyleIntent.putExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME, mFormatXmlFileName);
@@ -864,18 +861,8 @@ public class DebatingActivity extends FragmentActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-
-        MenuItem prevSpeakerItem = menu.findItem(R.id.mainScreen_menuItem_prevSpeaker);
         MenuItem resetDebateItem = menu.findItem(R.id.mainScreen_menuItem_resetDebate);
-
-        if (mDebateManager != null) {
-            prevSpeakerItem.setEnabled(!mDebateManager.isInFirstPhase() && !mDebateManager.isRunning() && !mIsEditingTime);
-            resetDebateItem.setEnabled(true);
-        } else {
-            prevSpeakerItem.setEnabled(false);
-            resetDebateItem.setEnabled(false);
-        }
-
+        resetDebateItem.setEnabled(mDebateManager != null);
         return super.onPrepareOptionsMenu(menu);
     }
 
