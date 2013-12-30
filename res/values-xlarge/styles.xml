@@ -17,6 +17,6 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <dimen name="currentTime_textSize">160dip</dimen>
+    <dimen name="currentTime_textSize">240dip</dimen>
 
 </resources>
