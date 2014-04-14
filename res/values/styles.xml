@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
- * Copyright (C) 2012 Chuan-Zheng Lee
+ * Copyright (C) 2014 Chuan-Zheng Lee
  *
  * This file is part of the Debatekeeper app, which is licensed under the
  * GNU General Public Licence version 3 (GPLv3).  You can redistribute
@@ -27,6 +27,19 @@
         <item name="android:paddingRight">6dip</item>
     </style>
 
-    <dimen name="currentTime_textSize">72dip</dimen>
+    <dimen name="debateTimer_currentTime_textSize">72dp</dimen> <!-- not sp, we want this to be independent of font size preference -->
+    <dimen name="debateTimer_speechNameText_textSize">20sp</dimen>
+    <dimen name="debateTimer_periodDescriptionText_textSize">14sp</dimen>
+    <dimen name="debateTimer_informationLine_textSize">14sp</dimen>
+    
+    <dimen name="debateTimer_poiTimerButton_textSize">24sp</dimen>
+    <!-- portrait -->
+    <dimen name="debateTimer_poiTimerButton_widthPort">140dp</dimen>
+    <dimen name="debateTimer_poiTimerButton_heightPort">70dp</dimen>
+    <dimen name="debateTimer_poiTimerButton_marginBottom">44dp</dimen>
+    <!-- landscape -->
+    <dimen name="debateTimer_poiTimerButton_widthLand">75dp</dimen>
+    <dimen name="debateTimer_poiTimerButton_heightLand">120dp</dimen>
+    <dimen name="debateTimer_poiTimerButton_marginRight">24dp</dimen>
     
 </resources>

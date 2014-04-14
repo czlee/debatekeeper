@@ -17,6 +17,16 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <dimen name="currentTime_textSize">88dip</dimen>
+    <dimen name="debateTimer_currentTime_textSize">88dp</dimen>
+    
+    <dimen name="debateTimer_poiTimerButton_textSize">30sp</dimen>
+    <!-- portrait -->
+    <dimen name="debateTimer_poiTimerButton_widthPort">150dp</dimen>
+    <dimen name="debateTimer_poiTimerButton_heightPort">80dp</dimen>
+    <dimen name="debateTimer_poiTimerButton_marginBottom">44dp</dimen>
+    <!-- landscape -->
+    <dimen name="debateTimer_poiTimerButton_widthLand">88dp</dimen>
+    <dimen name="debateTimer_poiTimerButton_heightLand">140dp</dimen>
+    <dimen name="debateTimer_poiTimerButton_marginRight">20dp</dimen>
 
 </resources>

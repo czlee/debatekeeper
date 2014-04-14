@@ -55,12 +55,20 @@
             android:layout_height="fill_parent"
             android:text="@string/mainScreen_playBell_buttonText" />
     </LinearLayout>
-    
-    <net.czlee.debatekeeper.EnableableViewPager
+        
+   <!--  <net.czlee.debatekeeper.EnableableViewPager
         android:id="@+id/mainScreen_debateTimerViewPager"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@id/mainScreen_controlButtons"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true" /> -->
+
+    <include
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/mainScreen_controlButtons"
+        layout="@layout/debate_timer_display" />
 
 </RelativeLayout>
