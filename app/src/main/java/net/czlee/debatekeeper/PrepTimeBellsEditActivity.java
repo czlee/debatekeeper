@@ -195,8 +195,7 @@ public class PrepTimeBellsEditActivity extends FragmentActivity {
         }
 
         /**
-         * @param dialog the {@link Dialog} to be prepared
-         * @param args a {@link Bundle} representing the bell being edited, must <b>not</b> be <code>null</code>
+         * @param view the {@link View} to be prepared
          */
         private void prepareEditBellDialogView(View view) {
             final Bundle args = getArguments();

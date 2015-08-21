@@ -721,7 +721,6 @@ public class DebateFormatBuilderForSchema1 {
 
     /**
      * Checks if the controlled prep time has a finish bell.
-     * @param speechRef the name of the {@link SpeechFormat} to check
      * @return <code>true</code> if the prep time has a finish bell, <code>false</code> otherwise
      * @throws DebateFormatBuilderException if prep time is not controlled
      */

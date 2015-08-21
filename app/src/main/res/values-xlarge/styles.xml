@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public Licence
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources>
 
     <dimen name="debateTimer_currentTime_textSize">240dip</dimen>
     <dimen name="debateTimer_speechNameText_textSize">42sp</dimen>

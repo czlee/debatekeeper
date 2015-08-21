@@ -35,9 +35,7 @@ import android.widget.NumberPicker.OnValueChangeListener;
 /**
  * NumberPreference implements a preference using a number picker.
  *
- * This class is mainly based on {@link com.michaelnovakjr.numberpicker.NumberPickerPreference}.
- * The only difference is that it uses the stock Android {@link NumberPicker} instead of
- * {@link com.michaelnovakjr.numberpicker.NumberPicker}.  Therefore, it can only be used in SDKs 11 and higher.
+ * Based on what used to be com.michaelnovakjr.numberpicker.NumberPickerPreference.
  *
  * @author Chuan-Zheng Lee
  * @since  2013-02-10

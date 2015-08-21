@@ -1464,8 +1464,8 @@ public class DebatingActivity extends FragmentActivity {
      * Dialogs that could be queued must call <code>queueDialog()</code> instead of <code>showDialog()</code>.
      * Only one dialog may be queued at a time.  If more than one dialog is queued, only the last
      * one is kept in the queue; all others are discarded.
-     * @param id the dialog ID that would be passed to showDialog()
-     * @param args the {@link Bundle} that would be passed to showDialog()
+     * @param fragment the {@link DialogFragment} that would be passed to showDialog()
+     * @param tag the tag that would be passed to showDialog()
      */
     private void queueDialog(DialogFragment fragment, String tag) {
         if (!mDialogBlocking) {

@@ -224,7 +224,7 @@ public class AlertManager
 
     /**
      * Shows the notification.  Call this when the timer is started.
-     * @param pi the {@link PeriodInfo} to use in the notification
+     * @param speechName the speech name to use in the notification
      */
     public void makeActive(String speechName) {
 
@@ -335,8 +335,7 @@ public class AlertManager
 
     /**
      * Triggers an alert.  Play this to activate a bell.
-     * @param bi the {@link BellInfo} to use to play the bell
-     * @param pi the {@link PeriodInfo} to use in the notification
+     * @param bsi the {@link BellSoundInfo} to use to play the bell
      */
     public void triggerAlert(BellSoundInfo bsi) {
         if(mShowingNotification) {

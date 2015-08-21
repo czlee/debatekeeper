@@ -23,7 +23,7 @@ import java.util.ArrayList;
 /**
  * <p>DebatePhaseFormat is an interface for DebatePhaseManager.</p>
  *
- * <p>Known direct implementations: {@link GenericSpeechorPrepFormat}</p>
+ * <p>Known direct implementations: {@link GenericDebatePhaseFormat}</p>
  *
  * <p>Known direct sub-interfaces: {@link PrepTimeFormat}</p>
  *

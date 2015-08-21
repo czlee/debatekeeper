@@ -452,7 +452,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
      * {@link ControlledDebatePhaseFormat} ({@link SpeechFormat} and {@link PrepTimeControlledFormat}).
      * @param cspf
      * @param element
-     * @param length
+     * @param location
      */
     private void populateControlledTimeFormat(ControlledDebatePhaseFormat cspf, Element element, String location) {
 

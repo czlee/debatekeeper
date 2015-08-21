@@ -217,7 +217,7 @@ public class PeriodInfoManager {
      * for XML format errors, but does not check for duplicate period-type references; the
      * caller must check that if required.  If this method returns without throwing a {@link PeriodInfoException},
      * then the reference of the {@link PeriodInfo} is guaranteed not to be <code>null</code>.
-     * @param node an {@link Element} representing a &lt;period-type&gt; element
+     * @param element an {@link Element} representing a &lt;period-type&gt; element
      * @return a fully-period {@link PeriodInfo} with the information in the element
      * @throws PeriodInfoException if there was a fatal parsing error (<i>e.g.</i> the period-type
      * had no reference).
