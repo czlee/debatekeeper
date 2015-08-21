@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2014 Chuan-Zheng Lee
+ *
+ * This file is part of the Debatekeeper app, which is licensed under the
+ * GNU General Public Licence version 3 (GPLv3).  You can redistribute
+ * and/or modify it under the terms of the GPLv3, and you must not use
+ * this file except in compliance with the GPLv3.
+ *
+ * This app is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public Licence for more details.
+ *
+ * You should have received a copy of the GNU General Public Licence
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/debateTimer_root" >
+
+    <TextView
+        android:id="@+id/debateTimer_speechNameText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:gravity="center_horizontal"
+        android:paddingTop="4dip"
+        android:textSize="@dimen/debateTimer_speechNameText_textSize"
+        android:textIsSelectable="true" />
+
+    <TextView
+        android:id="@+id/debateTimer_periodDescriptionText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/debateTimer_speechNameText"
+        android:gravity="center_horizontal"
+        android:textSize="@dimen/debateTimer_periodDescriptionText_textSize"
+        android:textIsSelectable="true" />
+
+    <TextView
+        android:id="@+id/debateTimer_currentTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:textSize="@dimen/debateTimer_currentTime_textSize"
+        android:textIsSelectable="false" />
+
+    <TextView
+        android:id="@+id/debateTimer_informationLine"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="4sp"
+        android:gravity="center_horizontal"
+        android:textSize="@dimen/debateTimer_informationLine_textSize"
+        android:textIsSelectable="true" />
+
+    <TimePicker
+        android:id="@+id/debateTimer_currentTimePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+    <include layout="@layout/poi_timer_button" />
+
+</RelativeLayout>
