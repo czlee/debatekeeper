@@ -1442,8 +1442,8 @@ public class DebatingActivity extends FragmentActivity {
                         showDialog(new DialogPoiTimerInfoFragment(), DIALOG_TAG_POI_TIMER_INFO);
         }
 
-        mViewPager.setCurrentItem(mDebateManager.getActivePhaseIndex(), false);
         mViewPager.getAdapter().notifyDataSetChanged();
+        mViewPager.setCurrentItem(mDebateManager.getActivePhaseIndex(), false);
         applyPreferences();
         updateGui();
     }
