@@ -510,7 +510,7 @@ public class DebatingActivity extends FragmentActivity {
      */
     private class DebateTimerDisplayPagerAdapter extends PagerAdapter {
 
-        private static final String TAG = "DebateTimerDisplayPagerAdapter";
+        private static final String TAG = "DebateTmrDispPagAdapt";
 
         private final HashMap<DebatePhaseTag, View> mViewsMap = new HashMap<DebatePhaseTag, View>();
         private static final String NO_DEBATE_LOADED = "no_debate_loaded";
@@ -1704,7 +1704,7 @@ public class DebatingActivity extends FragmentActivity {
      */
     private void updateDebateTimerDisplay() {
         if (mDebateManager == null) {
-            Log.w("updateDebateTimerDisplay", "mDebateManager was null");
+            Log.w("updateDebateTmrDisplay", "mDebateManager was null");
             mViewPager.getAdapter().notifyDataSetChanged();
             return;
         }
@@ -1732,11 +1732,11 @@ public class DebatingActivity extends FragmentActivity {
         // Make sure it makes sense to run this method now
 
         if (debateTimerDisplay == null) {
-            Log.w("updateDebateTimerDisplay", "debateTimerDisplay was null");
+            Log.w("updateDebateTmrDisplay", "debateTimerDisplay was null");
             return;
         }
         if (debateTimerDisplay.getId() != R.id.debateTimer_root) {
-            Log.w("updateDebateTimerDisplay", "debateTimerDisplay was not the debate timer display");
+            Log.w("updateDebateTmrDisplay", "debateTimerDisplay was not the debate timer display");
             return;
         }
 
