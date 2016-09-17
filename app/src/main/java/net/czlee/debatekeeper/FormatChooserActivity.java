@@ -33,7 +33,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -53,7 +52,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -353,13 +351,6 @@ public class FormatChooserActivity extends FragmentActivity {
         private static final long serialVersionUID = 3195935815375118010L;
     }
 
-    private class CancelButtonOnClickListener implements OnClickListener {
-        @Override
-        public void onClick(View v) {
-            FormatChooserActivity.this.finish();
-        }
-    }
-
     private class DetailsButtonOnClickListener implements OnClickListener {
 
         private final String filename;
@@ -430,16 +421,6 @@ public class FormatChooserActivity extends FragmentActivity {
                 return;
             }
         }
-
-
-
-    }
-
-    private class OKButtonOnClickListener implements OnClickListener {
-        @Override
-        public void onClick(View v) {
-            confirmSelectionAndReturn();
-        }
     }
 
     /**
@@ -470,14 +451,9 @@ public class FormatChooserActivity extends FragmentActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // We only show these buttons if there is an action bar.  In Gingerbread and earlier,
-        // we show dedicated OK/Cancel buttons.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            MenuInflater inflater = getMenuInflater();
-            inflater.inflate(R.menu.format_chooser_action_bar, menu);
-            return true;
-        }
-        return super.onCreateOptionsMenu(menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.format_chooser_action_bar, menu);
+        return true;
     }
 
     @Override
@@ -497,7 +473,6 @@ public class FormatChooserActivity extends FragmentActivity {
     // Protected methods
     //******************************************************************************************
 
-    @TargetApi(11)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -507,17 +482,8 @@ public class FormatChooserActivity extends FragmentActivity {
         mFilesManager = new FormatXmlFilesManager(this);
 
         // Set the action bar
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            ActionBar bar = getActionBar();
-            bar.setDisplayHomeAsUpEnabled(true);
-        }
-
-        // Set OnClickListeners
-        // These buttons only exist in layouts for versions Gingerbread and older
-        Button okButton = (Button) findViewById(R.id.formatChooser_okButton);
-        if (okButton != null) okButton.setOnClickListener(new OKButtonOnClickListener());
-        Button cancelButton = (Button) findViewById(R.id.formatChooser_cancelButton);
-        if (cancelButton != null) cancelButton.setOnClickListener(new CancelButtonOnClickListener());
+        ActionBar bar = getActionBar();
+        if (bar != null) bar.setDisplayHomeAsUpEnabled(true);
 
         // Populate mStylesList
         try {

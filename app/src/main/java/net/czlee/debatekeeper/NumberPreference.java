@@ -21,7 +21,6 @@
 
 package net.czlee.debatekeeper;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
@@ -40,7 +39,6 @@ import android.widget.NumberPicker.OnValueChangeListener;
  * @author Chuan-Zheng Lee
  * @since  2013-02-10
  */
-@TargetApi(11)
 public class NumberPreference extends DialogPreference {
 
     private static final String TAG = "NumberPreference";

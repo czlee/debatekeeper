@@ -17,18 +17,12 @@
 
 package net.czlee.debatekeeper;
 
-import java.util.ArrayList;
-import java.util.ListIterator;
-import java.util.Locale;
-
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -50,6 +44,10 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.ListIterator;
+import java.util.Locale;
 
 /**
  * This activity allows the user to edit the preparation time bells.
@@ -156,7 +154,7 @@ public class PrepTimeBellsEditActivity extends FragmentActivity {
 
             } else {
 
-                Log.e("DialogAddOrEditBellFragment", "Unrecognised tag: " + getTag());
+                Log.e("DialogAddOrEditBellFrag", "Unrecognised tag: " + getTag());
 
                 title = getString(R.string.prepTimeBellsEditor_addBellDialog_title);
                 confirmButtonText = getString(R.string.prepTimeBellsEditor_addBellDialog_confirmButton);
@@ -317,8 +315,6 @@ public class PrepTimeBellsEditActivity extends FragmentActivity {
     // Protected methods
     //******************************************************************************************
 
-    @TargetApi(11)
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prep_time_bells_edit);
@@ -350,11 +346,8 @@ public class PrepTimeBellsEditActivity extends FragmentActivity {
         });
 
         // Set the action bar
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            ActionBar bar = getActionBar();
-            bar.setDisplayHomeAsUpEnabled(true);
-        }
-
+        ActionBar bar = getActionBar();
+        bar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

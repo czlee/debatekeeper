@@ -17,22 +17,20 @@
 
 package net.czlee.debatekeeper;
 
-import java.util.HashMap;
-import java.util.HashSet;
-
-import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.view.MenuItem;
+
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * @author Chuan-Zheng Lee
@@ -87,7 +85,6 @@ public class GlobalSettingsActivity extends PreferenceActivity {
     //******************************************************************************************
     // Protected methods
     //******************************************************************************************
-    @TargetApi(11)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -166,10 +163,8 @@ public class GlobalSettingsActivity extends PreferenceActivity {
         });
 
         // Set the action bar
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            ActionBar bar = getActionBar();
-            bar.setDisplayHomeAsUpEnabled(true);
-        }
+        ActionBar bar = getActionBar();
+        if (bar != null) bar.setDisplayHomeAsUpEnabled(true);
 
     }
 
@@ -178,7 +173,6 @@ public class GlobalSettingsActivity extends PreferenceActivity {
         super.onResume();
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(listener);
     }
-
 
     @Override
     protected void onPause() {

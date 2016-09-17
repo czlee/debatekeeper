@@ -27,33 +27,11 @@
         android:layout_alignParentTop="true"
         android:visibility="gone" />
 
-    <LinearLayout
-        android:id="@+id/formatChooser_buttons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true" >
-
-        <Button
-            android:id="@+id/formatChooser_okButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@android:string/ok" />
-
-        <Button
-            android:id="@+id/formatChooser_cancelButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@android:string/cancel" />
-    </LinearLayout>
-
     <ListView
         android:id="@+id/formatChooser_stylesList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/formatChooser_buttons"
+        android:layout_alignParentBottom="true"
         android:layout_below="@id/formatChooser_filterStylesBy"
         android:choiceMode="singleChoice"
         android:overScrollMode="ifContentScrolls" >
