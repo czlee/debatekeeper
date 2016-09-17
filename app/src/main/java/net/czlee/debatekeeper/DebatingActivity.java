@@ -184,7 +184,8 @@ public class DebatingActivity extends FragmentActivity {
                             if (doNotShowAgain.isChecked()) {
                                 SharedPreferences prefs = activity.getPreferences(MODE_PRIVATE);
                                 Editor editor = prefs.edit();
-                                editor.putInt(LAST_CHANGELOG_DIALOG_SHOWN, BuildConfig.VERSION_CODE);
+                                int thisChangelogVersionCode = getResources().getInteger(R.integer.changelogDialog_versionCode);
+                                editor.putInt(LAST_CHANGELOG_DIALOG_SHOWN, thisChangelogVersionCode);
                                 editor.apply();
                             }
                             dialog.dismiss();
@@ -979,13 +980,14 @@ public class DebatingActivity extends FragmentActivity {
         //
         // TODO If there's been an update, show the changelog.
         SharedPreferences prefs = getPreferences(MODE_PRIVATE);
-        int currentVersion = prefs.getInt(LAST_CHANGELOG_DIALOG_SHOWN, -1);
-        if (currentVersion == -1) {
+        int lastChangelogVersionShown = prefs.getInt(LAST_CHANGELOG_DIALOG_SHOWN, -1);
+        int thisChangelogVersion = getResources().getInteger(R.integer.changelogDialog_versionCode);
+        if (lastChangelogVersionShown == -1) {
             // Don't show on the dialog on first install, but take note of the version.
             Editor editor = prefs.edit();
-            editor.putInt(LAST_CHANGELOG_DIALOG_SHOWN, BuildConfig.VERSION_CODE);
+            editor.putInt(LAST_CHANGELOG_DIALOG_SHOWN, thisChangelogVersion);
             editor.apply();
-        } else if (currentVersion < BuildConfig.VERSION_CODE) {
+        } else if (lastChangelogVersionShown < thisChangelogVersion) {
             // The dialog will update the preference to the new version code.
             showDialog(new DialogChangelogFragment(), DIALOG_TAG_CHANGELOG);
         }

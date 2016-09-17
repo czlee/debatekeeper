@@ -101,11 +101,13 @@
 	<string name="poiTimer_moreInfoUrl">http://tryingtoreason.wordpress.com/debatekeeper/points-of-information/</string>
 
     <!-- Changelog dialog -->
+    <!-- By convention, this should be changed to match the manifest versionCode when the changelog changes. -->
+    <integer name="changelogDialog_versionCode">17</integer>
     <string name="changelogDialog_title">What\'s new in version 1.1</string>
     <string name="changelogDialog_message">
         Sorry it\'s been a while! \n\n
         • Fixed \"keep screen on\" while timer is running \n
-        • Fixed custom XML format files (sorry if you had problems with them)
+        • Fixed custom XML format files (sorry if you had problems with these before)
     </string>
     <string name="changelogDialog_dontShow">Don\'t show this again</string>
     <string name="changelogDialog_ok">Okay, got it!</string>
