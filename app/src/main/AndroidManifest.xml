@@ -19,7 +19,7 @@
     package="net.czlee.debatekeeper"
     android:installLocation="auto"
     android:versionCode="17"
-    android:versionName="1.1-dev.3" >
+    android:versionName="1.1-dev.4" >
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
