@@ -29,6 +29,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.media.AudioManager;
@@ -140,7 +141,7 @@ public class DebatingActivity extends FragmentActivity {
     private static final String BUNDLE_KEY_XML_FILE_NAME         = "xmlfn";
     private static final String PREFERENCE_XML_FILE_NAME         = "xmlfn";
     private static final String DO_NOT_SHOW_POI_TIMER_DIALOG     = "dnspoi";
-    private static final String LAST_CHANGELOG_DIALOG_SHOWN      = "lastChangeLog";
+    private static final String LAST_CHANGELOG_VERSION_SHOWN     = "lastChangeLog";
     private static final String DIALOG_ARGUMENT_FATAL_MESSAGE    = "fm";
     private static final String DIALOG_ARGUMENT_XML_ERROR_LOG    = "xel";
     private static final String DIALOG_ARGUMENT_SCHEMA_USED      = "used";
@@ -185,7 +186,7 @@ public class DebatingActivity extends FragmentActivity {
                                 SharedPreferences prefs = activity.getPreferences(MODE_PRIVATE);
                                 Editor editor = prefs.edit();
                                 int thisChangelogVersionCode = getResources().getInteger(R.integer.changelogDialog_versionCode);
-                                editor.putInt(LAST_CHANGELOG_DIALOG_SHOWN, thisChangelogVersionCode);
+                                editor.putInt(LAST_CHANGELOG_VERSION_SHOWN, thisChangelogVersionCode);
                                 editor.apply();
                             }
                             dialog.dismiss();
@@ -978,18 +979,21 @@ public class DebatingActivity extends FragmentActivity {
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
         //
-        // TODO If there's been an update, show the changelog.
+        // If there's been an update, show the changelog.
         SharedPreferences prefs = getPreferences(MODE_PRIVATE);
-        int lastChangelogVersionShown = prefs.getInt(LAST_CHANGELOG_DIALOG_SHOWN, -1);
-        int thisChangelogVersion = getResources().getInteger(R.integer.changelogDialog_versionCode);
-        if (lastChangelogVersionShown == -1) {
-            // Don't show on the dialog on first install, but take note of the version.
-            Editor editor = prefs.edit();
-            editor.putInt(LAST_CHANGELOG_DIALOG_SHOWN, thisChangelogVersion);
-            editor.apply();
-        } else if (lastChangelogVersionShown < thisChangelogVersion) {
-            // The dialog will update the preference to the new version code.
-            showDialog(new DialogChangelogFragment(), DIALOG_TAG_CHANGELOG);
+        Resources res = getResources();
+        int thisChangelogVersion = res.getInteger(R.integer.changelogDialog_versionCode);
+        int lastChangelogVersionShown = prefs.getInt(LAST_CHANGELOG_VERSION_SHOWN, 0);
+        if (lastChangelogVersionShown < thisChangelogVersion) {
+            if (isFirstInstall()) {
+                // Don't show on the dialog on first install, but take note of the version.
+                Editor editor = prefs.edit();
+                editor.putInt(LAST_CHANGELOG_VERSION_SHOWN, thisChangelogVersion);
+                editor.apply();
+            } else {
+                // The dialog will update the preference to the new version code.
+                showDialog(new DialogChangelogFragment(), DIALOG_TAG_CHANGELOG);
+            }
         }
     }
 
@@ -1503,6 +1507,23 @@ public class DebatingActivity extends FragmentActivity {
         mViewPager.setCurrentItem(mDebateManager.getActivePhaseIndex(), false);
         applyPreferences();
         updateGui();
+    }
+
+    /**
+     * Returns whether or not this is the user's first time opening the app.
+     * @return true if it is the first time, false otherwise.
+     */
+    private boolean isFirstInstall() {
+        PackageInfo info = null;
+        try {
+            info = getPackageManager().getPackageInfo(getPackageName(), 0);
+        } catch (NameNotFoundException e) {
+            Log.e(TAG, "isFirstInstall: Can't find package info, assuming it is the first install");
+            return true;
+        }
+
+        Log.v(TAG, String.format("isFirstInstall: %d vs %d", info.firstInstallTime, info.lastUpdateTime));
+        return info.firstInstallTime == info.lastUpdateTime;
     }
 
     private String loadXmlFileName() {
