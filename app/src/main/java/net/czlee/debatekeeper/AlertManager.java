@@ -72,7 +72,6 @@ public class AlertManager
     // Preferences for speech bells
     private       boolean               mSilentMode;
     private       boolean               mVibrateMode;
-    private       boolean               mKeepScreenOn;
     private       FlashScreenMode       mFlashScreenMode     = FlashScreenMode.OFF;
 
     // Preferences for POI bells
@@ -110,7 +109,6 @@ public class AlertManager
         Resources res = mService.getResources();
         mSilentMode   = res.getBoolean(R.bool.prefDefault_silentMode);
         mVibrateMode  = res.getBoolean(R.bool.prefDefault_vibrateMode);
-        mKeepScreenOn = res.getBoolean(R.bool.prefDefault_keepScreenOn);
 
         createWakeLock();
     }
@@ -312,15 +310,6 @@ public class AlertManager
         this.mVibrateMode = vibrateMode;
     }
 
-    public void setKeepScreenOn(boolean keepScreenOn) {
-        this.mKeepScreenOn = keepScreenOn;
-
-        // Also, re-create the wake lock and re-acquire if appropriate
-        createWakeLock();  // This also resets the wake lock
-        if (mShowingNotification)
-            mWakeLock.acquire();
-    }
-
     public void setPoiBuzzerEnabled(boolean poiBuzzerEnabled) {
         this.mPoiBuzzerEnabled = poiBuzzerEnabled;
     }
@@ -394,14 +383,7 @@ public class AlertManager
             mWakeLock = null;
         }
 
-        // First compile the correct flags.
-        // If "keep screen on" is enabled, get the dim wake lock, otherwise, partial lock (this
-        // just keeps the CPU running) is sufficient.
-        int flags = PowerManager.ON_AFTER_RELEASE;
-        if (mKeepScreenOn) flags |= PowerManager.SCREEN_DIM_WAKE_LOCK;
-        else flags |= PowerManager.PARTIAL_WAKE_LOCK;
-
-        mWakeLock = mPowerManager.newWakeLock(flags, "Debatekeeper");
+        mWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Debatekeeper");
 
         // Either we have the lock or we don't, we don't need to count how many times we locked
         // it.  Turning this off makes it okay to acquire or release multiple times.

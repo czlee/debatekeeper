@@ -76,6 +76,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -127,7 +128,8 @@ public class DebatingActivity extends FragmentActivity {
     private CountDirection       mPrepTimeCountDirection = CountDirection.COUNT_DOWN;
     private BackgroundColourArea mBackgroundColourArea   = BackgroundColourArea.WHOLE_SCREEN;
     private boolean              mPoiTimerEnabled        = true;
-    private boolean              mKeepScreenOn;
+    private boolean              mRelevantKeepScreenOn   = false;
+    private boolean              mSpeechKeepScreenOn;
     private boolean              mPrepTimeKeepScreenOn;
 
     private boolean              mDialogBlocking          = false;
@@ -426,6 +428,7 @@ public class DebatingActivity extends FragmentActivity {
         public void onClick(View v) {
             mDebateManager.startTimer();
             updateGui();
+            updateKeepScreenOn();
         }
     }
 
@@ -434,6 +437,7 @@ public class DebatingActivity extends FragmentActivity {
         public void onClick(View v) {
             mDebateManager.stopTimer();
             updateGui();
+            updateKeepScreenOn();
         }
     }
 
@@ -1012,7 +1016,7 @@ public class DebatingActivity extends FragmentActivity {
             overtimeBellsEnabled = prefs.getBoolean(res.getString(R.string.pref_overtimeBellsEnable_key),
                     res.getBoolean(R.bool.prefDefault_overtimeBellsEnable));
 
-            mKeepScreenOn = prefs.getBoolean(res.getString(R.string.pref_keepScreenOn_key),
+            mSpeechKeepScreenOn = prefs.getBoolean(res.getString(R.string.pref_keepScreenOn_key),
                     res.getBoolean(R.bool.prefDefault_keepScreenOn));
             mPrepTimeKeepScreenOn = prefs.getBoolean(res.getString(R.string.pref_prepTimer_keepScreenOn_key),
                     res.getBoolean(R.bool.prefDefault_prepTimer_keepScreenOn));
@@ -1376,8 +1380,6 @@ public class DebatingActivity extends FragmentActivity {
         mViewPager.setCurrentItem(mDebateManager.getActivePhaseIndex());
 
         updateGui();
-        updateKeepScreenOn();
-
     }
 
     /**
@@ -1396,8 +1398,6 @@ public class DebatingActivity extends FragmentActivity {
         mViewPager.setCurrentItem(mDebateManager.getActivePhaseIndex());
 
         updateGui();
-        updateKeepScreenOn();
-
     }
 
     private void initialiseDebate() {
@@ -1893,24 +1893,29 @@ public class DebatingActivity extends FragmentActivity {
     }
 
     /**
-     * Sets the "keep screen on" setting according to whether it is prep time or a speech.
-     * This method should be called whenever (a) we switch between speeches and prep time,
-     * and (b) the user preference is applied again.
+     * Update the "keep screen on" flag according to
+     * <ul>
+     *    <li>whether it is prep time or a speech, and</li>
+     *    <li>whether the timer is currently running.</li>
+     * </ul>
+     * This method should be called whenever
+     * <ul>
+     *     <li>the user preference is applied, and</li>
+     *     <li>the timer starts or stops, or might start or stop.</li>
+     * </ul>
      */
     private void updateKeepScreenOn() {
-        if (mBinder == null)
-            return;
+        boolean relevantKeepScreenOn = false;
 
-        AlertManager am = mBinder.getAlertManager();
+        if (mDebateManager != null && mDebateManager.getActivePhaseFormat().isPrep())
+            relevantKeepScreenOn = mPrepTimeKeepScreenOn;
+        else
+            relevantKeepScreenOn = mSpeechKeepScreenOn;
 
-        if (mDebateManager != null) {
-            if (mDebateManager.getActivePhaseFormat().isPrep()) {
-                am.setKeepScreenOn(mPrepTimeKeepScreenOn);
-                return;
-            }
-        }
-
-        am.setKeepScreenOn(mKeepScreenOn);
+        if (relevantKeepScreenOn && mDebateManager != null && mDebateManager.isRunning())
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        else
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     private void updatePlayBellButton() {
