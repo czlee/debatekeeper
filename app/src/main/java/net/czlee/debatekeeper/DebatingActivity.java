@@ -17,32 +17,6 @@
 
 package net.czlee.debatekeeper;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
-
-import net.czlee.debatekeeper.AlertManager.FlashScreenListener;
-import net.czlee.debatekeeper.AlertManager.FlashScreenMode;
-import net.czlee.debatekeeper.debateformat.BellInfo;
-import net.czlee.debatekeeper.debateformat.DebateFormat;
-import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml;
-import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXmlForSchema1;
-import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXmlForSchema2;
-import net.czlee.debatekeeper.debateformat.DebatePhaseFormat;
-import net.czlee.debatekeeper.debateformat.PeriodInfo;
-import net.czlee.debatekeeper.debateformat.PrepTimeFormat;
-import net.czlee.debatekeeper.debateformat.SpeechFormat;
-import net.czlee.debatekeeper.debateformat.XmlUtilities;
-import net.czlee.debatekeeper.debatemanager.DebateManager;
-import net.czlee.debatekeeper.debatemanager.DebateManager.DebatePhaseTag;
-
-import org.xml.sax.SAXException;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -83,6 +57,32 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import net.czlee.debatekeeper.AlertManager.FlashScreenListener;
+import net.czlee.debatekeeper.AlertManager.FlashScreenMode;
+import net.czlee.debatekeeper.debateformat.BellInfo;
+import net.czlee.debatekeeper.debateformat.DebateFormat;
+import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml;
+import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXmlForSchema1;
+import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXmlForSchema2;
+import net.czlee.debatekeeper.debateformat.DebatePhaseFormat;
+import net.czlee.debatekeeper.debateformat.PeriodInfo;
+import net.czlee.debatekeeper.debateformat.PrepTimeFormat;
+import net.czlee.debatekeeper.debateformat.SpeechFormat;
+import net.czlee.debatekeeper.debateformat.XmlUtilities;
+import net.czlee.debatekeeper.debatemanager.DebateManager;
+import net.czlee.debatekeeper.debatemanager.DebateManager.DebatePhaseTag;
+
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -128,7 +128,6 @@ public class DebatingActivity extends FragmentActivity {
     private CountDirection       mPrepTimeCountDirection = CountDirection.COUNT_DOWN;
     private BackgroundColourArea mBackgroundColourArea   = BackgroundColourArea.WHOLE_SCREEN;
     private boolean              mPoiTimerEnabled        = true;
-    private boolean              mRelevantKeepScreenOn   = false;
     private boolean              mSpeechKeepScreenOn;
     private boolean              mPrepTimeKeepScreenOn;
 
@@ -141,6 +140,7 @@ public class DebatingActivity extends FragmentActivity {
     private static final String BUNDLE_KEY_XML_FILE_NAME         = "xmlfn";
     private static final String PREFERENCE_XML_FILE_NAME         = "xmlfn";
     private static final String DO_NOT_SHOW_POI_TIMER_DIALOG     = "dnspoi";
+    private static final String LAST_CHANGELOG_DIALOG_SHOWN      = "lastChangeLog";
     private static final String DIALOG_ARGUMENT_FATAL_MESSAGE    = "fm";
     private static final String DIALOG_ARGUMENT_XML_ERROR_LOG    = "xel";
     private static final String DIALOG_ARGUMENT_SCHEMA_USED      = "used";
@@ -150,6 +150,7 @@ public class DebatingActivity extends FragmentActivity {
     private static final String DIALOG_TAG_ERRORS_WITH_XML       = "errors";
     private static final String DIALOG_TAG_FATAL_PROBLEM         = "fatal";
     private static final String DIALOG_TAG_POI_TIMER_INFO        = "poiinfo";
+    private static final String DIALOG_TAG_CHANGELOG             = "changelog";
 
     private static final int    CHOOSE_STYLE_REQUEST      = 0;
 
@@ -160,6 +161,46 @@ public class DebatingActivity extends FragmentActivity {
     //******************************************************************************************
     // Public classes
     //******************************************************************************************
+
+    public static class DialogChangelogFragment extends DialogFragment {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final Activity activity = getActivity();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+            View content = activity.getLayoutInflater().inflate(R.layout.changelog_dialog, null);
+            final CheckBox doNotShowAgain = (CheckBox) content.findViewById(R.id.changelogDialog_dontShow);
+
+
+            builder.setTitle(R.string.changelogDialog_title)
+                    .setView(content)
+                    .setCancelable(true)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Take note of "do not show again" setting
+                            if (doNotShowAgain.isChecked()) {
+                                SharedPreferences prefs = activity.getPreferences(MODE_PRIVATE);
+                                Editor editor = prefs.edit();
+                                editor.putInt(LAST_CHANGELOG_DIALOG_SHOWN, BuildConfig.VERSION_CODE);
+                                editor.apply();
+                            }
+                            dialog.dismiss();
+                        }
+                    })
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            dialog.dismiss();
+                        }
+                    });
+
+            return builder.create();
+        }
+
+    }
 
     public static class DialogErrorsWithXmlFileFragment extends DialogFragment {
 
@@ -934,6 +975,13 @@ public class DebatingActivity extends FragmentActivity {
         Intent intent = new Intent(this, DebatingTimerService.class);
         startService(intent);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
+        //
+        // TODO If there's been an update, show the changelog.
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        Log.i(TAG, String.format("Version code is %d, preference is %d", BuildConfig.VERSION_CODE, prefs.getInt(LAST_CHANGELOG_DIALOG_SHOWN, 0)));
+        if (prefs.getInt(LAST_CHANGELOG_DIALOG_SHOWN, 0) < BuildConfig.VERSION_CODE)
+            showDialog(new DialogChangelogFragment(), DIALOG_TAG_CHANGELOG);
     }
 
     @Override

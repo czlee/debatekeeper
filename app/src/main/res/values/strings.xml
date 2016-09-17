@@ -25,7 +25,7 @@
     <string name="activityName_PrepTimeBellsEdit">Prep timer bells</string>
 
     <string name="app_marketUri">market://details?id=net.czlee.debatekeeper</string>
-    
+
     <!-- Buttons -->
     <string name="mainScreen_controlButton_startTimer_text">Start</string>
     <string name="mainScreen_controlButton_stopTimer_text">Stop</string>
@@ -35,7 +35,7 @@
     <string name="mainScreen_controlButton_chooseStyle_text">Choose style</string>
     <string name="mainScreen_playBell_buttonText">Bell</string>
     <string name="mainScreen_poiTimer_buttonText">POI</string>
-    
+
     <!-- Notices -->
     <string name="notification_title">Debatekeeper</string>
     <string name="notification_tickerText">Debatekeeper is timing</string>
@@ -57,12 +57,12 @@
     <string name="prepTimeControlledIndicator">", controlled"</string>
     <string name="pauseOnBellIndicator">" (pause)"</string>
     <string name="silentBellIndicator">" (silent)"</string>
-    
+
     <string name="mainScreen_toast_resetDebate">All timers in debate reset</string>
     <string name="mainScreen_noDebateLoaded_text">No debate loaded</string>
-    
+
     <string name="prepTime_title">Preparation time</string>
-    
+
     <string name="mainScreen_toast_editTextDiscardChangesInfo_limitedBelow">To discard changes, press the back button. (You can\'t set the time to an overtime value.)</string>
     <string name="mainScreen_toast_editTextDiscardChangesInfo_limitedAbove">To discard changes, press the back button. (You can\'t set the time to greater than 23:59.)</string>
 
@@ -73,12 +73,12 @@
 
     <!-- Dialogs -->
     <string name="dialogs_fileName_suffix">\n\n[File: %1$s]</string>
-    
+
     <string name="fatalProblemWithXmlFileDialog_title">Oh no!</string>
     <string name="fatalProblemWithXmlFileDialog_button">Choose style</string>
     <string name="fatalProblemWithXmlFileDialog_message_noSpeeches">"There are no speeches in this debate style file."</string>
     <string name="fatalProblemWithXmlFileDialog_message_cannotRead">"I've hit a problem opening this debate style file."</string>
-    <string name="fatalProblemWithXmlFileDialog_message_cannotFind">"I've hit a problem opening this debate style file."</string>
+    <string name="fatalProblemWithXmlFileDialog_message_cannotFind">"I've hit a problem opening the debate style file %1$s."</string>
     <string name="fatalProblemWithXmlFileDialog_message_badXml">"There's a problem with the XML in this debate style file. The error was:\n\n%1$s\n"</string>
     <string name="fatalProblemWithXmlFileDialog_message_suffix">"\nPlease choose another style."</string>
     <string name="fatalProblemWithXmlFileDialog_noSchemaVersion_suffix">"No schema version was specified; please ask the author of this XML file to specify one.\n"</string>
@@ -92,11 +92,21 @@
     <string name="schemaTooNewDialog_button_upgrade">Check for updates</string>
     <string name="schemaTooNewDialog_button_ignore">Ignore</string>
     <string name="schemaTooNewDialog_message">This debate style file uses a schema (%1$s) newer than supported (%2$s) by this app version (%3$s). Check for updates on Google Play?</string>
-    
+
     <!-- POI timer -->
 	<string name="poiTimerInfoDialog_title">About the POI timer</string>
 	<string name="poiTimerInfoDialog_message">The <b>POI</b> button starts a 15-second countdown.\n\nIf you don\'t want to use it, you can hide it under <b>Settings &gt; Show POIs timer</b>.</string>
 	<string name="poiTimerInfoDialog_dontShow">Do not show this again</string>
 	<string name="poiTimerInfoDialog_button_learnMore">Learn more</string>
 	<string name="poiTimer_moreInfoUrl">http://tryingtoreason.wordpress.com/debatekeeper/points-of-information/</string>
+
+    <!-- Changelog dialog -->
+    <string name="changelogDialog_title">What\'s new in version 1.1</string>
+    <string name="changelogDialog_message">
+        Sorry it\'s been a while! \n\n
+        • Fixed \"keep screen on\" while timer is running \n
+        • Fixed custom XML format files (sorry if you had problems with them)
+    </string>
+    <string name="changelogDialog_dontShow">Don\'t show this again</string>
+    <string name="changelogDialog_ok">Okay, got it!</string>
 </resources>
