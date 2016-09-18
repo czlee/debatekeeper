@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_countDirection_summaries">
+        <item>Compter vers le haut</item>
+        <item>Compter vers le bas</item>
+    </string-array>
+    <string-array name="pref_countDirection_entries">
+        <item>Compter vers le haut</item>
+        <item>Compter vers le bas</item>
+    </string-array>
+    <string-array name="pref_backgroundColourArea_summaries">
+        <item>Laisser le fond noir pendant tout le débat</item>
+        <item>Colorier seulement la barre en haut pour indiquer les périodes dans les discours</item>
+        <item>Colorier l\'écran entier pour indiquer les périodes dans les discours</item>
+    </string-array>
+    <string-array name="pref_backgroundColourArea_entries">
+        <item>Désactivé</item>
+        <item>Seulement la barre en haut</item>
+        <item>Ecran entier</item>
+    </string-array>
+    <string-array name="pref_prepTimer_countDirection_summaries">
+        <item>Compter vers le haut dans la chronomètre de préparation</item>
+        <item>Compter vers le bas dans la chronomètre de préparation</item>
+    </string-array>
+    <string-array name="pref_poiTimer_flashScreenMode_summaries">
+        <item>Ne pas faire clignoter l\'écran pour les POIs</item>
+        <item>Faire clignoter de manière stroboscopique quand le temps de POI expire</item>
+        <item>Faire clignoter en bleu brièvement quand le temps de POI expire</item>
+    </string-array>
+    <string-array name="pref_flashScreenMode_summaries">
+        <item>Ne pas faire clignoter l\'écran</item>
+        <item>Faire clignoter l\'écran de manière stroboscopique aux temps de sonnettes</item>
+        <item>Faire clignoter l\'écran en blanc brièvement aux temps de sonnettes</item>
+    </string-array>
+    <string-array name="pref_flashScreenMode_entries">
+        <item>Désactivé</item>
+        <item>Stroboscope</item>
+        <item>Solide</item>
+    </string-array>
+    <string-array name="prepTimeBellsEditor_editBellDialog_types">
+        <item>Temps du début</item>
+        <item>Temps à la fin</item>
+        <item>Pourcentage</item>
+    </string-array>
+</resources>
