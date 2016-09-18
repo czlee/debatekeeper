@@ -94,7 +94,7 @@
     <string name="schemaTooNewDialog_message">This debate style file uses a schema (%1$s) newer than supported (%2$s) by this app version (%3$s). Check for updates on Google Play?</string>
 
     <!-- POI timer -->
-	<string name="poiTimer_moreInfoUrl">http://tryingtoreason.wordpress.com/debatekeeper/points-of-information/</string>
+	<string name="poiTimer_moreInfoUrl">https://github.com/czlee/debatekeeper/wiki/Points-of-information</string>
 
     <!-- Changelog dialog -->
     <!-- By convention, this should be changed to match the manifest versionCode when the changelog changes. -->
