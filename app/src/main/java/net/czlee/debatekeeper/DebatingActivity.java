@@ -37,6 +37,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -162,6 +163,7 @@ public class DebatingActivity extends FragmentActivity {
 
     public static class DialogChangelogFragment extends DialogFragment {
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final Activity activity = getActivity();
@@ -210,6 +212,7 @@ public class DebatingActivity extends FragmentActivity {
             return fragment;
         }
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -219,11 +222,12 @@ public class DebatingActivity extends FragmentActivity {
             Bundle args = getArguments();
 
             ArrayList<String> errorLog = args.getStringArrayList(DIALOG_ARGUMENT_XML_ERROR_LOG);
-            Iterator<String> errorIterator = errorLog.iterator();
 
-            while (errorIterator.hasNext()) {
-                errorMessage.append("\n");
-                errorMessage.append(errorIterator.next());
+            if (errorLog != null) {
+                for (String error : errorLog) {
+                    errorMessage.append("\n");
+                    errorMessage.append(error);
+                }
             }
 
             errorMessage.append(getString(R.string.dialogs_fileName_suffix, args.getString(DIALOG_ARGUMENT_FILE_NAME)));
@@ -254,6 +258,7 @@ public class DebatingActivity extends FragmentActivity {
             return fragment;
         }
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final FragmentActivity activity = getActivity();
@@ -302,6 +307,7 @@ public class DebatingActivity extends FragmentActivity {
             return fragment;
         }
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final DebatingActivity activity = (DebatingActivity) getActivity();
@@ -343,9 +349,7 @@ public class DebatingActivity extends FragmentActivity {
                     }
                 });
 
-            AlertDialog dialog = builder.create();
-
-            return dialog;
+            return builder.create();
         }
 
         @Override
@@ -369,25 +373,24 @@ public class DebatingActivity extends FragmentActivity {
 
         private final String key;
 
-        private BackgroundColourArea(String key) {
+        BackgroundColourArea(String key) {
             this.key = key;
         }
 
         public static BackgroundColourArea toEnum(String key) {
-            BackgroundColourArea[] values = BackgroundColourArea.values();
-            for (int i = 0; i < values.length; i++)
-                if (key.equals(values[i].key))
-                    return values[i];
+            for (BackgroundColourArea value : BackgroundColourArea.values())
+                if (key.equals(value.key))
+                    return value;
             throw new IllegalArgumentException(String.format("There is no enumerated constant '%s'", key));
         }
     }
 
     private class ControlButtonSpec {
-        int textResid;
+        int textResId;
         View.OnClickListener onClickListener;
 
-        private ControlButtonSpec(int textResid, View.OnClickListener onClickListener) {
-            this.textResid = textResid;
+        private ControlButtonSpec(int textResId, View.OnClickListener onClickListener) {
+            this.textResId = textResId;
             this.onClickListener = onClickListener;
         }
     }
@@ -444,19 +447,17 @@ public class DebatingActivity extends FragmentActivity {
 
         private final String key;
 
-        private CountDirection(String key) {
+        CountDirection(String key) {
             this.key = key;
         }
 
         public static CountDirection toEnum(String key) {
-            CountDirection[] values = CountDirection.values();
-            for (int i = 0; i < values.length; i++)
-                if (key.equals(values[i].key))
-                    return values[i];
+            for (CountDirection value : CountDirection.values())
+                if (key.equals(value.key))
+                    return value;
             throw new IllegalArgumentException(String.format("There is no enumerated constant '%s'", key));
         }
-
-    };
+    }
 
     private class CurrentTimeOnLongClickListener implements OnLongClickListener {
 
@@ -509,18 +510,19 @@ public class DebatingActivity extends FragmentActivity {
 
         private static final String TAG = "DebateTmrDispPagAdapt";
 
-        private final HashMap<DebatePhaseTag, View> mViewsMap = new HashMap<DebatePhaseTag, View>();
+        private final HashMap<DebatePhaseTag, View> mViewsMap = new HashMap<>();
         private static final String NO_DEBATE_LOADED = "no_debate_loaded";
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
-            View view = mViewsMap.get(object);
+            DebatePhaseTag dpt = (DebatePhaseTag) object;
+            View view = mViewsMap.get(dpt);
             if (view == null) {
                 Log.e(TAG, "Nothing found to destroy at position " + position + " - " + object.toString());
                 return;
             }
             container.removeView(view);
-            mViewsMap.remove(object);
+            mViewsMap.remove(dpt);
         }
 
         @Override
@@ -536,11 +538,11 @@ public class DebatingActivity extends FragmentActivity {
             // then the View no longer exists.  Likewise if there is no debate loaded and
             // there was anything but the "no debate loaded" screen.
             DebatePhaseTag tag = (DebatePhaseTag) object;
-            if ((mDebateManager == null) != (tag.specialTag == NO_DEBATE_LOADED))
+            if ((mDebateManager == null) != (NO_DEBATE_LOADED.equals(tag.specialTag)))
                 return POSITION_NONE;
 
             // If it was "no debate loaded" and there is still no debate loaded, it's unchanged.
-            if (mDebateManager == null && tag.specialTag == NO_DEBATE_LOADED)
+            if (mDebateManager == null && NO_DEBATE_LOADED.equals(tag.specialTag))
                 return POSITION_UNCHANGED;
 
             // That covers all situations in which mDebateManager could be null. Just to be safe:
@@ -548,9 +550,7 @@ public class DebatingActivity extends FragmentActivity {
 
             // If there's no messy debate format changing or loading, delegate this function to the
             // DebateManager.
-            int position = mDebateManager.getPhaseIndexForTag((DebatePhaseTag) object);
-
-            return position;
+            return mDebateManager.getPhaseIndexForTag((DebatePhaseTag) object);
         }
 
         @Override
@@ -573,7 +573,7 @@ public class DebatingActivity extends FragmentActivity {
 
             // OnTouchListeners
             v.setOnClickListener(new DebateTimerDisplayOnClickListener());
-            ((TextView) v.findViewById(R.id.debateTimer_currentTime)).setOnLongClickListener(new CurrentTimeOnLongClickListener());
+            v.findViewById(R.id.debateTimer_currentTime).setOnLongClickListener(new CurrentTimeOnLongClickListener());
 
             // Set the time picker to 24-hour time
             TimePicker currentTimePicker = (TimePicker) v.findViewById(R.id.debateTimer_currentTimePicker);
@@ -604,8 +604,8 @@ public class DebatingActivity extends FragmentActivity {
 
         @Override
         public boolean isViewFromObject(View view, Object object) {
-            if (!mViewsMap.containsKey(object)) return false;
-            else return (mViewsMap.get(object) == view);
+            DebatePhaseTag dpt = (DebatePhaseTag) object;
+            return mViewsMap.containsKey(dpt) && (mViewsMap.get(dpt) == view);
         }
 
         @Override
@@ -618,7 +618,8 @@ public class DebatingActivity extends FragmentActivity {
             // timer display - it is just whatever view is currently being displayed.  Therefore,
             // other methods should check that mDebateTimerDisplay is in fact a debate timer
             // display (by comparing its ID to R.id.debateTimer_root) before working on it.
-            mDebateTimerDisplay = mViewsMap.get(object);
+            DebatePhaseTag dpt = (DebatePhaseTag) object;
+            mDebateTimerDisplay = mViewsMap.get(dpt);
 
             // Disable the lock that prevents updateGui() from running while the pages are
             // changing.
@@ -640,9 +641,7 @@ public class DebatingActivity extends FragmentActivity {
          */
         public void refreshBackgroundColours() {
             if (mDebateManager == null) return;
-            Iterator<Entry<DebatePhaseTag, View>> iterator = mViewsMap.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Entry<DebatePhaseTag, View> entry = iterator.next();
+            for (Entry<DebatePhaseTag, View> entry : mViewsMap.entrySet()) {
                 int phaseIndex = mDebateManager.getPhaseIndexForTag(entry.getKey());
                 DebatePhaseFormat dpf = mDebateManager.getPhaseFormat(phaseIndex);
                 long time = mDebateManager.getPhaseCurrentTime(phaseIndex);
@@ -800,31 +799,23 @@ public class DebatingActivity extends FragmentActivity {
     public void onBackPressed() {
 
         // If no debate is loaded, exit.
-        if (mDebateManager == null) {
+        if (mDebateManager == null)
             super.onBackPressed();
-            return;
-        }
 
         // If we're in editing mode, exit editing mode
-        if (mIsEditingTime) {
+        else if (mIsEditingTime)
             editCurrentTimeFinish(false);
-            return;
-        }
 
         // If the timer is stopped AND it's not the first speaker, go back one speaker.
         // Note: We do not just leave this check to goToPreviousSpeaker(), because we want to do
         // other things if it's not in a state in which it could go to the previous speaker.
-        if (!mDebateManager.isInFirstPhase() && !mDebateManager.isRunning()) {
+        else if (!mDebateManager.isInFirstPhase() && !mDebateManager.isRunning())
             goToPreviousSpeech();
-            return;
 
         // Otherwise, behave normally (i.e. exit).
         // Note that if the timer is running, the service will remain present in the
         // background, so this doesn't stop a running timer.
-        } else {
-            super.onBackPressed();
-            return;
-        }
+        else super.onBackPressed();
     }
 
     @Override
@@ -898,7 +889,7 @@ public class DebatingActivity extends FragmentActivity {
         // ViewPager
         mViewPager = (EnableableViewPager) findViewById(R.id.mainScreen_debateTimerViewPager);
         mViewPager.setAdapter(new DebateTimerDisplayPagerAdapter());
-        mViewPager.setOnPageChangeListener(new DebateTimerDisplayOnPageChangeListener());
+        mViewPager.addOnPageChangeListener(new DebateTimerDisplayOnPageChangeListener());
         mViewPager.setPageMargin(1);
         mViewPager.setPageMarginDrawable(R.drawable.divider);
 
@@ -1068,7 +1059,7 @@ public class DebatingActivity extends FragmentActivity {
                 SharedPreferences.Editor editor = prefs.edit();
                 String newValue = (userCountDirectionValue.equals("generallyUp")) ? "alwaysUp" : "alwaysDown";
                 editor.putString(res.getString(R.string.pref_countDirection_key), newValue);
-                editor.commit();
+                editor.apply();
                 Log.i(TAG, "countDirection: replaced " + userCountDirectionValue + " with " + newValue);
                 userCountDirectionValue = newValue;
             }
@@ -1114,7 +1105,7 @@ public class DebatingActivity extends FragmentActivity {
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString(res.getString(R.string.pref_flashScreenMode_key), flashStringModePrefValue);
                 editor.remove(res.getString(R.string.pref_flashScreenBool_key));
-                editor.commit();
+                editor.apply();
                 Log.i(TAG, "flashScreenMode: replaced boolean preference with list preference: " + flashStringModePrefValue);
 
             } else {
@@ -1190,7 +1181,7 @@ public class DebatingActivity extends FragmentActivity {
 
         DebateFormatBuilderFromXml dfbfx;
 
-        InputStream is = null;
+        InputStream is;
         DebateFormat df;
         FormatXmlFilesManager filesManager = new FormatXmlFilesManager(this);
 
@@ -1440,7 +1431,7 @@ public class DebatingActivity extends FragmentActivity {
             // null once restored).
             if (mLastStateBundle != null) {
                 String xmlFileName = mLastStateBundle.getString(BUNDLE_KEY_XML_FILE_NAME);
-                if (xmlFileName.equals(mFormatXmlFileName))
+                if (xmlFileName != null && xmlFileName.equals(mFormatXmlFileName))
                     mDebateManager.restoreState(BUNDLE_KEY_DEBATE_MANAGER, mLastStateBundle);
                 mLastStateBundle = null;
             }
@@ -1457,7 +1448,7 @@ public class DebatingActivity extends FragmentActivity {
      * @return true if it is the first time, false otherwise.
      */
     private boolean isFirstInstall() {
-        PackageInfo info = null;
+        PackageInfo info;
         try {
             info = getPackageManager().getPackageInfo(getPackageName(), 0);
         } catch (NameNotFoundException e) {
@@ -1550,7 +1541,7 @@ public class DebatingActivity extends FragmentActivity {
         if (spec == null)
             button.setVisibility(View.GONE);
         else {
-            button.setText(spec.textResid);
+            button.setText(spec.textResId);
             button.setOnClickListener(spec.onClickListener);
             button.setVisibility(View.VISIBLE);
         }
@@ -1599,7 +1590,7 @@ public class DebatingActivity extends FragmentActivity {
         SharedPreferences sp = getPreferences(MODE_PRIVATE);
         Editor editor = sp.edit();
         editor.putString(PREFERENCE_XML_FILE_NAME, filename);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1764,9 +1755,9 @@ public class DebatingActivity extends FragmentActivity {
         // If it passed all those checks, populate the timer display
 
         TextView periodDescriptionText = (TextView) debateTimerDisplay.findViewById(R.id.debateTimer_periodDescriptionText);
-        TextView speechNameText        = (TextView) debateTimerDisplay.findViewById(R.id.debateTimer_speechNameText);
-        TextView currentTimeText       = (TextView) debateTimerDisplay.findViewById(R.id.debateTimer_currentTime);
-        TextView infoLineText          = (TextView) debateTimerDisplay.findViewById(R.id.debateTimer_informationLine);
+        TextView speechNameText = (TextView) debateTimerDisplay.findViewById(R.id.debateTimer_speechNameText);
+        TextView currentTimeText = (TextView) debateTimerDisplay.findViewById(R.id.debateTimer_currentTime);
+        TextView infoLineText = (TextView) debateTimerDisplay.findViewById(R.id.debateTimer_informationLine);
 
         // The information at the top of the screen
         speechNameText.setText(phaseName);
@@ -1781,14 +1772,12 @@ public class DebatingActivity extends FragmentActivity {
 
         // Colours
         int currentTimeTextColor = getResources().getColor((overtime) ? R.color.overtimeTextColour : android.R.color.primary_text_dark);
-        int backgroundColour     = getBackgroundColorFromPeriodInfo(dpf, pi);
+        int backgroundColour = getBackgroundColorFromPeriodInfo(dpf, pi);
 
         // If we're updating the current display (as opposed to an inactive debate phase), then
         // don't update colours if there is a flash screen in progress.
         boolean displayIsActive = debateTimerDisplay == mDebateTimerDisplay;
-        boolean semaphoreAcquired;
-        if (displayIsActive) semaphoreAcquired = mFlashScreenSemaphore.tryAcquire();
-        else semaphoreAcquired = false;
+        boolean semaphoreAcquired = displayIsActive && mFlashScreenSemaphore.tryAcquire();
 
         // If not current display, or we got the semaphore, we're good to go.  If not, don't bother.
         if (!displayIsActive || semaphoreAcquired) {
@@ -1803,12 +1792,11 @@ public class DebatingActivity extends FragmentActivity {
         long length = dpf.getLength();
         String lengthStr;
         if (length % 60 == 0)
-            lengthStr = String.format(getResources().
-                    getQuantityString(R.plurals.timeInMinutes, (int) (length / 60), length / 60));
+            lengthStr = getResources().getQuantityString(R.plurals.timeInMinutes, (int) (length / 60), length / 60);
         else
             lengthStr = XmlUtilities.secsToText(length);
 
-        int finalTimeTextUnformattedResid = (dpf.isPrep()) ? R.string.prepTimeLength: R.string.speechLength;
+        int finalTimeTextUnformattedResid = (dpf.isPrep()) ? R.string.prepTimeLength : R.string.speechLength;
         infoLine.append(String.format(this.getString(finalTimeTextUnformattedResid),
                 lengthStr));
 
@@ -1926,7 +1914,7 @@ public class DebatingActivity extends FragmentActivity {
      * </ul>
      */
     private void updateKeepScreenOn() {
-        boolean relevantKeepScreenOn = false;
+        boolean relevantKeepScreenOn;
 
         if (mDebateManager != null && mDebateManager.getActivePhaseFormat().isPrep())
             relevantKeepScreenOn = mPrepTimeKeepScreenOn;

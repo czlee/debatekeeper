@@ -38,23 +38,13 @@ import java.util.HashSet;
  */
 public class GlobalSettingsActivity extends PreferenceActivity {
 
-    private final HashMap<String, Integer> mPreferenceToSummaryResidMap = new HashMap<String, Integer>();
-    private final HashMap<String, Integer> mPreferenceToDefaultResidMap = new HashMap<String, Integer>();
+    private final HashMap<String, Integer> mPreferenceToSummaryResidMap = new HashMap<>();
+    private final HashMap<String, Integer> mPreferenceToDefaultResidMap = new HashMap<>();
 
-    private final HashSet<String> mIntegerPreferenceKeys       = new HashSet<String>();
-    private final HashSet<String> mListPreferenceKeys          = new HashSet<String>();
+    private final HashSet<String> mIntegerPreferenceKeys       = new HashSet<>();
+    private final HashSet<String> mListPreferenceKeys          = new HashSet<>();
 
     private final ChangeSummaryOnSharedPreferenceChangeListener listener = new ChangeSummaryOnSharedPreferenceChangeListener();
-
-    private static String KEY_FIRST_OVERTIME_BELL;
-    private static String KEY_OVERTIME_BELL_PERIOD;
-    private static String KEY_COUNT_DIRECTION;
-    private static String KEY_BACKGROUND_COLOUR_AREA;
-    private static String KEY_FLASH_SCREEN_MODE;
-    private static String KEY_POI_FLASH_SCREEN_MODE;
-    private static String KEY_POI_TIMER_LEARN_MORE;
-    private static String KEY_PREP_TIMER_COUNT_DIRECTION;
-    private static String KEY_PREP_TIMER_BELLS;
 
     //******************************************************************************************
     // Private classes
@@ -94,15 +84,15 @@ public class GlobalSettingsActivity extends PreferenceActivity {
         // *************************************************************************************
         // Set up key-to-parameter maps
 
-        KEY_FIRST_OVERTIME_BELL        = getString(R.string.pref_firstOvertimeBell_key);
-        KEY_OVERTIME_BELL_PERIOD       = getString(R.string.pref_overtimeBellPeriod_key);
-        KEY_COUNT_DIRECTION            = getString(R.string.pref_countDirection_key);
-        KEY_BACKGROUND_COLOUR_AREA     = getString(R.string.pref_backgroundColourArea_key);
-        KEY_FLASH_SCREEN_MODE          = getString(R.string.pref_flashScreenMode_key);
-        KEY_POI_FLASH_SCREEN_MODE      = getString(R.string.pref_poiTimer_flashScreenMode_key);
-        KEY_POI_TIMER_LEARN_MORE       = getString(R.string.pref_poiTimer_learnMore_key);
-        KEY_PREP_TIMER_COUNT_DIRECTION = getString(R.string.pref_prepTimer_countDirection_key);
-        KEY_PREP_TIMER_BELLS           = getString(R.string.pref_prepTimer_bells_key);
+        String KEY_FIRST_OVERTIME_BELL        = getString(R.string.pref_firstOvertimeBell_key);
+        String KEY_OVERTIME_BELL_PERIOD       = getString(R.string.pref_overtimeBellPeriod_key);
+        String KEY_COUNT_DIRECTION            = getString(R.string.pref_countDirection_key);
+        String KEY_BACKGROUND_COLOUR_AREA     = getString(R.string.pref_backgroundColourArea_key);
+        String KEY_FLASH_SCREEN_MODE          = getString(R.string.pref_flashScreenMode_key);
+        String KEY_POI_FLASH_SCREEN_MODE      = getString(R.string.pref_poiTimer_flashScreenMode_key);
+        String KEY_POI_TIMER_LEARN_MORE       = getString(R.string.pref_poiTimer_learnMore_key);
+        String KEY_PREP_TIMER_COUNT_DIRECTION = getString(R.string.pref_prepTimer_countDirection_key);
+        String KEY_PREP_TIMER_BELLS           = getString(R.string.pref_prepTimer_bells_key);
 
         mIntegerPreferenceKeys.add(KEY_FIRST_OVERTIME_BELL);
         mIntegerPreferenceKeys.add(KEY_OVERTIME_BELL_PERIOD);
