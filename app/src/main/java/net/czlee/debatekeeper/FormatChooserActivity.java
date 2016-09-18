@@ -29,6 +29,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.Xml;
 import android.util.Xml.Encoding;
@@ -39,6 +40,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -77,9 +79,10 @@ public class FormatChooserActivity extends FragmentActivity {
     private static final String TAG = "FormatChooserActivity";
 
     private FormatXmlFilesManager mFilesManager;
-
     private ListView mStylesListView;
+
     private String   mCurrentStyleName = null;
+    private boolean  mInitialLookForCustomFormats = false;
 
     private DebateFormatEntryArrayAdapter mStylesArrayAdapter;
     private final ArrayList<DebateFormatListEntry> mStylesList = new ArrayList<DebateFormatListEntry>();
@@ -427,6 +430,20 @@ public class FormatChooserActivity extends FragmentActivity {
         }
     }
 
+    private class LookForCustomCheckboxOnClickListener implements OnClickListener {
+        @Override
+        public void onClick(View v) {
+            CheckBox checkbox = (CheckBox) v;
+            boolean checked = checkbox.isChecked();
+            mFilesManager.setLookForUserFiles(checked);
+
+            // If either it's not checked (so we don't care about read permissions), or read
+            // permissions are already there, refresh the styles list. Ask for the permission if
+            // it's not.
+            if (!checked || requestReadPermission()) refreshStylesList();
+        }
+    }
+
     /**
      * A comparator for DebateFormatListEntries, which sorts the debate formats alphabetically
      * by style name.
@@ -479,6 +496,15 @@ public class FormatChooserActivity extends FragmentActivity {
             // If we've just received read permissions, refresh the styles list.
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 refreshStylesList();
+
+            //  Otherwise, uncheck the checkbox and show an error message.
+            else {
+                CheckBox checkbox = (CheckBox) findViewById(R.id.formatChooser_lookForCustomCheckbox);
+                checkbox.setChecked(false);
+                mFilesManager.setLookForUserFiles(false);
+                Toast.makeText(this, getResources().getString(R.string.formatChooser_lookForCustom_errorNoReadPermission),
+                        Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -492,14 +518,6 @@ public class FormatChooserActivity extends FragmentActivity {
         setContentView(R.layout.activity_format_chooser);
         DEBATING_TIMER_URI = getString(R.string.xml_uri);
 
-        // Check the external storage permission
-        // We do it here, not in FormatXmlFilesManager, so that DebatingActivity doesn't try to ask.
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    REQUEST_TO_READ_EXTERNAL_STORAGE);
-        }
-
         mFilesManager = new FormatXmlFilesManager(this);
         mStylesArrayAdapter = new DebateFormatEntryArrayAdapter(this, mStylesList,
                 new FormatChooserActivityBinder());
@@ -507,6 +525,19 @@ public class FormatChooserActivity extends FragmentActivity {
         // Set the action bar
         ActionBar bar = getActionBar();
         if (bar != null) bar.setDisplayHomeAsUpEnabled(true);
+
+        // Configure the checkbox
+        CheckBox checkbox = (CheckBox) findViewById(R.id.formatChooser_lookForCustomCheckbox);
+        checkbox.setMovementMethod(LinkMovementMethod.getInstance());
+        checkbox.setOnClickListener(new LookForCustomCheckboxOnClickListener());
+        mInitialLookForCustomFormats = mFilesManager.isLookingForUserFiles();
+        checkbox.setChecked(mInitialLookForCustomFormats);
+
+        // If we need it, ask the user for read permission. If it's not already granted, treat the
+        // initial setting as false.
+        if (mInitialLookForCustomFormats) {
+            mInitialLookForCustomFormats = requestReadPermission(); // note: this method may show an alert to the user
+        }
 
         // Populate the styles list
         refreshStylesList();
@@ -533,10 +564,10 @@ public class FormatChooserActivity extends FragmentActivity {
      */
     private void confirmSelectionAndReturn() {
         int selectedPosition = mStylesListView.getCheckedItemPosition();
-        if (selectedPosition == getIncomingSelection()) {
-            Toast.makeText(FormatChooserActivity.this,
-                    R.string.formatChooser_toast_formatUnchanged, Toast.LENGTH_SHORT)
-                    .show();
+        if (selectedPosition == getIncomingSelection() &&
+                mInitialLookForCustomFormats == mFilesManager.isLookingForUserFiles()) {
+            Toast.makeText(FormatChooserActivity.this, R.string.formatChooser_toast_formatUnchanged,
+                    Toast.LENGTH_SHORT).show();
             FormatChooserActivity.this.finish();
         } else if (selectedPosition != ListView.INVALID_POSITION) {
             returnSelectionByPosition(selectedPosition);
@@ -687,6 +718,24 @@ public class FormatChooserActivity extends FragmentActivity {
             setResult(RESULT_OK, intent);
         }
         FormatChooserActivity.this.finish();
+    }
+
+    /**
+     * Requests the <code>READ_EXTERNAL_STORAGE</code> permission if it hasn't already been granted.
+     * We do this here, not in {@link FormatXmlFilesManager}, so that {@link DebatingActivity}
+     * doesn't ask for the permission.
+     * @return true if the permission is already granted, false otherwise.
+     */
+    private boolean requestReadPermission() {
+        boolean granted = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED;
+
+        if (!granted) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    REQUEST_TO_READ_EXTERNAL_STORAGE);
+        }
+
+        return granted;
     }
 
     /**

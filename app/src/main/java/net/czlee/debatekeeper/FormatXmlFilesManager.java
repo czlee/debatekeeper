@@ -17,16 +17,18 @@
 
 package net.czlee.debatekeeper;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.AssetManager;
+import android.os.Environment;
+import android.preference.PreferenceManager;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
-
-import android.content.Context;
-import android.content.res.AssetManager;
-import android.os.Environment;
 
 /**
  * FormatXmlFilesManager manages the multiple sources of debate format XML files.
@@ -46,6 +48,8 @@ import android.os.Environment;
  * backwards compatibility and (b) more importantly, so that uninstalling the app doesn't delete
  * those user files that the user himself put there!
  *
+ * FormatXmlFilesManager also manages the "look for custom formats" preference.
+ *
  * @author Chuan-Zheng Lee
  *
  */
@@ -56,15 +60,23 @@ import android.os.Environment;
 public class FormatXmlFilesManager {
 
     private final AssetManager mAssets;
+    private final SharedPreferences mPrefs;
     private static final String XML_FILE_ROOT_DIRECTORY_NAME = "debatekeeper";
     private static final String ASSETS_PATH                  = "formats";
+    private static final String PREFERENCE_LOOK_FOR_CUSTOM_FORMATS = "lookForCustom";
 
     public static final int LOCATION_ASSETS       = 0;
     public static final int LOCATION_USER_DEFINED = 1;
     public static final int LOCATION_NOT_FOUND    = -1;
 
+    private boolean mLookForUserFiles = false;
+
     public FormatXmlFilesManager(Context context) {
         mAssets = context.getAssets();
+
+        // initialise with the user files preference
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        mLookForUserFiles = mPrefs.getBoolean(PREFERENCE_LOOK_FOR_CUSTOM_FORMATS, false);
     }
 
     //******************************************************************************************
@@ -78,9 +90,11 @@ public class FormatXmlFilesManager {
      * @throws IOException if the file can't be found or there is a problem with the file.
      */
     public InputStream open(String filename) throws IOException {
-        InputStream is = openFromRoot(filename);
-        if (is != null)
-            return is;
+        if(mLookForUserFiles) {
+            InputStream is = openFromRoot(filename);
+            if (is != null)
+                return is;
+        }
         return openFromAssets(filename);
     }
 
@@ -94,12 +108,14 @@ public class FormatXmlFilesManager {
         HashSet<String> compiledSet = new HashSet<String>();
 
         // First add files in the user files directory...
-        File userFilesDirectory = getUserFilesDirectory();
-        if (userFilesDirectory != null) {
-            String[] userFilesList = userFilesDirectory.list();
-            if (userFilesList != null) {
-                for (int i = 0; i < userFilesList.length; i++) {
-                    compiledSet.add(userFilesList[i]);
+        if (mLookForUserFiles) {
+            File userFilesDirectory = getUserFilesDirectory();
+            if (userFilesDirectory != null) {
+                String[] userFilesList = userFilesDirectory.list();
+                if (userFilesList != null) {
+                    for (int i = 0; i < userFilesList.length; i++) {
+                        compiledSet.add(userFilesList[i]);
+                    }
                 }
             }
         }
@@ -123,9 +139,11 @@ public class FormatXmlFilesManager {
      * @return a LOCATION_* integer representing the location of the file
      */
     public int getLocation(String filename) {
-        InputStream userFileInputStream = openFromRoot(filename);
-        if (userFileInputStream != null)
-            return LOCATION_USER_DEFINED;
+        if (mLookForUserFiles) {
+            InputStream userFileInputStream = openFromRoot(filename);
+            if (userFileInputStream != null)
+                return LOCATION_USER_DEFINED;
+        }
 
         InputStream assetInputStream;
         try {
@@ -138,6 +156,26 @@ public class FormatXmlFilesManager {
             return LOCATION_ASSETS;
 
         return LOCATION_NOT_FOUND;
+    }
+
+    /**
+     * Returns whether this manager is set to look for user files.
+     * @return
+     */
+    public boolean isLookingForUserFiles() {
+        return mLookForUserFiles;
+    }
+
+    /**
+     * Sets whether the files manager will look for user files.
+     * This method also saves the setting to preferences.
+     * @param lookForUserFiles
+     */
+    public void setLookForUserFiles(boolean lookForUserFiles) {
+        this.mLookForUserFiles = lookForUserFiles;
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(PREFERENCE_LOOK_FOR_CUSTOM_FORMATS, lookForUserFiles);
+        editor.apply();
     }
 
     //******************************************************************************************

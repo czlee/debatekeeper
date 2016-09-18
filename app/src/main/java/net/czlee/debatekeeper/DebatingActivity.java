@@ -122,7 +122,6 @@ public class DebatingActivity extends FragmentActivity {
 
     private DebateManager         mDebateManager;
     private Bundle                mLastStateBundle;
-    private FormatXmlFilesManager mFilesManager;
 
     private String               mFormatXmlFileName      = null;
     private CountDirection       mCountDirection         = CountDirection.COUNT_UP;
@@ -938,8 +937,6 @@ public class DebatingActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_debate);
 
-        mFilesManager = new FormatXmlFilesManager(this);
-
         mLeftControlButton       = (Button) findViewById(R.id.mainScreen_leftControlButton);
         mLeftCentreControlButton = (Button) findViewById(R.id.mainScreen_leftCentreControlButton);
         mCentreControlButton     = (Button) findViewById(R.id.mainScreen_centreControlButton);
@@ -1244,11 +1241,12 @@ public class DebatingActivity extends FragmentActivity {
 
         InputStream is = null;
         DebateFormat df;
+        FormatXmlFilesManager filesManager = new FormatXmlFilesManager(this);
 
         try {
-            is = mFilesManager.open(filename);
+            is = filesManager.open(filename);
         } catch (IOException e) {
-            throw new FatalXmlError(getString(R.string.fatalProblemWithXmlFileDialog_message_cannotFind, filename), e);
+            throw new FatalXmlError(getString(R.string.fatalProblemWithXmlFileDialog_message_cannotFind), e);
         }
 
         dfbfx = new DebateFormatBuilderFromXmlForSchema2(this);
@@ -1271,7 +1269,7 @@ public class DebatingActivity extends FragmentActivity {
 
             try {
                 is.close();
-                is = mFilesManager.open(filename);
+                is = filesManager.open(filename);
             } catch (IOException e) {
                 throw new FatalXmlError(getString(R.string.fatalProblemWithXmlFileDialog_message_cannotFind), e);
             }
