@@ -172,7 +172,7 @@ public class DebatingActivity extends FragmentActivity {
             final CheckBox doNotShowAgain = (CheckBox) content.findViewById(R.id.changelogDialog_dontShow);
             final Resources res = getResources();
 
-            builder.setTitle(R.string.changelogDialog_title)
+            builder.setTitle(res.getString(R.string.changelogDialog_title, BuildConfig.VERSION_NAME))
                     .setView(content)
                     .setCancelable(true)
                     .setPositiveButton(res.getString(R.string.changelogDialog_ok), new DialogInterface.OnClickListener() {
