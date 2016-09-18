@@ -94,10 +94,6 @@
     <string name="schemaTooNewDialog_message">This debate style file uses a schema (%1$s) newer than supported (%2$s) by this app version (%3$s). Check for updates on Google Play?</string>
 
     <!-- POI timer -->
-	<string name="poiTimerInfoDialog_title">About the POI timer</string>
-	<string name="poiTimerInfoDialog_message">The <b>POI</b> button starts a 15-second countdown.\n\nIf you don\'t want to use it, you can hide it under <b>Settings &gt; Show POIs timer</b>.</string>
-	<string name="poiTimerInfoDialog_dontShow">Do not show this again</string>
-	<string name="poiTimerInfoDialog_button_learnMore">Learn more</string>
 	<string name="poiTimer_moreInfoUrl">http://tryingtoreason.wordpress.com/debatekeeper/points-of-information/</string>
 
     <!-- Changelog dialog -->

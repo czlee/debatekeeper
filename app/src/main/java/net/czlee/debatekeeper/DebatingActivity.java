@@ -139,7 +139,6 @@ public class DebatingActivity extends FragmentActivity {
     private static final String BUNDLE_KEY_DEBATE_MANAGER        = "dm";
     private static final String BUNDLE_KEY_XML_FILE_NAME         = "xmlfn";
     private static final String PREFERENCE_XML_FILE_NAME         = "xmlfn";
-    private static final String DO_NOT_SHOW_POI_TIMER_DIALOG     = "dnspoi";
     private static final String LAST_CHANGELOG_VERSION_SHOWN     = "lastChangeLog";
     private static final String DIALOG_ARGUMENT_FATAL_MESSAGE    = "fm";
     private static final String DIALOG_ARGUMENT_XML_ERROR_LOG    = "xel";
@@ -149,7 +148,6 @@ public class DebatingActivity extends FragmentActivity {
     private static final String DIALOG_TAG_SCHEMA_TOO_NEW        = "toonew";
     private static final String DIALOG_TAG_ERRORS_WITH_XML       = "errors";
     private static final String DIALOG_TAG_FATAL_PROBLEM         = "fatal";
-    private static final String DIALOG_TAG_POI_TIMER_INFO        = "poiinfo";
     private static final String DIALOG_TAG_CHANGELOG             = "changelog";
 
     private static final int    CHOOSE_STYLE_REQUEST      = 0;
@@ -286,51 +284,6 @@ public class DebatingActivity extends FragmentActivity {
                         @Override
                         public void onCancel(DialogInterface dialog) {
                             activity.finish();
-                        }
-                    });
-
-            return builder.create();
-        }
-
-    }
-
-    public static class DialogPoiTimerInfoFragment extends DialogFragment {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final Activity activity = getActivity();
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-
-            View content = activity.getLayoutInflater().inflate(R.layout.poi_timer_dialog, null);
-            final CheckBox doNotShowAgain = (CheckBox) content.findViewById(R.id.poiTimerInfoDialog_dontShow);
-
-            builder.setTitle(R.string.poiTimerInfoDialog_title)
-                   .setView(content)
-                   .setCancelable(true)
-                   .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Take note of "do not show again" setting
-                            SharedPreferences prefs = activity.getPreferences(MODE_PRIVATE);
-                            Editor editor = prefs.edit();
-                            editor.putBoolean(DO_NOT_SHOW_POI_TIMER_DIALOG, doNotShowAgain.isChecked());
-                            editor.commit();
-                            dialog.dismiss();
-                        }
-                    })
-                   .setNeutralButton(R.string.poiTimerInfoDialog_button_learnMore, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Uri uri = Uri.parse(getString(R.string.poiTimer_moreInfoUrl));
-                            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                            startActivity(intent);
-                        }
-                    })
-                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            dialog.dismiss();
                         }
                     });
 
@@ -1493,12 +1446,6 @@ public class DebatingActivity extends FragmentActivity {
                     mDebateManager.restoreState(BUNDLE_KEY_DEBATE_MANAGER, mLastStateBundle);
                 mLastStateBundle = null;
             }
-
-            SharedPreferences prefs = getPreferences(MODE_PRIVATE);
-            if (!prefs.getBoolean(DO_NOT_SHOW_POI_TIMER_DIALOG, false))
-                if (df.hasPoisAllowedSomewhere())
-                    if (mPoiTimerEnabled)
-                        showDialog(new DialogPoiTimerInfoFragment(), DIALOG_TAG_POI_TIMER_INFO);
         }
 
         mViewPager.getAdapter().notifyDataSetChanged();
