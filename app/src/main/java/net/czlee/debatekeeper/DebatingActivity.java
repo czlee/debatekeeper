@@ -165,24 +165,22 @@ public class DebatingActivity extends FragmentActivity {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final Activity activity = getActivity();
-
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-
             View content = activity.getLayoutInflater().inflate(R.layout.changelog_dialog, null);
             final CheckBox doNotShowAgain = (CheckBox) content.findViewById(R.id.changelogDialog_dontShow);
-
+            final Resources res = getResources();
 
             builder.setTitle(R.string.changelogDialog_title)
                     .setView(content)
                     .setCancelable(true)
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    .setPositiveButton(res.getString(R.string.changelogDialog_ok), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             // Take note of "do not show again" setting
                             if (doNotShowAgain.isChecked()) {
                                 SharedPreferences prefs = activity.getPreferences(MODE_PRIVATE);
                                 Editor editor = prefs.edit();
-                                int thisChangelogVersionCode = getResources().getInteger(R.integer.changelogDialog_versionCode);
+                                int thisChangelogVersionCode = res.getInteger(R.integer.changelogDialog_versionCode);
                                 editor.putInt(LAST_CHANGELOG_VERSION_SHOWN, thisChangelogVersionCode);
                                 editor.apply();
                             }

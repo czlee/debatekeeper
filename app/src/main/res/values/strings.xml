@@ -106,7 +106,7 @@
         • Fixed custom XML format files (sorry if you had problems with these before)
     </string>
     <string name="changelogDialog_dontShow">Don\'t show this again</string>
-    <string name="changelogDialog_ok">Okay, got it!</string>
+    <string name="changelogDialog_ok">Okay, roll on!</string>
 
     <!-- Format chooser activity -->
     <string name="formatChooser_lookForCustomCheckbox_text">Look for custom formats (<a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">Learn more</a>)</string>
