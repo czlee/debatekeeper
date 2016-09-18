@@ -18,60 +18,60 @@
 <resources>
 
     <!-- Version 1 schema -->
-    
-    <string name="xml1elemName_root">debateformat</string>
-        <string name="xml1attrName_root_name">name</string>
-        <string name="xml1attrName_root_schemaVersion">schemaversion</string>
-        <string name="xml1attrName_common_ref">ref</string>
-            <string name="xml1attrValue_common_true">true</string>
-            <string name="xml1attrValue_common_false">false</string>
-            <string name="xml1attrValue_common_stay">#stay</string>
-            <string name="xml1attrValue_common_default">#default</string>
 
-    <string name="xml1elemName_info">info</string>
-        <string name="xml1elemName_info_region">region</string>
-        <string name="xml1elemName_info_level">level</string>
-        <string name="xml1elemName_info_usedAt">usedat</string>
-        <string name="xml1elemName_info_desc">desc</string>
+    <string name="xml1elemName_root" translatable="false">debateformat</string>
+        <string name="xml1attrName_root_name" translatable="false">name</string>
+        <string name="xml1attrName_root_schemaVersion" translatable="false">schemaversion</string>
+        <string name="xml1attrName_common_ref" translatable="false">ref</string>
+            <string name="xml1attrValue_common_true" translatable="false">true</string>
+            <string name="xml1attrValue_common_false" translatable="false">false</string>
+            <string name="xml1attrValue_common_stay" translatable="false">#stay</string>
+            <string name="xml1attrValue_common_default" translatable="false">#default</string>
 
-    <string name="xml1elemName_resource">resource</string>
-        <string name="xml1attrValue_resource_ref_common">#all</string>
+    <string name="xml1elemName_info" translatable="false">info</string>
+        <string name="xml1elemName_info_region" translatable="false">region</string>
+        <string name="xml1elemName_info_level" translatable="false">level</string>
+        <string name="xml1elemName_info_usedAt" translatable="false">usedat</string>
+        <string name="xml1elemName_info_desc" translatable="false">desc</string>
 
-    <string name="xml1elemName_prepTimeSimpleFormat">preptime</string>
+    <string name="xml1elemName_resource" translatable="false">resource</string>
+        <string name="xml1attrValue_resource_ref_common" translatable="false">#all</string>
+
+    <string name="xml1elemName_prepTimeSimpleFormat" translatable="false">preptime</string>
 
     <!-- attributes common to preptime-controlled and speechtype -->
-        <string name="xml1attrName_controlledTimeLength">length</string>
-        <string name="xml1attrName_controlledTimeFirstPeriod">firstperiod</string>
+        <string name="xml1attrName_controlledTimeLength" translatable="false">length</string>
+        <string name="xml1attrName_controlledTimeFirstPeriod" translatable="false">firstperiod</string>
 
-    <string name="xml1elemName_prepTimeControlledFormat">preptime-controlled</string>
+    <string name="xml1elemName_prepTimeControlledFormat" translatable="false">preptime-controlled</string>
 
-    <string name="xml1elemName_speechFormat">speechtype</string>
-        <string name="xml1attrName_speechFormat_countDir">countdir</string>
-            <string name="xml1attrValue_speechFormat_countDir_up">up</string>
-            <string name="xml1attrValue_speechFormat_countDir_down">down</string>
+    <string name="xml1elemName_speechFormat" translatable="false">speechtype</string>
+        <string name="xml1attrName_speechFormat_countDir" translatable="false">countdir</string>
+            <string name="xml1attrValue_speechFormat_countDir_up" translatable="false">up</string>
+            <string name="xml1attrValue_speechFormat_countDir_down" translatable="false">down</string>
 
-    <string name="xml1elemName_bell">bell</string>
-        <string name="xml1attrName_bell_time">time</string>
-            <string name="xml1attrValue_bell_time_finish">finish</string>
-        <string name="xml1attrName_bell_number">number</string>
-        <string name="xml1attrName_bell_nextPeriod">nextperiod</string>
-        <string name="xml1attrName_bell_pauseOnBell">pauseonbell</string>
+    <string name="xml1elemName_bell" translatable="false">bell</string>
+        <string name="xml1attrName_bell_time" translatable="false">time</string>
+            <string name="xml1attrValue_bell_time_finish" translatable="false">finish</string>
+        <string name="xml1attrName_bell_number" translatable="false">number</string>
+        <string name="xml1attrName_bell_nextPeriod" translatable="false">nextperiod</string>
+        <string name="xml1attrName_bell_pauseOnBell" translatable="false">pauseonbell</string>
 
-    <string name="xml1elemName_period">period</string>
-        <string name="xml1attrName_period_desc">desc</string>
-        <string name="xml1attrName_period_bgcolor">bgcolor</string>
-        <string name="xml1attrName_period_poisAllowed">poisallowed</string>
+    <string name="xml1elemName_period" translatable="false">period</string>
+        <string name="xml1attrName_period_desc" translatable="false">desc</string>
+        <string name="xml1attrName_period_bgcolor" translatable="false">bgcolor</string>
+        <string name="xml1attrName_period_poisAllowed" translatable="false">poisallowed</string>
 
-    <string name="xml1elemName_include">include</string>
-        <string name="xml1attrName_include_resource">resource</string>
+    <string name="xml1elemName_include" translatable="false">include</string>
+        <string name="xml1attrName_include_resource" translatable="false">resource</string>
 
-    <string name="xml1elemName_speechesList">speeches</string>
-        <string name="xml1elemName_speech">speech</string>
-            <string name="xml1attrName_speech_name">name</string>
-            <string name="xml1attrName_speech_format">type</string>
+    <string name="xml1elemName_speechesList" translatable="false">speeches</string>
+        <string name="xml1elemName_speech" translatable="false">speech</string>
+            <string name="xml1attrName_speech_name" translatable="false">name</string>
+            <string name="xml1attrName_speech_format" translatable="false">type</string>
 
     <!-- Version 1 error messages -->
-            
+
     <string name="xml1error_rootNoName">This debate format has no name!</string>
     <string name="xml1error_somethingOutsideRoot">There was something outside the root debateformat element</string>
     <string name="xml1error_resourceNoRef">"No 'ref' was specified for a resource"</string>

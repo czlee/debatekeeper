@@ -348,7 +348,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
                 pauseOnBell = false;
             }
             if (pauseOnBell)
-                bellsList.append(mContext.getString(R.string.pauseOnBellIndicator));
+                bellsList.append(mContext.getString(R.string.mainScreen_pauseOnBellIndicator));
 
             // If there's one after this, add a comma
             if (i < list.getLength() - 1) bellsList.append(", ");

@@ -18,62 +18,62 @@
 <resources>
 
     <!-- Version 2 schema -->
-    
-    <string name="xml2elemName_root">debate-format</string>
-        <string name="xml2attrName_root_schemaVersion">schema-version</string>
-        <string name="xml2attrName_common_ref">ref</string>
-            <string name="xml2attrValue_common_true">true</string>
-            <string name="xml2attrValue_common_false">false</string>
-            <string name="xml2attrValue_common_stay">#stay</string>
-            <string name="xml2attrValue_common_default">#default</string>
 
-    <string name="xml2elemName_name">name</string>
+    <string name="xml2elemName_root" translatable="false">debate-format</string>
+        <string name="xml2attrName_root_schemaVersion" translatable="false">schema-version</string>
+        <string name="xml2attrName_common_ref" translatable="false">ref</string>
+            <string name="xml2attrValue_common_true" translatable="false">true</string>
+            <string name="xml2attrValue_common_false" translatable="false">false</string>
+            <string name="xml2attrValue_common_stay" translatable="false">#stay</string>
+            <string name="xml2attrValue_common_default" translatable="false">#default</string>
 
-    <string name="xml2elemName_info">info</string>
-        <string name="xml2elemName_info_region">region</string>
-        <string name="xml2elemName_info_level">level</string>
-        <string name="xml2elemName_info_usedAt">used-at</string>
-        <string name="xml2elemName_info_desc">description</string>
+    <string name="xml2elemName_name" translatable="false">name</string>
 
-    <string name="xml2elemName_periodTypes">period-types</string>
-	    <string name="xml2elemName_periodType">period-type</string>
-	        <string name="xml2attrName_periodType_poisAllowed">pois-allowed</string>
-	        <string name="xml2elemName_periodType_name">name</string>
-	        <string name="xml2elemName_periodType_display">display</string>
-	        <string name="xml2elemName_periodType_defaultBackgroundColor">default-bgcolor</string>
+    <string name="xml2elemName_info" translatable="false">info</string>
+        <string name="xml2elemName_info_region" translatable="false">region</string>
+        <string name="xml2elemName_info_level" translatable="false">level</string>
+        <string name="xml2elemName_info_usedAt" translatable="false">used-at</string>
+        <string name="xml2elemName_info_desc" translatable="false">description</string>
 
-    <string name="xml2elemName_prepTimeSimpleFormat">prep-time</string>
+    <string name="xml2elemName_periodTypes" translatable="false">period-types</string>
+	    <string name="xml2elemName_periodType" translatable="false">period-type</string>
+	        <string name="xml2attrName_periodType_poisAllowed" translatable="false">pois-allowed</string>
+	        <string name="xml2elemName_periodType_name" translatable="false">name</string>
+	        <string name="xml2elemName_periodType_display" translatable="false">display</string>
+	        <string name="xml2elemName_periodType_defaultBackgroundColor" translatable="false">default-bgcolor</string>
+
+    <string name="xml2elemName_prepTimeSimpleFormat" translatable="false">prep-time</string>
 
     <!-- attributes common to prep-time-controlled and speech-type -->
-        <string name="xml2attrName_controlledTimeLength">length</string>
-        <string name="xml2attrName_controlledTimeFirstPeriod">first-period</string>
+        <string name="xml2attrName_controlledTimeLength" translatable="false">length</string>
+        <string name="xml2attrName_controlledTimeFirstPeriod" translatable="false">first-period</string>
 
-    <string name="xml2elemName_prepTimeControlledFormat">prep-time-controlled</string>
+    <string name="xml2elemName_prepTimeControlledFormat" translatable="false">prep-time-controlled</string>
 
-    <string name="xml2elemName_speechFormats">speech-types</string>
-    <string name="xml2elemName_speechFormat">speech-type</string>
+    <string name="xml2elemName_speechFormats" translatable="false">speech-types</string>
+    <string name="xml2elemName_speechFormat" translatable="false">speech-type</string>
 
-    <string name="xml2elemName_bell">bell</string>
-        <string name="xml2attrName_bell_time">time</string>
-            <string name="xml2attrValue_bell_time_finish">finish</string>
-        <string name="xml2attrName_bell_number">number</string>
-        <string name="xml2attrName_bell_nextPeriod">next-period</string>
-        <string name="xml2attrName_bell_pauseOnBell">pause-on-bell</string>
+    <string name="xml2elemName_bell" translatable="false">bell</string>
+        <string name="xml2attrName_bell_time" translatable="false">time</string>
+            <string name="xml2attrValue_bell_time_finish" translatable="false">finish</string>
+        <string name="xml2attrName_bell_number" translatable="false">number</string>
+        <string name="xml2attrName_bell_nextPeriod" translatable="false">next-period</string>
+        <string name="xml2attrName_bell_pauseOnBell" translatable="false">pause-on-bell</string>
 
-    <string name="xml2elemName_speechesList">speeches</string>
-        <string name="xml2elemName_speech">speech</string>
-            <string name="xml2elemName_speech_name">name</string>
-            <string name="xml2attrName_speech_format">type</string>
+    <string name="xml2elemName_speechesList" translatable="false">speeches</string>
+        <string name="xml2elemName_speech" translatable="false">speech</string>
+            <string name="xml2elemName_speech_name" translatable="false">name</string>
+            <string name="xml2attrName_speech_format" translatable="false">type</string>
 
     <!-- Version 2 error messages -->
-    
+
     <string name="xml2error_root_noName">"No name was specified for this debate format"</string>
     <string name="xml2error_periodType_ref_null">"No 'ref' was specified for a period-type"</string>
     <string name="xml2error_periodType_ref_blank">"The 'ref' for period-types must not be blank"</string>
     <string name="xml2error_periodType_name_null">"No name was specified for period-type '%1$s'"</string>
     <string name="xml2error_periodType_name_blank">"The 'name' for period-type '%1$s' must not be blank"</string>
-    <string name="xml2Error_periodType_defaultBgColor_invalid">"Invalid default-bgcolor specified for period-type '%2$s': '%1$s'"</string> 
-    <string name="xml2Error_periodType_poisAllowed_invalid">"Invalid pois-allowed specified for period-type '%2$s': '%1$s' (must be 'true' or 'false')"</string> 
+    <string name="xml2Error_periodType_defaultBgColor_invalid">"Invalid default-bgcolor specified for period-type '%2$s': '%1$s'"</string>
+    <string name="xml2Error_periodType_poisAllowed_invalid">"Invalid pois-allowed specified for period-type '%2$s': '%1$s' (must be 'true' or 'false')"</string>
     <string name="xml2error_prepTime_multiple">"Both a prep-time and a prep-time-controlled were found"</string>
     <string name="xml2error_prepTimeSimple_length_null">"The prep-time had no length"</string>
     <string name="xml2error_prepTimeSimple_length_invalid">"Invalid time for length of prep-time: '%1$s'"</string>
@@ -89,7 +89,7 @@
     <string name="xml2error_bell_time_invalid">"Invalid time for a bell in %2$s: '%1$s'"</string>
     <string name="xml2error_bell_number_invalid">"Invalid number of bells at %3$s in %2$s: '%1$s'"</string>
     <string name="xml2error_bell_pauseOnBell_invalid">"Invalid pause-on-bell value for bell at %3$s in %2$s: '%1$s'"</string>
-    
+
     <string name="dfb2error_periodInfo_builtInDuplicate">"The period-type '%1$s' is a built-in period-type; you can't use it"</string>
     <string name="dfb2error_periodInfo_duplicate">"The period-type '%1$s' was specified more than once"</string>
     <string name="dfb2error_periodInfo_notFound">"There is no period-type with ref '%1$s'"</string>

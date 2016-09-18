@@ -1803,18 +1803,18 @@ public class DebatingActivity extends FragmentActivity {
         long length = dpf.getLength();
         String lengthStr;
         if (length % 60 == 0)
-            lengthStr = getResources().getQuantityString(R.plurals.timeInMinutes, (int) (length / 60), length / 60);
+            lengthStr = getResources().getQuantityString(R.plurals.mainScreen_timeInMinutes, (int) (length / 60), length / 60);
         else
             lengthStr = XmlUtilities.secsToText(length);
 
-        int finalTimeTextUnformattedResid = (dpf.isPrep()) ? R.string.prepTimeLength : R.string.speechLength;
+        int finalTimeTextUnformattedResid = (dpf.isPrep()) ? R.string.mainScreen_prepTimeLength : R.string.mainScreen_speechLength;
         infoLine.append(String.format(this.getString(finalTimeTextUnformattedResid),
                 lengthStr));
 
         if (dpf.isPrep()) {
             PrepTimeFormat ptf = (PrepTimeFormat) dpf;
             if (ptf.isControlled())
-                infoLine.append(getString(R.string.prepTimeControlledIndicator));
+                infoLine.append(getString(R.string.mainScreen_prepTimeControlledIndicator));
         }
 
         // ...then, if applicable, bells
@@ -1840,9 +1840,9 @@ public class DebatingActivity extends FragmentActivity {
                 long bellTime = subtractFromSpeechLengthIfCountingDown(bi.getBellTime(), dpf);
                 bellsStr.append(XmlUtilities.secsToText(bellTime));
                 if (bi.isPauseOnBell())
-                    bellsStr.append(getString(R.string.pauseOnBellIndicator));
+                    bellsStr.append(getString(R.string.mainScreen_pauseOnBellIndicator));
                 if (bi.isSilent())
-                    bellsStr.append(getString(R.string.silentBellIndicator));
+                    bellsStr.append(getString(R.string.mainScreen_silentBellIndicator));
                 if (currentSpeechBellsIter.hasNext())
                     bellsStr.append(", ");
             }

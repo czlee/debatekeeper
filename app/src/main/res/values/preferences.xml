@@ -19,27 +19,27 @@
 
     <!-- Keys -->
     <!-- These strings must be unique. -->
-    <string name="pref_silentMode_key">silentMode</string>
-    <string name="pref_vibrateMode_key">vibrateMode</string>
-    <string name="pref_flashScreenMode_key">flashScreenMode</string>
-    <string name="pref_overtimeBellsEnable_key">overtimeBellsEnable</string>
-    <string name="pref_firstOvertimeBell_key">firstOvertimeBell</string>
-    <string name="pref_overtimeBellPeriod_key">overtimeBellPeriod</string>
-    <string name="pref_countDirection_key">countDirection</string>
-    <string name="pref_backgroundColourArea_key">backgroundColourArea</string>
-    <string name="pref_keepScreenOn_key">keepScreenOn</string>
-    <string name="pref_poiTimer_enable_key">poiTimerEnable</string>
-    <string name="pref_poiTimer_buzzerEnable_key">poiBuzzerEnable</string>
-    <string name="pref_poiTimer_vibrateEnable_key">poiVibrateEnable</string>
-    <string name="pref_poiTimer_flashScreenMode_key">poiFlashScreenMode</string>
-    <string name="pref_poiTimer_learnMore_key">poiLearnMore</string>
-    <string name="pref_prepTimer_enable_key">prepTimerEnable</string>
-    <string name="pref_prepTimer_countDirection_key">prepTimerCountDirection</string>
-    <string name="pref_prepTimer_keepScreenOn_key">prepTimerKeepScreenOn</string>
-    <string name="pref_prepTimer_bells_key">prepTimerBells</string>
+    <string name="pref_silentMode_key" translatable="false">silentMode</string>
+    <string name="pref_vibrateMode_key" translatable="false">vibrateMode</string>
+    <string name="pref_flashScreenMode_key" translatable="false">flashScreenMode</string>
+    <string name="pref_overtimeBellsEnable_key" translatable="false">overtimeBellsEnable</string>
+    <string name="pref_firstOvertimeBell_key" translatable="false">firstOvertimeBell</string>
+    <string name="pref_overtimeBellPeriod_key" translatable="false">overtimeBellPeriod</string>
+    <string name="pref_countDirection_key" translatable="false">countDirection</string>
+    <string name="pref_backgroundColourArea_key" translatable="false">backgroundColourArea</string>
+    <string name="pref_keepScreenOn_key" translatable="false">keepScreenOn</string>
+    <string name="pref_poiTimer_enable_key" translatable="false">poiTimerEnable</string>
+    <string name="pref_poiTimer_buzzerEnable_key" translatable="false">poiBuzzerEnable</string>
+    <string name="pref_poiTimer_vibrateEnable_key" translatable="false">poiVibrateEnable</string>
+    <string name="pref_poiTimer_flashScreenMode_key" translatable="false">poiFlashScreenMode</string>
+    <string name="pref_poiTimer_learnMore_key" translatable="false">poiLearnMore</string>
+    <string name="pref_prepTimer_enable_key" translatable="false">prepTimerEnable</string>
+    <string name="pref_prepTimer_countDirection_key" translatable="false">prepTimerCountDirection</string>
+    <string name="pref_prepTimer_keepScreenOn_key" translatable="false">prepTimerKeepScreenOn</string>
+    <string name="pref_prepTimer_bells_key" translatable="false">prepTimerBells</string>
 
     <!-- Keys for backwards-compatibility -->
-    <string name="pref_flashScreenBool_key">flashScreen</string> <!-- replaced in version 0.6 -->
+    <string name="pref_flashScreenBool_key" translatable="false">flashScreen</string> <!-- replaced in version 0.6 -->
 
     <!-- Category titles -->
     <string name="prefCategory_overtimeBells_title">Overtime bells</string>
@@ -72,12 +72,12 @@
         <item>Strobe flash</item>
         <item>Solid flash</item>
     </string-array>
-    <string-array name="pref_flashScreenMode_values">
+    <string-array name="pref_flashScreenMode_values" translatable="false">
         <item>off</item>
         <item>strobeFlash</item>
         <item>solidFlash</item>
     </string-array>
-    <string name="prefDefault_flashScreenMode">off</string>
+    <string name="prefDefault_flashScreenMode" translatable="false">off</string>
 
     <!-- Overtime bells -->
     <string name="pref_overtimeBellsEnable_title">Enable overtime bells</string>
@@ -109,12 +109,12 @@
     there used to be options called generallyUp and generallyDown. These options were obsoleted
     in version 0.9, but to retain compatibility we keep the values for the other two as they
     were before. Since the user never sees these, it doesn't matter what they're called. -->
-    <string-array name="pref_countDirection_values">
+    <string-array name="pref_countDirection_values" translatable="false">
         <item>alwaysUp</item>
         <item>alwaysDown</item>
     </string-array>
-    <string name="prefDefault_countDirection">alwaysUp</string>
-    
+    <string name="prefDefault_countDirection" translatable="false">alwaysUp</string>
+
     <!-- Background colour -->
     <string name="pref_backgroundColourArea_title">Background colour area</string>
     <string-array name="pref_backgroundColourArea_summaries">
@@ -127,12 +127,12 @@
         <item>Top bar only</item>
         <item>Whole screen</item>
     </string-array>
-    <string-array name="pref_backgroundColourArea_values">
+    <string-array name="pref_backgroundColourArea_values" translable="false">
         <item>disabled</item>
         <item>topBarOnly</item>
         <item>wholeScreen</item>
     </string-array>
-    <string name="prefDefault_backgroundColourArea">wholeScreen</string>
+    <string name="prefDefault_backgroundColourArea" translatable="false">wholeScreen</string>
 
     <!-- Keep screen on -->
     <string name="pref_keepScreenOn_title">Keep screen on</string>
@@ -150,7 +150,7 @@
         <item>Count up in the prep timer</item>
         <item>Count down in the prep timer</item>
     </string-array>
-    <string name="prefDefault_prepTimer_countDirection">alwaysDown</string>
+    <string name="prefDefault_prepTimer_countDirection" translatable="false">alwaysDown</string>
 
     <string name="pref_prepTimer_keepScreenOn_onSummary">Keep screen on (dimmed) while prep timer is running</string>
     <string name="pref_prepTimer_keepScreenOn_offSummary">Apply normal screen timeout during prep time</string>
@@ -182,7 +182,7 @@
         <item>Flash screen blue briefly when POI time expires</item>
     </string-array>
     <!-- For the entries and entry values, use the same ones as the main flash screen preference -->
-    <string name="prefDefault_poiTimer_flashScreenMode">solidFlash</string>
+    <string name="prefDefault_poiTimer_flashScreenMode" translatable="false">solidFlash</string>
 
     <string name="pref_poiTimer_learnMore_title">Learn more</string>
     <string name="pref_poiTimer_learnMore_summary">Learn more about the POIs timer (launches web browser)</string>

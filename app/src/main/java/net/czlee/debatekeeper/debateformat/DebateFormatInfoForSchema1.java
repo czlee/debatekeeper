@@ -198,7 +198,7 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
                 MiniBellInfo bi = iterator.next();
                 str.append(XmlUtilities.secsToText(bi.getTime()));
                 if (bi.isPause())
-                    str.append(mContext.getString(R.string.pauseOnBellIndicator));
+                    str.append(mContext.getString(R.string.mainScreen_pauseOnBellIndicator));
 
                 // If there's one after this, add a comma
                 if (iterator.hasNext()) str.append(", ");
