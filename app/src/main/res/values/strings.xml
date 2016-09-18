@@ -103,7 +103,7 @@
     <string name="changelogDialog_message">
         Sorry it\'s been a while! \n\n
         • Fixed \"keep screen on\" while timer is running \n
-        • Fixed custom XML format files (sorry if you had problems with these before)
+        • Fixed Android permissions issue with custom XML format files (sorry if you had problems with these before)
     </string>
     <string name="changelogDialog_dontShow">Don\'t show this again</string>
     <string name="changelogDialog_ok">Okay, roll on!</string>
