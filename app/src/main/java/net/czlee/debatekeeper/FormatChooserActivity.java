@@ -540,7 +540,7 @@ public class FormatChooserActivity extends FragmentActivity {
         }
 
         // Populate the styles list
-        refreshStylesList();
+        populateStylesList();
 
         // Configure the ListView
         mStylesListView = (ListView) findViewById(R.id.formatChooser_stylesList);
@@ -548,11 +548,8 @@ public class FormatChooserActivity extends FragmentActivity {
         mStylesListView.setOnItemClickListener(new StylesListViewOnItemClickListener());
 
         // Select and scroll to the incoming selection (if existent)
-        int incomingSelection = getIncomingSelection();
-        if (incomingSelection != ListView.INVALID_POSITION) {
-            mStylesListView.setItemChecked(incomingSelection, true);
-            mStylesListView.smoothScrollToPosition(incomingSelection);
-        }
+        String incomingFilename = getIntent().getStringExtra(EXTRA_XML_FILE_NAME);
+        setSelectionAndScroll(incomingFilename);
     }
 
     //******************************************************************************************
@@ -564,18 +561,60 @@ public class FormatChooserActivity extends FragmentActivity {
      */
     private void confirmSelectionAndReturn() {
         int selectedPosition = mStylesListView.getCheckedItemPosition();
-        if (selectedPosition == getIncomingSelection() &&
+        String selectedFilename = convertIndexToFilename(selectedPosition);
+        String incomingFilename = getIntent().getStringExtra(EXTRA_XML_FILE_NAME);
+        if (selectedFilename != null && selectedFilename.equals(incomingFilename) &&
                 mInitialLookForCustomFormats == mFilesManager.isLookingForUserFiles()) {
             Toast.makeText(FormatChooserActivity.this, R.string.formatChooser_toast_formatUnchanged,
                     Toast.LENGTH_SHORT).show();
             FormatChooserActivity.this.finish();
+
         } else if (selectedPosition != ListView.INVALID_POSITION) {
-            returnSelectionByPosition(selectedPosition);
+            String filename = convertIndexToFilename(selectedPosition);
+            if (filename == null) {
+                setResult(RESULT_ERROR);
+                Log.e(TAG, "Returning error, no entry in position " + selectedPosition);
+            } else {
+                Intent intent = new Intent();
+                Log.v(TAG, "File name in position " + selectedPosition + " is " + filename);
+                intent.putExtra(EXTRA_XML_FILE_NAME, filename);
+                setResult(RESULT_OK, intent);
+            }
+            this.finish();
+
         } else {
             Toast.makeText(FormatChooserActivity.this, R.string.formatChooser_toast_noSelection,
                     Toast.LENGTH_SHORT).show();
             FormatChooserActivity.this.finish();
         }
+    }
+
+    /**
+     * Given a filename, returns the index in the styles list where the entry is.
+     * @param filename
+     * @return integer between 0 and <code>mStylesList.length - 1</code>, or
+     * <code>ListView.INVALID_POSITION</code> if the item could not be found.
+     */
+    private int convertFilenameToIndex(String filename) {
+        if (filename != null) {
+            int i = 0;
+            for (DebateFormatListEntry entry : mStylesList) {
+                if (filename.equals(entry.getFilename())) return i;
+                i++;
+            }
+        }
+        return ListView.INVALID_POSITION;
+    }
+
+    /**
+     * Given an index in the styles list, returns the filename.
+     * @param index
+     * @return filename, or null if the index was invalid.
+     */
+    private String convertIndexToFilename(int index) {
+        if (index < 0 || index > mStylesList.size())
+            return null;
+        return mStylesList.get(index).getFilename();
     }
 
     /**
@@ -615,26 +654,6 @@ public class FormatChooserActivity extends FragmentActivity {
     }
 
     /**
-     * @return the selection (as an integer) that was passed in the <code>Intent</code> that
-     * started this <code>Activity</code>, or <code>ListView.INVALID_POSITION</code>
-     */
-    private int getIncomingSelection() {
-        Intent data = getIntent();
-        String incomingFilename = data.getStringExtra(EXTRA_XML_FILE_NAME);
-        if (incomingFilename != null) {
-            Iterator<DebateFormatListEntry> entryIterator = mStylesList
-                    .iterator();
-            while (entryIterator.hasNext()) {
-                DebateFormatListEntry se = entryIterator.next();
-                if (incomingFilename.equals(se.getFilename())) {
-                    return mStylesList.indexOf(se);
-                }
-            }
-        }
-        return ListView.INVALID_POSITION;
-    }
-
-    /**
      * @param view the <code>View</code> to be populated
      * @param filename the filename of the XML file from which data is to be taken
      * @throws IOException if there was an IO problem with the XML file
@@ -652,7 +671,7 @@ public class FormatChooserActivity extends FragmentActivity {
      * serious that it can't even get the list, we show a dialog to that effect, and leave the list
      * empty.
      */
-    private void refreshStylesList() {
+    private void populateStylesList() {
         String[] fileList;
 
         try {
@@ -663,8 +682,6 @@ public class FormatChooserActivity extends FragmentActivity {
             fragment.show(getSupportFragmentManager(), DIALOG_TAG_LIST_IO_ERROR);
             return;
         }
-
-        mStylesList.clear();
 
         for (String filename : fileList) {
             if (!filename.endsWith(".xml")) continue;
@@ -700,24 +717,18 @@ public class FormatChooserActivity extends FragmentActivity {
     }
 
     /**
-     * Ends this Activity, returning a result to the activity that called this Activity.
-     * @param position the integer position in the styles list of the user-selected position.
+     * Refreshes the styles list, intelligently maintaining the current selection if there is one.
      */
-    private void returnSelectionByPosition(int position) {
-        Log.v(TAG, "Picked item " + position);
+    private void refreshStylesList() {
+        // Take note of current selection by file name
+        int selectedPosition = mStylesListView.getCheckedItemPosition();
+        String selectedFilename = convertIndexToFilename(selectedPosition);
 
-        Intent intent = new Intent();
+        mStylesList.clear();
+        populateStylesList();
 
-        if (position >= mStylesList.size()) {
-            setResult(RESULT_ERROR);
-            Log.e(TAG, "No item associated with that");
-        } else {
-            String filename = mStylesList.get(position).getFilename();
-            Log.v(TAG, "File name is " + filename);
-            intent.putExtra(EXTRA_XML_FILE_NAME, filename);
-            setResult(RESULT_OK, intent);
-        }
-        FormatChooserActivity.this.finish();
+        // Restore selection, which may have changed position
+        setSelectionAndScroll(selectedFilename);
     }
 
     /**
@@ -736,6 +747,18 @@ public class FormatChooserActivity extends FragmentActivity {
         }
 
         return granted;
+    }
+
+    /**
+     * Sets the selection to the given file name and scrolls so that the selection is visible.
+     * If the file name isn't in the list, it deselects everything.
+     * @param filename name of file to select
+     */
+    private void setSelectionAndScroll(String filename) {
+        int index = convertFilenameToIndex(filename);
+        mStylesListView.setItemChecked(index, true);
+        if (index != ListView.INVALID_POSITION)
+            mStylesListView.smoothScrollToPosition(index);
     }
 
     /**
