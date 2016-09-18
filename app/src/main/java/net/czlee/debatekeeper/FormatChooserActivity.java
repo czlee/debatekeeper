@@ -17,31 +17,18 @@
 
 package net.czlee.debatekeeper;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-
-import net.czlee.debatekeeper.debateformat.DebateFormatInfo;
-import net.czlee.debatekeeper.debateformat.DebateFormatInfoExtractorForSchema1;
-import net.czlee.debatekeeper.debateformat.DebateFormatInfoForSchema2;
-import net.czlee.debatekeeper.debateformat.XmlUtilities;
-import net.czlee.debatekeeper.debateformat.XmlUtilities.IllegalSchemaVersionException;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
+import android.Manifest;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.Xml;
 import android.util.Xml.Encoding;
@@ -57,6 +44,22 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import net.czlee.debatekeeper.debateformat.DebateFormatInfo;
+import net.czlee.debatekeeper.debateformat.DebateFormatInfoExtractorForSchema1;
+import net.czlee.debatekeeper.debateformat.DebateFormatInfoForSchema2;
+import net.czlee.debatekeeper.debateformat.XmlUtilities;
+import net.czlee.debatekeeper.debateformat.XmlUtilities.IllegalSchemaVersionException;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
 
 /**
  * This Activity displays a list of formats for the user to choose from. It
@@ -83,6 +86,7 @@ public class FormatChooserActivity extends FragmentActivity {
 
     private String DEBATING_TIMER_URI;
 
+    private static final int REQUEST_TO_READ_EXTERNAL_STORAGE = 17;
     private static final String DIALOG_ARGUMENT_FILE_NAME = "fn";
     private static final String DIALOG_TAG_MORE_DETAILS = "md";
     private static final String DIALOG_TAG_LIST_IO_ERROR = "io";
@@ -469,6 +473,15 @@ public class FormatChooserActivity extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        if (requestCode == REQUEST_TO_READ_EXTERNAL_STORAGE) {
+            // If we've just received read permissions, refresh the styles list.
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                refreshStylesList();
+        }
+    }
+
     //******************************************************************************************
     // Protected methods
     //******************************************************************************************
@@ -479,26 +492,24 @@ public class FormatChooserActivity extends FragmentActivity {
         setContentView(R.layout.activity_format_chooser);
         DEBATING_TIMER_URI = getString(R.string.xml_uri);
 
+        // Check the external storage permission
+        // We do it here, not in FormatXmlFilesManager, so that DebatingActivity doesn't try to ask.
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    REQUEST_TO_READ_EXTERNAL_STORAGE);
+        }
+
         mFilesManager = new FormatXmlFilesManager(this);
+        mStylesArrayAdapter = new DebateFormatEntryArrayAdapter(this, mStylesList,
+                new FormatChooserActivityBinder());
 
         // Set the action bar
         ActionBar bar = getActionBar();
         if (bar != null) bar.setDisplayHomeAsUpEnabled(true);
 
-        // Populate mStylesList
-        try {
-            populateStylesLists();
-        } catch (IOException e) {
-            e.printStackTrace();
-            ListIOErrorDialogFragment fragment = new ListIOErrorDialogFragment();
-            fragment.show(getSupportFragmentManager(), DIALOG_TAG_LIST_IO_ERROR);
-        }
-
-        mStylesArrayAdapter = new DebateFormatEntryArrayAdapter(this, mStylesList,
-                new FormatChooserActivityBinder());
-
-        // Sort alphabetically by style name
-        mStylesArrayAdapter.sort(new StyleEntryComparatorByStyleName());
+        // Populate the styles list
+        refreshStylesList();
 
         // Configure the ListView
         mStylesListView = (ListView) findViewById(R.id.formatChooser_stylesList);
@@ -516,15 +527,6 @@ public class FormatChooserActivity extends FragmentActivity {
     //******************************************************************************************
     // Private methods
     //******************************************************************************************
-
-    /**
-     * Adds a style to the master styles list.
-     * @param filename the file name for this style
-     * @param styleName the name of this style
-     */
-    private void addStyleToList(String filename, String styleName) {
-        mStylesList.add(new DebateFormatListEntry(filename, styleName));
-    }
 
     /**
      * Confirms and handles the selection appropriately, and ends the Activity.
@@ -615,20 +617,28 @@ public class FormatChooserActivity extends FragmentActivity {
 
     /**
      * Populates the master styles list, <code>mStylesList</code>.  Should be called when this
-     * Activity is created.
-     * @throws IOException if there is an IOException that is so serious that it cannot
-     * hope to populate the StylesLists.  Note that this does <b>not</b> include an error
-     * opening a single specific file.
+     * Activity is created, or whenever we want to refresh the styles list. If there is an error so
+     * serious that it can't even get the list, we show a dialog to that effect, and leave the list
+     * empty.
      */
-    private void populateStylesLists() throws IOException {
-        String[] fileList = mFilesManager.list();
+    private void refreshStylesList() {
+        String[] fileList;
 
-        for (int i = 0; i < fileList.length; i++) {
-            String filename = fileList[i];
+        try {
+             fileList = mFilesManager.list();
+        } catch (IOException e) {
+            e.printStackTrace();
+            ListIOErrorDialogFragment fragment = new ListIOErrorDialogFragment();
+            fragment.show(getSupportFragmentManager(), DIALOG_TAG_LIST_IO_ERROR);
+            return;
+        }
+
+        mStylesList.clear();
+
+        for (String filename : fileList) {
+            if (!filename.endsWith(".xml")) continue;
+
             InputStream is;
-
-            if (!filename.endsWith(".xml"))
-                continue;
 
             try {
                 is = mFilesManager.open(filename);
@@ -645,15 +655,17 @@ public class FormatChooserActivity extends FragmentActivity {
                 // This exception means the XML parsing was successful - we just
                 // use it to stop the parser.
                 if (mCurrentStyleName != null)
-                    addStyleToList(filename, mCurrentStyleName);
+                    mStylesList.add(new DebateFormatListEntry(filename, mCurrentStyleName));
 
-            } catch (SAXException e) {
+            } catch (SAXException|IOException e) {
                 mCurrentStyleName = null;
-                continue;
             }
 
         }
 
+        // Sort alphabetically by style name and tell observers
+        mStylesArrayAdapter.sort(new StyleEntryComparatorByStyleName());
+        mStylesArrayAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -699,7 +711,7 @@ public class FormatChooserActivity extends FragmentActivity {
 
     /**
      * @param view the <code>View</code> to be populated
-     * @param is an <code>InputStream> for the XML file from which data is to be taken
+     * @param dfi is an <code>InputStream> for the XML file from which data is to be taken
      */
     private static void populateBasicInfo(View view, DebateFormatInfo dfi) {
         ((TextView) view.findViewById(R.id.viewFormat_tableCell_regionValue)).setText(
