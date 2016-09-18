@@ -503,7 +503,7 @@ public class FormatChooserActivity extends FragmentActivity {
                 checkbox.setChecked(false);
                 mFilesManager.setLookForUserFiles(false);
                 Toast.makeText(this, getResources().getString(R.string.formatChooser_lookForCustom_errorNoReadPermission),
-                        Toast.LENGTH_SHORT).show();
+                        Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -563,30 +563,24 @@ public class FormatChooserActivity extends FragmentActivity {
         int selectedPosition = mStylesListView.getCheckedItemPosition();
         String selectedFilename = convertIndexToFilename(selectedPosition);
         String incomingFilename = getIntent().getStringExtra(EXTRA_XML_FILE_NAME);
+
         if (selectedFilename != null && selectedFilename.equals(incomingFilename) &&
                 mInitialLookForCustomFormats == mFilesManager.isLookingForUserFiles()) {
-            Toast.makeText(FormatChooserActivity.this, R.string.formatChooser_toast_formatUnchanged,
+            Toast.makeText(this, R.string.formatChooser_toast_formatUnchanged,
                     Toast.LENGTH_SHORT).show();
-            FormatChooserActivity.this.finish();
 
-        } else if (selectedPosition != ListView.INVALID_POSITION) {
-            String filename = convertIndexToFilename(selectedPosition);
-            if (filename == null) {
-                setResult(RESULT_ERROR);
-                Log.e(TAG, "Returning error, no entry in position " + selectedPosition);
-            } else {
-                Intent intent = new Intent();
-                Log.v(TAG, "File name in position " + selectedPosition + " is " + filename);
-                intent.putExtra(EXTRA_XML_FILE_NAME, filename);
-                setResult(RESULT_OK, intent);
-            }
-            this.finish();
+        } else if (selectedFilename == null) {
+            setResult(RESULT_ERROR);
+            Log.e(TAG, "Returning error, no entry in position " + selectedPosition);
 
         } else {
-            Toast.makeText(FormatChooserActivity.this, R.string.formatChooser_toast_noSelection,
-                    Toast.LENGTH_SHORT).show();
-            FormatChooserActivity.this.finish();
+            Intent intent = new Intent();
+            Log.v(TAG, "File name in position " + selectedPosition + " is " + selectedFilename);
+            intent.putExtra(EXTRA_XML_FILE_NAME, selectedFilename);
+            setResult(RESULT_OK, intent);
         }
+
+        this.finish();
     }
 
     /**

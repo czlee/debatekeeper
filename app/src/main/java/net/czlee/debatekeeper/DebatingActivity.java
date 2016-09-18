@@ -862,16 +862,24 @@ public class DebatingActivity extends FragmentActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == CHOOSE_STYLE_REQUEST && resultCode == RESULT_OK) {
-            String filename = data.getStringExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME);
-            if (filename != null) {
-                Log.v(TAG, "Got file name " + filename);
-                setXmlFileName(filename);
-                resetDebateWithoutToast();
-            }
-            // Do nothing if cancelled or error.
-        }
+        if (requestCode == CHOOSE_STYLE_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                String filename = data.getStringExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME);
+                if (filename != null) {
+                    Log.v(TAG, "Got file name " + filename);
+                    setXmlFileName(filename);
+                    resetDebateWithoutToast();
+                }
+            } else if (resultCode == FormatChooserActivity.RESULT_ERROR) {
+                Log.w(TAG, "Got error from FormatChooserActivity");
+                setXmlFileName(null);
+                if (mBinder != null) mBinder.releaseDebateManager();
+                mDebateManager = null;
+                updateGui();
 
+            }
+            // Do nothing if cancelled
+        }
     }
 
     @Override
@@ -1589,7 +1597,10 @@ public class DebatingActivity extends FragmentActivity {
         mFormatXmlFileName = filename;
         SharedPreferences sp = getPreferences(MODE_PRIVATE);
         Editor editor = sp.edit();
-        editor.putString(PREFERENCE_XML_FILE_NAME, filename);
+        if (filename != null)
+            editor.putString(PREFERENCE_XML_FILE_NAME, filename);
+        else
+            editor.remove(PREFERENCE_XML_FILE_NAME);
         editor.apply();
     }
 
