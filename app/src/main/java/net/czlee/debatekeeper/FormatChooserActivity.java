@@ -26,6 +26,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -86,7 +87,7 @@ public class FormatChooserActivity extends FragmentActivity {
     private boolean  mInitialLookForCustomFormats = false;
 
     private DebateFormatEntryArrayAdapter mStylesArrayAdapter;
-    private final ArrayList<DebateFormatListEntry> mStylesList = new ArrayList<DebateFormatListEntry>();
+    private final ArrayList<DebateFormatListEntry> mStylesList = new ArrayList<>();
 
     private String DEBATING_TIMER_URI;
 
@@ -167,6 +168,7 @@ public class FormatChooserActivity extends FragmentActivity {
      */
     public static class ListIOErrorDialogFragment extends DialogFragment {
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final FormatChooserActivity activity = (FormatChooserActivity) getActivity();
@@ -197,6 +199,7 @@ public class FormatChooserActivity extends FragmentActivity {
             return fragment;
         }
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             String filename = getArguments().getString(DIALOG_ARGUMENT_FILE_NAME);
@@ -208,7 +211,7 @@ public class FormatChooserActivity extends FragmentActivity {
          * for a given debate format couldn't be populated.
          * @param filename the file name of the debate format XML file to which this Dialog should
          * relate
-         * @param e
+         * @param e the exception leading to this error
          * @return the {@link AlertDialog}
          */
         private AlertDialog getBlankDetailsDialog(String filename, Exception e) {
@@ -315,21 +318,18 @@ public class FormatChooserActivity extends FragmentActivity {
 
         /**
          * Populates a table from an ArrayList of String arrays.
-         * @param view
-         * @param tableResid A resource ID pointing to a <code>TableLayout</code>
-         * @param rowResid A resource ID pointing to a <code>TableRow</code> <b>layout file</b>.
+         * @param view the view in which to find the resources
+         * @param tableResΙd A resource ID pointing to a <code>TableLayout</code>
+         * @param rowResΙd A resource ID pointing to a <code>TableRow</code> <b>layout file</b>.
          * (Not the <code>TableRow</code> itself.)
          * TableRow must have at least two TextView elements, which must have IDs "text1" and "text2".
          * @param list the list of String arrays.  Each array must have two elements.
          */
-        private void populateTwoColumnTable(View view, int tableResid, int rowResid, ArrayList<String[]> list) {
-            TableLayout table = (TableLayout) view.findViewById(tableResid);
+        private void populateTwoColumnTable(View view, int tableResΙd, int rowResΙd, ArrayList<String[]> list) {
+            TableLayout table = (TableLayout) view.findViewById(tableResΙd);
 
-            Iterator<String[]> iterator = list.iterator();
-
-            while (iterator.hasNext()) {
-                String[] rowText = iterator.next();
-                TableRow row = (TableRow) View.inflate(getActivity(), rowResid, null);
+            for (String[] rowText : list) {
+                TableRow row = (TableRow) View.inflate(getActivity(), rowResΙd, null);
                 ((TextView) row.findViewById(R.id.text1)).setText(rowText[0].concat(" "));
                 ((TextView) row.findViewById(R.id.text2)).setText(rowText[1].concat(" "));
                 table.addView(row);
@@ -424,10 +424,8 @@ public class FormatChooserActivity extends FragmentActivity {
                 // We don't need to parse any more once we find the style name
             }
 
-            if (localName.equals(getString(R.string.xml2elemName_name))) {
+            if (localName.equals(getString(R.string.xml2elemName_name)))
                 mNameBuffer = new StringBuilder();
-                return;
-            }
         }
     }
 
@@ -492,7 +490,7 @@ public class FormatChooserActivity extends FragmentActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         if (requestCode == REQUEST_TO_READ_EXTERNAL_STORAGE) {
             // If we've just received read permissions, refresh the styles list.
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
@@ -586,7 +584,7 @@ public class FormatChooserActivity extends FragmentActivity {
 
     /**
      * Given a filename, returns the index in the styles list where the entry is.
-     * @param filename
+     * @param filename the file name of the style
      * @return integer between 0 and <code>mStylesList.length - 1</code>, or
      * <code>ListView.INVALID_POSITION</code> if the item could not be found.
      */
@@ -603,7 +601,7 @@ public class FormatChooserActivity extends FragmentActivity {
 
     /**
      * Given an index in the styles list, returns the filename.
-     * @param index
+     * @param index the index in the styles list
      * @return filename, or null if the index was invalid.
      */
     private String convertIndexToFilename(int index) {
@@ -769,7 +767,7 @@ public class FormatChooserActivity extends FragmentActivity {
      * @return the result, a single <code>String</code>
      */
     private static String concatenate(ArrayList<String> list) {
-        String str = new String();
+        String str = "";
         Iterator<String> iterator = list.iterator();
 
         // Start with the first item (if it exists)

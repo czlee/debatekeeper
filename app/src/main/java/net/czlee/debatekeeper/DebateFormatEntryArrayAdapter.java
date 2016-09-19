@@ -17,20 +17,20 @@
 
 package net.czlee.debatekeeper;
 
-import java.io.IOException;
-import java.util.List;
-
-import net.czlee.debatekeeper.FormatChooserActivity.DebateFormatListEntry;
-import net.czlee.debatekeeper.FormatChooserActivity.FormatChooserActivityBinder;
-
-import org.xml.sax.SAXException;
-
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckedTextView;
+
+import net.czlee.debatekeeper.FormatChooserActivity.DebateFormatListEntry;
+import net.czlee.debatekeeper.FormatChooserActivity.FormatChooserActivityBinder;
+
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * An ArrayAdapter for displaying a list of debate formats. This adapter changes
@@ -78,13 +78,7 @@ public class DebateFormatEntryArrayAdapter extends
                 // description of the style.
                 mBinder.populateBasicInfo(view, filename);
 
-            } catch (IOException e) {
-                // Do nothing.
-                // This basically just means the view won't be populated with information,
-                // i.e. the fields will just have a hyphen ("-") in them.  This is fine.  When
-                // the user tries to do something else with the file, it will show the real
-                // error message.
-            } catch (SAXException e) {
+            } catch (IOException | SAXException e) {
                 // Do nothing.
                 // This basically just means the view won't be populated with information,
                 // i.e. the fields will just have a hyphen ("-") in them.  This is fine.  When

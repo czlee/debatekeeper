@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashSet;
 
 /**
@@ -105,32 +106,25 @@ public class FormatXmlFilesManager {
      * @throws IOException
      */
     public String[] list() throws IOException {
-        HashSet<String> compiledSet = new HashSet<String>();
+        HashSet<String> compiledSet = new HashSet<>();
 
         // First add files in the user files directory...
         if (mLookForUserFiles) {
             File userFilesDirectory = getUserFilesDirectory();
             if (userFilesDirectory != null) {
                 String[] userFilesList = userFilesDirectory.list();
-                if (userFilesList != null) {
-                    for (int i = 0; i < userFilesList.length; i++) {
-                        compiledSet.add(userFilesList[i]);
-                    }
-                }
+                if (userFilesList != null)
+                    Collections.addAll(compiledSet, userFilesList);
             }
         }
 
         // Then add files in the assets...
         String[] assetList = mAssets.list(ASSETS_PATH);
-        if (assetList != null) {
-            for (int i = 0; i < assetList.length; i++) {
-                compiledSet.add(assetList[i]);
-            }
-        }
+        if (assetList != null)
+            Collections.addAll(compiledSet, assetList);
 
         // Finally, return the combined list.
-        String[] compiledList = compiledSet.toArray(new String[0]);
-        return compiledList;
+        return compiledSet.toArray(new String[compiledSet.size()]);
     }
 
     /**
@@ -159,8 +153,7 @@ public class FormatXmlFilesManager {
     }
 
     /**
-     * Returns whether this manager is set to look for user files.
-     * @return
+     * @return whether this manager is set to look for user files.
      */
     public boolean isLookingForUserFiles() {
         return mLookForUserFiles;
@@ -169,7 +162,7 @@ public class FormatXmlFilesManager {
     /**
      * Sets whether the files manager will look for user files.
      * This method also saves the setting to preferences.
-     * @param lookForUserFiles
+     * @param lookForUserFiles whether to look for user files
      */
     public void setLookForUserFiles(boolean lookForUserFiles) {
         this.mLookForUserFiles = lookForUserFiles;
@@ -184,11 +177,7 @@ public class FormatXmlFilesManager {
 
     private boolean isExternalStorageReadable() {
         String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state))
-            return true;
-        if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state))
-            return true;
-        return false;
+        return Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
     }
 
     /**

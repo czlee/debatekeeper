@@ -17,20 +17,21 @@
 
 package net.czlee.debatekeeper;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.util.Log;
+
+import net.czlee.debatekeeper.debateformat.BellInfo;
+import net.czlee.debatekeeper.debateformat.PrepTimeSimpleFormat;
+import net.czlee.debatekeeper.debateformat.XmlUtilities;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Locale;
-
-import net.czlee.debatekeeper.debateformat.BellInfo;
-import net.czlee.debatekeeper.debateformat.PrepTimeSimpleFormat;
-import net.czlee.debatekeeper.debateformat.XmlUtilities;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.util.Log;
 
 /**
  * PrepTimeBellsManager manages the user-defined bell times for preparation time.
@@ -66,7 +67,7 @@ public class PrepTimeBellsManager {
     public  static final String PREP_TIME_BELLS_PREFERENCES_NAME = "prep_time_bells";
     private static final String KEY_TOTAL_NUMBER_OF_BELLS        = "totalBells";
 
-    private final ArrayList<PrepTimeBellSpec> mBellSpecs = new ArrayList<PrepTimeBellSpec>();
+    private final ArrayList<PrepTimeBellSpec> mBellSpecs = new ArrayList<>();
 
     private final Context mContext;
 
@@ -86,26 +87,26 @@ public class PrepTimeBellsManager {
          * incompatible with the length given (e.g. it would occur after the end
          * of the prep time given).
          */
-        public BellInfo getBell(long length);
+        BellInfo getBell(long length);
 
         /**
          * Saves this bell specification to a bundle.
          * @param bundle the Bundle to save to
          */
-        public void saveToBundle(Bundle bundle);
+        void saveToBundle(Bundle bundle);
 
         /**
          * Saves this bell specification to a shared preferences file.
          * @param index the index of this PrepTimeBellSpec in the list
          */
-        public void saveToPreferences(SharedPreferences.Editor editor, int index);
+        void saveToPreferences(SharedPreferences.Editor editor, int index);
 
         /**
          * @return <code>true</code> if the bell is <i>always</i> at the finish; <code>false</code>
          * otherwise. Note that a bell that <i>can</i> be, but is not <i>always</i> at the finish
          * (<i>e.g.</i> a start bell whose time coincides with the prep time length) returns <code>false</code>.
          */
-        public boolean isAtFinish();
+        boolean isAtFinish();
 
     }
 
@@ -228,10 +229,6 @@ public class PrepTimeBellsManager {
 
         public PrepTimeBellFromStart(Bundle bundle) throws PrepTimeBellConstructorException {
             super(bundle);
-        }
-
-        public PrepTimeBellFromStart(long time) {
-            super(time);
         }
 
         public PrepTimeBellFromStart(SharedPreferences prefs, int index) throws PrepTimeBellConstructorException {
@@ -385,7 +382,7 @@ public class PrepTimeBellsManager {
 
     /**
      * Deletes the bell at the given index.
-     * @param index
+     * @param index the index to delete
      */
     public void deleteBell(int index) {
         mBellSpecs.remove(index);
@@ -416,9 +413,8 @@ public class PrepTimeBellsManager {
      * <code>false</code> otherwise
      */
     public boolean hasFinishBell() {
-        Iterator<PrepTimeBellSpec> iterator = mBellSpecs.iterator();
-        while (iterator.hasNext())
-            if (iterator.next().isAtFinish())
+        for (PrepTimeBellSpec mBellSpec : mBellSpecs)
+            if (mBellSpec.isAtFinish())
                 return true;
         return false;
     }
@@ -448,7 +444,7 @@ public class PrepTimeBellsManager {
     }
 
     /**
-     * @param index
+     * @param index the index to look for
      * @return a {@link Bundle} representing the bell at <code>index</code>
      */
     public Bundle getBellBundle(int index) {
@@ -462,10 +458,9 @@ public class PrepTimeBellsManager {
      * @return An {@link ArrayList} of Strings being descriptions of the bell specs
      */
     public ArrayList<String> getBellDescriptions() {
-        ArrayList<String> descriptions = new ArrayList<String>(mBellSpecs.size());
-        Iterator<PrepTimeBellSpec> iterator = mBellSpecs.iterator();
-        while (iterator.hasNext())
-            descriptions.add(iterator.next().toString());
+        ArrayList<String> descriptions = new ArrayList<>(mBellSpecs.size());
+        for (PrepTimeBellSpec mBellSpec : mBellSpecs)
+            descriptions.add(mBellSpec.toString());
         return descriptions;
     }
 
@@ -486,7 +481,7 @@ public class PrepTimeBellsManager {
     public ArrayList<BellInfo> getBellsList(long length) {
 
         Iterator<PrepTimeBellSpec> specIterator = mBellSpecs.iterator();
-        ArrayList<BellInfo> allBells = new ArrayList<BellInfo>();
+        ArrayList<BellInfo> allBells = new ArrayList<>();
 
         // First, generate all the bells and put them in a list.
         // Don't bother adding null bells.
@@ -512,7 +507,7 @@ public class PrepTimeBellsManager {
 
         // Then, run through the bells, adding only non-duplicates.
         Iterator<BellInfo> allBellsIterator = allBells.iterator();
-        ArrayList<BellInfo> bells = new ArrayList<BellInfo>();
+        ArrayList<BellInfo> bells = new ArrayList<>();
         while (allBellsIterator.hasNext()) {
             BellInfo bell = allBellsIterator.next();
 
@@ -520,9 +515,7 @@ public class PrepTimeBellsManager {
 
             // Treat as a "duplicate" if the bell is within fifteen seconds of another bell.
             // (The bells are already in prioritised order.)
-            Iterator<BellInfo> bellIterator = bells.iterator();
-            while (bellIterator.hasNext()) {
-                BellInfo checkBell = bellIterator.next();
+            for (BellInfo checkBell : bells) {
                 if (Math.abs(checkBell.getBellTime() - bell.getBellTime()) < 15) {
                     duplicate = true;
                     break;
@@ -581,15 +574,19 @@ public class PrepTimeBellsManager {
             PrepTimeBellSpec bell;
 
             try {
-                if (type.equals(VALUE_TYPE_START)) {
-                    bell = new PrepTimeBellFromStart(prefs, index);
-                } else if (type.equals(VALUE_TYPE_FINISH)) {
-                    bell = new PrepTimeBellFromFinish(prefs, index);
-                } else if (type.equals(VALUE_TYPE_PROPORTIONAL)) {
-                    bell = new PrepTimeBellProportional(prefs, index);
-                } else {
-                    Log.e(TAG, indexStr + ": Unrecognised type: " + type);
-                    continue;
+                switch (type) {
+                    case VALUE_TYPE_START:
+                        bell = new PrepTimeBellFromStart(prefs, index);
+                        break;
+                    case VALUE_TYPE_FINISH:
+                        bell = new PrepTimeBellFromFinish(prefs, index);
+                        break;
+                    case VALUE_TYPE_PROPORTIONAL:
+                        bell = new PrepTimeBellProportional(prefs, index);
+                        break;
+                    default:
+                        Log.e(TAG, indexStr + ": Unrecognised type: " + type);
+                        continue;
                 }
                 Log.v(TAG, indexStr + ": Found a " + type);
             } catch (PrepTimeBellConstructorException e) {
@@ -635,7 +632,7 @@ public class PrepTimeBellsManager {
         editor.putInt(KEY_TOTAL_NUMBER_OF_BELLS, index);
 
         // Commit the changes
-        editor.commit();
+        editor.apply();
     }
 
     //******************************************************************************************
@@ -660,15 +657,19 @@ public class PrepTimeBellsManager {
         PrepTimeBellSpec bell;
 
         try {
-            if (type.equals(VALUE_TYPE_START)) {
-                bell = new PrepTimeBellFromStart(bundle);
-            } else if (type.equals(VALUE_TYPE_FINISH)) {
-                bell = new PrepTimeBellFromFinish(bundle);
-            } else if (type.equals(VALUE_TYPE_PROPORTIONAL)) {
-                bell = new PrepTimeBellProportional(bundle);
-            } else {
-                Log.e(TAG, "createFromBundle: Unrecognised type: " + type);
-                return null;
+            switch (type) {
+                case VALUE_TYPE_START:
+                    bell = new PrepTimeBellFromStart(bundle);
+                    break;
+                case VALUE_TYPE_FINISH:
+                    bell = new PrepTimeBellFromFinish(bundle);
+                    break;
+                case VALUE_TYPE_PROPORTIONAL:
+                    bell = new PrepTimeBellProportional(bundle);
+                    break;
+                default:
+                    Log.e(TAG, "createFromBundle: Unrecognised type: " + type);
+                    return null;
             }
             Log.v(TAG, "createFromBundle: Found a " + type);
         } catch (PrepTimeBellConstructorException e) {

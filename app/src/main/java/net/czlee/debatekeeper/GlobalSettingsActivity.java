@@ -38,8 +38,8 @@ import java.util.HashSet;
  */
 public class GlobalSettingsActivity extends PreferenceActivity {
 
-    private final HashMap<String, Integer> mPreferenceToSummaryResidMap = new HashMap<>();
-    private final HashMap<String, Integer> mPreferenceToDefaultResidMap = new HashMap<>();
+    private final HashMap<String, Integer> mPreferenceToSummaryResIdMap = new HashMap<>();
+    private final HashMap<String, Integer> mPreferenceToDefaultResIdMap = new HashMap<>();
 
     private final HashSet<String> mIntegerPreferenceKeys       = new HashSet<>();
     private final HashSet<String> mListPreferenceKeys          = new HashSet<>();
@@ -102,21 +102,21 @@ public class GlobalSettingsActivity extends PreferenceActivity {
         mListPreferenceKeys.add(KEY_POI_FLASH_SCREEN_MODE);
         mListPreferenceKeys.add(KEY_PREP_TIMER_COUNT_DIRECTION);
 
-        mPreferenceToSummaryResidMap.put(KEY_FIRST_OVERTIME_BELL,        R.string.pref_firstOvertimeBell_summary);
-        mPreferenceToSummaryResidMap.put(KEY_OVERTIME_BELL_PERIOD,       R.string.pref_overtimeBellPeriod_summary);
-        mPreferenceToSummaryResidMap.put(KEY_COUNT_DIRECTION,            R.array.pref_countDirection_summaries);
-        mPreferenceToSummaryResidMap.put(KEY_BACKGROUND_COLOUR_AREA,     R.array.pref_backgroundColourArea_summaries);
-        mPreferenceToSummaryResidMap.put(KEY_FLASH_SCREEN_MODE,          R.array.pref_flashScreenMode_summaries);
-        mPreferenceToSummaryResidMap.put(KEY_POI_FLASH_SCREEN_MODE,      R.array.pref_poiTimer_flashScreenMode_summaries);
-        mPreferenceToSummaryResidMap.put(KEY_PREP_TIMER_COUNT_DIRECTION, R.array.pref_prepTimer_countDirection_summaries);
+        mPreferenceToSummaryResIdMap.put(KEY_FIRST_OVERTIME_BELL,        R.string.pref_firstOvertimeBell_summary);
+        mPreferenceToSummaryResIdMap.put(KEY_OVERTIME_BELL_PERIOD,       R.string.pref_overtimeBellPeriod_summary);
+        mPreferenceToSummaryResIdMap.put(KEY_COUNT_DIRECTION,            R.array.pref_countDirection_summaries);
+        mPreferenceToSummaryResIdMap.put(KEY_BACKGROUND_COLOUR_AREA,     R.array.pref_backgroundColourArea_summaries);
+        mPreferenceToSummaryResIdMap.put(KEY_FLASH_SCREEN_MODE,          R.array.pref_flashScreenMode_summaries);
+        mPreferenceToSummaryResIdMap.put(KEY_POI_FLASH_SCREEN_MODE,      R.array.pref_poiTimer_flashScreenMode_summaries);
+        mPreferenceToSummaryResIdMap.put(KEY_PREP_TIMER_COUNT_DIRECTION, R.array.pref_prepTimer_countDirection_summaries);
 
-        mPreferenceToDefaultResidMap.put(KEY_FIRST_OVERTIME_BELL,        R.integer.prefDefault_firstOvertimeBell);
-        mPreferenceToDefaultResidMap.put(KEY_OVERTIME_BELL_PERIOD,       R.integer.prefDefault_overtimeBellPeriod);
-        mPreferenceToDefaultResidMap.put(KEY_COUNT_DIRECTION,            R.string.prefDefault_countDirection);
-        mPreferenceToDefaultResidMap.put(KEY_BACKGROUND_COLOUR_AREA,     R.string.prefDefault_backgroundColourArea);
-        mPreferenceToDefaultResidMap.put(KEY_FLASH_SCREEN_MODE,          R.string.prefDefault_flashScreenMode);
-        mPreferenceToDefaultResidMap.put(KEY_POI_FLASH_SCREEN_MODE,      R.string.prefDefault_poiTimer_flashScreenMode);
-        mPreferenceToDefaultResidMap.put(KEY_PREP_TIMER_COUNT_DIRECTION, R.string.prefDefault_prepTimer_countDirection);
+        mPreferenceToDefaultResIdMap.put(KEY_FIRST_OVERTIME_BELL,        R.integer.prefDefault_firstOvertimeBell);
+        mPreferenceToDefaultResIdMap.put(KEY_OVERTIME_BELL_PERIOD,       R.integer.prefDefault_overtimeBellPeriod);
+        mPreferenceToDefaultResIdMap.put(KEY_COUNT_DIRECTION,            R.string.prefDefault_countDirection);
+        mPreferenceToDefaultResIdMap.put(KEY_BACKGROUND_COLOUR_AREA,     R.string.prefDefault_backgroundColourArea);
+        mPreferenceToDefaultResIdMap.put(KEY_FLASH_SCREEN_MODE,          R.string.prefDefault_flashScreenMode);
+        mPreferenceToDefaultResIdMap.put(KEY_POI_FLASH_SCREEN_MODE,      R.string.prefDefault_poiTimer_flashScreenMode);
+        mPreferenceToDefaultResIdMap.put(KEY_PREP_TIMER_COUNT_DIRECTION, R.string.prefDefault_prepTimer_countDirection);
 
         updateIntegerPreferenceSummary(KEY_FIRST_OVERTIME_BELL);
         updateIntegerPreferenceSummary(KEY_OVERTIME_BELL_PERIOD);
@@ -175,22 +175,22 @@ public class GlobalSettingsActivity extends PreferenceActivity {
     //******************************************************************************************
     private void updateIntegerPreferenceSummary(String key) {
         SharedPreferences prefs             = PreferenceManager.getDefaultSharedPreferences(this);
-        int               defaultValueResid = mPreferenceToDefaultResidMap.get(key);
-        int               value             = prefs.getInt(key, this.getResources().getInteger(defaultValueResid));
+        int               defaultValueResId = mPreferenceToDefaultResIdMap.get(key);
+        int               value             = prefs.getInt(key, this.getResources().getInteger(defaultValueResId));
         Preference        pref              = findPreference(key);
-        int               summaryTextResid  = mPreferenceToSummaryResidMap.get(key);
+        int               summaryTextResId  = mPreferenceToSummaryResIdMap.get(key);
 
-        pref.setSummary(getString(summaryTextResid, value));
+        pref.setSummary(getString(summaryTextResId, value));
     }
 
     private void updateListPreferenceSummary(String key) {
         SharedPreferences prefs              = PreferenceManager.getDefaultSharedPreferences(this);
-        int               defaultValueResid  = mPreferenceToDefaultResidMap.get(key);
-        String            value              = prefs.getString(key, getString(defaultValueResid));
+        int               defaultValueResId  = mPreferenceToDefaultResIdMap.get(key);
+        String            value              = prefs.getString(key, getString(defaultValueResId));
         ListPreference    pref               = (ListPreference) findPreference(key);
         int               index              = pref.findIndexOfValue(value);
-        int               summariesTextResid = mPreferenceToSummaryResidMap.get(key);
-        String[]          summaries          = this.getResources().getStringArray(summariesTextResid);
+        int               summariesTextResId = mPreferenceToSummaryResIdMap.get(key);
+        String[]          summaries          = this.getResources().getStringArray(summariesTextResId);
 
         pref.setSummary(summaries[index]);
     }

@@ -17,12 +17,6 @@
 
 package net.czlee.debatekeeper;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import net.czlee.debatekeeper.debateformat.BellInfo;
-import net.czlee.debatekeeper.debateformat.BellSoundInfo;
-import net.czlee.debatekeeper.debateformat.PeriodInfo;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -33,6 +27,11 @@ import android.content.res.Resources;
 import android.os.PowerManager;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
+
+import net.czlee.debatekeeper.debateformat.BellSoundInfo;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * AlertManager manages all alerts for the Debatekeeper application.
@@ -141,7 +140,7 @@ public class AlertManager
          * @return <code>true</code> if the flash screen is allowed to continue, <code>false</code>
          * if the flash screen is disallowed
          */
-        public boolean begin();
+        boolean begin();
 
         /**
          * This is called by {@link AlertManager} to turn on a screen-flash.  In strobe flashes,
@@ -149,13 +148,13 @@ public class AlertManager
          * @param colour the colour of the screen-flash
          */
 
-        public void flashScreenOn(int colour);
+        void flashScreenOn(int colour);
 
         /**
          * This is called by {@link AlertManager} to turn off a screen flash.  In strobe flashes,
          * it is called once for each strobe (<i>i.e.</i> lots of times).
          */
-        public void flashScreenOff();
+        void flashScreenOff();
 
         /**
          * This is called by {@link AlertManager} at the end of a screen-flash.  (In the case of
@@ -163,7 +162,7 @@ public class AlertManager
          * execute any clean-up necessary.  This will likely involve releasing a semaphore
          * acquired in <code>begin()</code>.  It might also involve updating the parent GUI.
          */
-        public void done();
+        void done();
     }
 
     public enum FlashScreenMode {
@@ -177,7 +176,7 @@ public class AlertManager
 
         private final String prefValue;
 
-        private FlashScreenMode(String prefValue) {
+        FlashScreenMode(String prefValue) {
             this.prefValue = prefValue;
         }
 
@@ -186,10 +185,9 @@ public class AlertManager
         }
 
         public static FlashScreenMode toEnum(String key) {
-            FlashScreenMode[] values = FlashScreenMode.values();
-            for (int i = 0; i < values.length; i++)
-                if (key.equals(values[i].prefValue))
-                    return values[i];
+            for (FlashScreenMode value : FlashScreenMode.values())
+                if (key.equals(value.prefValue))
+                    return value;
             throw new IllegalArgumentException(String.format("There is no enumerated constant '%s'", key));
         }
     }
@@ -235,7 +233,7 @@ public class AlertManager
                    .setContentText(speechName)
                    .setContentIntent(mIntentForOngoingNotification);
 
-            mNotification = builder.getNotification();
+            mNotification = builder.build();
             mService.startForeground(NOTIFICATION_ID, mNotification);
             mShowingNotification = true;
         }
@@ -334,9 +332,9 @@ public class AlertManager
     }
 
     public void triggerPoiAlert() {
-        if (mPoiBuzzerEnabled)
+        // if (mPoiBuzzerEnabled)
             // TODO fill this space
-            ;
+        //    ;
 
         if (mPoiVibrateEnabled)
             mVibrator.vibrate(POI_VIBRATE_TIME);
