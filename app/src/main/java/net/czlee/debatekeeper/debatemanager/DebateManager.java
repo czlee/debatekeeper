@@ -17,7 +17,11 @@
 
 package net.czlee.debatekeeper.debatemanager;
 
-import java.util.ArrayList;
+import android.app.Service;
+import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 
 import net.czlee.debatekeeper.AlertManager;
 import net.czlee.debatekeeper.DebatingTimerService.GuiUpdateBroadcastSender;
@@ -27,11 +31,8 @@ import net.czlee.debatekeeper.debateformat.DebateFormat;
 import net.czlee.debatekeeper.debateformat.DebatePhaseFormat;
 import net.czlee.debatekeeper.debateformat.PeriodInfo;
 import net.czlee.debatekeeper.debateformat.PrepTimeSimpleFormat;
-import android.app.Service;
-import android.content.Context;
-import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
-import android.util.Log;
+
+import java.util.ArrayList;
 
 
 /**
@@ -92,7 +93,7 @@ public class DebateManager {
         this.mPhaseManager = new DebatePhaseManager(am);
         // TODO un-hardcode this '15'
         this.mPoiManager    = new PoiManager(am, 15);
-        this.mSpeechTimes   = new ArrayList<Long>();
+        this.mSpeechTimes   = new ArrayList<>();
         this.mPrepTime      = 0;
 
         this.mSpeechTimes.ensureCapacity(df.numberOfSpeeches());
@@ -145,7 +146,7 @@ public class DebateManager {
 
         private final String key;
 
-        private DebatePhaseType(String key) {
+        DebatePhaseType(String key) {
             this.key = key;
         }
 
@@ -155,10 +156,9 @@ public class DebateManager {
         }
 
         public static DebatePhaseType toEnum(String key) {
-            DebatePhaseType[] values = DebatePhaseType.values();
-            for (int i = 0; i < values.length; i++)
-                if (key.equals(values[i].key))
-                    return values[i];
+            for (DebatePhaseType value : DebatePhaseType.values())
+                if (key.equals(value.key))
+                    return value;
             throw new IllegalArgumentException(String.format("There is no enumerated constant '%s'", key));
         }
     }
@@ -193,7 +193,6 @@ public class DebateManager {
      * <p>Returns the phase index of the timer that is currently active.</p>
      * <p>The phase indices number consecutively starting from 0.  Note that phase indices don't
      * necessarily correlate with speeches if, for example, prep time is enabled or disabled.</p>
-     * @param timerIndex the new timer index
      */
     public int getActivePhaseIndex() {
         return findPhaseIndex(mActivePhaseType, mActiveSpeechIndex);
@@ -553,7 +552,7 @@ public class DebateManager {
     /**
      * Sets the {@link PrepTimeBellsManager} for the prep time format.
      * If the prep time is controlled for the current format, or if there is no prep time, does nothing.
-     * @param ptbm
+     * @param ptbm the {@link PrepTimeBellsManager} object
      */
     public void setPrepTimeBellsManager(PrepTimeBellsManager ptbm) {
         if (mDebateFormat.getPrepFormat() != null)
@@ -575,14 +574,12 @@ public class DebateManager {
 
         // Switch out of prep time if necessary, since if you disable prep time it doesn't make
         // any sense to continue to be in prep time
-        if (prepTimeEnabled == false) {
-            if (mActivePhaseType == DebatePhaseType.PREP_TIME) {
-                saveSpeech();
-                mPhaseManager.stop();
-                mActivePhaseType = DebatePhaseType.SPEECH;
-                mActiveSpeechIndex = 0;
-                loadSpeech();
-            }
+        if (!prepTimeEnabled && mActivePhaseType == DebatePhaseType.PREP_TIME) {
+            saveSpeech();
+            mPhaseManager.stop();
+            mActivePhaseType = DebatePhaseType.SPEECH;
+            mActiveSpeechIndex = 0;
+            loadSpeech();
         }
     }
 
