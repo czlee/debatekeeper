@@ -24,6 +24,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
@@ -732,6 +733,13 @@ public class FormatChooserActivity extends FragmentActivity {
      * @return true if the permission is already granted, false otherwise.
      */
     private boolean requestReadPermission() {
+
+        // READ_EXTERNAL_STORAGE started being enforced in API level 19 (KITKAT), so skip this check
+        // if we're before then, to avoid calling a constant that's only existed since API level 16
+        // (JELLY_BEAN)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
+            return true;
+
         boolean granted = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED;
 
