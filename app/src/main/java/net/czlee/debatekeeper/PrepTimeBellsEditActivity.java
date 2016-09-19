@@ -24,6 +24,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
@@ -38,7 +39,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -70,6 +70,10 @@ public class PrepTimeBellsEditActivity extends FragmentActivity {
 
     private static final String KEY_INDEX = "index";
 
+    public static final int DEFAULT_MINUTES = 5;
+    public static final int DEFAULT_SECONDS = 0;
+    public static final String DEFAULT_PERCENTAGE_TEXT = "50";
+
     // These must match the strings in R.string.AddPrepTimeBellTypes (in prep_time_bells_edit.xml)
     private static final int ADD_PREP_TIME_BELL_TYPE_START      = 0;
     private static final int ADD_PREP_TIME_BELL_TYPE_FINISH     = 1;
@@ -87,10 +91,10 @@ public class PrepTimeBellsEditActivity extends FragmentActivity {
 
         }
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            Dialog dialog = getAddOrEditBellDialog();
-            return dialog;
+            return getAddOrEditBellDialog();
         }
 
         private Dialog getAddOrEditBellDialog() {
@@ -134,7 +138,7 @@ public class PrepTimeBellsEditActivity extends FragmentActivity {
             DialogInterface.OnClickListener confirmOnClickListener;
 
             // Prepare the dialog fields
-            if (getTag() == DIALOG_TAG_ADD_BELL) {
+            if (DIALOG_TAG_ADD_BELL.equals(getTag())) {
 
                 prepareAddBellDialogView(content);
 
@@ -142,7 +146,7 @@ public class PrepTimeBellsEditActivity extends FragmentActivity {
                 confirmButtonText = getString(R.string.prepTimeBellsEditor_addBellDialog_confirmButton);
                 confirmOnClickListener = activity.getAddBellDialogOnClickListener();
 
-            } else if (getTag() == DIALOG_TAG_EDIT_BELL) {
+            } else if (DIALOG_TAG_EDIT_BELL.equals(getTag())) {
 
                 prepareEditBellDialogView(content);
                 int index = getArguments().getInt(KEY_INDEX);
@@ -186,9 +190,9 @@ public class PrepTimeBellsEditActivity extends FragmentActivity {
             final EditText   editText    = (EditText)   view.findViewById(R.id.addPrepTimeBellDialog_editText);
 
             // Defaults
-            timePicker.setCurrentHour(5);
-            timePicker.setCurrentMinute(0);
-            editText.setText("50");
+            timePicker.setCurrentHour(DEFAULT_MINUTES);
+            timePicker.setCurrentMinute(DEFAULT_SECONDS);
+            editText.setText(DEFAULT_PERCENTAGE_TEXT);
 
         }
 
@@ -203,23 +207,23 @@ public class PrepTimeBellsEditActivity extends FragmentActivity {
             final EditText   editText    = (EditText)   view.findViewById(R.id.addPrepTimeBellDialog_editText);
 
             // Defaults
-            timePicker.setCurrentHour(5);
-            timePicker.setCurrentMinute(0);
-            editText.setText("50");
+            timePicker.setCurrentHour(DEFAULT_MINUTES);
+            timePicker.setCurrentMinute(DEFAULT_SECONDS);
+            editText.setText(DEFAULT_PERCENTAGE_TEXT);
 
             // Populate the fields with the current values
             String type = args.getString(PrepTimeBellsManager.KEY_TYPE);
-            if (type == PrepTimeBellsManager.VALUE_TYPE_START) {
+            if (PrepTimeBellsManager.VALUE_TYPE_START.equals(type)) {
                 typeSpinner.setSelection(ADD_PREP_TIME_BELL_TYPE_START);
                 long time = args.getLong(PrepTimeBellsManager.KEY_TIME);
                 timePicker.setCurrentHour((int) (time / 60));
                 timePicker.setCurrentMinute((int) (time % 60));
-            } else if (type == PrepTimeBellsManager.VALUE_TYPE_FINISH) {
+            } else if (PrepTimeBellsManager.VALUE_TYPE_FINISH.equals(type)) {
                 typeSpinner.setSelection(ADD_PREP_TIME_BELL_TYPE_FINISH);
                 long time = args.getLong(PrepTimeBellsManager.KEY_TIME);
                 timePicker.setCurrentHour((int) (time / 60));
                 timePicker.setCurrentMinute((int) (time % 60));
-            } else if (type == PrepTimeBellsManager.VALUE_TYPE_PROPORTIONAL) {
+            } else if (PrepTimeBellsManager.VALUE_TYPE_PROPORTIONAL.equals(type)) {
                 typeSpinner.setSelection(ADD_PREP_TIME_BELL_TYPE_PERCENTAGE);
                 double proportion = args.getDouble(PrepTimeBellsManager.KEY_PROPORTION);
                 editText.setText(String.valueOf(proportion * 100));
@@ -231,6 +235,7 @@ public class PrepTimeBellsEditActivity extends FragmentActivity {
 
     public static class DialogClearBellsFragment extends DialogFragment {
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -328,10 +333,8 @@ public class PrepTimeBellsEditActivity extends FragmentActivity {
         refreshBellsList();
 
         // Set the OnClickListeners
-        ((Button) findViewById(R.id.prepTimeBellsEditor_addBellButton))
-                .setOnClickListener(new AddButtonOnClickListener());
-        ((Button) findViewById(R.id.prepTimeBellsEditor_clearAllButton))
-                .setOnClickListener(new ClearButtonOnClickListener());
+        findViewById(R.id.prepTimeBellsEditor_addBellButton).setOnClickListener(new AddButtonOnClickListener());
+        findViewById(R.id.prepTimeBellsEditor_clearAllButton).setOnClickListener(new ClearButtonOnClickListener());
 
         // Register a context menu for the bells list items
         registerForContextMenu(findViewById(R.id.prepTimeBellsEditor_bellsList));
@@ -394,11 +397,11 @@ public class PrepTimeBellsEditActivity extends FragmentActivity {
         }
 
         ListView view = (ListView) findViewById(R.id.prepTimeBellsEditor_bellsList);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, descriptions);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, descriptions);
         view.setAdapter(adapter);
 
         // Disable the "clear" button if there is nothing to clear
-        ((Button) findViewById(R.id.prepTimeBellsEditor_clearAllButton)).setEnabled(mPtbm.hasBells());
+        findViewById(R.id.prepTimeBellsEditor_clearAllButton).setEnabled(mPtbm.hasBells());
     }
 
     private static Bundle createBellBundleFromAddOrEditDialog(final Dialog dialog) {

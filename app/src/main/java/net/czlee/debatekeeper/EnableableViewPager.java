@@ -69,15 +69,12 @@ public class EnableableViewPager extends ViewPager {
 
         mLastPagingEnabled = mPagingEnabled;
 
-        if (execute) return super.onTouchEvent(event);
-        else return false;
+        return execute && super.onTouchEvent(event);
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
-        if (mPagingEnabled || mLastPagingEnabled)
-            return super.onInterceptTouchEvent(event);
-        return false;
+        return (mPagingEnabled || mLastPagingEnabled) && super.onInterceptTouchEvent(event);
     }
 
     public void setPagingEnabled(boolean enable) {
