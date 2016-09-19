@@ -950,13 +950,7 @@ public class DebatingActivity extends FragmentActivity {
 
         unbindService(mConnection);
 
-        boolean keepRunning = false;
-        if (mDebateManager != null) {
-            if (mDebateManager.isRunning()) {
-                keepRunning = true;
-            }
-        }
-        if (!keepRunning) {
+        if (mDebateManager == null || !mDebateManager.isRunning()) {
             Intent intent = new Intent(this, DebatingTimerService.class);
             stopService(intent);
             Log.i(TAG, "Timer is not running, stopped service");
@@ -987,9 +981,7 @@ public class DebatingActivity extends FragmentActivity {
         super.onStop();
         if (mBinder != null) {
             AlertManager am = mBinder.getAlertManager();
-            if (am != null) {
-                am.activityStop();
-            }
+            if (am != null) am.activityStop();
         }
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mGuiUpdateBroadcastReceiver);
     }
