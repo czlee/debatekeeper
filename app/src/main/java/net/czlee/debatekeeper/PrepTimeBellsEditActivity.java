@@ -347,7 +347,8 @@ public class PrepTimeBellsEditActivity extends FragmentActivity {
 
         // Set the action bar
         ActionBar bar = getActionBar();
-        bar.setDisplayHomeAsUpEnabled(true);
+        if (bar != null)
+            bar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
