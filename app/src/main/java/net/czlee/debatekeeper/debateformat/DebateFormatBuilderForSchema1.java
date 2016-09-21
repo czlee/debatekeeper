@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import net.czlee.debatekeeper.R;
 import net.czlee.debatekeeper.debateformat.DebateFormat.NoSuchFormatException;
 import android.content.Context;
+import android.text.format.DateUtils;
 
 /**
  * DebateFormatBuilderForSchema1 provides mechanisms for building DebateFormats.
@@ -216,7 +217,7 @@ public class DebateFormatBuilderForSchema1 {
             while (biIterator.hasNext()) {
                 BellInfo checkBi = biIterator.next();
                 if (checkBi.getBellTime() == bellTime) {
-                    String timeStr = XmlUtilities.secsToText(bellTime);
+                    String timeStr = DateUtils.formatElapsedTime(bellTime);
                     throw new DebateFormatBuilderException(R.string.dfb1error_bellDuplicate, timeStr);
                 }
             }
@@ -330,7 +331,7 @@ public class DebateFormatBuilderForSchema1 {
 
             // Check that the bell isn't after the finish time
             if (bellTime > mLength) {
-                String timeStr = XmlUtilities.secsToText(bellTime);
+                String timeStr = DateUtils.formatElapsedTime(bellTime);
                 throw new DebateFormatBuilderException(R.string.dfb1error_bellAfterFinishTime, timeStr);
             }
 
