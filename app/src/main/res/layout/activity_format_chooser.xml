@@ -15,35 +15,43 @@
  * You should have received a copy of the GNU General Public Licence
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/formatChooser_coordinator"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/formatChooser_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        />
-
-    <CheckBox
-        android:id="@+id/formatChooser_lookForCustomCheckbox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="10dp"
-        android:text="@string/formatChooser_lookForCustomCheckbox_text" />
-
-    <ListView
-        android:id="@+id/formatChooser_stylesList"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:choiceMode="singleChoice"
-        android:overScrollMode="ifContentScrolls" >
+        android:orientation="vertical" >
 
-        <!-- Preview: listitem=@android:layout/simple_list_item_single_choice -->
-    </ListView>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/formatChooser_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            />
 
-</LinearLayout>
+        <CheckBox
+            android:id="@+id/formatChooser_lookForCustomCheckbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:text="@string/formatChooser_lookForCustomCheckbox_text" />
+
+        <ListView
+            android:id="@+id/formatChooser_stylesList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:choiceMode="singleChoice"
+            android:overScrollMode="ifContentScrolls" >
+
+            <!-- Preview: listitem=@android:layout/simple_list_item_single_choice -->
+        </ListView>
+
+    </LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>

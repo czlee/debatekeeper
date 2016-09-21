@@ -38,6 +38,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -61,7 +62,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import net.czlee.debatekeeper.AlertManager.FlashScreenListener;
 import net.czlee.debatekeeper.AlertManager.FlashScreenMode;
@@ -865,22 +865,30 @@ public class DebatingActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == CHOOSE_STYLE_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                String filename = data.getStringExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME);
-                if (filename != null) {
-                    Log.v(TAG, "Got file name " + filename);
-                    setXmlFileName(filename);
-                    resetDebateWithoutToast();
-                }
-            } else if (resultCode == FormatChooserActivity.RESULT_ERROR) {
-                Log.w(TAG, "Got error from FormatChooserActivity");
-                setXmlFileName(null);
-                if (mBinder != null) mBinder.releaseDebateManager();
-                mDebateManager = null;
-                updateGui();
 
+            switch (resultCode) {
+                case RESULT_OK:
+                    String filename = data.getStringExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME);
+                    if (filename != null) {
+                        Log.v(TAG, "Got file name " + filename);
+                        setXmlFileName(filename);
+                        resetDebateWithoutSnackbar();
+                    }
+                    break;
+
+                case FormatChooserActivity.RESULT_UNCHANGED:
+                    View coordinator = findViewById(R.id.mainScreen_coordinator);
+                    if (coordinator != null)
+                        Snackbar.make(coordinator, R.string.mainScreen_snackbar_formatUnchanged, Snackbar.LENGTH_SHORT);
+                    break;
+
+                case FormatChooserActivity.RESULT_ERROR:
+                    Log.w(TAG, "Got error from FormatChooserActivity");
+                    setXmlFileName(null);
+                    if (mBinder != null) mBinder.releaseDebateManager();
+                    mDebateManager = null;
+                    updateGui();
             }
-            // Do nothing if cancelled
         }
     }
 
@@ -1318,13 +1326,16 @@ public class DebatingActivity extends AppCompatActivity {
         currentTime = subtractFromSpeechLengthIfCountingDown(currentTime);
 
         // Limit to the allowable time range
+        View coordinator = findViewById(R.id.mainScreen_coordinator);
         if (currentTime < 0) {
             currentTime = 0;
-            Toast.makeText(this, R.string.mainScreen_toast_editTextDiscardChangesInfo_limitedBelow, Toast.LENGTH_LONG).show();
+            if (coordinator != null)
+                Snackbar.make(coordinator, R.string.mainScreen_snackbar_editTextDiscardChangesInfo_limitedBelow, Snackbar.LENGTH_LONG).show();
         }
         if (currentTime >= 24 * 60) {
             currentTime = 24 * 60 - 1;
-            Toast.makeText(this, R.string.mainScreen_toast_editTextDiscardChangesInfo_limitedAbove, Toast.LENGTH_LONG).show();
+            if (coordinator != null)
+                Snackbar.make(coordinator, R.string.mainScreen_snackbar_editTextDiscardChangesInfo_limitedAbove, Snackbar.LENGTH_LONG).show();
         }
 
         // We're using this in hours and minutes, not minutes and seconds
@@ -1513,11 +1524,13 @@ public class DebatingActivity extends AppCompatActivity {
     }
 
     private void resetDebate() {
-        resetDebateWithoutToast();
-        Toast.makeText(this, R.string.mainScreen_toast_resetDebate, Toast.LENGTH_SHORT).show();
+        resetDebateWithoutSnackbar();
+        View coordinator = findViewById(R.id.mainScreen_coordinator);
+        if (coordinator != null)
+            Snackbar.make(coordinator, R.string.mainScreen_snackbar_resetDebate, Snackbar.LENGTH_LONG).show();
     }
 
-    private void resetDebateWithoutToast() {
+    private void resetDebateWithoutSnackbar() {
         if (mBinder == null) return;
         mBinder.releaseDebateManager();
         initialiseDebate();

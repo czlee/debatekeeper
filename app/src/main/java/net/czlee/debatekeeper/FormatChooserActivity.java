@@ -26,6 +26,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
@@ -48,7 +49,6 @@ import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import net.czlee.debatekeeper.debateformat.DebateFormatInfo;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfoExtractorForSchema1;
@@ -98,6 +98,7 @@ public class FormatChooserActivity extends AppCompatActivity {
     private static final String DIALOG_TAG_LIST_IO_ERROR = "io";
 
     public  static final int RESULT_ERROR = RESULT_FIRST_USER;
+    public  static final int RESULT_UNCHANGED = RESULT_FIRST_USER + 1;
 
     public static final String CURRENT_SCHEMA_VERSION = "2.0";
 
@@ -499,10 +500,13 @@ public class FormatChooserActivity extends AppCompatActivity {
             //  Otherwise, uncheck the checkbox and show an error message.
             else {
                 CheckBox checkbox = (CheckBox) findViewById(R.id.formatChooser_lookForCustomCheckbox);
-                checkbox.setChecked(false);
+                if (checkbox != null) checkbox.setChecked(false);
                 mFilesManager.setLookForUserFiles(false);
-                Toast.makeText(this, getResources().getString(R.string.formatChooser_lookForCustom_errorNoReadPermission),
-                        Toast.LENGTH_LONG).show();
+
+                View coordinator = findViewById(R.id.formatChooser_coordinator);
+                if (coordinator != null)
+                    Snackbar.make(coordinator, getResources().getString(R.string.formatChooser_lookForCustom_errorNoReadPermission),
+                            Snackbar.LENGTH_LONG).show();
             }
         }
     }
@@ -571,8 +575,7 @@ public class FormatChooserActivity extends AppCompatActivity {
 
         if (selectedFilename != null && selectedFilename.equals(incomingFilename) &&
                 mInitialLookForCustomFormats == mFilesManager.isLookingForUserFiles()) {
-            Toast.makeText(this, R.string.formatChooser_toast_formatUnchanged,
-                    Toast.LENGTH_SHORT).show();
+            setResult(RESULT_UNCHANGED);
 
         } else if (selectedFilename == null) {
             setResult(RESULT_ERROR);

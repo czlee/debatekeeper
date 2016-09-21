@@ -59,13 +59,14 @@
     <string name="mainScreen_pauseOnBellIndicator">" (pause)"</string>
     <string name="mainScreen_silentBellIndicator">" (silent)"</string>
 
-    <string name="mainScreen_toast_resetDebate">All timers in debate reset</string>
+    <string name="mainScreen_snackbar_resetDebate">All timers in debate reset</string>
     <string name="mainScreen_noDebateLoaded_text">No debate loaded</string>
 
     <string name="prepTime_title">Preparation time</string>
 
-    <string name="mainScreen_toast_editTextDiscardChangesInfo_limitedBelow">To discard changes, press the back button. (You can\'t set the time to an overtime value.)</string>
-    <string name="mainScreen_toast_editTextDiscardChangesInfo_limitedAbove">To discard changes, press the back button. (You can\'t set the time to greater than 23:59.)</string>
+    <string name="mainScreen_snackbar_editTextDiscardChangesInfo_limitedBelow">To discard changes, press the back button. (You can\'t set the time to an overtime value.)</string>
+    <string name="mainScreen_snackbar_editTextDiscardChangesInfo_limitedAbove">To discard changes, press the back button. (You can\'t set the time to greater than 23:59.)</string>
+    <string name="mainScreen_snackbar_formatUnchanged">Style not changed</string>
 
     <!-- Menu -->
     <string name="mainScreen_menuItem_resetDebate">Reset debate</string>
@@ -109,9 +110,4 @@
     <string name="changelogDialog_dontShow">Don\'t show this again</string>
     <string name="changelogDialog_ok">Okay, roll on!</string>
 
-    <!-- Format chooser activity -->
-    <string name="formatChooser_lookForCustomCheckbox_text">Look for custom formats (<a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">Learn more</a>)</string>
-    <string name="formatChooser_lookForCustom_errorNoReadPermission">You must allow Debatekeeper to read files on your device for custom formats to be read.</string>
-    <string name="title_activity_global_settings">Settings</string>
-    
 </resources>
