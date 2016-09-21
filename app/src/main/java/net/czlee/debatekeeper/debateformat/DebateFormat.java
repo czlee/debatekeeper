@@ -216,30 +216,4 @@ public class DebateFormat {
         return this.mName;
     }
 
-    /**
-     * Finds whether any speech in the debate has POIs allowed.
-     * @return <code>true</code> if POIs are allowed somewhere in the debate,
-     * <code>false</code> otherwise.
-     */
-    public boolean hasPoisAllowedSomewhere() {
-        Iterator<SpeechSpec> speechIterator = mSpeechSpecs.iterator();
-        HashSet<String> seenFormats = new HashSet<String>();
-
-        while (speechIterator.hasNext()) {
-            // Return true as soon as we find one with POIs allowed
-
-            SpeechSpec thisSpeech = speechIterator.next();
-            String speechType = thisSpeech.type;
-
-            // Only bother checking if we haven't already seen this speech type
-            if (!seenFormats.contains(speechType)) {
-                seenFormats.add(speechType);
-                SpeechFormat sf = mSpeechFormats.get(speechType);
-                if (sf.hasPoisAllowedSomewhere()) return true;
-            }
-        }
-
-        return false;
-    }
-
 }
