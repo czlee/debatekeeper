@@ -18,7 +18,6 @@
 package net.czlee.debatekeeper;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -26,7 +25,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBar;import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -60,7 +60,7 @@ import java.util.Locale;
  * @since  2013-02-02
  *
  */
-public class PrepTimeBellsEditActivity extends FragmentActivity {
+public class PrepTimeBellsEditActivity extends AppCompatActivity {
 
     private PrepTimeBellsManager mPtbm;
 
@@ -323,6 +323,7 @@ public class PrepTimeBellsEditActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prep_time_bells_edit);
+        setSupportActionBar((Toolbar) findViewById(R.id.prepTimeBellsEditor_toolbar));
 
         // Open the preferences file and instantiate the PrepTimeBellsManager
         SharedPreferences prefs = getSharedPreferences(PrepTimeBellsManager.PREP_TIME_BELLS_PREFERENCES_NAME, MODE_PRIVATE);
@@ -349,7 +350,7 @@ public class PrepTimeBellsEditActivity extends FragmentActivity {
         });
 
         // Set the action bar
-        ActionBar bar = getActionBar();
+        ActionBar bar = getSupportActionBar();
         if (bar != null)
             bar.setDisplayHomeAsUpEnabled(true);
     }

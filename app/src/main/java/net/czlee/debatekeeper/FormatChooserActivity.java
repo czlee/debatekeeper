@@ -18,7 +18,6 @@
 package net.czlee.debatekeeper;
 
 import android.Manifest;
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -29,8 +28,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.Xml;
@@ -76,7 +77,7 @@ import java.util.Iterator;
  * @author Chuan-Zheng Lee
  *
  */
-public class FormatChooserActivity extends FragmentActivity {
+public class FormatChooserActivity extends AppCompatActivity {
 
     private static final String TAG = "FormatChooserActivity";
 
@@ -514,6 +515,8 @@ public class FormatChooserActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_format_chooser);
+        setSupportActionBar((Toolbar) findViewById(R.id.formatChooser_toolbar));
+
         DEBATING_TIMER_URI = getString(R.string.xml_uri);
 
         mFilesManager = new FormatXmlFilesManager(this);
@@ -521,15 +524,17 @@ public class FormatChooserActivity extends FragmentActivity {
                 new FormatChooserActivityBinder());
 
         // Set the action bar
-        ActionBar bar = getActionBar();
+        ActionBar bar = getSupportActionBar();
         if (bar != null) bar.setDisplayHomeAsUpEnabled(true);
 
         // Configure the checkbox
-        CheckBox checkbox = (CheckBox) findViewById(R.id.formatChooser_lookForCustomCheckbox);
-        checkbox.setMovementMethod(LinkMovementMethod.getInstance());
-        checkbox.setOnClickListener(new LookForCustomCheckboxOnClickListener());
         mInitialLookForCustomFormats = mFilesManager.isLookingForUserFiles();
-        checkbox.setChecked(mInitialLookForCustomFormats);
+        CheckBox checkbox = (CheckBox) findViewById(R.id.formatChooser_lookForCustomCheckbox);
+        if (checkbox != null){
+            checkbox.setMovementMethod(LinkMovementMethod.getInstance());
+            checkbox.setOnClickListener(new LookForCustomCheckboxOnClickListener());
+            checkbox.setChecked(mInitialLookForCustomFormats);
+        }
 
         // If we need it, ask the user for read permission. If it's not already granted, treat the
         // initial setting as false.
@@ -542,8 +547,10 @@ public class FormatChooserActivity extends FragmentActivity {
 
         // Configure the ListView
         mStylesListView = (ListView) findViewById(R.id.formatChooser_stylesList);
-        mStylesListView.setAdapter(mStylesArrayAdapter);
-        mStylesListView.setOnItemClickListener(new StylesListViewOnItemClickListener());
+        if (mStylesListView != null) {
+            mStylesListView.setAdapter(mStylesArrayAdapter);
+            mStylesListView.setOnItemClickListener(new StylesListViewOnItemClickListener());
+        }
 
         // Select and scroll to the incoming selection (if existent)
         String incomingFilename = getIntent().getStringExtra(EXTRA_XML_FILE_NAME);

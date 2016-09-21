@@ -15,25 +15,26 @@
  * You should have received a copy of the GNU General Public Licence
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <item
         android:id="@+id/mainScreen_menuItem_resetDebate"
         android:orderInCategory="0"
         android:title="@string/mainScreen_menuItem_resetDebate"
         android:icon="@drawable/ic_replay_white_24dp"
-        android:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/mainScreen_menuItem_chooseFormat"
         android:orderInCategory="1"
         android:title="@string/mainScreen_menuItem_chooseFormat"
         android:icon="@drawable/ic_style_white_24dp"
-        android:showAsAction="never"/>
+        app:showAsAction="never"/>
     <item
         android:id="@+id/mainScreen_menuItem_settings"
         android:orderInCategory="3"
         android:title="@string/mainScreen_menuItem_settings"
         android:icon="@drawable/ic_settings_white_24dp"
-        android:showAsAction="never"/>
+        app:showAsAction="never"/>
 
 </menu>

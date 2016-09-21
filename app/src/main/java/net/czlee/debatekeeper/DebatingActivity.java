@@ -44,6 +44,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -96,7 +98,7 @@ import java.util.concurrent.TimeUnit;
  * @since  2012-04-05
  *
  */
-public class DebatingActivity extends FragmentActivity {
+public class DebatingActivity extends AppCompatActivity {
 
     private static final String TAG = "DebatingActivity";
 
@@ -886,6 +888,7 @@ public class DebatingActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_debate);
+        setSupportActionBar((Toolbar) findViewById(R.id.mainScreen_toolbar));
 
         mLeftControlButton       = (Button) findViewById(R.id.mainScreen_leftControlButton);
         mLeftCentreControlButton = (Button) findViewById(R.id.mainScreen_leftCentreControlButton);

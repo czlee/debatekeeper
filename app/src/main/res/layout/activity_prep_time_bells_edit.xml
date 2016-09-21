@@ -19,12 +19,22 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content" >
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/prepTimeBellsEditor_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:layout_alignParentTop="true"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        />
+
     <LinearLayout
         android:id="@+id/prepTimeBellsEditor_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" >
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/prepTimeBellsEditor_toolbar">
 
         <Button
             android:id="@+id/prepTimeBellsEditor_addBellButton"
@@ -32,7 +42,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/prepTimeBellsEditor_addBell_buttonText" />
-        <Button
+
+        <Button
             android:id="@+id/prepTimeBellsEditor_clearAllButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
