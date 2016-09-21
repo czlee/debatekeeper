@@ -20,14 +20,20 @@
     <item
         android:id="@+id/mainScreen_menuItem_resetDebate"
         android:orderInCategory="0"
-        android:title="@string/mainScreen_menuItem_resetDebate" android:icon="@drawable/ic_menu_close_clear_cancel"/>
+        android:title="@string/mainScreen_menuItem_resetDebate"
+        android:icon="@drawable/ic_replay_white_24dp"
+        android:showAsAction="ifRoom" />
     <item
         android:id="@+id/mainScreen_menuItem_chooseFormat"
         android:orderInCategory="1"
-        android:title="@string/mainScreen_menuItem_chooseFormat" android:icon="@drawable/ic_menu_mapmode"/>
+        android:title="@string/mainScreen_menuItem_chooseFormat"
+        android:icon="@drawable/ic_style_white_24dp"
+        android:showAsAction="never"/>
     <item
         android:id="@+id/mainScreen_menuItem_settings"
         android:orderInCategory="3"
-        android:title="@string/mainScreen_menuItem_settings" android:icon="@drawable/ic_menu_preferences"/>
+        android:title="@string/mainScreen_menuItem_settings"
+        android:icon="@drawable/ic_settings_white_24dp"
+        android:showAsAction="never"/>
 
 </menu>

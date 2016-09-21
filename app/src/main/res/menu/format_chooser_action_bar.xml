@@ -19,13 +19,8 @@
 
     <item
         android:id="@+id/formatChooser_actionBar_ok"
-        android:icon="@drawable/ic_action_confirm"
+        android:icon="@drawable/ic_done_white_24dp"
         android:showAsAction="always" android:title="@string/formatChooser_actionBar_confirmName">
-    </item>
-    <item
-        android:id="@+id/formatChooser_actionBar_cancel"
-        android:icon="@drawable/ic_action_cancel"
-        android:showAsAction="always" android:title="@android:string/cancel">
     </item>
 
 </menu>

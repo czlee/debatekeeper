@@ -480,7 +480,6 @@ public class FormatChooserActivity extends FragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case android.R.id.home:
-        case R.id.formatChooser_actionBar_cancel:
             finish();
             break;
         case R.id.formatChooser_actionBar_ok:
