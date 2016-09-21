@@ -44,6 +44,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -1969,7 +1970,8 @@ public class DebatingActivity extends FragmentActivity {
                 if (poiTime == null)
                     poiButton.setText(R.string.mainScreen_poiTimer_buttonText);
                 else
-                    poiButton.setText(poiTime.toString());
+                    //noinspection AndroidLintDefaultLocale
+                    poiButton.setText(String.format("%d", poiTime));
 
             // Otherwise, disable it
             } else {
@@ -1990,10 +1992,10 @@ public class DebatingActivity extends FragmentActivity {
      * @param time a time in seconds
      * @return the String
      */
-    private static String secsToTextSigned(long time) {
+    private String secsToTextSigned(long time) {
         if (time >= 0)
-            return XmlUtilities.secsToText(time);
+            return DateUtils.formatElapsedTime(time);
         else
-            return "+" + XmlUtilities.secsToText(-time);
+            return getResources().getString(R.string.mainScreen_overtimeFormat, DateUtils.formatElapsedTime(-time));
     }
 }
