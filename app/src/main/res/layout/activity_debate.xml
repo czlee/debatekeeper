@@ -44,7 +44,8 @@
             android:layout_width="fill_parent"
             android:layout_height="60dip"
             android:layout_alignParentBottom="true"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            >
 
             <Button
                 android:id="@+id/mainScreen_leftControlButton"

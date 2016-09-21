@@ -153,7 +153,8 @@ public class DebatingActivity extends AppCompatActivity {
     private static final String DIALOG_TAG_FATAL_PROBLEM         = "fatal";
     private static final String DIALOG_TAG_CHANGELOG             = "changelog";
 
-    private static final int    CHOOSE_STYLE_REQUEST      = 0;
+    private static final int    CHOOSE_STYLE_REQUEST           = 0;
+    private static final int    SNACKBAR_DURATION_RESET_DEBATE = 500;
 
     private DebatingTimerService.DebatingTimerServiceBinder mBinder;
     private final BroadcastReceiver mGuiUpdateBroadcastReceiver = new GuiUpdateBroadcastReceiver();
@@ -839,7 +840,9 @@ public class DebatingActivity extends AppCompatActivity {
         case R.id.mainScreen_menuItem_resetDebate:
             if (mDebateManager == null) return true;
             resetDebate();
-            updateGui();
+            View coordinator = findViewById(R.id.mainScreen_coordinator);
+            if (coordinator != null)
+                Snackbar.make(coordinator, R.string.mainScreen_snackbar_resetDebate, SNACKBAR_DURATION_RESET_DEBATE).show();
             return true;
         case R.id.mainScreen_menuItem_settings:
             startActivity(new Intent(this, GlobalSettingsActivity.class));
@@ -852,7 +855,7 @@ public class DebatingActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem resetDebateItem = menu.findItem(R.id.mainScreen_menuItem_resetDebate);
-        resetDebateItem.setEnabled(mDebateManager != null);
+        resetDebateItem.setVisible(mDebateManager != null);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -872,7 +875,7 @@ public class DebatingActivity extends AppCompatActivity {
                     if (filename != null) {
                         Log.v(TAG, "Got file name " + filename);
                         setXmlFileName(filename);
-                        resetDebateWithoutSnackbar();
+                        resetDebate();
                     }
                     break;
 
@@ -888,6 +891,7 @@ public class DebatingActivity extends AppCompatActivity {
                     if (mBinder != null) mBinder.releaseDebateManager();
                     mDebateManager = null;
                     updateGui();
+                    invalidateOptionsMenu();
             }
         }
     }
@@ -1455,6 +1459,7 @@ public class DebatingActivity extends AppCompatActivity {
         mViewPager.setCurrentItem(mDebateManager.getActivePhaseIndex(), false);
         applyPreferences();
         updateGui();
+        invalidateOptionsMenu();
     }
 
     /**
@@ -1524,13 +1529,6 @@ public class DebatingActivity extends AppCompatActivity {
     }
 
     private void resetDebate() {
-        resetDebateWithoutSnackbar();
-        View coordinator = findViewById(R.id.mainScreen_coordinator);
-        if (coordinator != null)
-            Snackbar.make(coordinator, R.string.mainScreen_snackbar_resetDebate, Snackbar.LENGTH_LONG).show();
-    }
-
-    private void resetDebateWithoutSnackbar() {
         if (mBinder == null) return;
         mBinder.releaseDebateManager();
         initialiseDebate();
