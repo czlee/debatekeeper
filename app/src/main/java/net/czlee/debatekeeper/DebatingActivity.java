@@ -1891,16 +1891,13 @@ public class DebatingActivity extends FragmentActivity {
             return;
         }
 
-        // Log.d(TAG, "updateGui");
-
         updateDebateTimerDisplay();
         updateControls();
 
-        if (mDebateManager != null) {
-            this.setTitle(getString(R.string.activityName_Debating_withFormat, mDebateManager.getDebateFormatName()));
-        } else {
+        if (mDebateManager != null)
+            setTitle(getString(R.string.activityName_Debating_withFormat, mDebateManager.getDebateFormatName()));
+        else
             setTitle(R.string.activityName_Debating_withoutFormat);
-        }
 
     }
 
@@ -1942,27 +1939,13 @@ public class DebatingActivity extends FragmentActivity {
     private void updatePoiTimerButton(View debateTimerDisplay, DebatePhaseFormat dpf) {
         Button poiButton = (Button) debateTimerDisplay.findViewById(R.id.debateTimer_poiTimerButton);
 
-        // Determine whether or not we display the POI timer button
         // Display only when user has POI timer enabled, and a debate is loaded and the current
         // speech has POIs in it.
-        boolean displayPoiTimerButton = false;
-        if (mPoiTimerEnabled)
-            if (dpf.getClass() == SpeechFormat.class)
-                if (((SpeechFormat) dpf).hasPoisAllowedSomewhere())
-                    displayPoiTimerButton = true;
-
-        // If it's appropriate to display the button, do so
-        if (displayPoiTimerButton) {
+        if (mPoiTimerEnabled && dpf.getClass() == SpeechFormat.class && ((SpeechFormat) dpf).hasPoisAllowedSomewhere()) {
             poiButton.setVisibility(View.VISIBLE);
 
-            // Determine whether POIs are active
-            boolean poisActive = false;
-            if (mDebateManager != null)
-                if (mDebateManager.isPoisActive())
-                    poisActive = true;
-
             // If POIs are currently active, enable the button
-            if (poisActive) {
+            if (mDebateManager != null && mDebateManager.isPoisActive()) {
                 poiButton.setEnabled(mDebateManager.isRunning());
 
                 Long poiTime = mDebateManager.getCurrentPoiTime();
