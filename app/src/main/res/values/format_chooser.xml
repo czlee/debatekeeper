@@ -56,9 +56,6 @@
         <item quantity="other">bells at %s</item>
     </plurals>
 
-    <string name="viewFormat_speechTypeDescription">"<i>%1$s</i>: %2$s"</string>
-    <string name="viewFormat_speechDescription">"%1$s (<i>%2$s</i>)"</string>
-
     <style name="ViewFormat_TableLabel">
         <item name="android:paddingLeft">7dip</item>
         <item name="android:layout_width">100dip</item>
