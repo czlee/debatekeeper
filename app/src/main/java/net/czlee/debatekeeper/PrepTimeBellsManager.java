@@ -20,11 +20,11 @@ package net.czlee.debatekeeper;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import net.czlee.debatekeeper.debateformat.BellInfo;
 import net.czlee.debatekeeper.debateformat.PrepTimeSimpleFormat;
-import net.czlee.debatekeeper.debateformat.XmlUtilities;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -210,7 +210,7 @@ public class PrepTimeBellsManager {
         @Override
         public String toString() {
             if (time == 0) return mContext.getString(R.string.prepTimeBellDescription_atFinish);
-            return mContext.getString(R.string.prepTimeBellDescription_beforeFinish, XmlUtilities.secsToText(time));
+            return mContext.getString(R.string.prepTimeBellDescription_beforeFinish, DateUtils.formatElapsedTime(time));
         }
 
         @Override
@@ -248,7 +248,7 @@ public class PrepTimeBellsManager {
         @Override
         public String toString() {
             if (time == 0) return mContext.getString(R.string.prepTimeBellDescription_atStart);
-            return mContext.getString(R.string.prepTimeBellDescription_afterStart, XmlUtilities.secsToText(time));
+            return mContext.getString(R.string.prepTimeBellDescription_afterStart, DateUtils.formatElapsedTime(time));
         }
 
         @Override

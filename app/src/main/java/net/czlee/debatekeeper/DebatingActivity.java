@@ -72,7 +72,6 @@ import net.czlee.debatekeeper.debateformat.DebatePhaseFormat;
 import net.czlee.debatekeeper.debateformat.PeriodInfo;
 import net.czlee.debatekeeper.debateformat.PrepTimeFormat;
 import net.czlee.debatekeeper.debateformat.SpeechFormat;
-import net.czlee.debatekeeper.debateformat.XmlUtilities;
 import net.czlee.debatekeeper.debatemanager.DebateManager;
 import net.czlee.debatekeeper.debatemanager.DebateManager.DebatePhaseTag;
 
@@ -1798,7 +1797,7 @@ public class DebatingActivity extends FragmentActivity {
         if (length % 60 == 0)
             lengthStr = getResources().getQuantityString(R.plurals.mainScreen_timeInMinutes, (int) (length / 60), length / 60);
         else
-            lengthStr = XmlUtilities.secsToText(length);
+            lengthStr = DateUtils.formatElapsedTime(length);
 
         int finalTimeTextUnformattedResid = (dpf.isPrep()) ? R.string.mainScreen_prepTimeLength : R.string.mainScreen_speechLength;
         infoLine.append(String.format(this.getString(finalTimeTextUnformattedResid),
@@ -1831,7 +1830,7 @@ public class DebatingActivity extends FragmentActivity {
             while (currentSpeechBellsIter.hasNext()) {
                 BellInfo bi = currentSpeechBellsIter.next();
                 long bellTime = subtractFromSpeechLengthIfCountingDown(bi.getBellTime(), dpf);
-                bellsStr.append(XmlUtilities.secsToText(bellTime));
+                bellsStr.append(DateUtils.formatElapsedTime(bellTime));
                 if (bi.isPauseOnBell())
                     bellsStr.append(getString(R.string.mainScreen_pauseOnBellIndicator));
                 if (bi.isSilent())

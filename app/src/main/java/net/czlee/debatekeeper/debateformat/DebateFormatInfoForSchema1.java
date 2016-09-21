@@ -25,6 +25,7 @@ import java.util.Iterator;
 import net.czlee.debatekeeper.R;
 import net.czlee.debatekeeper.debateformat.XmlUtilities.IllegalSchemaVersionException;
 import android.content.Context;
+import android.text.format.DateUtils;
 
 /**
  * Passive data class for holding quick information about a debate format. This
@@ -105,7 +106,7 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
                 long minutes = length / 60;
                 description = mContext.getResources().getQuantityString(R.plurals.viewFormat_timeDescription_lengthInMinutesOnly, (int) minutes, minutes);
             } else
-                description = mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, XmlUtilities.secsToText(length));
+                description = mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, DateUtils.formatElapsedTime(length));
 
             if (controlled)
                 description += mContext.getString(R.string.viewFormat_timeDescription_controlledPrepSuffix);
@@ -165,7 +166,7 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
                 long minutes = length / 60;
                 description = mContext.getResources().getQuantityString(R.plurals.viewFormat_timeDescription_lengthInMinutesOnly, (int) minutes, minutes);
             } else
-                description = mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, XmlUtilities.secsToText(length));
+                description = mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, DateUtils.formatElapsedTime(length));
 
             if (getBells().size() > 0) {
                 String bellsDesc = getBellsString();
@@ -196,7 +197,7 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
 
             while (iterator.hasNext()) {
                 MiniBellInfo bi = iterator.next();
-                str.append(XmlUtilities.secsToText(bi.getTime()));
+                str.append(DateUtils.formatElapsedTime(bi.getTime()));
                 if (bi.isPause())
                     str.append(mContext.getString(R.string.mainScreen_pauseOnBellIndicator));
 

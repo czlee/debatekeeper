@@ -35,6 +35,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import android.content.Context;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 
@@ -340,7 +341,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
                     continue; // if we couldn't interpret the time, ignore it
                 }
             }
-            bellsList.append(XmlUtilities.secsToText(time));
+            bellsList.append(DateUtils.formatElapsedTime(time));
             boolean pauseOnBell;
             try {
                 pauseOnBell = xu.isAttributeTrue(element, R.string.xml2attrName_bell_pauseOnBell);
@@ -365,7 +366,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             long minutes = length / 60;
             return mContext.getResources().getQuantityString(R.plurals.viewFormat_timeDescription_lengthInMinutesOnly, (int) minutes, minutes);
         } else
-            return mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, XmlUtilities.secsToText(length));
+            return mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, DateUtils.formatElapsedTime(length));
     }
 }
 
