@@ -1138,7 +1138,6 @@ public class DebatingActivity extends AppCompatActivity {
 
             // Volume control stream is linked to ring bells mode
             am.setBellsEnabled(mBellsEnabled);
-            setVolumeControlStream((mBellsEnabled) ? AudioManager.STREAM_MUSIC : AudioManager.STREAM_RING);
 
             am.setVibrateMode(vibrateMode);
             am.setFlashScreenMode(flashScreenMode);
@@ -1147,13 +1146,13 @@ public class DebatingActivity extends AppCompatActivity {
             am.setPoiVibrateEnabled(poiVibrateEnabled);
             am.setPoiFlashScreenMode(poiFlashScreenMode);
 
-            this.updateKeepScreenOn();
-
             Log.v(TAG, "successfully applied");
         } else {
             Log.v(TAG, "Couldn't restore AlertManager preferences; mBinder doesn't yet exist");
         }
 
+        setVolumeControlStream((mBellsEnabled) ? AudioManager.STREAM_MUSIC : AudioManager.STREAM_RING);
+        updateKeepScreenOn();
         invalidateOptionsMenu();
         updateGui();
     }
