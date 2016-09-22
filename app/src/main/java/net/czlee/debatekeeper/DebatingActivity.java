@@ -898,12 +898,6 @@ public class DebatingActivity extends AppCompatActivity {
                     }
                     break;
 
-                case FormatChooserActivity.RESULT_UNCHANGED:
-                    View coordinator = findViewById(R.id.mainScreen_coordinator);
-                    if (coordinator != null)
-                        Snackbar.make(coordinator, R.string.mainScreen_snackbar_formatUnchanged, Snackbar.LENGTH_SHORT);
-                    break;
-
                 case FormatChooserActivity.RESULT_ERROR:
                     Log.w(TAG, "Got error from FormatChooserActivity");
                     setXmlFileName(null);
@@ -1315,16 +1309,24 @@ public class DebatingActivity extends AppCompatActivity {
         currentTime = subtractFromSpeechLengthIfCountingDown(currentTime);
 
         // Limit to the allowable time range
-        View coordinator = findViewById(R.id.mainScreen_coordinator);
+        int snackbarMessageResId = 0;
         if (currentTime < 0) {
             currentTime = 0;
-            if (coordinator != null)
-                Snackbar.make(coordinator, R.string.mainScreen_snackbar_editTextDiscardChangesInfo_limitedBelow, Snackbar.LENGTH_LONG).show();
-        }
-        if (currentTime >= 24 * 60) {
+            snackbarMessageResId = R.string.mainScreen_snackbar_editTextDiscardChangesInfo_limitedBelow;
+        } else if (currentTime >= 24 * 60) {
             currentTime = 24 * 60 - 1;
-            if (coordinator != null)
-                Snackbar.make(coordinator, R.string.mainScreen_snackbar_editTextDiscardChangesInfo_limitedAbove, Snackbar.LENGTH_LONG).show();
+            snackbarMessageResId = R.string.mainScreen_snackbar_editTextDiscardChangesInfo_limitedAbove;
+        }
+
+        if (snackbarMessageResId != 0) {
+            View coordinator = findViewById(R.id.mainScreen_coordinator);
+            if (coordinator != null) {
+                Snackbar snackbar = Snackbar.make(coordinator, snackbarMessageResId, Snackbar.LENGTH_LONG);
+                View snackbarText = snackbar.getView();
+                TextView textView = (TextView) snackbarText.findViewById(android.support.design.R.id.snackbar_text);
+                if (textView != null) textView.setMaxLines(5);
+                snackbar.show();
+            }
         }
 
         // We're using this in hours and minutes, not minutes and seconds

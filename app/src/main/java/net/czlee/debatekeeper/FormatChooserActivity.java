@@ -504,9 +504,14 @@ public class FormatChooserActivity extends AppCompatActivity {
                 mFilesManager.setLookForUserFiles(false);
 
                 View coordinator = findViewById(R.id.formatChooser_coordinator);
-                if (coordinator != null)
-                    Snackbar.make(coordinator, getResources().getString(R.string.formatChooser_lookForCustom_errorNoReadPermission),
-                            Snackbar.LENGTH_LONG).show();
+                if (coordinator != null) {
+                    Snackbar snackbar = Snackbar.make(coordinator, getResources().getString(R.string.formatChooser_lookForCustom_errorNoReadPermission),
+                            Snackbar.LENGTH_LONG);
+                    View snackbarText = snackbar.getView();
+                    TextView textView = (TextView) snackbarText.findViewById(android.support.design.R.id.snackbar_text);
+                    if (textView != null) textView.setMaxLines(5);
+                    snackbar.show();
+                }
             }
         }
     }
