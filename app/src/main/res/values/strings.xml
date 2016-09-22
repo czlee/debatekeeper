@@ -105,12 +105,12 @@
 
     <!-- Changelog dialog -->
     <!-- By convention, this should be changed to match the manifest versionCode when the changelog changes. -->
-    <integer name="changelogDialog_versionCode">17</integer>
+    <integer name="changelogDialog_versionCode">20</integer>
     <string name="changelogDialog_title">What\'s new in version %1$s</string>
     <string name="changelogDialog_message">
-        Sorry it\'s been a while! \n\n
-        • Fixed \"keep screen on\" while timer is running \n
-        • Fixed Android permissions issue with custom XML format files (sorry if you had problems with these before)
+        • New icon (thanks to Zandi Speedy-Willis) and updated theme\n
+        • Quick access to turning bells on or off\n
+        • Other user interface improvements
     </string>
     <string name="changelogDialog_dontShow">Don\'t show this again</string>
     <string name="changelogDialog_ok">Okay, roll on!</string>

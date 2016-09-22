@@ -127,7 +127,7 @@
         <item>Top bar only</item>
         <item>Whole screen</item>
     </string-array>
-    <string-array name="pref_backgroundColourArea_values" translable="false">
+    <string-array name="pref_backgroundColourArea_values" translatable="false">
         <item>disabled</item>
         <item>topBarOnly</item>
         <item>wholeScreen</item>
