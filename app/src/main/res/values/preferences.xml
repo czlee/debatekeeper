@@ -39,7 +39,6 @@
     <string name="pref_prepTimer_bells_key" translatable="false">prepTimerBells</string>
 
     <!-- Keys for backwards-compatibility -->
-    <string name="pref_flashScreenBool_key" translatable="false">flashScreen</string> <!-- replaced in version 0.6 -->
     <string name="pref_silentMode_key" translatable="false">silentMode</string> <!-- replaced in version 1.2 -->
 
     <!-- Category titles -->

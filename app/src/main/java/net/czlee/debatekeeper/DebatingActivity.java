@@ -1138,41 +1138,11 @@ public class DebatingActivity extends AppCompatActivity {
                 ((DebateTimerDisplayPagerAdapter) mViewPager.getAdapter()).refreshBackgroundColours();
             }
 
-
             // List preference: Flash screen mode
-            //  - Backwards compatibility measure
-            // This changed from a boolean to a list preference in version 0.6, so there is
-            // backwards compatibility to take care of.  Backwards compatibility applies if
-            // (a) the list preference is NOT present AND (b) the boolean preference IS present.
-            // In this case, retrieve the boolean preference, delete it and write the corresponding
-            // list preference.  In all other cases, just take the list preference (using the
-            // normal default mechanism if it isn't present, i.e. neither are present).
-
-            if (!prefs.contains(res.getString(R.string.pref_flashScreenMode_key)) &&
-                    prefs.contains(res.getString(R.string.pref_flashScreenBool_key))) {
-                // Boolean preference.
-                // First, get the string and convert it to an enum.
-                boolean flashScreenModeBool = prefs.getBoolean(
-                        res.getString(R.string.pref_flashScreenBool_key), false);
-                flashScreenMode = (flashScreenModeBool) ? FlashScreenMode.SOLID_FLASH : FlashScreenMode.OFF;
-
-                // Then, convert that enum to the list preference value (a string) and write that
-                // back to the preferences.  Also, remove the old boolean preference.
-                String flashStringModePrefValue = flashScreenMode.toPrefValue();
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(res.getString(R.string.pref_flashScreenMode_key), flashStringModePrefValue);
-                editor.remove(res.getString(R.string.pref_flashScreenBool_key));
-                editor.apply();
-                Log.i(TAG, "flashScreenMode: replaced boolean preference with list preference: " + flashStringModePrefValue);
-
-            } else {
-                // List preference.
-                // Get the string and convert it to an enum.
-                String flashScreenModeValue;
-                flashScreenModeValue = prefs.getString(res.getString(R.string.pref_flashScreenMode_key),
-                        res.getString(R.string.prefDefault_flashScreenMode));
-                flashScreenMode = FlashScreenMode.toEnum(flashScreenModeValue);
-            }
+            String flashScreenModeValue;
+            flashScreenModeValue = prefs.getString(res.getString(R.string.pref_flashScreenMode_key),
+                    res.getString(R.string.prefDefault_flashScreenMode));
+            flashScreenMode = FlashScreenMode.toEnum(flashScreenModeValue);
 
         } catch (ClassCastException e) {
             Log.e(TAG, "caught ClassCastException!");
