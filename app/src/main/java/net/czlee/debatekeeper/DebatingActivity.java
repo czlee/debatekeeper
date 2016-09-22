@@ -131,6 +131,7 @@ public class DebatingActivity extends AppCompatActivity {
     private CountDirection       mPrepTimeCountDirection = CountDirection.COUNT_DOWN;
     private BackgroundColourArea mBackgroundColourArea   = BackgroundColourArea.WHOLE_SCREEN;
     private boolean              mPoiTimerEnabled        = true;
+    private boolean              mSilentMode             = false;
     private boolean              mSpeechKeepScreenOn;
     private boolean              mPrepTimeKeepScreenOn;
 
@@ -842,10 +843,20 @@ public class DebatingActivity extends AppCompatActivity {
             resetDebate();
             View coordinator = findViewById(R.id.mainScreen_coordinator);
             if (coordinator != null)
+                //noinspection WrongConstant
                 Snackbar.make(coordinator, R.string.mainScreen_snackbar_resetDebate, SNACKBAR_DURATION_RESET_DEBATE).show();
             return true;
         case R.id.mainScreen_menuItem_settings:
             startActivity(new Intent(this, GlobalSettingsActivity.class));
+            return true;
+        case R.id.mainScreen_menuItem_silentMode:
+            // Edit the preference, then apply the changes.
+            // Don't fetch the current preference - if there is an inconsistency, we want the toggle
+            // to reflect what this activity thinks silent mode is.
+            Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+            editor.putBoolean(getResources().getString(R.string.pref_silentMode_key), !mSilentMode);
+            boolean success = editor.commit(); // we want this to block until it returns
+            if (success) applyPreferences(); // this will update mSilentMode
             return true;
         default:
             return super.onOptionsItemSelected(item);
@@ -854,8 +865,15 @@ public class DebatingActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        // show or hide the debate menu button
         MenuItem resetDebateItem = menu.findItem(R.id.mainScreen_menuItem_resetDebate);
         resetDebateItem.setVisible(mDebateManager != null);
+
+        // display the appropriate silent mode icon
+        MenuItem silentModeItem = menu.findItem(R.id.mainScreen_menuItem_silentMode);
+        silentModeItem.setChecked(mSilentMode);
+        silentModeItem.setIcon((mSilentMode) ? R.drawable.ic_volume_off_white_24dp : R.drawable.ic_volume_up_white_24dp);
+
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -1011,7 +1029,7 @@ public class DebatingActivity extends AppCompatActivity {
      */
     private void applyPreferences() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean silentMode, vibrateMode, overtimeBellsEnabled;
+        boolean vibrateMode, overtimeBellsEnabled;
         boolean poiBuzzerEnabled, poiVibrateEnabled, prepTimerEnabled;
         int firstOvertimeBell, overtimeBellPeriod;
         String userCountDirectionValue, userPrepTimeCountDirectionValue, poiFlashScreenModeValue, backgroundColourAreaValue;
@@ -1024,7 +1042,7 @@ public class DebatingActivity extends AppCompatActivity {
         try {
 
             // The boolean preferences
-            silentMode = prefs.getBoolean(res.getString(R.string.pref_silentMode_key),
+            mSilentMode = prefs.getBoolean(res.getString(R.string.pref_silentMode_key),
                     res.getBoolean(R.bool.prefDefault_silentMode));
             vibrateMode = prefs.getBoolean(res.getString(R.string.pref_vibrateMode_key),
                     res.getBoolean(R.bool.prefDefault_vibrateMode));
@@ -1154,8 +1172,8 @@ public class DebatingActivity extends AppCompatActivity {
             AlertManager am = mBinder.getAlertManager();
 
             // Volume control stream is linked to silent mode
-            am.setSilentMode(silentMode);
-            setVolumeControlStream((silentMode) ? AudioManager.STREAM_RING : AudioManager.STREAM_MUSIC);
+            am.setSilentMode(mSilentMode);
+            setVolumeControlStream((mSilentMode) ? AudioManager.STREAM_RING : AudioManager.STREAM_MUSIC);
 
             am.setVibrateMode(vibrateMode);
             am.setFlashScreenMode(flashScreenMode);
@@ -1171,6 +1189,8 @@ public class DebatingActivity extends AppCompatActivity {
             Log.v(TAG, "Couldn't restore AlertManager preferences; mBinder doesn't yet exist");
         }
 
+        invalidateOptionsMenu();
+        updateGui();
     }
 
     private void applyPrepTimeBells() {
@@ -1458,8 +1478,6 @@ public class DebatingActivity extends AppCompatActivity {
         mViewPager.getAdapter().notifyDataSetChanged();
         mViewPager.setCurrentItem(mDebateManager.getActivePhaseIndex(), false);
         applyPreferences();
-        updateGui();
-        invalidateOptionsMenu();
     }
 
     /**
