@@ -30,7 +30,8 @@
     <TimePicker
         android:id="@+id/addPrepTimeBellDialog_timePicker"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:timePickerMode="spinner" />
 
     <!--
     The text box is for percentage through prep time.
