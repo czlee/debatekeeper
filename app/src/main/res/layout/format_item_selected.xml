@@ -18,7 +18,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" 
+    android:orientation="vertical"
     android:paddingTop="@dimen/view_format_list_item_padding"
     android:paddingBottom="@dimen/view_format_list_item_padding" >
     <include
@@ -26,9 +26,17 @@
         android:layout_height="wrap_content"
         layout="@android:layout/simple_list_item_single_choice" />
 
-    <include
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        layout="@layout/view_format_short" />
+        android:layout_height="match_parent"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/view_format_short" />
+
+    </FrameLayout>
 
 </LinearLayout>

@@ -39,8 +39,9 @@
             android:id="@+id/formatChooser_lookForCustomCheckbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:text="@string/formatChooser_lookForCustomCheckbox_text" />
+            android:text="@string/formatChooser_lookForCustomCheckbox_text"
+            android:layout_marginStart="9dp"
+            android:layout_marginLeft="9dp" />
 
         <ListView
             android:id="@+id/formatChooser_stylesList"
