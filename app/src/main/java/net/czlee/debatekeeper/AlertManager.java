@@ -227,7 +227,7 @@ public class AlertManager
         if(!mShowingNotification) {
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(mService);
-            builder.setSmallIcon(R.drawable.ic_stat_name)
+            builder.setSmallIcon(R.drawable.ic_stat_debatekeeper)
                    .setTicker(mService.getText(R.string.notification_tickerText))
                    .setContentTitle(mService.getText(R.string.notification_title))
                    .setContentText(speechName)

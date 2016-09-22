@@ -22,7 +22,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
         android:id="@+id/mainScreen_rootView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -39,13 +39,20 @@
             android:layout_alignParentTop="true"
             />
 
+        <View
+            android:id="@+id/mainScreen_toolbar_line"
+            android:layout_below="@id/mainScreen_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:elevation="4dp"
+            android:background="@color/debatekeeper_accent_dark" />
+
         <LinearLayout
             android:id="@+id/mainScreen_controlButtons"
             android:layout_width="fill_parent"
             android:layout_height="@dimen/debateTimer_controlButtons_height"
             android:layout_alignParentBottom="true"
-            android:orientation="horizontal"
-            >
+            android:orientation="horizontal" >
 
             <Button
                 android:id="@+id/mainScreen_leftControlButton"
@@ -80,7 +87,7 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_above="@id/mainScreen_controlButtons"
-            android:layout_below="@id/mainScreen_toolbar" />
+            android:layout_below="@id/mainScreen_toolbar_line" />
 
     </RelativeLayout>
 
