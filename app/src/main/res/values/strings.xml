@@ -18,7 +18,6 @@
 
     <string name="app_name" translatable="false">Debatekeeper</string>
     <string name="activityName_Debating_withoutFormat" translatable="false">Debatekeeper</string>
-    <string name="activityName_Debating_withFormat" translatable="false">%1$s</string>
     <string name="activityName_GlobalSettings">Settings</string>
     <string name="activityName_FormatChooser">Choose style</string>
     <string name="activityName_PrepTimeBellsEdit">Prep timer bells</string>

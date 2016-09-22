@@ -236,6 +236,13 @@ public class DebateManager {
     }
 
     /**
+     * @return the debate format name
+     */
+    public String getDebateFormatShortName() {
+        return mDebateFormat.getShortName();
+    }
+
+    /**
      * Returns the number of phases in this debate.  A "phase" is a part of a debate that is
      * governed by a single running timer, e.g. a speech or a period of preparation time.
      * @return the number of phases

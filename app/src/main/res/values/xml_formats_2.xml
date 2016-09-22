@@ -28,6 +28,7 @@
             <string name="xml2attrValue_common_default" translatable="false">#default</string>
 
     <string name="xml2elemName_name" translatable="false">name</string>
+    <string name="xml2elemName_shortName" translatable="false">short-name</string>
 
     <string name="xml2elemName_info" translatable="false">info</string>
         <string name="xml2elemName_info_region" translatable="false">region</string>

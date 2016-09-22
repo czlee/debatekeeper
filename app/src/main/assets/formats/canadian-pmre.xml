@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <debate-format schema-version="2.0">
   <name>Canadian Parliamentary (PMRE)</name>
+  <short-name>CP (PMRE)</short-name>
   <info>
     <region>Canada</region>
     <level>University</level>

@@ -17,14 +17,8 @@
 
 package net.czlee.debatekeeper.debateformat;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import android.content.Context;
+import android.util.Log;
 
 import net.czlee.debatekeeper.R;
 import net.czlee.debatekeeper.debateformat.DebateFormat.NoSuchFormatException;
@@ -37,8 +31,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import android.content.Context;
-import android.util.Log;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * DebateFormatBuilderForSchema2 provides mechanisms for building DebateFormats.
@@ -117,7 +117,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
         else if (!isSchemaSupported())
             logXmlError(R.string.xmlError_rootNewSchemaVersion, mSchemaVersion, MAXIMUM_SCHEMA_VERSION);
 
-        // 1. <name> - mandatory
+        // 1. <name> - mandatory, <short-name> - optional
         String name = xu.findElementText(root, R.string.xml2elemName_name);
 
         if (name == null) {
@@ -126,6 +126,9 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
         }
 
         df.setName(name); // do this even if there was an error with the name
+
+        String shortName = xu.findElementText(root, R.string.xml2elemName_shortName);
+        if (shortName != null) df.setShortName(shortName);
 
         // 2. If there are <period-type>s in this format, deal with them first.  We'll need to
         // store them somewhere useful in the meantime.

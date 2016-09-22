@@ -968,6 +968,7 @@ public class DebatingActivity extends AppCompatActivity {
                     setXmlFileName(null);
                     if (mBinder != null) mBinder.releaseDebateManager();
                     mDebateManager = null;
+                    updateTitle();
                     updateGui();
                     invalidateOptionsMenu();
             }
@@ -1513,6 +1514,7 @@ public class DebatingActivity extends AppCompatActivity {
         mViewPager.getAdapter().notifyDataSetChanged();
         mViewPager.setCurrentItem(mDebateManager.getActivePhaseIndex(), false);
         applyPreferences();
+        updateTitle();
     }
 
     /**
@@ -1950,12 +1952,6 @@ public class DebatingActivity extends AppCompatActivity {
 
         updateDebateTimerDisplay();
         updateControls();
-
-        if (mDebateManager != null)
-            setTitle(getString(R.string.activityName_Debating_withFormat, mDebateManager.getDebateFormatName()));
-        else
-            setTitle(R.string.activityName_Debating_withoutFormat);
-
     }
 
     /**
@@ -2022,6 +2018,17 @@ public class DebatingActivity extends AppCompatActivity {
         } else {
             poiButton.setVisibility(View.GONE);
         }
+    }
+
+    void updateTitle() {
+        if (mDebateManager != null) {
+            String shortName = mDebateManager.getDebateFormatShortName();
+            if (shortName != null)
+                setTitle(shortName);
+            else
+                setTitle(mDebateManager.getDebateFormatName());
+        }
+        else setTitle(R.string.activityName_Debating_withoutFormat);
     }
 
     /**

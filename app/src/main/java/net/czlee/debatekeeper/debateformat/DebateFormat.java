@@ -41,6 +41,7 @@ public class DebateFormat {
     private static final String TAG = "DebateFormat";
 
     private String                               mName = "";
+    private String                               mShortName = null;
     private PrepTimeFormat                       mPrepTimeFormat;
     private final HashMap<String, SpeechFormat>  mSpeechFormats;
     private final ArrayList<SpeechSpec>          mSpeechSpecs;
@@ -214,6 +215,22 @@ public class DebateFormat {
      */
     public String getName() {
         return this.mName;
+    }
+
+    /**
+     * Sets the short name of this debate format
+     * @param shortName the short name of this debate format
+     */
+    public void setShortName(String shortName) {
+        this.mShortName = shortName;
+    }
+
+    /**
+     * Gets the short name of this debate format
+     * @return the short name of this debate format
+     */
+    public String getShortName() {
+        return this.mShortName;
     }
 
 }
