@@ -17,13 +17,9 @@
 
 package net.czlee.debatekeeper.debateformat;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import android.content.Context;
+import android.text.format.DateUtils;
+import android.util.Log;
 
 import net.czlee.debatekeeper.R;
 import net.czlee.debatekeeper.debateformat.XmlUtilities.IllegalSchemaVersionException;
@@ -34,9 +30,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import android.content.Context;
-import android.text.format.DateUtils;
-import android.util.Log;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 
 /**
@@ -58,7 +58,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
     private final Element mInfoElement; // keep <info> readily accessible for performance
 
     private static final String MINIMUM_SCHEMA_VERSION = "2.0";
-    private static final String MAXIMUM_SCHEMA_VERSION = "2.0";
+    private static final String MAXIMUM_SCHEMA_VERSION = "2.1";
 
     public DebateFormatInfoForSchema2(Context context, InputStream is) {
         mContext = context;

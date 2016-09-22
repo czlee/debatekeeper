@@ -81,7 +81,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
 
     private String mSchemaVersion;
     private static final String MINIMUM_SCHEMA_VERSION = "2.0";
-    private static final String MAXIMUM_SCHEMA_VERSION = "2.0";
+    private static final String MAXIMUM_SCHEMA_VERSION = "2.1";
 
     /**
      * Constructor.
