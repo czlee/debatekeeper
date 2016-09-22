@@ -50,6 +50,7 @@
 
                 <TextView
                     style="@style/ViewFormat_TableLabel"
+                    android:paddingRight="@dimen/formatChooser_tableCellPadding"
                     android:text="@string/viewFormat_regionLabel" />
 
                 <TextView
@@ -63,6 +64,7 @@
 
                 <TextView
                     style="@style/ViewFormat_TableLabel"
+                    android:paddingRight="@dimen/formatChooser_tableCellPadding"
                     android:text="@string/viewFormat_levelLabel" />
 
                 <TextView
@@ -83,6 +85,7 @@
 
             <TextView
                 style="@style/ViewFormat_TableLabel"
+                android:paddingRight="@dimen/formatChooser_tableCellPadding"
                 android:text="@string/viewFormat_usedAtLabel" />
 
             <TextView
@@ -96,6 +99,7 @@
 
             <TextView
                 style="@style/ViewFormat_TableLabel"
+                android:paddingRight="@dimen/formatChooser_tableCellPadding"
                 android:text="@string/viewFormat_descLabel" />
 
             <TextView
@@ -103,4 +107,5 @@
                 style="@style/ViewFormat_TableValue" />
         </TableRow>
     </TableLayout>
-</LinearLayout>
+
+</LinearLayout>

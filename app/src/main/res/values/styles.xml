@@ -44,4 +44,6 @@
 
     <dimen name="debateTimer_controlButtons_height">60dp</dimen>
 
+    <dimen name="formatChooser_tableCellPadding">6dp</dimen>
+
 </resources>

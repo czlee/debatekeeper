@@ -48,6 +48,7 @@
 		        android:id="@+id/viewFormat_prepTimeLabel"
 		        style="@style/ViewFormat_TableLabel"
 		        android:text="@string/viewFormat_prepTimeLabel"
+				android:paddingRight="@dimen/formatChooser_tableCellPadding"
 		         />
 
 		    <TextView
