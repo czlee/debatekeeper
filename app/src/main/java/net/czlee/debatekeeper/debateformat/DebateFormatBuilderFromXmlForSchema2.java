@@ -34,7 +34,6 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -75,7 +74,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
     private final DocumentBuilderFactory mDocumentBuilderFactory;
     private final PeriodInfoManager      mPeriodInfoManager;
     private final Context                mContext;
-    private final ArrayList<String>      mErrorLog = new ArrayList<String>();
+    private final ArrayList<String>      mErrorLog = new ArrayList<>();
 
     private final XmlUtilities xu;
 
@@ -105,6 +104,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
 
         DebateFormat df = new DebateFormat();
         Document doc = getDocumentFromInputStream(is);
+        assert doc != null;
         Element root = doc.getDocumentElement();
 
         // 0. Schema version
@@ -143,8 +143,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
                     logXmlError(e);
                 }
                 // Check for and log non-fatal errors, if any
-                Iterator<String> errors = mPeriodInfoManager.lastElementErrors().iterator();
-                while (errors.hasNext()) logXmlError(errors.next());
+                for (String s : mPeriodInfoManager.lastElementErrors()) logXmlError(s);
             }
         }
 
@@ -205,7 +204,6 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
                 df.addSpeech(speechName, formatRef);
             } catch (NoSuchFormatException e) {
                 logXmlError(R.string.dfb2error_addSpeech_speechFormatNotFound, formatRef, name);
-                continue;
             }
         }
 
@@ -326,6 +324,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
      * @param element an {@link Element} object
      * @param finishTime the length of the speech, used if the bell is to be at the finish
      * time of the speech
+     * @param location String describing where the bell was, used in error messages
      * @return a {@link BellInfo}, may return <code>null</code> if there was an error preventing
      * the object from being created
      */
@@ -453,11 +452,11 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
      * (more likely one of its subclasses) must already exist and have a length associated with it.
      * This method exists mainly to avoid duplicate code to handle the two subclasses of
      * {@link ControlledDebatePhaseFormat} ({@link SpeechFormat} and {@link PrepTimeControlledFormat}).
-     * @param cspf
-     * @param element
-     * @param location
+     * @param cdpf a {@link ControlledDebatePhaseFormat}
+     * @param element the {@link Element}
+     * @param location String describing the type of element this is, used in error messages
      */
-    private void populateControlledTimeFormat(ControlledDebatePhaseFormat cspf, Element element, String location) {
+    private void populateControlledTimeFormat(ControlledDebatePhaseFormat cdpf, Element element, String location) {
 
         // If there is a first period specified, and it is not "#stay", set it accordingly
         String firstPeriod = xu.findAttributeText(element, R.string.xml2attrName_controlledTimeFirstPeriod);
@@ -467,11 +466,11 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
                 if (npi == null)
                     logXmlError(R.string.dfb2error_periodInfo_notFound, firstPeriod); // not checked by schema
                 else
-                    cspf.setFirstPeriodInfo(npi);
+                    cdpf.setFirstPeriodInfo(npi);
             }
         }
 
-        long length = cspf.getLength();
+        long length = cdpf.getLength();
 
         // Add all the bells
         NodeList bellElements = xu.findAllElements(element, R.string.xml2elemName_bell);
@@ -479,7 +478,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
             Element bellElement = (Element) bellElements.item(i);
             BellInfo bi = createBellInfoFromElement(bellElement, length, location);
             if (bi == null) continue;
-            cspf.addBellInfo(bi);
+            cdpf.addBellInfo(bi);
         }
 
     }

@@ -38,7 +38,7 @@ import java.util.Iterator;
  * @author Chuan-Zheng Lee
  *
  */
-public abstract class GenericDebatePhaseFormat implements DebatePhaseFormat {
+abstract class GenericDebatePhaseFormat implements DebatePhaseFormat {
 
     @Override
     public abstract long getLength();
@@ -58,7 +58,7 @@ public abstract class GenericDebatePhaseFormat implements DebatePhaseFormat {
     @Override
     public BellInfo getBellAtTime(long seconds) {
         Iterator<BellInfo> bellIterator = getBells().iterator();
-        BellInfo thisBell = null;
+        BellInfo thisBell;
 
         while (bellIterator.hasNext()) {
             thisBell = bellIterator.next();
@@ -73,7 +73,7 @@ public abstract class GenericDebatePhaseFormat implements DebatePhaseFormat {
     public PeriodInfo getPeriodInfoForTime(long seconds) {
         PeriodInfo workingPi = new PeriodInfo();
         Iterator<BellInfo> bellIterator = getBells().iterator();
-        BellInfo thisBell = null;
+        BellInfo thisBell;
         long latestBellTimeSoFar = 0;
 
         workingPi.update(getFirstPeriodInfo());
@@ -102,7 +102,7 @@ public abstract class GenericDebatePhaseFormat implements DebatePhaseFormat {
     public ArrayList<BellInfo> getBellsSorted() {
 
         // A shallow copy is fine, we just want to sort the bells, not edit them.
-        ArrayList<BellInfo> bells = new ArrayList<BellInfo>(getBells());
+        ArrayList<BellInfo> bells = new ArrayList<>(getBells());
 
         Collections.sort(bells, new Comparator<BellInfo>() {
             @Override

@@ -23,7 +23,7 @@ package net.czlee.debatekeeper.debateformat;
  * @author Chuan-Zheng Lee
  * @since  2012-06-20
  */
-public enum DebateFormatXmlSecondLevelContext {
+enum DebateFormatXmlSecondLevelContext {
     NONE ("no context"),
     INFO ("info"),
     RESOURCE ("resource"),
@@ -33,7 +33,7 @@ public enum DebateFormatXmlSecondLevelContext {
 
     private final String name;
 
-    private DebateFormatXmlSecondLevelContext(String name) {
+    DebateFormatXmlSecondLevelContext(String name) {
         this.name = name;
     }
 

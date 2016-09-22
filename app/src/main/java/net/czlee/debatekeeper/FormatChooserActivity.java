@@ -116,16 +116,16 @@ public class FormatChooserActivity extends AppCompatActivity {
         private final String filename;
         private final String styleName;
 
-        public DebateFormatListEntry(String filename, String styleName) {
+        DebateFormatListEntry(String filename, String styleName) {
             this.filename = filename;
             this.styleName = styleName;
         }
 
-        public String getFilename() {
+        String getFilename() {
             return filename;
         }
 
-        public String getStyleName() {
+        String getStyleName() {
             return styleName;
         }
 
@@ -145,18 +145,18 @@ public class FormatChooserActivity extends AppCompatActivity {
      *
      */
     public class FormatChooserActivityBinder {
-        public DetailsButtonOnClickListener getDetailsButtonOnClickListener(String filename) {
+        DetailsButtonOnClickListener getDetailsButtonOnClickListener(String filename) {
             return new DetailsButtonOnClickListener(filename);
         }
 
         /**
          * @return the position of the currently checked item.
          */
-        public int getSelectedPosition() {
+        int getSelectedPosition() {
             return mStylesListView.getCheckedItemPosition();
         }
 
-        public void populateBasicInfo(View view, String filename) throws IOException, SAXException {
+        void populateBasicInfo(View view, String filename) throws IOException, SAXException {
             FormatChooserActivity.this.populateBasicInfo(view, filename);
         }
 
@@ -365,7 +365,7 @@ public class FormatChooserActivity extends AppCompatActivity {
 
         private final String filename;
 
-        public DetailsButtonOnClickListener(String filename) {
+        DetailsButtonOnClickListener(String filename) {
             this.filename = filename;
         }
 
