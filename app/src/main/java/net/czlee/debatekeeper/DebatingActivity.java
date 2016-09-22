@@ -156,7 +156,7 @@ public class DebatingActivity extends AppCompatActivity {
     private static final String DIALOG_TAG_CHANGELOG             = "changelog";
 
     private static final int    CHOOSE_STYLE_REQUEST           = 0;
-    private static final int    SNACKBAR_DURATION_RESET_DEBATE = 500;
+    private static final int    SNACKBAR_DURATION_RESET_DEBATE = 1200;
 
     private DebatingTimerService.DebatingTimerServiceBinder mBinder;
     private final BroadcastReceiver mGuiUpdateBroadcastReceiver = new GuiUpdateBroadcastReceiver();
