@@ -1105,21 +1105,7 @@ public class DebatingActivity extends AppCompatActivity {
             poiFlashScreenMode = FlashScreenMode.toEnum(poiFlashScreenModeValue);
 
             // List preference: Count direction
-            //  - Backwards compatibility measure
-            // This changed in version 0.9, to remove the generallyUp and generallyDown options.
-            // Therefore, if we find either of those, we need to replace it with alwaysUp or
-            // alwaysDown, respectively.
-            userCountDirectionValue = prefs.getString(res.getString(R.string.pref_countDirection_key),
-                    res.getString(R.string.prefDefault_countDirection));
-            if (userCountDirectionValue.equals("generallyUp") || userCountDirectionValue.equals("generallyDown")) {
-                // Replace the preference with alwaysUp or alwaysDown, respectively.
-                SharedPreferences.Editor editor = prefs.edit();
-                String newValue = (userCountDirectionValue.equals("generallyUp")) ? "alwaysUp" : "alwaysDown";
-                editor.putString(res.getString(R.string.pref_countDirection_key), newValue);
-                editor.apply();
-                Log.i(TAG, "countDirection: replaced " + userCountDirectionValue + " with " + newValue);
-                userCountDirectionValue = newValue;
-            }
+            userCountDirectionValue = prefs.getString(res.getString(R.string.pref_countDirection_key), res.getString(R.string.prefDefault_countDirection));
             mCountDirection = CountDirection.toEnum(userCountDirectionValue);
 
             // List preference: Count direction for prep time
