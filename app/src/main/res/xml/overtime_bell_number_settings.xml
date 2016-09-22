@@ -20,7 +20,7 @@
     android:order="1" >
 
     <PreferenceCategory android:title="@string/prefCategory_overtimeBells_title" >
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/prefDefault_overtimeBellsEnable"
             android:disableDependentsState="false"
             android:key="@string/pref_overtimeBellsEnable_key"

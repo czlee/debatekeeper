@@ -66,7 +66,7 @@
     <PreferenceCategory
         android:order="3"
         android:title="@string/prefCategory_prepTime_title" >
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/prefDefault_prepTimer_enable"
             android:disableDependentsState="false"
             android:key="@string/pref_prepTimer_enable_key"
@@ -99,7 +99,7 @@
     <PreferenceCategory
         android:order="4"
         android:title="@string/prefCategory_pois_title" >
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/prefDefault_poiTimer_enable"
             android:disableDependentsState="false"
             android:key="@string/pref_poiTimer_enable_key"
