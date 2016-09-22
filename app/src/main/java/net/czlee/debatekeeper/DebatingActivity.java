@@ -49,6 +49,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -137,9 +138,7 @@ public class DebatingActivity extends AppCompatActivity {
     private boolean              mPrepTimeKeepScreenOn;
 
     private boolean              mDialogBlocking          = false;
-    private boolean              mDialogWaiting           = false;
-    private DialogFragment       mDialogFragmentInWaiting = null;
-    private String               mDialogTagInWaiting      = null;
+    private ArrayList<Pair<String, QueueableDialogFragment>> mDialogsInWaiting = new ArrayList<>();
 
     private static final String BUNDLE_KEY_DEBATE_MANAGER        = "dm";
     private static final String BUNDLE_KEY_XML_FILE_NAME         = "xmlfn";
@@ -151,6 +150,7 @@ public class DebatingActivity extends AppCompatActivity {
     private static final String DIALOG_ARGUMENT_SCHEMA_SUPPORTED = "supp";
     private static final String DIALOG_ARGUMENT_FILE_NAME        = "fn";
     private static final String DIALOG_TAG_SCHEMA_TOO_NEW        = "toonew";
+    private static final String DIALOG_TAG_SCHEMA_OUTDATED       = "outdated";
     private static final String DIALOG_TAG_ERRORS_WITH_XML       = "errors";
     private static final String DIALOG_TAG_FATAL_PROBLEM         = "fatal";
     private static final String DIALOG_TAG_CHANGELOG             = "changelog";
@@ -166,7 +166,25 @@ public class DebatingActivity extends AppCompatActivity {
     // Public classes
     //******************************************************************************************
 
-    public static class DialogChangelogFragment extends DialogFragment {
+    public static class QueueableDialogFragment extends DialogFragment {
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            super.onDismiss(dialog);
+            DebatingActivity activity;
+            try {
+                activity = (DebatingActivity) getActivity();
+            } catch (ClassCastException e) {
+                Log.e(TAG, "QueueableDialogFragment.onDismiss: class cast exception in QueueableDialogFragment");
+                return;
+            }
+            if (activity != null) {
+                Log.w(TAG, "QueueableDialogFragment.onDismiss: activity was null");
+                activity.showNextQueuedDialog();
+            }
+        }
+    }
+
+    public static class DialogChangelogFragment extends QueueableDialogFragment {
 
         @NonNull
         @Override
@@ -206,7 +224,7 @@ public class DebatingActivity extends AppCompatActivity {
 
     }
 
-    public static class DialogErrorsWithXmlFileFragment extends DialogFragment {
+    public static class DialogErrorsWithXmlFileFragment extends QueueableDialogFragment {
 
         static DialogErrorsWithXmlFileFragment newInstance(ArrayList<String> errorLog, String filename) {
             DialogErrorsWithXmlFileFragment fragment = new DialogErrorsWithXmlFileFragment();
@@ -252,7 +270,7 @@ public class DebatingActivity extends AppCompatActivity {
 
     }
 
-    public static class DialogFatalProblemWithXmlFileFragment extends DialogFragment {
+    public static class DialogFatalProblemWithXmlFileFragment extends QueueableDialogFragment {
 
         static DialogFatalProblemWithXmlFileFragment newInstance(String message, String filename) {
             DialogFatalProblemWithXmlFileFragment fragment = new DialogFatalProblemWithXmlFileFragment();
@@ -300,7 +318,7 @@ public class DebatingActivity extends AppCompatActivity {
 
     }
 
-    public static class DialogSchemaTooNewFragment extends DialogFragment {
+    public static class DialogSchemaTooNewFragment extends QueueableDialogFragment {
 
         static DialogSchemaTooNewFragment newInstance(String schemaUsed, String schemaSupported, String filename) {
             DialogSchemaTooNewFragment fragment = new DialogSchemaTooNewFragment();
@@ -356,11 +374,58 @@ public class DebatingActivity extends AppCompatActivity {
 
             return builder.create();
         }
+    }
 
+    public static class DialogSchemaTooOldFragment extends QueueableDialogFragment {
+
+        static DialogSchemaTooOldFragment newInstance(String filename) {
+            DialogSchemaTooOldFragment fragment = new DialogSchemaTooOldFragment();
+            Bundle args = new Bundle();
+            args.putString(DIALOG_ARGUMENT_FILE_NAME, filename);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @NonNull
         @Override
-        public void onDismiss(DialogInterface dialog) {
-            super.onDismiss(dialog);
-            ((DebatingActivity) getActivity()).showQueuedDialog();
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final DebatingActivity activity = (DebatingActivity) getActivity();
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            Bundle args = getArguments();
+
+            String appVersion;
+            try {
+                appVersion = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0).versionName;
+            } catch (NameNotFoundException e) {
+                appVersion = "unknown";
+            }
+
+            StringBuilder message = new StringBuilder(getString(R.string.schemaOutdatedDialog_message));
+
+            message.append(getString(R.string.dialogs_fileName_suffix, args.getString(DIALOG_ARGUMENT_FILE_NAME)));
+
+            builder.setTitle(R.string.schemaOutdatedDialog_title)
+                    .setMessage(message)
+                    .setCancelable(false)
+                    .setNegativeButton(R.string.schemaOutdatedDialog_button_learnMore, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Open web browser with page about schema versions
+                            Uri uri = Uri.parse(getString(R.string.schemaOutdatedDialog_moreInfoUrl));
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(uri);
+                            startActivity(intent);
+                        }
+                    })
+                    .setPositiveButton(R.string.schemaOutdatedDialog_button_ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // To ignore, just dismiss the dialog and return to whatever was happening before
+                            dialog.dismiss();
+                        }
+                    });
+
+            return builder.create();
         }
     }
 
@@ -967,7 +1032,7 @@ public class DebatingActivity extends AppCompatActivity {
                 editor.apply();
             } else {
                 // The dialog will update the preference to the new version code.
-                showDialog(new DialogChangelogFragment(), DIALOG_TAG_CHANGELOG);
+                queueDialog(new DialogChangelogFragment(), DIALOG_TAG_CHANGELOG);
             }
         }
     }
@@ -1219,19 +1284,22 @@ public class DebatingActivity extends AppCompatActivity {
                         R.string.fatalProblemWithXmlFileDialog_message_badXml, e.getMessage()), e);
             }
 
-            // If it's looking good, replace.
+            // If it's looking good, replace, but prompt user to convert the file.
             // (Otherwise, pretend this schema 1.0 attempt never happened.)
             if (dfbfx1.isSchemaSupported()) {
                 df    = df1;
                 dfbfx = dfbfx1;
+
+                QueueableDialogFragment fragment = DialogSchemaTooOldFragment.newInstance(filename);
+                queueDialog(fragment, DIALOG_TAG_SCHEMA_OUTDATED);
             }
         }
 
         // If the schema still isn't supported (even after possibly having been replaced by
         // schema 1.0), prompt the user to upgrade the app.
         if (dfbfx.isSchemaTooNew()) {
-            DialogFragment fragment = DialogSchemaTooNewFragment.newInstance(dfbfx.getSchemaVersion(), dfbfx.getSupportedSchemaVersion(), filename);
-            showBlockingDialog(fragment, DIALOG_TAG_SCHEMA_TOO_NEW);
+            QueueableDialogFragment fragment = DialogSchemaTooNewFragment.newInstance(dfbfx.getSchemaVersion(), dfbfx.getSupportedSchemaVersion(), filename);
+            queueDialog(fragment, DIALOG_TAG_SCHEMA_TOO_NEW);
         }
 
         if (df.numberOfSpeeches() == 0)
@@ -1239,7 +1307,7 @@ public class DebatingActivity extends AppCompatActivity {
                     R.string.fatalProblemWithXmlFileDialog_message_noSpeeches));
 
         if (dfbfx.hasErrors()) {
-            DialogFragment fragment = DialogErrorsWithXmlFileFragment.newInstance(dfbfx.getErrorLog(), mFormatXmlFileName);
+            QueueableDialogFragment fragment = DialogErrorsWithXmlFileFragment.newInstance(dfbfx.getErrorLog(), mFormatXmlFileName);
             queueDialog(fragment, DIALOG_TAG_ERRORS_WITH_XML);
         }
 
@@ -1419,7 +1487,7 @@ public class DebatingActivity extends AppCompatActivity {
             try {
                 df = buildDebateFromXml(mFormatXmlFileName);
             } catch (FatalXmlError e) {
-                DialogFragment fragment = DialogFatalProblemWithXmlFileFragment.newInstance(e.getMessage(), mFormatXmlFileName);
+                QueueableDialogFragment fragment = DialogFatalProblemWithXmlFileFragment.newInstance(e.getMessage(), mFormatXmlFileName);
                 queueDialog(fragment, DIALOG_TAG_FATAL_PROBLEM);
 
                 // We still need to notify of a data set change when there ends up being no
@@ -1483,15 +1551,12 @@ public class DebatingActivity extends AppCompatActivity {
      * @param fragment the {@link DialogFragment} that would be passed to showDialog()
      * @param tag the tag that would be passed to showDialog()
      */
-    private void queueDialog(DialogFragment fragment, String tag) {
+    private void queueDialog(QueueableDialogFragment fragment, String tag) {
         if (!mDialogBlocking) {
+            mDialogBlocking = true;
             showDialog(fragment, tag);
-            return;
         }
-
-        mDialogWaiting           = true;
-        mDialogFragmentInWaiting = fragment;
-        mDialogTagInWaiting      = tag;
+        else mDialogsInWaiting.add(Pair.create(tag, fragment));
     }
 
     /**
@@ -1595,12 +1660,6 @@ public class DebatingActivity extends AppCompatActivity {
         editor.apply();
     }
 
-
-    private void showBlockingDialog(DialogFragment fragment, String tag) {
-        mDialogBlocking = true;
-        showDialog(fragment, tag);
-    }
-
     /**
      * Shows the dialog given, allowing state loss as a workaround for a bug in Android
      * (possibly issue #7132432)
@@ -1622,17 +1681,16 @@ public class DebatingActivity extends AppCompatActivity {
     }
 
     /**
-     * Shows the currently-queued dialog if there is one; does nothing otherwise.  Dialogs that
-     * could block other dialogs must call this method on dismissal.
+     * Shows the next queued dialog if there is one, otherwise notes that there are no dialogs
+     * blocking.
      */
-    private void showQueuedDialog() {
-        if (mDialogWaiting) {
-            showDialog(mDialogFragmentInWaiting, mDialogTagInWaiting);
-            mDialogBlocking = false;
-            mDialogWaiting = false;
-            mDialogFragmentInWaiting = null;
-            mDialogTagInWaiting = null;
+    private void showNextQueuedDialog() {
+        if (mDialogsInWaiting.size() > 0) {
+            Pair<String, QueueableDialogFragment> pair = mDialogsInWaiting.remove(0);
+            showDialog(pair.second, pair.first);
+            mDialogBlocking = true;  // it should already be true, but just to be safe
         }
+        else mDialogBlocking = false;
     }
 
     /**
