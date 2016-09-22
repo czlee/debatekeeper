@@ -302,6 +302,8 @@ public class AlertManager
 
     public void setBellsEnabled(boolean bellsEnabled) {
         this.mBellsEnabled = bellsEnabled;
+        if (mBellRepeater != null && mBellRepeater.isPlaying())
+            mBellRepeater.stop();
     }
 
     public void setVibrateMode(boolean vibrateMode) {
