@@ -60,6 +60,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -110,11 +111,11 @@ public class DebatingActivity extends AppCompatActivity {
     private EnableableViewPager mViewPager;
     private boolean             mChangingPages;
 
-    private Button    mLeftControlButton;
-    private Button    mLeftCentreControlButton;
-    private Button    mCentreControlButton;
-    private Button    mRightControlButton;
-    private Button    mPlayBellButton;
+    private Button      mLeftControlButton;
+    private Button      mLeftCentreControlButton;
+    private Button      mCentreControlButton;
+    private Button      mRightControlButton;
+    private ImageButton mPlayBellButton;
 
     private final ControlButtonSpec CONTROL_BUTTON_START_TIMER  = new ControlButtonSpec(R.string.mainScreen_controlButton_startTimer_text,  new ControlButtonStartTimerOnClickListener());
     private final ControlButtonSpec CONTROL_BUTTON_STOP_TIMER   = new ControlButtonSpec(R.string.mainScreen_controlButton_stopTimer_text,   new ControlButtonStopTimerOnClickListener());
@@ -924,7 +925,7 @@ public class DebatingActivity extends AppCompatActivity {
         mLeftCentreControlButton = (Button) findViewById(R.id.mainScreen_leftCentreControlButton);
         mCentreControlButton     = (Button) findViewById(R.id.mainScreen_centreControlButton);
         mRightControlButton      = (Button) findViewById(R.id.mainScreen_rightControlButton);
-        mPlayBellButton          = (Button) findViewById(R.id.mainScreen_playBellButton);
+        mPlayBellButton          = (ImageButton) findViewById(R.id.mainScreen_playBellButton);
 
         //
         // ViewPager

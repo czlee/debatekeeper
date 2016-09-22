@@ -42,7 +42,7 @@
         <LinearLayout
             android:id="@+id/mainScreen_controlButtons"
             android:layout_width="fill_parent"
-            android:layout_height="60dip"
+            android:layout_height="@dimen/debateTimer_controlButtons_height"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal"
             >
@@ -66,12 +66,13 @@
                 android:id="@+id/mainScreen_rightControlButton"
                 style="@style/ControlButton" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/mainScreen_playBellButton"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/debateTimer_controlButtons_height"
                 android:layout_gravity="center"
                 android:layout_height="fill_parent"
-                android:text="@string/mainScreen_playBell_buttonText" />
+                android:src="@drawable/ic_notifications_white_24dp"
+                android:contentDescription="@string/mainScreen_playBell_buttonText" />
         </LinearLayout>
 
         <net.czlee.debatekeeper.EnableableViewPager
