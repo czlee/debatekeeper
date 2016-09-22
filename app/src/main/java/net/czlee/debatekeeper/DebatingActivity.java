@@ -1062,46 +1062,34 @@ public class DebatingActivity extends AppCompatActivity {
                 Log.i(TAG, String.format("applyPreferences: replaced silentMode (%b) with ringBells (%b)", oldSilentMode, mBellsEnabled));
             } else {
                 // Normal mechanism
-                mBellsEnabled = prefs.getBoolean(res.getString(R.string.pref_ringBells_key),
-                        res.getBoolean(R.bool.prefDefault_ringBells));
+                mBellsEnabled = prefs.getBoolean(res.getString(R.string.pref_ringBells_key), res.getBoolean(R.bool.prefDefault_ringBells));
             }
 
 
             // The boolean preferences
-            vibrateMode = prefs.getBoolean(res.getString(R.string.pref_vibrateMode_key),
-                    res.getBoolean(R.bool.prefDefault_vibrateMode));
-            overtimeBellsEnabled = prefs.getBoolean(res.getString(R.string.pref_overtimeBellsEnable_key),
-                    res.getBoolean(R.bool.prefDefault_overtimeBellsEnable));
+            vibrateMode = prefs.getBoolean(res.getString(R.string.pref_vibrateMode_key), res.getBoolean(R.bool.prefDefault_vibrateMode));
+            overtimeBellsEnabled = prefs.getBoolean(res.getString(R.string.pref_overtimeBellsEnable_key), res.getBoolean(R.bool.prefDefault_overtimeBellsEnable));
 
-            mSpeechKeepScreenOn = prefs.getBoolean(res.getString(R.string.pref_keepScreenOn_key),
-                    res.getBoolean(R.bool.prefDefault_keepScreenOn));
-            mPrepTimeKeepScreenOn = prefs.getBoolean(res.getString(R.string.pref_prepTimer_keepScreenOn_key),
-                    res.getBoolean(R.bool.prefDefault_prepTimer_keepScreenOn));
+            mSpeechKeepScreenOn = prefs.getBoolean(res.getString(R.string.pref_keepScreenOn_key), res.getBoolean(R.bool.prefDefault_keepScreenOn));
+            mPrepTimeKeepScreenOn = prefs.getBoolean(res.getString(R.string.pref_prepTimer_keepScreenOn_key), res.getBoolean(R.bool.prefDefault_prepTimer_keepScreenOn));
 
-            mPoiTimerEnabled = prefs.getBoolean(res.getString(R.string.pref_poiTimer_enable_key),
-                    res.getBoolean(R.bool.prefDefault_poiTimer_enable));
-            poiBuzzerEnabled = prefs.getBoolean(res.getString(R.string.pref_poiTimer_buzzerEnable_key),
-                    res.getBoolean(R.bool.prefDefault_poiTimer_buzzerEnable));
-            poiVibrateEnabled = prefs.getBoolean(res.getString(R.string.pref_poiTimer_vibrateEnable_key),
-                    res.getBoolean(R.bool.prefDefault_poiTimer_vibrateEnable));
+            mPoiTimerEnabled = prefs.getBoolean(res.getString(R.string.pref_poiTimer_enable_key), res.getBoolean(R.bool.prefDefault_poiTimer_enable));
+            poiBuzzerEnabled = prefs.getBoolean(res.getString(R.string.pref_poiTimer_buzzerEnable_key), res.getBoolean(R.bool.prefDefault_poiTimer_buzzerEnable));
+            poiVibrateEnabled = prefs.getBoolean(res.getString(R.string.pref_poiTimer_vibrateEnable_key), res.getBoolean(R.bool.prefDefault_poiTimer_vibrateEnable));
 
-            prepTimerEnabled = prefs.getBoolean(res.getString(R.string.pref_prepTimer_enable_key),
-                    res.getBoolean(R.bool.prefDefault_prepTimer_enable));
+            prepTimerEnabled = prefs.getBoolean(res.getString(R.string.pref_prepTimer_enable_key), res.getBoolean(R.bool.prefDefault_prepTimer_enable));
 
             // Overtime bell integers
             if (overtimeBellsEnabled) {
-                firstOvertimeBell  = prefs.getInt(res.getString(R.string.pref_firstOvertimeBell_key),
-                        res.getInteger(R.integer.prefDefault_firstOvertimeBell));
-                overtimeBellPeriod = prefs.getInt(res.getString(R.string.pref_overtimeBellPeriod_key),
-                        res.getInteger(R.integer.prefDefault_overtimeBellPeriod));
+                firstOvertimeBell  = prefs.getInt(res.getString(R.string.pref_firstOvertimeBell_key), res.getInteger(R.integer.prefDefault_firstOvertimeBell));
+                overtimeBellPeriod = prefs.getInt(res.getString(R.string.pref_overtimeBellPeriod_key), res.getInteger(R.integer.prefDefault_overtimeBellPeriod));
             } else {
                 firstOvertimeBell = 0;
                 overtimeBellPeriod = 0;
             }
 
             // List preference: POI flash screen mode
-            poiFlashScreenModeValue = prefs.getString(res.getString(R.string.pref_poiTimer_flashScreenMode_key),
-                    res.getString(R.string.prefDefault_poiTimer_flashScreenMode));
+            poiFlashScreenModeValue = prefs.getString(res.getString(R.string.pref_poiTimer_flashScreenMode_key), res.getString(R.string.prefDefault_poiTimer_flashScreenMode));
             poiFlashScreenMode = FlashScreenMode.toEnum(poiFlashScreenModeValue);
 
             // List preference: Count direction
@@ -1109,14 +1097,12 @@ public class DebatingActivity extends AppCompatActivity {
             mCountDirection = CountDirection.toEnum(userCountDirectionValue);
 
             // List preference: Count direction for prep time
-            userPrepTimeCountDirectionValue = prefs.getString(res.getString(R.string.pref_prepTimer_countDirection_key),
-                    res.getString(R.string.prefDefault_prepTimer_countDirection));
+            userPrepTimeCountDirectionValue = prefs.getString(res.getString(R.string.pref_prepTimer_countDirection_key), res.getString(R.string.prefDefault_prepTimer_countDirection));
             mPrepTimeCountDirection = CountDirection.toEnum(userPrepTimeCountDirectionValue);
 
             // List preference: Background colour area
             BackgroundColourArea oldBackgroundColourArea = mBackgroundColourArea;
-            backgroundColourAreaValue = prefs.getString(res.getString(R.string.pref_backgroundColourArea_key),
-                    res.getString(R.string.prefDefault_backgroundColourArea));
+            backgroundColourAreaValue = prefs.getString(res.getString(R.string.pref_backgroundColourArea_key), res.getString(R.string.prefDefault_backgroundColourArea));
             mBackgroundColourArea = BackgroundColourArea.toEnum(backgroundColourAreaValue);
             if (oldBackgroundColourArea != mBackgroundColourArea) {
                 Log.v(TAG, "background colour preference changed - refreshing");
@@ -1126,8 +1112,7 @@ public class DebatingActivity extends AppCompatActivity {
 
             // List preference: Flash screen mode
             String flashScreenModeValue;
-            flashScreenModeValue = prefs.getString(res.getString(R.string.pref_flashScreenMode_key),
-                    res.getString(R.string.prefDefault_flashScreenMode));
+            flashScreenModeValue = prefs.getString(res.getString(R.string.pref_flashScreenMode_key), res.getString(R.string.prefDefault_flashScreenMode));
             flashScreenMode = FlashScreenMode.toEnum(flashScreenModeValue);
 
         } catch (ClassCastException e) {
