@@ -131,7 +131,7 @@ public class DebatingActivity extends AppCompatActivity {
     private CountDirection       mPrepTimeCountDirection = CountDirection.COUNT_DOWN;
     private BackgroundColourArea mBackgroundColourArea   = BackgroundColourArea.WHOLE_SCREEN;
     private boolean              mPoiTimerEnabled        = true;
-    private boolean              mSilentMode             = false;
+    private boolean              mBellsEnabled           = true;
     private boolean              mSpeechKeepScreenOn;
     private boolean              mPrepTimeKeepScreenOn;
 
@@ -849,14 +849,14 @@ public class DebatingActivity extends AppCompatActivity {
         case R.id.mainScreen_menuItem_settings:
             startActivity(new Intent(this, GlobalSettingsActivity.class));
             return true;
-        case R.id.mainScreen_menuItem_silentMode:
+        case R.id.mainScreen_menuItem_ringBells:
             // Edit the preference, then apply the changes.
             // Don't fetch the current preference - if there is an inconsistency, we want the toggle
             // to reflect what this activity thinks silent mode is.
             Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-            editor.putBoolean(getResources().getString(R.string.pref_silentMode_key), !mSilentMode);
+            editor.putBoolean(getResources().getString(R.string.pref_ringBells_key), !mBellsEnabled);
             boolean success = editor.commit(); // we want this to block until it returns
-            if (success) applyPreferences(); // this will update mSilentMode
+            if (success) applyPreferences(); // this will update mBellsEnabled
             return true;
         default:
             return super.onOptionsItemSelected(item);
@@ -869,10 +869,10 @@ public class DebatingActivity extends AppCompatActivity {
         MenuItem resetDebateItem = menu.findItem(R.id.mainScreen_menuItem_resetDebate);
         resetDebateItem.setVisible(mDebateManager != null);
 
-        // display the appropriate silent mode icon
-        MenuItem silentModeItem = menu.findItem(R.id.mainScreen_menuItem_silentMode);
-        silentModeItem.setChecked(mSilentMode);
-        silentModeItem.setIcon((mSilentMode) ? R.drawable.ic_volume_off_white_24dp : R.drawable.ic_volume_up_white_24dp);
+        // display the appropriate bells icon
+        MenuItem ringBellsItem = menu.findItem(R.id.mainScreen_menuItem_ringBells);
+        ringBellsItem.setChecked(mBellsEnabled);
+        ringBellsItem.setIcon((mBellsEnabled) ? R.drawable.ic_notifications_active_white_24dp : R.drawable.ic_notifications_off_white_24dp);
 
         return super.onPrepareOptionsMenu(menu);
     }
@@ -1041,9 +1041,33 @@ public class DebatingActivity extends AppCompatActivity {
 
         try {
 
+            // Boolean preference: Ring bells
+            //  - Backwards compatibility measure
+            // This changed from "silent mode" (true meaning no bells) to "ring bells" (true
+            // meaning ring bells), i.e. it was inverted, in version 1.2, so there is backwards
+            // compatibility to take care of.  Backward compatibility applies if (a) ringBells is
+            // NOT present AND (b) silentMode IS present. In this case, retrieve the old silentMode
+            // preference, delete it and write the opposite into the new ringBells preference. In
+            // all other cases, just use the normal mechanism (i.e. retrieve if present, use
+            // default if not).
+
+            if (!prefs.contains(res.getString(R.string.pref_ringBells_key)) &&
+                    prefs.contains(res.getString(R.string.pref_silentMode_key))) {
+                boolean oldSilentMode = prefs.getBoolean(res.getString(R.string.pref_silentMode_key), false);
+                mBellsEnabled = !oldSilentMode;
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean(res.getString(R.string.pref_ringBells_key), mBellsEnabled);
+                editor.remove(res.getString(R.string.pref_silentMode_key));
+                editor.apply();
+                Log.i(TAG, String.format("applyPreferences: replaced silentMode (%b) with ringBells (%b)", oldSilentMode, mBellsEnabled));
+            } else {
+                // Normal mechanism
+                mBellsEnabled = prefs.getBoolean(res.getString(R.string.pref_ringBells_key),
+                        res.getBoolean(R.bool.prefDefault_ringBells));
+            }
+
+
             // The boolean preferences
-            mSilentMode = prefs.getBoolean(res.getString(R.string.pref_silentMode_key),
-                    res.getBoolean(R.bool.prefDefault_silentMode));
             vibrateMode = prefs.getBoolean(res.getString(R.string.pref_vibrateMode_key),
                     res.getBoolean(R.bool.prefDefault_vibrateMode));
             overtimeBellsEnabled = prefs.getBoolean(res.getString(R.string.pref_overtimeBellsEnable_key),
@@ -1171,9 +1195,9 @@ public class DebatingActivity extends AppCompatActivity {
         if (mBinder != null) {
             AlertManager am = mBinder.getAlertManager();
 
-            // Volume control stream is linked to silent mode
-            am.setSilentMode(mSilentMode);
-            setVolumeControlStream((mSilentMode) ? AudioManager.STREAM_RING : AudioManager.STREAM_MUSIC);
+            // Volume control stream is linked to ring bells mode
+            am.setBellsEnabled(mBellsEnabled);
+            setVolumeControlStream((mBellsEnabled) ? AudioManager.STREAM_MUSIC : AudioManager.STREAM_RING);
 
             am.setVibrateMode(vibrateMode);
             am.setFlashScreenMode(flashScreenMode);
@@ -1961,7 +1985,7 @@ public class DebatingActivity extends AppCompatActivity {
 
     private void updatePlayBellButton() {
         if (mBinder != null)
-            mPlayBellButton.setVisibility((mBinder.getAlertManager().isSilentMode()) ? View.GONE : View.VISIBLE);
+            mPlayBellButton.setVisibility((mBinder.getAlertManager().isBellsEnabled()) ? View.VISIBLE : View.GONE);
     }
 
     /**

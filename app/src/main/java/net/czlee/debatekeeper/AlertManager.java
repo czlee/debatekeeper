@@ -69,7 +69,7 @@ public class AlertManager
     private       boolean               mActivityActive      = false;
 
     // Preferences for speech bells
-    private       boolean               mSilentMode;
+    private       boolean               mBellsEnabled;
     private       boolean               mVibrateMode;
     private       FlashScreenMode       mFlashScreenMode     = FlashScreenMode.OFF;
 
@@ -106,7 +106,7 @@ public class AlertManager
 
         // Set up defaults
         Resources res = mService.getResources();
-        mSilentMode   = res.getBoolean(R.bool.prefDefault_silentMode);
+        mBellsEnabled = res.getBoolean(R.bool.prefDefault_ringBells);
         mVibrateMode  = res.getBoolean(R.bool.prefDefault_vibrateMode);
 
         createWakeLock();
@@ -214,8 +214,8 @@ public class AlertManager
             mWakeLock.acquire();
     }
 
-    public boolean isSilentMode() {
-        return mSilentMode;
+    public boolean isBellsEnabled() {
+        return mBellsEnabled;
     }
 
     /**
@@ -265,7 +265,7 @@ public class AlertManager
 
     /**
      * Plays a bell according to a given {@link BellSoundInfo}.
-     * Takes preferences like silent mode, vibrate mode, flash screen mode into account.
+     * Takes preferences like ring bells mode, vibrate mode, flash screen mode into account.
      * @param bsi the <code>BellSoundInfo</code> to play
      */
     public void playBell(BellSoundInfo bsi) {
@@ -273,7 +273,7 @@ public class AlertManager
             mBellRepeater.stop();
         }
 
-        if (!mSilentMode) {
+        if (mBellsEnabled) {
             mBellRepeater = new BellRepeater(mService.getApplicationContext(), bsi);
             mBellRepeater.play();
         }
@@ -300,8 +300,8 @@ public class AlertManager
         this.mFlashScreenMode = flashScreenMode;
     }
 
-    public void setSilentMode(boolean silentMode) {
-        this.mSilentMode = silentMode;
+    public void setBellsEnabled(boolean bellsEnabled) {
+        this.mBellsEnabled = bellsEnabled;
     }
 
     public void setVibrateMode(boolean vibrateMode) {

@@ -19,7 +19,7 @@
 
     <!-- Keys -->
     <!-- These strings must be unique. -->
-    <string name="pref_silentMode_key" translatable="false">silentMode</string>
+    <string name="pref_ringBells_key" translatable="false">ringBells</string>
     <string name="pref_vibrateMode_key" translatable="false">vibrateMode</string>
     <string name="pref_flashScreenMode_key" translatable="false">flashScreenMode</string>
     <string name="pref_overtimeBellsEnable_key" translatable="false">overtimeBellsEnable</string>
@@ -40,6 +40,7 @@
 
     <!-- Keys for backwards-compatibility -->
     <string name="pref_flashScreenBool_key" translatable="false">flashScreen</string> <!-- replaced in version 0.6 -->
+    <string name="pref_silentMode_key" translatable="false">silentMode</string> <!-- replaced in version 1.2 -->
 
     <!-- Category titles -->
     <string name="prefCategory_overtimeBells_title">Overtime bells</string>
@@ -49,10 +50,10 @@
     <string name="prefCategory_general_title">General</string>
 
     <!-- Silent mode -->
-    <string name="pref_silentMode_title">Silent mode</string>
-    <string name="pref_silentMode_onSummary">Bell will not sound (this doesn\'t affect other sounds from your phone)</string>
-    <string name="pref_silentMode_offSummary">Bell will sound\n(Everyone except the timekeeper should enable silent mode)</string>
-    <bool   name="prefDefault_silentMode">false</bool>
+    <string name="pref_ringBells_title">Ring bells</string>
+    <string name="pref_ringBells_onSummary">Bells will sound\n(Everyone except the timekeeper should turn these off)</string>
+    <string name="pref_ringBells_offSummary">Bells will not sound\n(This doesn\'t affect other sounds from your phone)</string>
+    <bool   name="prefDefault_ringBells">true</bool>
 
     <!-- Vibrate mode -->
     <string name="pref_vibrateMode_title">Vibrator</string>

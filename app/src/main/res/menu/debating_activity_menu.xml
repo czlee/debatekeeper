@@ -19,10 +19,10 @@
       xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <item
-        android:id="@+id/mainScreen_menuItem_silentMode"
+        android:id="@+id/mainScreen_menuItem_ringBells"
         android:orderInCategory="0"
-        android:title="@string/mainScreen_menuItem_silentMode"
-        android:icon="@drawable/ic_volume_up_white_24dp"
+        android:title="@string/mainScreen_menuItem_ringBells"
+        android:icon="@drawable/ic_notifications_active_white_24dp"
         android:checkable="true"
         android:checked="false"
         app:showAsAction="ifRoom" />

@@ -109,6 +109,6 @@
     </string>
     <string name="changelogDialog_dontShow">Don\'t show this again</string>
     <string name="changelogDialog_ok">Okay, roll on!</string>
-    <string name="mainScreen_menuItem_silentMode">Silent mode</string>
+    <string name="mainScreen_menuItem_ringBells">Ring bells</string>
 
 </resources>
