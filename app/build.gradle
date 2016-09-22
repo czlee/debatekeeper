@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "net.czlee.debatekeeper"
-        minSdkVersion 11
+        minSdkVersion 14
         targetSdkVersion 23
         vectorDrawables.useSupportLibrary = true
     }
