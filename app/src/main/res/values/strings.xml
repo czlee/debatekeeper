@@ -36,7 +36,6 @@
 
     <!-- Notices -->
     <string name="notification_title" translatable="false">Debatekeeper</string>
-    <string name="notification_tickerText">Debatekeeper is timing</string>
 
     <string name="mainScreen_overtimeFormat">+%1$s</string>
 

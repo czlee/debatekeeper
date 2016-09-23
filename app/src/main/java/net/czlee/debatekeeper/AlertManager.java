@@ -26,7 +26,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.PowerManager;
 import android.os.Vibrator;
-import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.NotificationCompat;
 
 import net.czlee.debatekeeper.debateformat.BellSoundInfo;
 
@@ -47,7 +47,7 @@ public class AlertManager
 {
     private static final long MAX_BELL_SCREEN_FLASH_TIME = 500;
     private static final int  POI_VIBRATE_TIME           = 350;
-    public  static final int  NOTIFICATION_ID            = 1;
+    private static final int  NOTIFICATION_ID            = 1;
     private static final int  STROBE_PERIOD              = 100;
     private static final int  BELL_FLASH_COLOUR          = 0xffffffff;
     private static final int  POI_FLASH_COLOUR           = 0xffadd6ff;
@@ -84,7 +84,7 @@ public class AlertManager
      * @param debatingTimerService The instance of {@link DebatingTimerService} to which this
      * AlertManager relates
      */
-    public AlertManager(Service debatingTimerService) {
+    AlertManager(Service debatingTimerService) {
 
         mService = debatingTimerService;
 
@@ -101,8 +101,7 @@ public class AlertManager
         // back won't make the user go through several instances of Debatekeeper on the back stack.
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-        mIntentForOngoingNotification = PendingIntent.getActivity(debatingTimerService,
-                0, intent, 0);
+        mIntentForOngoingNotification = PendingIntent.getActivity(debatingTimerService, 0, intent, 0);
 
         // Set up defaults
         Resources res = mService.getResources();
@@ -125,7 +124,7 @@ public class AlertManager
      * @author Chuan-Zheng Lee
      *
      */
-    public interface FlashScreenListener {
+    interface FlashScreenListener {
         /**
          * This is called by {@link AlertManager} at the beginning of a screen-flash.  (In the
          * case of a strobe flash, it is called just once before the first strobe.)  It should
@@ -165,7 +164,7 @@ public class AlertManager
         void done();
     }
 
-    public enum FlashScreenMode {
+    enum FlashScreenMode {
 
         // These must match the values string array in the preference.xml file.
         // (We can pull strings from the resource automatically,
@@ -178,10 +177,6 @@ public class AlertManager
 
         FlashScreenMode(String prefValue) {
             this.prefValue = prefValue;
-        }
-
-        public String toPrefValue() {
-            return this.prefValue;
         }
 
         public static FlashScreenMode toEnum(String key) {
@@ -199,7 +194,7 @@ public class AlertManager
     /**
      * Call this when the activity is stopped (from onStop())
      */
-    public void activityStop() {
+    void activityStop() {
         mActivityActive = false;
         mWakeLock.release();
     }
@@ -207,14 +202,14 @@ public class AlertManager
     /**
      * Call this when the activity is started (from onStart())
      */
-    public void activityStart() {
+    void activityStart() {
         // Note: Write this method so that it can be called multiple times with no bad effect.
         mActivityActive = true;
         if (mShowingNotification)
             mWakeLock.acquire();
     }
 
-    public boolean isBellsEnabled() {
+    boolean isBellsEnabled() {
         return mBellsEnabled;
     }
 
@@ -228,10 +223,10 @@ public class AlertManager
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(mService);
             builder.setSmallIcon(R.drawable.ic_stat_debatekeeper)
-                   .setTicker(mService.getText(R.string.notification_tickerText))
                    .setContentTitle(mService.getText(R.string.notification_title))
                    .setContentText(speechName)
-                   .setContentIntent(mIntentForOngoingNotification);
+                   .setContentIntent(mIntentForOngoingNotification)
+                   .setCategory(NotificationCompat.CATEGORY_ALARM);
 
             mNotification = builder.build();
             mService.startForeground(NOTIFICATION_ID, mNotification);
@@ -258,7 +253,7 @@ public class AlertManager
      * Plays a single bell.
      * Intended for use directly with a user button.
      */
-    public void playSingleBell() {
+    void playSingleBell() {
         BellSoundInfo bellInfo = new BellSoundInfo(1);
         playBell(bellInfo);
     }
@@ -292,33 +287,33 @@ public class AlertManager
     /**
      * @param flashScreenListener the {@link FlashScreenListener} to set
      */
-    public void setFlashScreenListener(FlashScreenListener flashScreenListener) {
+    void setFlashScreenListener(FlashScreenListener flashScreenListener) {
         this.mFlashScreenListener = flashScreenListener;
     }
 
-    public void setFlashScreenMode(FlashScreenMode flashScreenMode) {
+    void setFlashScreenMode(FlashScreenMode flashScreenMode) {
         this.mFlashScreenMode = flashScreenMode;
     }
 
-    public void setBellsEnabled(boolean bellsEnabled) {
+    void setBellsEnabled(boolean bellsEnabled) {
         this.mBellsEnabled = bellsEnabled;
         if (mBellRepeater != null && mBellRepeater.isPlaying())
             mBellRepeater.stop();
     }
 
-    public void setVibrateMode(boolean vibrateMode) {
+    void setVibrateMode(boolean vibrateMode) {
         this.mVibrateMode = vibrateMode;
     }
 
-    public void setPoiBuzzerEnabled(boolean poiBuzzerEnabled) {
+    void setPoiBuzzerEnabled(boolean poiBuzzerEnabled) {
         this.mPoiBuzzerEnabled = poiBuzzerEnabled;
     }
 
-    public void setPoiVibrateEnabled(boolean poiVibrateEnabled) {
+    void setPoiVibrateEnabled(boolean poiVibrateEnabled) {
         this.mPoiVibrateEnabled = poiVibrateEnabled;
     }
 
-    public void setPoiFlashScreenMode(FlashScreenMode poiFlashScreenMode) {
+    void setPoiFlashScreenMode(FlashScreenMode poiFlashScreenMode) {
         this.mPoiFlashScreenMode = poiFlashScreenMode;
     }
 
