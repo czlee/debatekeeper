@@ -136,7 +136,7 @@
 
     <!-- Keep screen on -->
     <string name="pref_keepScreenOn_title">Keep screen on</string>
-    <string name="pref_keepScreenOn_onSummary">Keep screen on (dimmed) while timer is running</string>
+    <string name="pref_keepScreenOn_onSummary">Keep screen on while timer is running</string>
     <string name="pref_keepScreenOn_offSummary">Apply normal screen timeout</string>
     <bool   name="prefDefault_keepScreenOn">true</bool>
 
@@ -152,7 +152,7 @@
     </string-array>
     <string name="prefDefault_prepTimer_countDirection" translatable="false">alwaysDown</string>
 
-    <string name="pref_prepTimer_keepScreenOn_onSummary">Keep screen on (dimmed) while prep timer is running</string>
+    <string name="pref_prepTimer_keepScreenOn_onSummary">Keep screen on while prep timer is running</string>
     <string name="pref_prepTimer_keepScreenOn_offSummary">Apply normal screen timeout during prep time</string>
     <bool   name="prefDefault_prepTimer_keepScreenOn">false</bool>
 
