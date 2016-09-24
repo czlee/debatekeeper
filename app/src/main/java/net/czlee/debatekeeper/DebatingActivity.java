@@ -902,6 +902,7 @@ public class DebatingActivity extends AppCompatActivity {
         case R.id.mainScreen_menuItem_chooseFormat:
             Intent getStyleIntent = new Intent(this, FormatChooserActivity.class);
             getStyleIntent.putExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME, mFormatXmlFileName);
+            getStyleIntent.setAction(FormatChooserActivity.ACTION_CHOOSE_DEBATE_STYLE);
             startActivityForResult(getStyleIntent, CHOOSE_STYLE_REQUEST);
             return true;
         case R.id.mainScreen_menuItem_resetDebate:
@@ -1002,22 +1003,22 @@ public class DebatingActivity extends AppCompatActivity {
         mLastStateBundle = savedInstanceState; // This could be null
 
         //
-        // Find the style file name
-        String filename = loadXmlFileName();
-
-        // If there doesn't appear to be an existing style selected, then start
-        // the Activity to select the style immediately, and don't bother with the
-        // rest.
-        if (filename == null) {
+        // Find the style file name.
+        Intent incomingIntent = getIntent();
+        String filename = incomingIntent.getStringExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME);
+        if (filename != null) setXmlFileName(filename); // if there was one, use it
+        else filename = loadXmlFileName(); // otherwise, load the previous setting
+        if (filename == null) { // if there's neither, direct the user to choose one
             Intent getStyleIntent = new Intent(DebatingActivity.this, FormatChooserActivity.class);
+            getStyleIntent.setAction(FormatChooserActivity.ACTION_CHOOSE_DEBATE_STYLE);
             startActivityForResult(getStyleIntent, CHOOSE_STYLE_REQUEST);
         }
 
         //
         // Start the timer service
-        Intent intent = new Intent(this, DebatingTimerService.class);
-        startService(intent);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        Intent serviceIntent = new Intent(this, DebatingTimerService.class);
+        startService(serviceIntent);
+        bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
 
         //
         // If there's been an update, show the changelog.

@@ -24,9 +24,11 @@ import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -65,11 +67,15 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
+
+import static android.support.design.widget.Snackbar.LENGTH_LONG;
+import static android.support.design.widget.Snackbar.LENGTH_SHORT;
 
 /**
  * This Activity displays a list of formats for the user to choose from. It
@@ -86,6 +92,7 @@ public class FormatChooserActivity extends AppCompatActivity {
 
     private static final String TAG = "FormatChooserActivity";
     public static final String FILES_AUTHORITY = "net.czlee.debatekeeper.fileprovider";
+    public static final String ACTION_CHOOSE_DEBATE_STYLE = "net.czlee.debatekeeper.CHOOSE_DEBATE_STYLE";
 
     private FormatXmlFilesManager mFilesManager;
     private ListView mStylesListView;
@@ -99,6 +106,7 @@ public class FormatChooserActivity extends AppCompatActivity {
     private String DEBATING_TIMER_URI;
 
     private static final int REQUEST_TO_READ_EXTERNAL_STORAGE = 17;
+    private static final int REQUEST_TO_WRITE_EXTERNAL_STORAGE_FOR_IMPORT = 21;
     private static final String DIALOG_ARGUMENT_FILE_NAME = "fn";
     private static final String DIALOG_TAG_MORE_DETAILS = "md";
     private static final String DIALOG_TAG_LIST_IO_ERROR = "io";
@@ -293,7 +301,7 @@ public class FormatChooserActivity extends AppCompatActivity {
             FormatChooserActivity activity = (FormatChooserActivity) getActivity();
 
             // Display its location if it's not a built-in file
-            if (activity.getFileLocation(filename) == FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE) {
+            if (activity.mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE) {
                 TextView fileLocationText = (TextView) view.findViewById(R.id.viewFormat_fileLocationValue);
                 fileLocationText.setText(getString(R.string.viewFormat_fileLocationValue_userDefined));
                 fileLocationText.setVisibility(View.VISIBLE);
@@ -521,17 +529,14 @@ public class FormatChooserActivity extends AppCompatActivity {
                 CheckBox checkbox = (CheckBox) findViewById(R.id.formatChooser_lookForCustomCheckbox);
                 if (checkbox != null) checkbox.setChecked(false);
                 mFilesManager.setLookForUserFiles(false);
-
-                View coordinator = findViewById(R.id.formatChooser_coordinator);
-                if (coordinator != null) {
-                    Snackbar snackbar = Snackbar.make(coordinator, getResources().getString(R.string.formatChooser_lookForCustom_errorNoReadPermission),
-                            Snackbar.LENGTH_LONG);
-                    View snackbarText = snackbar.getView();
-                    TextView textView = (TextView) snackbarText.findViewById(android.support.design.R.id.snackbar_text);
-                    if (textView != null) textView.setMaxLines(5);
-                    snackbar.show();
-                }
+                showSnackbar(Snackbar.LENGTH_LONG, R.string.formatChooser_lookForCustom_errorNoReadPermission);
             }
+
+        } else if (requestCode == REQUEST_TO_WRITE_EXTERNAL_STORAGE_FOR_IMPORT) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                importIncomingFile();
+            else
+                showSnackbar(Snackbar.LENGTH_LONG, R.string.formatChooser_lookForCustom_errorNoWritePermissionForImport);
         }
     }
 
@@ -580,9 +585,14 @@ public class FormatChooserActivity extends AppCompatActivity {
             mStylesListView.setOnItemClickListener(new StylesListViewOnItemClickListener());
         }
 
-        // Select and scroll to the incoming selection (if existent)
-        String incomingFilename = getIntent().getStringExtra(EXTRA_XML_FILE_NAME);
-        setSelectionAndScroll(incomingFilename);
+        if (Intent.ACTION_VIEW.equals(getIntent().getAction()) && requestWritePermission()) {
+            importIncomingFile();
+
+        } else {
+            // Select and scroll to the incoming selection (if existent)
+            String incomingFilename = getIntent().getStringExtra(EXTRA_XML_FILE_NAME);
+            setSelectionAndScroll(incomingFilename);
+        }
     }
 
     //******************************************************************************************
@@ -608,7 +618,15 @@ public class FormatChooserActivity extends AppCompatActivity {
             Intent intent = new Intent();
             Log.v(TAG, "File name is " + selectedFilename);
             intent.putExtra(EXTRA_XML_FILE_NAME, selectedFilename);
-            setResult(RESULT_OK, intent);
+
+            if (ACTION_CHOOSE_DEBATE_STYLE.equals(getIntent().getAction())) {
+                Log.i(TAG, "confirmSelectionAndReturn: Returning result OK");
+                setResult(RESULT_OK, intent);
+            } else {
+                Log.i(TAG, "confirmSelectionAndReturn: Starting new DebatingActivity");
+                intent.setClass(this, DebatingActivity.class);
+                startActivity(intent);
+            }
         }
 
         this.finish();
@@ -670,12 +688,91 @@ public class FormatChooserActivity extends AppCompatActivity {
 
     }
 
-    /**
-     * @param filename a file name
-     * @return an integer representing the location of the file
-     */
-    private int getFileLocation(String filename) {
-        return mFilesManager.getLocation(filename);
+    @Nullable
+    private String getDestinationFilenameFromUri(Uri uri) {
+        String filename = null;
+        String scheme = uri.getScheme();
+
+        switch (scheme) {
+            case "file":
+                // Just retrieve the file name
+                File file = new File(uri.getPath());
+                String name = file.getName();
+                if (name.length() > 0)
+                    filename = name;
+                break;
+
+            case "content":
+                // Try to find a display name for it
+                Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+                if (cursor == null) break;
+                cursor.moveToFirst();
+                int nameIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
+                if (nameIndex >= 0)
+                    filename = cursor.getString(nameIndex);
+                cursor.close();
+                break;
+
+            default:
+                showSnackbar(LENGTH_LONG, R.string.formatChooser_view_error_generic);
+                return null;
+        }
+
+        // If it doesn't end in the .xml extension, make it end in one
+        if (filename != null && !filename.endsWith(".xml")) {
+
+            // Do this by stripping the current extension if there is one...
+            int lastIndex = filename.lastIndexOf(".");
+            if (lastIndex > 0) filename = filename.substring(0, lastIndex);
+
+            // ...and then adding .xml.
+            filename = filename + ".xml";
+
+        }
+
+        return filename;
+    }
+
+    private void importIncomingFile() {
+
+        Intent intent = getIntent();
+        if (!Intent.ACTION_VIEW.equals(intent.getAction())) {
+            Log.e(TAG, "importIncomingFile: Intent action was not ACTION_VIEW");
+            return;
+        }
+
+        Log.i(TAG, String.format("importIncomingFile: mime type %s, data %s", intent.getType(), intent.getDataString()));
+
+        Uri uri = intent.getData();
+        InputStream is;
+        try {
+            is = getContentResolver().openInputStream(uri);
+        } catch (FileNotFoundException e) {
+            showSnackbar(LENGTH_LONG, R.string.formatChooser_view_error_generic);
+            Log.e(TAG, "importIncomingFile: Could not resolve file" + uri.toString());
+            return;
+        }
+
+        String filename = getDestinationFilenameFromUri(uri);
+        Log.i(TAG, "importIncomingFile: file name is " + filename);
+
+        try {
+            mFilesManager.copy(is, filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showSnackbar(LENGTH_LONG, R.string.formatChooser_view_error_generic);
+            Log.e(TAG, "importIncomingFile: Could not copy file: " + e.getMessage());
+            return;
+        }
+
+        showSnackbar(LENGTH_SHORT, R.string.formatChooser_snackbar_importSuccessful, filename);
+
+        // Now, show the result
+        mFilesManager.setLookForUserFiles(true);
+        CheckBox checkbox = (CheckBox) findViewById(R.id.formatChooser_lookForCustomCheckbox);
+        if (checkbox != null) checkbox.setChecked(true);
+        refreshStylesList();
+        setSelectionAndScroll(filename);
     }
 
     /**
@@ -794,6 +891,32 @@ public class FormatChooserActivity extends AppCompatActivity {
     }
 
     /**
+     * Requests the <code>WRITE_EXTERNAL_STORAGE</code> permission if it hasn't already been granted.
+     * We do this here, not in {@link FormatXmlFilesManager}, so that {@link DebatingActivity}
+     * doesn't ask for the permission.
+     *
+     * @return true if the permission is already granted, false otherwise.
+     */
+    private boolean requestWritePermission() {
+
+        // WRITE_EXTERNAL_STORAGE started being enforced in API level 19 (KITKAT), so skip this
+        // check if we're before then, to avoid calling a constant that's only existed since API
+        // level 16 (JELLY_BEAN)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
+            return true;
+
+        boolean granted = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED;
+
+        if (!granted) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_TO_WRITE_EXTERNAL_STORAGE_FOR_IMPORT);
+        }
+
+        return granted;
+    }
+
+    /**
      * Sets the selection to the given file name and scrolls so that the selection is visible.
      * If the file name isn't in the list, it deselects everything.
      * @param filename name of file to select
@@ -815,8 +938,7 @@ public class FormatChooserActivity extends AppCompatActivity {
 
         // Check for error conditions
         if (filename == null) {
-            if (coordinator != null)
-                Snackbar.make(coordinator, R.string.formatChooser_share_error_noFileSelected, Snackbar.LENGTH_SHORT).show();
+            showSnackbar(LENGTH_SHORT, R.string.formatChooser_share_error_noFileSelected);
             return;
         }
 
@@ -825,22 +947,19 @@ public class FormatChooserActivity extends AppCompatActivity {
             case FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE:
                 break;
             case FormatXmlFilesManager.LOCATION_ASSETS:
-                if (coordinator != null)
-                    Snackbar.make(coordinator, R.string.formatChooser_share_error_builtInFile, Snackbar.LENGTH_SHORT).show();
+                showSnackbar(LENGTH_SHORT, R.string.formatChooser_share_error_builtInFile);
                 return;
             case FormatXmlFilesManager.LOCATION_NOT_FOUND:
             default:
                 Log.e(TAG, String.format("shareSelection: getLocation returned result code %d", location));
-                if (coordinator != null)
-                    Snackbar.make(coordinator, getString(R.string.formatChooser_share_error_notFound, filename), Snackbar.LENGTH_SHORT).show();
+                showSnackbar(LENGTH_SHORT, R.string.formatChooser_share_error_notFound, filename);
                 return;
         }
 
         File file = mFilesManager.getFileFromExternalStorage(filename);
         if (file == null) {
             Log.e(TAG, String.format("shareSelection: getFileFromExternalStorage returned null on file %s", filename));
-            if (coordinator != null)
-                Snackbar.make(coordinator, R.string.formatChooser_share_error_generic, Snackbar.LENGTH_SHORT).show();
+            showSnackbar(LENGTH_SHORT, R.string.formatChooser_share_error_generic);
             return;
         }
 
@@ -849,8 +968,7 @@ public class FormatChooserActivity extends AppCompatActivity {
             fileUri = FileProvider.getUriForFile(this, FILES_AUTHORITY, file);
         } catch (IllegalArgumentException e) {
             Log.e(TAG, "shareSelection: tried to get file from outside allowable paths");
-            if (coordinator != null)
-                Snackbar.make(coordinator, R.string.formatChooser_share_error_generic, Snackbar.LENGTH_SHORT).show();
+            showSnackbar(LENGTH_SHORT, R.string.formatChooser_share_error_generic);
             return;
         }
 
@@ -871,6 +989,18 @@ public class FormatChooserActivity extends AppCompatActivity {
 
         Intent chooserIntent = Intent.createChooser(shareIntent, getString(R.string.formatChooser_share_chooserTitle));
         startActivity(chooserIntent);
+    }
+
+    private void showSnackbar(int duration, int stringResId, Object... formatArgs) {
+        String string = getString(stringResId, formatArgs);
+        View coordinator = findViewById(R.id.formatChooser_coordinator);
+        if (coordinator != null) {
+            Snackbar snackbar = Snackbar.make(coordinator, string, duration);
+            View snackbarText = snackbar.getView();
+            TextView textView = (TextView) snackbarText.findViewById(android.support.design.R.id.snackbar_text);
+            if (textView != null) textView.setMaxLines(5);
+            snackbar.show();
+        }
     }
 
     /**

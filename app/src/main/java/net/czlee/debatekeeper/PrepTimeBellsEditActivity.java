@@ -309,13 +309,6 @@ public class PrepTimeBellsEditActivity extends AppCompatActivity {
         inflater.inflate(R.menu.prep_time_bells_list_context, menu);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home)
-            finish();
-        return super.onOptionsItemSelected(item);
-    }
-
     //******************************************************************************************
     // Protected methods
     //******************************************************************************************

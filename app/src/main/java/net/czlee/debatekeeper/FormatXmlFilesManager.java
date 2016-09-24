@@ -24,12 +24,15 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.HashSet;
 
@@ -64,6 +67,7 @@ public class FormatXmlFilesManager {
 
     private final AssetManager mAssets;
     private final SharedPreferences mPrefs;
+    private static final String TAG = "FormatXmlFilesManager";
     private static final String XML_FILE_ROOT_DIRECTORY_NAME = "debatekeeper";
     private static final String ASSETS_PATH                  = "formats";
     private static final String PREFERENCE_LOOK_FOR_CUSTOM_FORMATS = "lookForCustom";
@@ -85,6 +89,44 @@ public class FormatXmlFilesManager {
     //******************************************************************************************
     // Public methods
     //******************************************************************************************
+
+    /**
+     * Copies all data from the given stream to a file in the user-defined XML files directory.
+     * <p><b>Note that this overwrites the existing file if there is one.</b></p>
+     * @param in an {@link InputStream}
+     * @param destinationName the name of the destination file
+     * @throws IOException if there was an error dealing with any of the files
+     */
+    public void copy(InputStream in, String destinationName) throws IOException {
+
+        // Check we can write to external storage
+        if (!isExternalStorageWriteable()) {
+            Log.e(TAG, "copy: can't copy, external storage not writeable");
+            throw new IOException();
+        }
+
+        // Figure out where to copy the file to
+        File userFilesDirectory = getOrCreateUserFilesDirectory();
+        if (userFilesDirectory == null) {
+            Log.e(TAG, "copy: can't copy, no user files directory available");
+            throw new IOException();
+        }
+
+        File destination = new File(userFilesDirectory, destinationName);
+
+        // Open the files
+        OutputStream out = new FileOutputStream(destination);
+
+        // Copy the file over
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0)
+            out.write(buf, 0, len);
+        out.flush();
+        in.close();
+        out.close();
+
+    }
 
     /**
      * Opens the file given by 'filename' and returns an <code>InputStream</code> for the file.
@@ -202,6 +244,11 @@ public class FormatXmlFilesManager {
         return Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
     }
 
+    private boolean isExternalStorageWriteable() {
+        String state = Environment.getExternalStorageState();
+        return Environment.MEDIA_MOUNTED.equals(state);
+    }
+
     /**
      * @return the user files directory if it exists, or <code>null</code> if it does not exist
      * or is not a directory.  If this method returns something non-null, you can assume it is
@@ -217,6 +264,33 @@ public class FormatXmlFilesManager {
             return null;
 
         return userFilesDirectory;
+    }
+
+    /**
+     * @return the user files directory, or <code>null</code> if it does not exist and could not
+     * be created or is not a directory.  If this method returns something non-null, you can assume
+     * it is a directory.
+     */
+    private File getOrCreateUserFilesDirectory() {
+
+        // Can't do anything if we can't read external storage.
+        if (!isExternalStorageReadable())
+            return null;
+
+        File root = Environment.getExternalStorageDirectory();
+        File userFilesDirectory = new File(root, XML_FILE_ROOT_DIRECTORY_NAME);
+
+        // If it's already a directory, bingo!
+        if (userFilesDirectory.isDirectory()) return userFilesDirectory;
+
+        // If there's nothing where the directory is supposed to be, and we can write to external
+        // storage, attempt to create the directory.
+        if (!userFilesDirectory.exists() && isExternalStorageWriteable()) {
+            boolean result = userFilesDirectory.mkdirs();
+            if (result) return userFilesDirectory;
+        }
+
+        return null;
     }
 
     /**
