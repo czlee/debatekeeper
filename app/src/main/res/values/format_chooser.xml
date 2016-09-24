@@ -24,10 +24,16 @@
     <string name="blankDetailsDialog_title">"Sorry!"</string>
     <string name="blankDetailsDialog_text">"There's a problem with this debate format's XML file (%1$s).\n\nIn more detail:\n%2$s"</string>
 
-    <string name="formatChooser_actionBar_confirmName">Confirm</string>
+    <string name="formatChooser_actionBar_confirm">Confirm</string>
+    <string name="formatChooser_actionBar_share">Share</string>
 
     <string name="formatChooser_lookForCustomCheckbox_text">Look for custom formats (<a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">Learn more</a>)</string>
     <string name="formatChooser_lookForCustom_errorNoReadPermission">You must allow Debatekeeper to read files on your device for custom formats to be read.</string>
+    <string name="formatChooser_share_error_noFileSelected">No file selected.</string>
+    <string name="formatChooser_share_error_builtInFile">You can\'t share built-in formats.</string>
+    <string name="formatChooser_share_error_notFound">File %1$s could not be found.</string>
+    <string name="formatChooser_share_error_generic">There was an error sharing this file.</string>
+    <string name="formatChooser_share_chooserTitle">Share debate format using…</string>
 
     <string name="viewFormat_regionLabel">Region</string>
     <string name="viewFormat_levelLabel">Level</string>

@@ -19,10 +19,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <item
+        android:id="@+id/formatChooser_actionBar_share"
+        android:icon="@drawable/ic_share_white_24dp"
+        app:showAsAction="ifRoom"
+        android:title="@string/formatChooser_actionBar_share" />
+
+    <item
         android:id="@+id/formatChooser_actionBar_ok"
         android:icon="@drawable/ic_done_white_24dp"
         app:showAsAction="always"
-        android:title="@string/formatChooser_actionBar_confirmName">
+        android:title="@string/formatChooser_actionBar_confirm">
     </item>
 
 </menu>

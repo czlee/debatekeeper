@@ -20,16 +20,20 @@ package net.czlee.debatekeeper;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -60,6 +64,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -80,6 +85,7 @@ import java.util.Iterator;
 public class FormatChooserActivity extends AppCompatActivity {
 
     private static final String TAG = "FormatChooserActivity";
+    public static final String FILES_AUTHORITY = "net.czlee.debatekeeper.fileprovider";
 
     private FormatXmlFilesManager mFilesManager;
     private ListView mStylesListView;
@@ -287,7 +293,7 @@ public class FormatChooserActivity extends AppCompatActivity {
             FormatChooserActivity activity = (FormatChooserActivity) getActivity();
 
             // Display its location if it's not a built-in file
-            if (activity.getFileLocation(filename) == FormatXmlFilesManager.LOCATION_USER_DEFINED) {
+            if (activity.getFileLocation(filename) == FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE) {
                 TextView fileLocationText = (TextView) view.findViewById(R.id.viewFormat_fileLocationValue);
                 fileLocationText.setText(getString(R.string.viewFormat_fileLocationValue_userDefined));
                 fileLocationText.setVisibility(View.VISIBLE);
@@ -464,6 +470,7 @@ public class FormatChooserActivity extends AppCompatActivity {
         public void onItemClick(AdapterView<?> parent, View view, int position,
                 long id) {
             mStylesArrayAdapter.notifyDataSetChanged();
+            invalidateOptionsMenu();
         }
     }
 
@@ -481,13 +488,25 @@ public class FormatChooserActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case android.R.id.home:
-            finish();
-            break;
-        case R.id.formatChooser_actionBar_ok:
-            confirmSelectionAndReturn();
+            case R.id.formatChooser_actionBar_ok:
+                confirmSelectionAndReturn();
+                return true;
+            case R.id.formatChooser_actionBar_share:
+                shareSelection();
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // disable the share button if the current selection isn't shareable
+        MenuItem resetDebateItem = menu.findItem(R.id.formatChooser_actionBar_share);
+        String filename = getSelectedFilename();
+        boolean selectionShareable = filename != null && mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE;
+        resetDebateItem.setVisible(selectionShareable);
+
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -539,7 +558,7 @@ public class FormatChooserActivity extends AppCompatActivity {
         // Configure the checkbox
         mInitialLookForCustomFormats = mFilesManager.isLookingForUserFiles();
         CheckBox checkbox = (CheckBox) findViewById(R.id.formatChooser_lookForCustomCheckbox);
-        if (checkbox != null){
+        if (checkbox != null) {
             checkbox.setMovementMethod(LinkMovementMethod.getInstance());
             checkbox.setOnClickListener(new LookForCustomCheckboxOnClickListener());
             checkbox.setChecked(mInitialLookForCustomFormats);
@@ -574,8 +593,7 @@ public class FormatChooserActivity extends AppCompatActivity {
      * Confirms and handles the selection appropriately, and ends the Activity.
      */
     private void confirmSelectionAndReturn() {
-        int selectedPosition = mStylesListView.getCheckedItemPosition();
-        String selectedFilename = convertIndexToFilename(selectedPosition);
+        String selectedFilename = getSelectedFilename();
         String incomingFilename = getIntent().getStringExtra(EXTRA_XML_FILE_NAME);
 
         if (selectedFilename != null && selectedFilename.equals(incomingFilename) &&
@@ -584,11 +602,11 @@ public class FormatChooserActivity extends AppCompatActivity {
 
         } else if (selectedFilename == null) {
             setResult(RESULT_ERROR);
-            Log.e(TAG, "Returning error, no entry in position " + selectedPosition);
+            Log.e(TAG, "Returning error, no entry found");
 
         } else {
             Intent intent = new Intent();
-            Log.v(TAG, "File name in position " + selectedPosition + " is " + selectedFilename);
+            Log.v(TAG, "File name is " + selectedFilename);
             intent.putExtra(EXTRA_XML_FILE_NAME, selectedFilename);
             setResult(RESULT_OK, intent);
         }
@@ -698,7 +716,7 @@ public class FormatChooserActivity extends AppCompatActivity {
             try {
                 is = mFilesManager.open(filename);
             } catch (IOException e) {
-                Log.e(TAG, "Couldn't find file: "+ filename);
+                Log.e(TAG, "Couldn't find file: " + filename);
                 continue;
             }
 
@@ -721,6 +739,7 @@ public class FormatChooserActivity extends AppCompatActivity {
         // Sort alphabetically by style name and tell observers
         mStylesArrayAdapter.sort(new StyleEntryComparatorByStyleName());
         mStylesArrayAdapter.notifyDataSetChanged();
+        invalidateOptionsMenu();
     }
 
     /**
@@ -728,8 +747,7 @@ public class FormatChooserActivity extends AppCompatActivity {
      */
     private void refreshStylesList() {
         // Take note of current selection by file name
-        int selectedPosition = mStylesListView.getCheckedItemPosition();
-        String selectedFilename = convertIndexToFilename(selectedPosition);
+        String selectedFilename = getSelectedFilename();
 
         mStylesList.clear();
         populateStylesList();
@@ -739,9 +757,21 @@ public class FormatChooserActivity extends AppCompatActivity {
     }
 
     /**
+     * Returns the currently selected file name.
+     *
+     * @return The currently selected file name, or <code>null</code> if nothing is selected.
+     */
+    @Nullable
+    private String getSelectedFilename() {
+        int selectedPosition = mStylesListView.getCheckedItemPosition();
+        return convertIndexToFilename(selectedPosition);
+    }
+
+    /**
      * Requests the <code>READ_EXTERNAL_STORAGE</code> permission if it hasn't already been granted.
      * We do this here, not in {@link FormatXmlFilesManager}, so that {@link DebatingActivity}
      * doesn't ask for the permission.
+     *
      * @return true if the permission is already granted, false otherwise.
      */
     private boolean requestReadPermission() {
@@ -776,7 +806,76 @@ public class FormatChooserActivity extends AppCompatActivity {
     }
 
     /**
+     * Shares the current selection. If there is no current selection, it shows a {@link Snackbar}
+     * with an error message.
+     */
+    private void shareSelection() {
+        String filename = getSelectedFilename();
+        View coordinator = findViewById(R.id.formatChooser_coordinator);
+
+        // Check for error conditions
+        if (filename == null) {
+            if (coordinator != null)
+                Snackbar.make(coordinator, R.string.formatChooser_share_error_noFileSelected, Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+
+        int location = mFilesManager.getLocation(filename);
+        switch (location) {
+            case FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE:
+                break;
+            case FormatXmlFilesManager.LOCATION_ASSETS:
+                if (coordinator != null)
+                    Snackbar.make(coordinator, R.string.formatChooser_share_error_builtInFile, Snackbar.LENGTH_SHORT).show();
+                return;
+            case FormatXmlFilesManager.LOCATION_NOT_FOUND:
+            default:
+                Log.e(TAG, String.format("shareSelection: getLocation returned result code %d", location));
+                if (coordinator != null)
+                    Snackbar.make(coordinator, getString(R.string.formatChooser_share_error_notFound, filename), Snackbar.LENGTH_SHORT).show();
+                return;
+        }
+
+        File file = mFilesManager.getFileFromExternalStorage(filename);
+        if (file == null) {
+            Log.e(TAG, String.format("shareSelection: getFileFromExternalStorage returned null on file %s", filename));
+            if (coordinator != null)
+                Snackbar.make(coordinator, R.string.formatChooser_share_error_generic, Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+
+        Uri fileUri;
+        try {
+            fileUri = FileProvider.getUriForFile(this, FILES_AUTHORITY, file);
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "shareSelection: tried to get file from outside allowable paths");
+            if (coordinator != null)
+                Snackbar.make(coordinator, R.string.formatChooser_share_error_generic, Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.setType("text/xml");
+        shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
+
+        // I'm pretty sure this part doesn't do anything useful. It's part of the spec that
+        // setClipData is like putExtra with the ability to grant URI permissions using flags, but
+        // apps like Gmail don't seem to honour it, and there's almost no third-party posts on the
+        // topic. It also doesn't seem to be harmful, though.
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            ClipData clipData = new ClipData(filename, new String[]{"text/xml"}, new ClipData.Item(fileUri));
+            shareIntent.setClipData(clipData);
+        }
+
+        Intent chooserIntent = Intent.createChooser(shareIntent, getString(R.string.formatChooser_share_chooserTitle));
+        startActivity(chooserIntent);
+    }
+
+    /**
      * Concatenates a list of <code>String</code>s with line breaks delimiting.
+     *
      * @param list An <code>ArrayList</code> of <code>String</code>s.
      * @return the result, a single <code>String</code>
      */
@@ -808,4 +907,5 @@ public class FormatChooserActivity extends AppCompatActivity {
                 concatenate(dfi.getUsedAts()));
         ((TextView) view.findViewById(R.id.viewFormat_tableCell_descValue)).setText(
                 dfi.getDescription());
-    }}
+    }
+}

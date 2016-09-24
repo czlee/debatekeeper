@@ -22,6 +22,8 @@ import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -67,7 +69,7 @@ public class FormatXmlFilesManager {
     private static final String PREFERENCE_LOOK_FOR_CUSTOM_FORMATS = "lookForCustom";
 
     public static final int LOCATION_ASSETS       = 0;
-    public static final int LOCATION_USER_DEFINED = 1;
+    public static final int LOCATION_EXTERNAL_STORAGE = 1;
     public static final int LOCATION_NOT_FOUND    = -1;
 
     private boolean mLookForUserFiles = false;
@@ -92,7 +94,7 @@ public class FormatXmlFilesManager {
      */
     public InputStream open(String filename) throws IOException {
         if(mLookForUserFiles) {
-            InputStream is = openFromRoot(filename);
+            InputStream is = openFromExternalStorage(filename);
             if (is != null)
                 return is;
         }
@@ -128,15 +130,35 @@ public class FormatXmlFilesManager {
     }
 
     /**
+     * Returns a {@link File} object representing the file.
+     * @param filename Name of file to find.
+     * @return a {@link File} object, or <code>null</code> if it isn't a file.
+     */
+    @Nullable
+    File getFileFromExternalStorage(String filename) {
+        // See if we can find the directory...
+        File userFilesDirectory = getUserFilesDirectory();
+        if (userFilesDirectory == null)
+            return null;
+
+        // Then see if we can find the file...
+        File xmlFile = new File(userFilesDirectory, filename);
+        if (!xmlFile.isFile())
+            return null;
+
+        return xmlFile;
+    }
+
+    /**
      * Finds out in which location this file is.
      * @param filename the name of the file
      * @return a LOCATION_* integer representing the location of the file
      */
-    public int getLocation(String filename) {
+    public int getLocation(@NonNull String filename) {
         if (mLookForUserFiles) {
-            InputStream userFileInputStream = openFromRoot(filename);
+            InputStream userFileInputStream = openFromExternalStorage(filename);
             if (userFileInputStream != null)
-                return LOCATION_USER_DEFINED;
+                return LOCATION_EXTERNAL_STORAGE;
         }
 
         InputStream assetInputStream;
@@ -201,16 +223,11 @@ public class FormatXmlFilesManager {
      * @param filename the name of the file to open
      * @return an InputStream if the file exists, or <code>null</code> if it does not.
      */
-    private InputStream openFromRoot(String filename) {
+    @Nullable
+    private InputStream openFromExternalStorage(String filename) {
 
-        // See if we can find the directory...
-        File userFilesDirectory = getUserFilesDirectory();
-        if (userFilesDirectory == null)
-            return null;
-
-        // Then see if we can find the file...
-        File xmlFile = new File(userFilesDirectory, filename);
-        if (!xmlFile.isFile())
+        File xmlFile = getFileFromExternalStorage(filename);
+        if (xmlFile == null)
             return null;
 
         // Then see if we can open it...
