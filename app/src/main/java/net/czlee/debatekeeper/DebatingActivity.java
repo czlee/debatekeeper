@@ -17,6 +17,7 @@
 
 package net.czlee.debatekeeper;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -30,10 +31,14 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcEvent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -81,6 +86,7 @@ import net.czlee.debatekeeper.debatemanager.DebateManager.DebatePhaseTag;
 
 import org.xml.sax.SAXException;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -161,6 +167,7 @@ public class DebatingActivity extends AppCompatActivity {
     private DebatingTimerService.DebatingTimerServiceBinder mBinder;
     private final BroadcastReceiver mGuiUpdateBroadcastReceiver = new GuiUpdateBroadcastReceiver();
     private final ServiceConnection mConnection = new DebatingTimerServiceConnection();
+    private NfcAdapter mNfcAdapter = null;
 
     //******************************************************************************************
     // Public classes
@@ -835,6 +842,30 @@ public class DebatingActivity extends AppCompatActivity {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private class BeamFileUriCallback implements NfcAdapter.CreateBeamUrisCallback {
+
+        @Override
+        public Uri[] createBeamUris(NfcEvent event) {
+            FormatXmlFilesManager filesManager = new FormatXmlFilesManager(DebatingActivity.this);
+            if (filesManager.getLocation(mFormatXmlFileName) != FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE) {
+                Log.e(TAG, "createBeamUris: Tried to share file not on external storage");
+                showSnackbar(Snackbar.LENGTH_LONG, R.string.mainScreen_snackbar_beamNonExternalFile);
+                return new Uri[0];
+            }
+            File file = filesManager.getFileFromExternalStorage(mFormatXmlFileName);
+            Uri fileUri = Uri.fromFile(file);
+            if (fileUri != null) {
+                Log.i(TAG, "createBeamUris: Sharing URI " + fileUri.toString());
+                return new Uri[]{fileUri};
+            } else {
+                showSnackbar(Snackbar.LENGTH_LONG, R.string.mainScreen_snackbar_error_generic);
+                Log.e(TAG, "createBeamUris: file URI was null");
+                return new Uri[0];
+            }
+        }
+    }
+
     private final class GuiUpdateBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -908,10 +939,7 @@ public class DebatingActivity extends AppCompatActivity {
         case R.id.mainScreen_menuItem_resetDebate:
             if (mDebateManager == null) return true;
             resetDebate();
-            View coordinator = findViewById(R.id.mainScreen_coordinator);
-            if (coordinator != null)
-                //noinspection WrongConstant
-                Snackbar.make(coordinator, R.string.mainScreen_snackbar_resetDebate, SNACKBAR_DURATION_RESET_DEBATE).show();
+            showSnackbar(SNACKBAR_DURATION_RESET_DEBATE, R.string.mainScreen_snackbar_resetDebate);
             return true;
         case R.id.mainScreen_menuItem_settings:
             startActivity(new Intent(this, GlobalSettingsActivity.class));
@@ -1001,6 +1029,15 @@ public class DebatingActivity extends AppCompatActivity {
         mPlayBellButton.setOnClickListener(new PlayBellButtonOnClickListener());
 
         mLastStateBundle = savedInstanceState; // This could be null
+
+        //
+        // Configure NFC
+        if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC) &&
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+            if (mNfcAdapter != null)
+                mNfcAdapter.setBeamPushUrisCallback(new BeamFileUriCallback(), this);
+        }
 
         //
         // Find the style file name.
@@ -1379,24 +1416,12 @@ public class DebatingActivity extends AppCompatActivity {
         currentTime = subtractFromSpeechLengthIfCountingDown(currentTime);
 
         // Limit to the allowable time range
-        int snackbarMessageResId = 0;
         if (currentTime < 0) {
             currentTime = 0;
-            snackbarMessageResId = R.string.mainScreen_snackbar_editTextDiscardChangesInfo_limitedBelow;
+            showSnackbar(Snackbar.LENGTH_LONG, R.string.mainScreen_snackbar_editTextDiscardChangesInfo_limitedBelow);
         } else if (currentTime >= 24 * 60) {
             currentTime = 24 * 60 - 1;
-            snackbarMessageResId = R.string.mainScreen_snackbar_editTextDiscardChangesInfo_limitedAbove;
-        }
-
-        if (snackbarMessageResId != 0) {
-            View coordinator = findViewById(R.id.mainScreen_coordinator);
-            if (coordinator != null) {
-                Snackbar snackbar = Snackbar.make(coordinator, snackbarMessageResId, Snackbar.LENGTH_LONG);
-                View snackbarText = snackbar.getView();
-                TextView textView = (TextView) snackbarText.findViewById(android.support.design.R.id.snackbar_text);
-                if (textView != null) textView.setMaxLines(5);
-                snackbar.show();
-            }
+            showSnackbar(Snackbar.LENGTH_LONG, R.string.mainScreen_snackbar_editTextDiscardChangesInfo_limitedAbove);
         }
 
         // We're using this in hours and minutes, not minutes and seconds
@@ -1694,6 +1719,18 @@ public class DebatingActivity extends AppCompatActivity {
             mDialogBlocking = true;  // it should already be true, but just to be safe
         }
         else mDialogBlocking = false;
+    }
+
+    private void showSnackbar(int duration, int stringResId, Object... formatArgs) {
+        String string = getString(stringResId, formatArgs);
+        View coordinator = findViewById(R.id.mainScreen_coordinator);
+        if (coordinator != null) {
+            Snackbar snackbar = Snackbar.make(coordinator, string, duration);
+            View snackbarText = snackbar.getView();
+            TextView textView = (TextView) snackbarText.findViewById(android.support.design.R.id.snackbar_text);
+            if (textView != null) textView.setMaxLines(5);
+            snackbar.show();
+        }
     }
 
     /**

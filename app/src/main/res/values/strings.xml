@@ -65,6 +65,8 @@
 
     <string name="mainScreen_snackbar_editTextDiscardChangesInfo_limitedBelow">To discard changes, press the back button. (You can\'t set the time to an overtime value.)</string>
     <string name="mainScreen_snackbar_editTextDiscardChangesInfo_limitedAbove">To discard changes, press the back button. (You can\'t set the time to greater than 23:59.)</string>
+    <string name="mainScreen_snackbar_beamNonExternalFile">You can\'t use Android Beam to share built-in styles.</string>
+    <string name="mainScreen_snackbar_error_generic">There was an error beaming this debate format file.</string>
 
     <!-- Menu -->
     <string name="mainScreen_menuItem_resetDebate">Reset debate</string>

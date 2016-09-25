@@ -76,6 +76,7 @@ import java.util.Iterator;
 
 import static android.support.design.widget.Snackbar.LENGTH_LONG;
 import static android.support.design.widget.Snackbar.LENGTH_SHORT;
+import static android.util.Log.e;
 
 /**
  * This Activity displays a list of formats for the user to choose from. It
@@ -612,7 +613,7 @@ public class FormatChooserActivity extends AppCompatActivity {
 
         } else if (selectedFilename == null) {
             setResult(RESULT_ERROR);
-            Log.e(TAG, "Returning error, no entry found");
+            e(TAG, "Returning error, no entry found");
 
         } else {
             Intent intent = new Intent();
@@ -703,27 +704,31 @@ public class FormatChooserActivity extends AppCompatActivity {
                 break;
 
             case "content":
-                // Try to find a display name for it
+                // Try to find a name for the file
                 Cursor cursor = getContentResolver().query(uri,
-                        new String[] {MediaStore.MediaColumns.DISPLAY_NAME}, null, null, null);
+                        new String[] {MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.DATA}, null, null, null);
                 if (cursor == null) {
-                    Log.e(TAG, "getDestinationFilenameFromUri: cursor was null");
+                    e(TAG, "getDestinationFilenameFromUri: cursor was null");
                     return null;
                 }
                 if (!cursor.moveToFirst()) {
-                    Log.e(TAG, "getDestinationFilenameFromUri: failed moving cursor to first row");
+                    e(TAG, "getDestinationFilenameFromUri: failed moving cursor to first row");
                     cursor.close();
                     return null;
                 }
+                int dataIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
                 int nameIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
-                if (nameIndex < 0) {
-                    Log.e(TAG, "getDestinationFilenameFromUri: no column for display name");
-                    cursor.close();
-                    return null;
+                Log.i(TAG, "getDestinationFilenameFromUri: data at column " + dataIndex + ", name at column " + nameIndex);
+                if (dataIndex >= 0) {
+                    String path = cursor.getString(dataIndex);
+                    filename = (new File(path)).getName();
+
+                    Log.i(TAG, "getDestinationFilenameFromUri: got from data column, path: " + path + ", name: " + filename);
+                } else if (nameIndex >= 0) {
+                    filename = cursor.getString(nameIndex);
+                    Log.i(TAG, "getDestinationFilenameFromUri: got from name column: " + filename);
                 }
-                filename = cursor.getString(nameIndex);
-                if (filename == null)
-                    Log.e(TAG, "getDestinationFilenameFromUri: retrieved file name, but it was null");
+                else Log.e(TAG, "getDestinationFilenameFromUri: no column for file name available");
                 cursor.close();
                 break;
 
@@ -750,7 +755,7 @@ public class FormatChooserActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (!Intent.ACTION_VIEW.equals(intent.getAction())) {
-            Log.e(TAG, "importIncomingFile: Intent action was not ACTION_VIEW");
+            e(TAG, "importIncomingFile: Intent action was not ACTION_VIEW");
             return;
         }
 
@@ -762,7 +767,7 @@ public class FormatChooserActivity extends AppCompatActivity {
             is = getContentResolver().openInputStream(uri);
         } catch (FileNotFoundException e) {
             showSnackbar(LENGTH_LONG, R.string.formatChooser_view_error_generic);
-            Log.e(TAG, "importIncomingFile: Could not resolve file" + uri.toString());
+            e(TAG, "importIncomingFile: Could not resolve file" + uri.toString());
             return;
         }
 
@@ -771,7 +776,7 @@ public class FormatChooserActivity extends AppCompatActivity {
 
         if (filename == null) {
             showSnackbar(LENGTH_LONG, R.string.formatChooser_view_error_generic);
-            Log.e(TAG, "importIncomingFile: File name was null");
+            e(TAG, "importIncomingFile: File name was null");
             return;
         }
 
@@ -780,7 +785,7 @@ public class FormatChooserActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
             showSnackbar(LENGTH_LONG, R.string.formatChooser_view_error_generic);
-            Log.e(TAG, "importIncomingFile: Could not copy file: " + e.getMessage());
+            e(TAG, "importIncomingFile: Could not copy file: " + e.getMessage());
             return;
         }
 
@@ -832,7 +837,7 @@ public class FormatChooserActivity extends AppCompatActivity {
             try {
                 is = mFilesManager.open(filename);
             } catch (IOException e) {
-                Log.e(TAG, "Couldn't find file: " + filename);
+                e(TAG, "Couldn't find file: " + filename);
                 continue;
             }
 
@@ -970,14 +975,14 @@ public class FormatChooserActivity extends AppCompatActivity {
                 return;
             case FormatXmlFilesManager.LOCATION_NOT_FOUND:
             default:
-                Log.e(TAG, String.format("shareSelection: getLocation returned result code %d", location));
+                e(TAG, String.format("shareSelection: getLocation returned result code %d", location));
                 showSnackbar(LENGTH_SHORT, R.string.formatChooser_share_error_notFound, filename);
                 return;
         }
 
         File file = mFilesManager.getFileFromExternalStorage(filename);
         if (file == null) {
-            Log.e(TAG, String.format("shareSelection: getFileFromExternalStorage returned null on file %s", filename));
+            e(TAG, String.format("shareSelection: getFileFromExternalStorage returned null on file %s", filename));
             showSnackbar(LENGTH_SHORT, R.string.formatChooser_share_error_generic);
             return;
         }
@@ -986,7 +991,7 @@ public class FormatChooserActivity extends AppCompatActivity {
         try {
             fileUri = FileProvider.getUriForFile(this, FILES_AUTHORITY, file);
         } catch (IllegalArgumentException e) {
-            Log.e(TAG, "shareSelection: tried to get file from outside allowable paths");
+            e(TAG, "shareSelection: tried to get file from outside allowable paths");
             showSnackbar(LENGTH_SHORT, R.string.formatChooser_share_error_generic);
             return;
         }
