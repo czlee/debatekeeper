@@ -122,9 +122,10 @@
     <integer name="changelogDialog_versionCode">20</integer>
     <string name="changelogDialog_title">What\'s new in version %1$s</string>
     <string name="changelogDialog_message">
-        • New icon (thanks to Zandi Speedy-Willis) and updated theme\n
-        • Quick access to turning bells on or off\n
-        • Other user interface improvements
+          • New icon (thanks to Zandi Speedy-Willis) and updated theme
+        \n• Share custom debate formats, including via Android Beam (for Android 4.1 and above)
+        \n• Quick access to turning bells on or off
+        \n• Other user interface improvements
     </string>
     <string name="changelogDialog_dontShow">Don\'t show this again</string>
     <string name="changelogDialog_ok">Okay, roll on!</string>
