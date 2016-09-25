@@ -24,11 +24,9 @@ import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -67,14 +65,12 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 
-import static android.support.design.widget.Snackbar.LENGTH_LONG;
 import static android.support.design.widget.Snackbar.LENGTH_SHORT;
 import static android.util.Log.e;
 
@@ -93,7 +89,6 @@ public class FormatChooserActivity extends AppCompatActivity {
 
     private static final String TAG = "FormatChooserActivity";
     public static final String FILES_AUTHORITY = "net.czlee.debatekeeper.fileprovider";
-    public static final String ACTION_CHOOSE_DEBATE_STYLE = "net.czlee.debatekeeper.CHOOSE_DEBATE_STYLE";
 
     private FormatXmlFilesManager mFilesManager;
     private ListView mStylesListView;
@@ -107,7 +102,6 @@ public class FormatChooserActivity extends AppCompatActivity {
     private String DEBATING_TIMER_URI;
 
     private static final int REQUEST_TO_READ_EXTERNAL_STORAGE = 17;
-    private static final int REQUEST_TO_WRITE_EXTERNAL_STORAGE_FOR_IMPORT = 21;
     private static final String DIALOG_ARGUMENT_FILE_NAME = "fn";
     private static final String DIALOG_TAG_MORE_DETAILS = "md";
     private static final String DIALOG_TAG_LIST_IO_ERROR = "io";
@@ -532,12 +526,6 @@ public class FormatChooserActivity extends AppCompatActivity {
                 mFilesManager.setLookForUserFiles(false);
                 showSnackbar(Snackbar.LENGTH_LONG, R.string.formatChooser_lookForCustom_errorNoReadPermission);
             }
-
-        } else if (requestCode == REQUEST_TO_WRITE_EXTERNAL_STORAGE_FOR_IMPORT) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                importIncomingFile();
-            else
-                showSnackbar(Snackbar.LENGTH_LONG, R.string.formatChooser_lookForCustom_errorNoWritePermissionForImport);
         }
     }
 
@@ -586,14 +574,9 @@ public class FormatChooserActivity extends AppCompatActivity {
             mStylesListView.setOnItemClickListener(new StylesListViewOnItemClickListener());
         }
 
-        if (Intent.ACTION_VIEW.equals(getIntent().getAction()) && requestWritePermission()) {
-            importIncomingFile();
-
-        } else {
-            // Select and scroll to the incoming selection (if existent)
-            String incomingFilename = getIntent().getStringExtra(EXTRA_XML_FILE_NAME);
-            setSelectionAndScroll(incomingFilename);
-        }
+        // Select and scroll to the incoming selection (if existent)
+        String incomingFilename = getIntent().getStringExtra(EXTRA_XML_FILE_NAME);
+        setSelectionAndScroll(incomingFilename);
     }
 
     //******************************************************************************************
@@ -619,15 +602,7 @@ public class FormatChooserActivity extends AppCompatActivity {
             Intent intent = new Intent();
             Log.v(TAG, "File name is " + selectedFilename);
             intent.putExtra(EXTRA_XML_FILE_NAME, selectedFilename);
-
-            if (ACTION_CHOOSE_DEBATE_STYLE.equals(getIntent().getAction())) {
-                Log.i(TAG, "confirmSelectionAndReturn: Returning result OK");
-                setResult(RESULT_OK, intent);
-            } else {
-                Log.i(TAG, "confirmSelectionAndReturn: Starting new DebatingActivity");
-                intent.setClass(this, DebatingActivity.class);
-                startActivity(intent);
-            }
+            setResult(RESULT_OK, intent);
         }
 
         this.finish();
@@ -687,116 +662,6 @@ public class FormatChooserActivity extends AppCompatActivity {
         // If it isn't, keep pretending it was 2.0.
         return dfi2;
 
-    }
-
-    @Nullable
-    private String getDestinationFilenameFromUri(Uri uri) {
-        String filename = null;
-        String scheme = uri.getScheme();
-
-        switch (scheme) {
-            case "file":
-                // Just retrieve the file name
-                File file = new File(uri.getPath());
-                String name = file.getName();
-                if (name.length() > 0)
-                    filename = name;
-                break;
-
-            case "content":
-                // Try to find a name for the file
-                Cursor cursor = getContentResolver().query(uri,
-                        new String[] {MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.DATA}, null, null, null);
-                if (cursor == null) {
-                    e(TAG, "getDestinationFilenameFromUri: cursor was null");
-                    return null;
-                }
-                if (!cursor.moveToFirst()) {
-                    e(TAG, "getDestinationFilenameFromUri: failed moving cursor to first row");
-                    cursor.close();
-                    return null;
-                }
-                int dataIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
-                int nameIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
-                Log.i(TAG, "getDestinationFilenameFromUri: data at column " + dataIndex + ", name at column " + nameIndex);
-                if (dataIndex >= 0) {
-                    String path = cursor.getString(dataIndex);
-                    filename = (new File(path)).getName();
-
-                    Log.i(TAG, "getDestinationFilenameFromUri: got from data column, path: " + path + ", name: " + filename);
-                } else if (nameIndex >= 0) {
-                    filename = cursor.getString(nameIndex);
-                    Log.i(TAG, "getDestinationFilenameFromUri: got from name column: " + filename);
-                }
-                else Log.e(TAG, "getDestinationFilenameFromUri: no column for file name available");
-                cursor.close();
-                break;
-
-            default:
-                return null;
-        }
-
-        // If it doesn't end in the .xml extension, make it end in one
-        if (filename != null && !filename.endsWith(".xml")) {
-
-            // Do this by stripping the current extension if there is one...
-            int lastIndex = filename.lastIndexOf(".");
-            if (lastIndex > 0) filename = filename.substring(0, lastIndex);
-
-            // ...and then adding .xml.
-            filename = filename + ".xml";
-
-        }
-
-        return filename;
-    }
-
-    private void importIncomingFile() {
-
-        Intent intent = getIntent();
-        if (!Intent.ACTION_VIEW.equals(intent.getAction())) {
-            e(TAG, "importIncomingFile: Intent action was not ACTION_VIEW");
-            return;
-        }
-
-        Log.i(TAG, String.format("importIncomingFile: mime type %s, data %s", intent.getType(), intent.getDataString()));
-
-        Uri uri = intent.getData();
-        InputStream is;
-        try {
-            is = getContentResolver().openInputStream(uri);
-        } catch (FileNotFoundException e) {
-            showSnackbar(LENGTH_LONG, R.string.formatChooser_view_error_generic);
-            e(TAG, "importIncomingFile: Could not resolve file" + uri.toString());
-            return;
-        }
-
-        String filename = getDestinationFilenameFromUri(uri);
-        Log.i(TAG, "importIncomingFile: file name is " + filename);
-
-        if (filename == null) {
-            showSnackbar(LENGTH_LONG, R.string.formatChooser_view_error_generic);
-            e(TAG, "importIncomingFile: File name was null");
-            return;
-        }
-
-        try {
-            mFilesManager.copy(is, filename);
-        } catch (IOException e) {
-            e.printStackTrace();
-            showSnackbar(LENGTH_LONG, R.string.formatChooser_view_error_generic);
-            e(TAG, "importIncomingFile: Could not copy file: " + e.getMessage());
-            return;
-        }
-
-        showSnackbar(LENGTH_SHORT, R.string.formatChooser_snackbar_importSuccessful, filename);
-
-        // Now, show the result
-        mFilesManager.setLookForUserFiles(true);
-        CheckBox checkbox = (CheckBox) findViewById(R.id.formatChooser_lookForCustomCheckbox);
-        if (checkbox != null) checkbox.setChecked(true);
-        refreshStylesList();
-        setSelectionAndScroll(filename);
     }
 
     /**
@@ -909,32 +774,6 @@ public class FormatChooserActivity extends AppCompatActivity {
         if (!granted) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                     REQUEST_TO_READ_EXTERNAL_STORAGE);
-        }
-
-        return granted;
-    }
-
-    /**
-     * Requests the <code>WRITE_EXTERNAL_STORAGE</code> permission if it hasn't already been granted.
-     * We do this here, not in {@link FormatXmlFilesManager}, so that {@link DebatingActivity}
-     * doesn't ask for the permission.
-     *
-     * @return true if the permission is already granted, false otherwise.
-     */
-    private boolean requestWritePermission() {
-
-        // WRITE_EXTERNAL_STORAGE started being enforced in API level 19 (KITKAT), so skip this
-        // check if we're before then, to avoid calling a constant that's only existed since API
-        // level 16 (JELLY_BEAN)
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
-            return true;
-
-        boolean granted = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED;
-
-        if (!granted) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    REQUEST_TO_WRITE_EXTERNAL_STORAGE_FOR_IMPORT);
         }
 
         return granted;

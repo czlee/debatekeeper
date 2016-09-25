@@ -17,6 +17,7 @@
 
 package net.czlee.debatekeeper;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -34,6 +35,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
@@ -42,11 +44,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
@@ -87,6 +93,7 @@ import net.czlee.debatekeeper.debatemanager.DebateManager.DebatePhaseTag;
 import org.xml.sax.SAXException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -95,7 +102,6 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-
 
 /**
  * This is the main activity for the Debatekeeper application.  It is the launcher activity,
@@ -161,8 +167,9 @@ public class DebatingActivity extends AppCompatActivity {
     private static final String DIALOG_TAG_FATAL_PROBLEM         = "fatal";
     private static final String DIALOG_TAG_CHANGELOG             = "changelog";
 
-    private static final int    CHOOSE_STYLE_REQUEST           = 0;
-    private static final int    SNACKBAR_DURATION_RESET_DEBATE = 1200;
+    private static final int CHOOSE_STYLE_REQUEST                         = 0;
+    private static final int REQUEST_TO_WRITE_EXTERNAL_STORAGE_FOR_IMPORT = 21;
+    private static final int SNACKBAR_DURATION_RESET_DEBATE               = 1200;
 
     private DebatingTimerService.DebatingTimerServiceBinder mBinder;
     private final BroadcastReceiver mGuiUpdateBroadcastReceiver = new GuiUpdateBroadcastReceiver();
@@ -933,7 +940,6 @@ public class DebatingActivity extends AppCompatActivity {
         case R.id.mainScreen_menuItem_chooseFormat:
             Intent getStyleIntent = new Intent(this, FormatChooserActivity.class);
             getStyleIntent.putExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME, mFormatXmlFileName);
-            getStyleIntent.setAction(FormatChooserActivity.ACTION_CHOOSE_DEBATE_STYLE);
             startActivityForResult(getStyleIntent, CHOOSE_STYLE_REQUEST);
             return true;
         case R.id.mainScreen_menuItem_resetDebate:
@@ -970,6 +976,16 @@ public class DebatingActivity extends AppCompatActivity {
         ringBellsItem.setIcon((mBellsEnabled) ? R.drawable.ic_notifications_active_white_24dp : R.drawable.ic_notifications_off_white_24dp);
 
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_TO_WRITE_EXTERNAL_STORAGE_FOR_IMPORT) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                importIncomingFile();
+            else
+                showSnackbar(Snackbar.LENGTH_LONG, R.string.formatChooser_lookForCustom_errorNoWritePermissionForImport);
+        }
     }
 
     //******************************************************************************************
@@ -1042,13 +1058,15 @@ public class DebatingActivity extends AppCompatActivity {
         //
         // Find the style file name.
         Intent incomingIntent = getIntent();
-        String filename = incomingIntent.getStringExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME);
-        if (filename != null) setXmlFileName(filename); // if there was one, use it
-        else filename = loadXmlFileName(); // otherwise, load the previous setting
-        if (filename == null) { // if there's neither, direct the user to choose one
-            Intent getStyleIntent = new Intent(DebatingActivity.this, FormatChooserActivity.class);
-            getStyleIntent.setAction(FormatChooserActivity.ACTION_CHOOSE_DEBATE_STYLE);
-            startActivityForResult(getStyleIntent, CHOOSE_STYLE_REQUEST);
+        if (Intent.ACTION_VIEW.equals(incomingIntent.getAction()) && requestWritePermission()) {
+            importIncomingFile();
+
+        } else {
+            String filename = loadXmlFileName(); // otherwise, load the previous setting
+            if (filename == null) { // if there's neither, direct the user to choose one
+                Intent getStyleIntent = new Intent(DebatingActivity.this, FormatChooserActivity.class);
+                startActivityForResult(getStyleIntent, CHOOSE_STYLE_REQUEST);
+            }
         }
 
         //
@@ -1465,6 +1483,68 @@ public class DebatingActivity extends AppCompatActivity {
         return backgroundColour;
     }
 
+    @Nullable
+    private String getDestinationFilenameFromUri(Uri uri) {
+        String filename = null;
+        String scheme = uri.getScheme();
+
+        switch (scheme) {
+            case "file":
+                // Just retrieve the file name
+                File file = new File(uri.getPath());
+                String name = file.getName();
+                if (name.length() > 0)
+                    filename = name;
+                break;
+
+            case "content":
+                // Try to find a name for the file
+                Cursor cursor = getContentResolver().query(uri,
+                        new String[] {MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.DATA}, null, null, null);
+                if (cursor == null) {
+                    Log.e(TAG, "getDestinationFilenameFromUri: cursor was null");
+                    return null;
+                }
+                if (!cursor.moveToFirst()) {
+                    Log.e(TAG, "getDestinationFilenameFromUri: failed moving cursor to first row");
+                    cursor.close();
+                    return null;
+                }
+                int dataIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
+                int nameIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
+                Log.i(TAG, "getDestinationFilenameFromUri: data at column " + dataIndex + ", name at column " + nameIndex);
+                if (dataIndex >= 0) {
+                    String path = cursor.getString(dataIndex);
+                    filename = (new File(path)).getName();
+
+                    Log.i(TAG, "getDestinationFilenameFromUri: got from data column, path: " + path + ", name: " + filename);
+                } else if (nameIndex >= 0) {
+                    filename = cursor.getString(nameIndex);
+                    Log.i(TAG, "getDestinationFilenameFromUri: got from name column: " + filename);
+                }
+                else Log.e(TAG, "getDestinationFilenameFromUri: no column for file name available");
+                cursor.close();
+                break;
+
+            default:
+                return null;
+        }
+
+        // If it doesn't end in the .xml extension, make it end in one
+        if (filename != null && !filename.endsWith(".xml")) {
+
+            // Do this by stripping the current extension if there is one...
+            int lastIndex = filename.lastIndexOf(".");
+            if (lastIndex > 0) filename = filename.substring(0, lastIndex);
+
+            // ...and then adding .xml.
+            filename = filename + ".xml";
+
+        }
+
+        return filename;
+    }
+
     /**
      * Goes to the next speech.
      * Does nothing if there is no debate loaded, if the current speech is the last speech, if
@@ -1499,6 +1579,54 @@ public class DebatingActivity extends AppCompatActivity {
         mViewPager.setCurrentItem(mDebateManager.getActivePhaseIndex());
 
         updateGui();
+    }
+
+    private void importIncomingFile() {
+
+        Intent intent = getIntent();
+        if (!Intent.ACTION_VIEW.equals(intent.getAction())) {
+            Log.e(TAG, "importIncomingFile: Intent action was not ACTION_VIEW");
+            return;
+        }
+
+        Log.i(TAG, String.format("importIncomingFile: mime type %s, data %s", intent.getType(), intent.getDataString()));
+
+        Uri uri = intent.getData();
+        InputStream is;
+        try {
+            is = getContentResolver().openInputStream(uri);
+        } catch (FileNotFoundException e) {
+            showSnackbar(Snackbar.LENGTH_LONG, R.string.importDebateFormat_snackbar_error_generic);
+            Log.e(TAG, "importIncomingFile: Could not resolve file" + uri.toString());
+            return;
+        }
+
+        String filename = getDestinationFilenameFromUri(uri);
+        Log.i(TAG, "importIncomingFile: file name is " + filename);
+
+        if (filename == null) {
+            showSnackbar(Snackbar.LENGTH_LONG, R.string.importDebateFormat_snackbar_error_generic);
+            Log.e(TAG, "importIncomingFile: File name was null");
+            return;
+        }
+
+        FormatXmlFilesManager filesManager = new FormatXmlFilesManager(this);
+        filesManager.setLookForUserFiles(true);
+
+        try {
+            filesManager.copy(is, filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showSnackbar(Snackbar.LENGTH_LONG, R.string.importDebateFormat_snackbar_error_generic);
+            Log.e(TAG, "importIncomingFile: Could not copy file: " + e.getMessage());
+            return;
+        }
+
+        showSnackbar(Snackbar.LENGTH_SHORT, R.string.importDebateFormat_snackbar_success, filename);
+
+        // Now, load the debate
+        setXmlFileName(filename);
+        resetDebate();
     }
 
     private void initialiseDebate() {
@@ -1637,6 +1765,32 @@ public class DebatingActivity extends AppCompatActivity {
             button.setOnClickListener(spec.onClickListener);
             button.setVisibility(View.VISIBLE);
         }
+    }
+
+    /**
+     * Requests the <code>WRITE_EXTERNAL_STORAGE</code> permission if it hasn't already been granted.
+     * We do this here, not in {@link FormatXmlFilesManager}, so that {@link DebatingActivity}
+     * doesn't ask for the permission.
+     *
+     * @return true if the permission is already granted, false otherwise.
+     */
+    private boolean requestWritePermission() {
+
+        // WRITE_EXTERNAL_STORAGE started being enforced in API level 19 (KITKAT), so skip this
+        // check if we're before then, to avoid calling a constant that's only existed since API
+        // level 16 (JELLY_BEAN)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
+            return true;
+
+        boolean granted = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED;
+
+        if (!granted) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_TO_WRITE_EXTERNAL_STORAGE_FOR_IMPORT);
+        }
+
+        return granted;
     }
 
     /**
