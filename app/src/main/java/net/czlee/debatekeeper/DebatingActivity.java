@@ -117,10 +117,11 @@ public class DebatingActivity extends AppCompatActivity {
 
     private static final String TAG = "DebatingActivity";
 
+    private DebateManager    mDebateManager;
+    private Bundle           mLastStateBundle;
     private View             mDebateTimerDisplay;
     private boolean          mIsEditingTime = false;
     private final Semaphore  mFlashScreenSemaphore = new Semaphore(1, true);
-    private static final int COLOUR_TRANSPARENT = 0;
 
     private EnableableViewPager mViewPager;
     private boolean             mChangingPages;
@@ -138,9 +139,6 @@ public class DebatingActivity extends AppCompatActivity {
     private final ControlButtonSpec CONTROL_BUTTON_RESUME_TIMER = new ControlButtonSpec(R.string.mainScreen_controlButton_resumeTimer_text, new ControlButtonStartTimerOnClickListener());
     private final ControlButtonSpec CONTROL_BUTTON_NEXT_PHASE   = new ControlButtonSpec(R.string.mainScreen_controlButton_nextPhase_text,   new ControlButtonNextDebatePhaseOnClickListener());
 
-    private DebateManager         mDebateManager;
-    private Bundle                mLastStateBundle;
-
     private String               mFormatXmlFileName      = null;
     private CountDirection       mCountDirection         = CountDirection.COUNT_UP;
     private CountDirection       mPrepTimeCountDirection = CountDirection.COUNT_DOWN;
@@ -150,7 +148,7 @@ public class DebatingActivity extends AppCompatActivity {
     private boolean              mSpeechKeepScreenOn;
     private boolean              mPrepTimeKeepScreenOn;
 
-    private boolean              mDialogBlocking          = false;
+    private boolean mDialogBlocking = false;
     private ArrayList<Pair<String, QueueableDialogFragment>> mDialogsInWaiting = new ArrayList<>();
 
     private static final String BUNDLE_KEY_DEBATE_MANAGER               = "dm";
@@ -176,11 +174,11 @@ public class DebatingActivity extends AppCompatActivity {
     private static final int CHOOSE_STYLE_REQUEST                         = 0;
     private static final int REQUEST_TO_WRITE_EXTERNAL_STORAGE_FOR_IMPORT = 21;
     private static final int SNACKBAR_DURATION_RESET_DEBATE               = 1200;
+    private static final int COLOUR_TRANSPARENT                           = 0;
 
     private DebatingTimerService.DebatingTimerServiceBinder mBinder;
     private final BroadcastReceiver mGuiUpdateBroadcastReceiver = new GuiUpdateBroadcastReceiver();
     private final ServiceConnection mConnection = new DebatingTimerServiceConnection();
-    private NfcAdapter mNfcAdapter = null;
 
     //******************************************************************************************
     // Public classes
@@ -210,11 +208,11 @@ public class DebatingActivity extends AppCompatActivity {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final Activity activity = getActivity();
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             View content = activity.getLayoutInflater().inflate(R.layout.changelog_dialog, null);
             final CheckBox doNotShowAgain = (CheckBox) content.findViewById(R.id.changelogDialog_dontShow);
             final Resources res = getResources();
 
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setTitle(res.getString(R.string.changelogDialog_title, BuildConfig.VERSION_NAME))
                     .setView(content)
                     .setCancelable(true)
@@ -258,12 +256,8 @@ public class DebatingActivity extends AppCompatActivity {
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
             StringBuilder errorMessage = new StringBuilder(getString(R.string.errorsinXmlFileDialog_message_prefix));
-
             Bundle args = getArguments();
-
             ArrayList<String> errorLog = args.getStringArrayList(DIALOG_ARGUMENT_XML_ERROR_LOG);
 
             if (errorLog != null) {
@@ -275,6 +269,7 @@ public class DebatingActivity extends AppCompatActivity {
 
             errorMessage.append(getString(R.string.dialogs_fileName_suffix, args.getString(DIALOG_ARGUMENT_FILE_NAME)));
 
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(R.string.errorsinXmlFileDialog_title)
                    .setMessage(errorMessage)
                    .setCancelable(true)
@@ -305,13 +300,13 @@ public class DebatingActivity extends AppCompatActivity {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final FragmentActivity activity = getActivity();
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             Bundle args = getArguments();
 
             StringBuilder errorMessage = new StringBuilder(args.getString(DIALOG_ARGUMENT_FATAL_MESSAGE));
             errorMessage.append(getString(R.string.fatalProblemWithXmlFileDialog_message_suffix));
             errorMessage.append(getString(R.string.dialogs_fileName_suffix, args.getString(DIALOG_ARGUMENT_FILE_NAME)));
 
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setTitle(R.string.fatalProblemWithXmlFileDialog_title)
                    .setMessage(errorMessage)
                    .setCancelable(true)
@@ -416,7 +411,6 @@ public class DebatingActivity extends AppCompatActivity {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final DebatingActivity activity = (DebatingActivity) getActivity();
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             Bundle args = getArguments();
 
             String schemaUsed      = args.getString(DIALOG_ARGUMENT_SCHEMA_USED);
@@ -430,9 +424,9 @@ public class DebatingActivity extends AppCompatActivity {
             }
 
             StringBuilder message = new StringBuilder(getString(R.string.schemaTooNewDialog_message, schemaUsed, schemaSupported, appVersion));
-
             message.append(getString(R.string.dialogs_fileName_suffix, args.getString(DIALOG_ARGUMENT_FILE_NAME)));
 
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setTitle(R.string.schemaTooNewDialog_title)
                    .setMessage(message)
                    .setCancelable(false)
@@ -472,20 +466,11 @@ public class DebatingActivity extends AppCompatActivity {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final DebatingActivity activity = (DebatingActivity) getActivity();
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             Bundle args = getArguments();
-
-            String appVersion;
-            try {
-                appVersion = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0).versionName;
-            } catch (NameNotFoundException e) {
-                appVersion = "unknown";
-            }
-
             StringBuilder message = new StringBuilder(getString(R.string.schemaOutdatedDialog_message));
-
             message.append(getString(R.string.dialogs_fileName_suffix, args.getString(DIALOG_ARGUMENT_FILE_NAME)));
 
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setTitle(R.string.schemaOutdatedDialog_title)
                     .setMessage(message)
                     .setCancelable(false)
@@ -791,7 +776,7 @@ public class DebatingActivity extends AppCompatActivity {
          * Before calling this method, <code>DebatingActivity.resetBackgroundColoursToTransparent()</code>
          * should be called to reset all of the other background colours to transparent.
          */
-        public void refreshBackgroundColours() {
+        void refreshBackgroundColours() {
             if (mDebateManager == null) return;
             for (Entry<DebatePhaseTag, View> entry : mViewsMap.entrySet()) {
                 int phaseIndex = mDebateManager.getPhaseIndexForTag(entry.getKey());
@@ -850,7 +835,8 @@ public class DebatingActivity extends AppCompatActivity {
                     updateDebateTimerDisplayColours(mDebateTimerDisplay, textColour, backgroundColour);
 
                     // Set the background colour of the root view to be black again.
-                    findViewById(R.id.mainScreen_rootView).setBackgroundColor(resources.getColor(android.R.color.black));
+                    View rootView = findViewById(R.id.mainScreen_rootView);
+                    if (rootView != null) rootView.setBackgroundColor(resources.getColor(android.R.color.black));
                 }
             });
         }
@@ -875,11 +861,12 @@ public class DebatingActivity extends AppCompatActivity {
 
                     // So we invert the text colour and set all background colours to transparent.
                     // Everything will be restored by flashScreenOff().
-                    updateDebateTimerDisplayColours(mDebateTimerDisplay, invertedTextColour, COLOUR_TRANSPARENT);;
+                    updateDebateTimerDisplayColours(mDebateTimerDisplay, invertedTextColour, COLOUR_TRANSPARENT);
 
                     // Having completed preparations, set the background colour of the root view to
                     // flash the screen.
-                    findViewById(R.id.mainScreen_rootView).setBackgroundColor(colour);
+                    View rootView = findViewById(R.id.mainScreen_rootView);
+                    if (rootView != null) rootView.setBackgroundColor(colour);
                 }
             });
         }
@@ -908,11 +895,11 @@ public class DebatingActivity extends AppCompatActivity {
 
         private static final long serialVersionUID = -1774973645180296278L;
 
-        public FatalXmlError(String detailMessage) {
+        FatalXmlError(String detailMessage) {
             super(detailMessage);
         }
 
-        public FatalXmlError(String detailMessage, Throwable throwable) {
+        FatalXmlError(String detailMessage, Throwable throwable) {
             super(detailMessage, throwable);
         }
     }
@@ -1118,9 +1105,9 @@ public class DebatingActivity extends AppCompatActivity {
         // Configure NFC
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC) &&
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-            if (mNfcAdapter != null)
-                mNfcAdapter.setBeamPushUrisCallback(new BeamFileUriCallback(), this);
+            NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+            if (nfcAdapter != null)
+                nfcAdapter.setBeamPushUrisCallback(new BeamFileUriCallback(), this);
         }
 
         //

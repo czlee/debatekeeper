@@ -46,22 +46,22 @@ import java.util.HashSet;
  * @author Chuan-Zheng Lee
  * @since  2012-06-27
  */
-public class FormatXmlFilesManager {
+class FormatXmlFilesManager {
 
     private final AssetManager mAssets;
     private final SharedPreferences mPrefs;
-    private static final String TAG = "FormatXmlFilesManager";
-    private static final String XML_FILE_ROOT_DIRECTORY_NAME = "debatekeeper";
-    private static final String ASSETS_PATH                  = "formats";
+    private static final String TAG                                = "FormatXmlFilesManager";
+    private static final String XML_FILE_ROOT_DIRECTORY_NAME       = "debatekeeper";
+    private static final String ASSETS_PATH                        = "formats";
     private static final String PREFERENCE_LOOK_FOR_CUSTOM_FORMATS = "lookForCustom";
 
-    public static final int LOCATION_ASSETS       = 0;
-    public static final int LOCATION_EXTERNAL_STORAGE = 1;
-    public static final int LOCATION_NOT_FOUND    = -1;
+    static final int LOCATION_ASSETS           = 0;
+    static final int LOCATION_EXTERNAL_STORAGE = 1;
+    static final int LOCATION_NOT_FOUND       = -1;
 
     private boolean mLookForUserFiles = false;
 
-    public FormatXmlFilesManager(Context context) {
+    FormatXmlFilesManager(Context context) {
         mAssets = context.getAssets();
 
         // initialise with the user files preference
@@ -180,7 +180,7 @@ public class FormatXmlFilesManager {
      * @param filename the name of the file
      * @return a LOCATION_* integer representing the location of the file
      */
-    public int getLocation(@NonNull String filename) {
+    int getLocation(@NonNull String filename) {
         if (mLookForUserFiles) {
             InputStream userFileInputStream = openFromExternalStorage(filename);
             if (userFileInputStream != null)
@@ -203,7 +203,7 @@ public class FormatXmlFilesManager {
     /**
      * @return whether this manager is set to look for user files.
      */
-    public boolean isLookingForUserFiles() {
+    boolean isLookingForUserFiles() {
         return mLookForUserFiles;
     }
 
@@ -212,7 +212,7 @@ public class FormatXmlFilesManager {
      * This method also saves the setting to preferences.
      * @param lookForUserFiles whether to look for user files
      */
-    public void setLookForUserFiles(boolean lookForUserFiles) {
+    void setLookForUserFiles(boolean lookForUserFiles) {
         this.mLookForUserFiles = lookForUserFiles;
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(PREFERENCE_LOOK_FOR_CUSTOM_FORMATS, lookForUserFiles);

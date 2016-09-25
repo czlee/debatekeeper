@@ -18,7 +18,6 @@
 package net.czlee.debatekeeper.debateformat;
 
 import android.content.res.Resources;
-import android.text.format.DateUtils;
 
 import net.czlee.debatekeeper.R;
 
@@ -37,21 +36,21 @@ import org.w3c.dom.NodeList;
  */
 public class XmlUtilities {
 
-    Resources mResources;
+    private Resources mResources;
 
-    public XmlUtilities(Resources resources) {
+    XmlUtilities(Resources resources) {
         mResources = resources;
     }
 
     //******************************************************************************************
     // Public classes
     //******************************************************************************************
-    public static class XmlInvalidValueException extends Exception {
+    static class XmlInvalidValueException extends Exception {
 
         private static final long serialVersionUID = 6918559345445076788L;
         private final String value;
 
-        public XmlInvalidValueException(String value) {
+        XmlInvalidValueException(String value) {
             super();
             this.value = value;
         }
@@ -66,7 +65,7 @@ public class XmlUtilities {
 
         private static final long serialVersionUID = -5240666878173998127L;
 
-        public IllegalSchemaVersionException(String detailMessage) {
+        IllegalSchemaVersionException(String detailMessage) {
             super(detailMessage);
         }
 
@@ -82,7 +81,7 @@ public class XmlUtilities {
      * @param tagNameResId a resource ID referring to a string
      * @return the {@link Element} if found, or <code>null</code> if no such element is found
      */
-    public Element findElement(Element element, int tagNameResId) {
+    Element findElement(Element element, int tagNameResId) {
         String elemName = getString(tagNameResId);
         NodeList candidates = element.getElementsByTagName(elemName);
         return (Element) candidates.item(0);
@@ -95,7 +94,7 @@ public class XmlUtilities {
      * @return the String if found, or <code>null</code> if no such element is found (if multiple
      * elements are found it just returns the text of the first)
      */
-    public String findElementText(Element element, int tagNameResId) {
+    String findElementText(Element element, int tagNameResId) {
         element = findElement(element, tagNameResId);
         if (element == null) return null;
         else return element.getTextContent();
@@ -107,7 +106,7 @@ public class XmlUtilities {
      * @param tagNameResId a resource ID referring to a string
      * @return a {@link NodeList}
      */
-    public NodeList findAllElements(Element element, int tagNameResId) {
+    NodeList findAllElements(Element element, int tagNameResId) {
         String elemName = getString(tagNameResId);
         return element.getElementsByTagName(elemName);
     }
@@ -118,7 +117,7 @@ public class XmlUtilities {
      * @param attrNameResId a resource ID referring to a string
      * @return a string, or <code>null</code> if the attribute does not have a specified value
      */
-    public String findAttributeText(Element element, int attrNameResId) {
+    String findAttributeText(Element element, int attrNameResId) {
         String attrName = getString(attrNameResId);
         if (!element.hasAttribute(attrName)) return null;
         else return element.getAttribute(attrName);
@@ -132,7 +131,7 @@ public class XmlUtilities {
      * @return a Long, or the <code>null</code> if the attribute does not have a specified value
      * @throws XmlInvalidValueException if the attribute text cannot be interpreted as a time
      */
-    public Long findAttributeAsTime(Element element, int attrNameResId) throws XmlInvalidValueException {
+    Long findAttributeAsTime(Element element, int attrNameResId) throws XmlInvalidValueException {
         String text = findAttributeText(element, attrNameResId);
         if (text == null) return null;
         long seconds;
@@ -152,7 +151,7 @@ public class XmlUtilities {
      * @return a Long, or the <code>null</code> if the attribute does not have a specified value
      * @throws XmlInvalidValueException if the attribute text cannot be interpreted as an integer
      */
-    public Integer findAttributeAsInteger(Element element, int attrNameResId) throws XmlInvalidValueException {
+    Integer findAttributeAsInteger(Element element, int attrNameResId) throws XmlInvalidValueException {
         String text = findAttributeText(element, attrNameResId);
         if (text == null) return null;
         try {
@@ -171,7 +170,7 @@ public class XmlUtilities {
      * "false" or isn't specified
      *
      */
-    public boolean isAttributeTrue(Element element, int attrNameResId) throws XmlInvalidValueException {
+    boolean isAttributeTrue(Element element, int attrNameResId) throws XmlInvalidValueException {
         String text = findAttributeText(element, attrNameResId);
         if (text == null) return false;
         if (text.equals(getString(R.string.xml2attrValue_common_true))) return true;
@@ -185,7 +184,7 @@ public class XmlUtilities {
      * @return the total number of seconds (minutes + seconds * 60)
      * @throws NumberFormatException if the given value cannot be interpreted as a time
      */
-    public static long timeStr2Secs(String s) throws NumberFormatException {
+    static long timeStr2Secs(String s) throws NumberFormatException {
         long seconds = 0;
         String parts[] = s.split(":", 2);
         switch (parts.length){
@@ -204,8 +203,8 @@ public class XmlUtilities {
     }
 
     /**
-     * @param a
-     * @param b
+     * @param a a schema version string
+     * @param b a schema version string
      * @return 1 if a > b, 0 if a == b, 1 if a < b
      * @throws IllegalSchemaVersionException if the version could not be interpreted
      */
@@ -221,10 +220,10 @@ public class XmlUtilities {
     }
 
     /**
-     * @param version
+     * @param version a schema version string
      * @return <code>true</code> if the string is a valid version, <code>false</code> otherwise
      */
-    public static boolean isValidSchemaVersion(String version) {
+    static boolean isValidSchemaVersion(String version) {
         try {
             versionToIntArray(version);
             return true;
@@ -241,7 +240,7 @@ public class XmlUtilities {
     }
 
     /**
-     * @param version
+     * @param version a schema version string
      * @return an integer array
      * @throws IllegalSchemaVersionException if the version could not be interpreted
      */
