@@ -29,7 +29,6 @@
 
     <string name="formatChooser_lookForCustomCheckbox_text">Look for custom formats (<a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">Learn more</a>)</string>
     <string name="formatChooser_lookForCustom_errorNoReadPermission">You must allow Debatekeeper to read files on your device for custom formats to be read.</string>
-    <string name="formatChooser_lookForCustom_errorNoWritePermissionForImport">You must allow Debatekeeper to write files on your device for a format to be imported.</string>
     <string name="formatChooser_share_error_noFileSelected">No file selected.</string>
     <string name="formatChooser_share_error_builtInFile">You can\'t share built-in formats.</string>
     <string name="formatChooser_share_error_notFound">File %1$s could not be found.</string>

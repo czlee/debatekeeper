@@ -39,8 +39,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.util.Xml;
-import android.util.Xml.Encoding;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -57,12 +55,11 @@ import android.widget.TextView;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfo;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfoExtractorForSchema1;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfoForSchema2;
+import net.czlee.debatekeeper.debateformat.DebateFormatStyleNameExtractor;
 import net.czlee.debatekeeper.debateformat.XmlUtilities;
 import net.czlee.debatekeeper.debateformat.XmlUtilities.IllegalSchemaVersionException;
 
-import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,7 +69,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 
 import static android.support.design.widget.Snackbar.LENGTH_SHORT;
-import static android.util.Log.e;
 
 /**
  * This Activity displays a list of formats for the user to choose from. It
@@ -93,13 +89,10 @@ public class FormatChooserActivity extends AppCompatActivity {
     private FormatXmlFilesManager mFilesManager;
     private ListView mStylesListView;
 
-    private String   mCurrentStyleName = null;
     private boolean  mInitialLookForCustomFormats = false;
 
     private DebateFormatEntryArrayAdapter mStylesArrayAdapter;
     private final ArrayList<DebateFormatListEntry> mStylesList = new ArrayList<>();
-
-    private String DEBATING_TIMER_URI;
 
     private static final int REQUEST_TO_READ_EXTERNAL_STORAGE = 17;
     private static final String DIALOG_ARGUMENT_FILE_NAME = "fn";
@@ -366,10 +359,6 @@ public class FormatChooserActivity extends AppCompatActivity {
     // Private classes
     // ******************************************************************************************
 
-    private class AllInformationFoundException extends SAXException {
-        private static final long serialVersionUID = 3195935815375118010L;
-    }
-
     private class DetailsButtonOnClickListener implements OnClickListener {
 
         private final String filename;
@@ -384,60 +373,6 @@ public class FormatChooserActivity extends AppCompatActivity {
             fragment.show(getSupportFragmentManager(), DIALOG_TAG_MORE_DETAILS);
         }
 
-    }
-
-    /**
-     * This class just looks for the string inside &lt;debateformat name="...">
-     * and saves it to <code>mCurrentStyleName</code>.
-     */
-    private class GetDebateFormatNameXmlContentHandler extends DefaultHandler {
-
-        private StringBuilder mNameBuffer = null;
-
-        @Override
-        public void characters(char[] ch, int start, int length) throws SAXException {
-            String str = new String(ch, start, length);
-            if (mNameBuffer == null) return;
-            mNameBuffer = mNameBuffer.append(str);
-        }
-
-        @Override
-        public void endElement(String uri, String localName, String qName) throws SAXException {
-            if (localName.equals(getString(R.string.xml2elemName_name))) {
-                mCurrentStyleName = mNameBuffer.toString();
-                throw new AllInformationFoundException();
-                // We don't need to parse any more once we finish getting the style name
-            }
-        }
-
-        @Override
-        public void startDocument() throws SAXException {
-            // initialise
-            mCurrentStyleName = null;
-        }
-
-        @Override
-        public void startElement(String uri, String localName, String qName,
-                Attributes atts) throws SAXException {
-
-            if (!uri.equals(DEBATING_TIMER_URI))
-                return;
-
-            // To keep things light, we just use the attribute of the root element
-            // (schema 1) or the first <name> element (schema 2), whichever we find
-            // first.  We don't actually check the schema version, nor do we check
-            // that the <name> element is actually the right one.
-
-            if (localName.equals(getString(R.string.xml1elemName_root))) {
-                mCurrentStyleName = atts.getValue(DEBATING_TIMER_URI,
-                        getString(R.string.xml1attrName_root_name));
-                throw new AllInformationFoundException();
-                // We don't need to parse any more once we find the style name
-            }
-
-            if (localName.equals(getString(R.string.xml2elemName_name)))
-                mNameBuffer = new StringBuilder();
-        }
     }
 
     private class LookForCustomCheckboxOnClickListener implements OnClickListener {
@@ -539,8 +474,6 @@ public class FormatChooserActivity extends AppCompatActivity {
         setContentView(R.layout.activity_format_chooser);
         setSupportActionBar((Toolbar) findViewById(R.id.formatChooser_toolbar));
 
-        DEBATING_TIMER_URI = getString(R.string.xml_uri);
-
         mFilesManager = new FormatXmlFilesManager(this);
         mStylesArrayAdapter = new DebateFormatEntryArrayAdapter(this, mStylesList,
                 new FormatChooserActivityBinder());
@@ -596,7 +529,7 @@ public class FormatChooserActivity extends AppCompatActivity {
 
         } else if (selectedFilename == null) {
             setResult(RESULT_ERROR);
-            e(TAG, "Returning error, no entry found");
+            Log.e(TAG, "Returning error, no entry found");
 
         } else {
             Intent intent = new Intent();
@@ -684,6 +617,7 @@ public class FormatChooserActivity extends AppCompatActivity {
      */
     private void populateStylesList() {
         String[] fileList;
+        DebateFormatStyleNameExtractor nameExtractor = new DebateFormatStyleNameExtractor(this);
 
         try {
              fileList = mFilesManager.list();
@@ -702,23 +636,25 @@ public class FormatChooserActivity extends AppCompatActivity {
             try {
                 is = mFilesManager.open(filename);
             } catch (IOException e) {
-                e(TAG, "Couldn't find file: " + filename);
+                Log.e(TAG, "populateStylesList: Couldn't find file " + filename);
+                continue;
+            }
+
+            String styleName;
+            try {
+                styleName = nameExtractor.getStyleName(is);
+            } catch (SAXException|IOException e) {
                 continue;
             }
 
             try {
-                Xml.parse(is, Encoding.UTF_8,
-                        new GetDebateFormatNameXmlContentHandler());
-
-            } catch (AllInformationFoundException e) {
-                // This exception means the XML parsing was successful - we just
-                // use it to stop the parser.
-                if (mCurrentStyleName != null)
-                    mStylesList.add(new DebateFormatListEntry(filename, mCurrentStyleName));
-
-            } catch (SAXException|IOException e) {
-                mCurrentStyleName = null;
+                is.close();
+            } catch (IOException e) {
+                Log.e(TAG, "populateStylesList: error closing file " + filename);
             }
+
+            if (styleName != null)
+                mStylesList.add(new DebateFormatListEntry(filename, styleName));
 
         }
 
@@ -797,7 +733,6 @@ public class FormatChooserActivity extends AppCompatActivity {
      */
     private void shareSelection() {
         String filename = getSelectedFilename();
-        View coordinator = findViewById(R.id.formatChooser_coordinator);
 
         // Check for error conditions
         if (filename == null) {
@@ -814,14 +749,14 @@ public class FormatChooserActivity extends AppCompatActivity {
                 return;
             case FormatXmlFilesManager.LOCATION_NOT_FOUND:
             default:
-                e(TAG, String.format("shareSelection: getLocation returned result code %d", location));
+                Log.e(TAG, String.format("shareSelection: getLocation returned result code %d", location));
                 showSnackbar(LENGTH_SHORT, R.string.formatChooser_share_error_notFound, filename);
                 return;
         }
 
         File file = mFilesManager.getFileFromExternalStorage(filename);
         if (file == null) {
-            e(TAG, String.format("shareSelection: getFileFromExternalStorage returned null on file %s", filename));
+            Log.e(TAG, String.format("shareSelection: getFileFromExternalStorage returned null on file %s", filename));
             showSnackbar(LENGTH_SHORT, R.string.formatChooser_share_error_generic);
             return;
         }
@@ -830,7 +765,7 @@ public class FormatChooserActivity extends AppCompatActivity {
         try {
             fileUri = FileProvider.getUriForFile(this, FILES_AUTHORITY, file);
         } catch (IllegalArgumentException e) {
-            e(TAG, "shareSelection: tried to get file from outside allowable paths");
+            Log.e(TAG, "shareSelection: tried to get file from outside allowable paths");
             showSnackbar(LENGTH_SHORT, R.string.formatChooser_share_error_generic);
             return;
         }

@@ -41,25 +41,8 @@ import java.util.HashSet;
  * All debate format XML files are accessed through this class.  You only need a file name to be
  * able to retrieve a file.
  *
- * NOTE: Please DO NOT WRITE to the directory /debatekeeper/.  That is in the user's root space,
- * which we should try to avoid polluting.  If the user puts files there, we will read them.
- * But we will not put files there ourselves.
- *
- * If we do want to write files there in future, we should either:
- *  (a) ask the user, "Do you want to create the directory /debatekeeper?", or
- *  (b) write files into /Android/data/<package_name>/files/ (preferred),
- * in accordance with Android conventions.
- *
- * We should keep the /debatekeeper functionality present in all future versions, both (a) for
- * backwards compatibility and (b) more importantly, so that uninstalling the app doesn't delete
- * those user files that the user himself put there!
- *
  * FormatXmlFilesManager also manages the "look for custom formats" preference.
  *
- * @author Chuan-Zheng Lee
- *
- */
-/**
  * @author Chuan-Zheng Lee
  * @since  2012-06-27
  */
@@ -85,6 +68,7 @@ public class FormatXmlFilesManager {
         mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         mLookForUserFiles = mPrefs.getBoolean(PREFERENCE_LOOK_FOR_CUSTOM_FORMATS, false);
     }
+
 
     //******************************************************************************************
     // Public methods

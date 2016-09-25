@@ -83,6 +83,7 @@ import net.czlee.debatekeeper.debateformat.DebateFormat;
 import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml;
 import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXmlForSchema1;
 import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXmlForSchema2;
+import net.czlee.debatekeeper.debateformat.DebateFormatStyleNameExtractor;
 import net.czlee.debatekeeper.debateformat.DebatePhaseFormat;
 import net.czlee.debatekeeper.debateformat.PeriodInfo;
 import net.czlee.debatekeeper.debateformat.PrepTimeFormat;
@@ -152,20 +153,25 @@ public class DebatingActivity extends AppCompatActivity {
     private boolean              mDialogBlocking          = false;
     private ArrayList<Pair<String, QueueableDialogFragment>> mDialogsInWaiting = new ArrayList<>();
 
-    private static final String BUNDLE_KEY_DEBATE_MANAGER        = "dm";
-    private static final String BUNDLE_KEY_XML_FILE_NAME         = "xmlfn";
-    private static final String PREFERENCE_XML_FILE_NAME         = "xmlfn";
-    private static final String LAST_CHANGELOG_VERSION_SHOWN     = "lastChangeLog";
-    private static final String DIALOG_ARGUMENT_FATAL_MESSAGE    = "fm";
-    private static final String DIALOG_ARGUMENT_XML_ERROR_LOG    = "xel";
-    private static final String DIALOG_ARGUMENT_SCHEMA_USED      = "used";
-    private static final String DIALOG_ARGUMENT_SCHEMA_SUPPORTED = "supp";
-    private static final String DIALOG_ARGUMENT_FILE_NAME        = "fn";
-    private static final String DIALOG_TAG_SCHEMA_TOO_NEW        = "toonew";
-    private static final String DIALOG_TAG_SCHEMA_OUTDATED       = "outdated";
-    private static final String DIALOG_TAG_ERRORS_WITH_XML       = "errors";
-    private static final String DIALOG_TAG_FATAL_PROBLEM         = "fatal";
-    private static final String DIALOG_TAG_CHANGELOG             = "changelog";
+    private static final String BUNDLE_KEY_DEBATE_MANAGER               = "dm";
+    private static final String BUNDLE_KEY_XML_FILE_NAME                = "xmlfn";
+    private static final String PREFERENCE_XML_FILE_NAME                = "xmlfn";
+    private static final String LAST_CHANGELOG_VERSION_SHOWN            = "lastChangeLog";
+    private static final String DIALOG_ARGUMENT_FATAL_MESSAGE           = "fm";
+    private static final String DIALOG_ARGUMENT_XML_ERROR_LOG           = "xel";
+    private static final String DIALOG_ARGUMENT_SCHEMA_USED             = "used";
+    private static final String DIALOG_ARGUMENT_SCHEMA_SUPPORTED        = "supp";
+    private static final String DIALOG_ARGUMENT_FILE_NAME               = "fn";
+    private static final String DIALOG_ARGUMENT_NEED_TO_ASK_PERMISSIONS = "perm";
+    private static final String DIALOG_ARGUMENT_INCOMING_STYLE_NAME     = "isn";
+    private static final String DIALOG_ARGUMENT_EXISTING_STYLE_NAME     = "esn";
+    private static final String DIALOG_ARGUMENT_EXISTING_FILE_LOCATION  = "efl";
+    private static final String DIALOG_TAG_SCHEMA_TOO_NEW               = "toonew";
+    private static final String DIALOG_TAG_SCHEMA_OUTDATED              = "outdated";
+    private static final String DIALOG_TAG_ERRORS_WITH_XML              = "errors";
+    private static final String DIALOG_TAG_FATAL_PROBLEM                = "fatal";
+    private static final String DIALOG_TAG_CHANGELOG                    = "changelog";
+    private static final String DIALOG_TAG_IMPORT_CONFIRM               = "import";
 
     private static final int CHOOSE_STYLE_REQUEST                         = 0;
     private static final int REQUEST_TO_WRITE_EXTERNAL_STORAGE_FOR_IMPORT = 21;
@@ -326,6 +332,68 @@ public class DebatingActivity extends AppCompatActivity {
                             activity.finish();
                         }
                     });
+
+            return builder.create();
+        }
+
+    }
+
+    public static class DialogImportFileConfirmFragment extends QueueableDialogFragment {
+
+        static DialogImportFileConfirmFragment newInstance(boolean needToAskPermissions, @NonNull String incomingFilename,
+                                                           @NonNull String incomingStyleName, int existingFileLocation, @Nullable String existingStyleName) {
+            DialogImportFileConfirmFragment fragment = new DialogImportFileConfirmFragment();
+            Bundle args = new Bundle();
+            args.putBoolean(DIALOG_ARGUMENT_NEED_TO_ASK_PERMISSIONS, needToAskPermissions);
+            args.putString(DIALOG_ARGUMENT_FILE_NAME, incomingFilename);
+            args.putString(DIALOG_ARGUMENT_INCOMING_STYLE_NAME, incomingStyleName);
+            args.putInt(DIALOG_ARGUMENT_EXISTING_FILE_LOCATION, existingFileLocation);
+            args.putString(DIALOG_ARGUMENT_EXISTING_STYLE_NAME, existingStyleName);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final DebatingActivity activity = (DebatingActivity) getActivity();
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            Bundle args = getArguments();
+
+            StringBuilder message = new StringBuilder(getString(R.string.importDebateFormat_dialog_message_question,
+                    args.getString(DIALOG_ARGUMENT_FILE_NAME), args.getString(DIALOG_ARGUMENT_INCOMING_STYLE_NAME)));
+
+            switch (args.getInt(DIALOG_ARGUMENT_EXISTING_FILE_LOCATION)) {
+                case FormatXmlFilesManager.LOCATION_ASSETS:
+                    message.append("\n\n");
+                    message.append(getString(R.string.importDebateFormat_dialog_addendum_overrideBuiltIn, args.getString(DIALOG_ARGUMENT_EXISTING_STYLE_NAME, "<unknown>")));
+                    break;
+                case FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE:
+                    message.append("\n\n");
+                    message.append(getString(R.string.importDebateFormat_dialog_addendum_overwriteExisting, args.getString(DIALOG_ARGUMENT_EXISTING_STYLE_NAME, "<unknown>")));
+            }
+
+            if (args.getBoolean(DIALOG_ARGUMENT_NEED_TO_ASK_PERMISSIONS)) {
+                message.append("\n\n");
+                message.append(getString(R.string.importDebateFormat_dialog_addendum_permissions));
+            }
+
+            builder.setTitle(R.string.importDebateFormat_dialog_title)
+                   .setMessage(message)
+                   .setCancelable(false)
+                   .setPositiveButton(R.string.importDebateFormat_dialog_button_yes, new DialogInterface.OnClickListener() {
+                       @Override
+                       public void onClick(DialogInterface dialog, int which) {
+                           if (activity.requestWritePermission()) activity.importIncomingFile();
+                           dialog.dismiss();
+                       }
+                   })
+                   .setNegativeButton(R.string.importDebateFormat_dialog_button_no, new DialogInterface.OnClickListener() {
+                       @Override
+                       public void onClick(DialogInterface dialog, int which) {
+                           dialog.dismiss();
+                       }
+                   });
 
             return builder.create();
         }
@@ -866,7 +934,7 @@ public class DebatingActivity extends AppCompatActivity {
                 Log.i(TAG, "createBeamUris: Sharing URI " + fileUri.toString());
                 return new Uri[]{fileUri};
             } else {
-                showSnackbar(Snackbar.LENGTH_LONG, R.string.mainScreen_snackbar_error_generic);
+                showSnackbar(Snackbar.LENGTH_LONG, R.string.mainScreen_snackbar_beam_error_generic);
                 Log.e(TAG, "createBeamUris: file URI was null");
                 return new Uri[0];
             }
@@ -984,7 +1052,7 @@ public class DebatingActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 importIncomingFile();
             else
-                showSnackbar(Snackbar.LENGTH_LONG, R.string.formatChooser_lookForCustom_errorNoWritePermissionForImport);
+                showSnackbar(Snackbar.LENGTH_LONG, R.string.importDebateFormat_snackbar_error_noWritePermission);
         }
     }
 
@@ -1057,16 +1125,16 @@ public class DebatingActivity extends AppCompatActivity {
 
         //
         // Find the style file name.
-        Intent incomingIntent = getIntent();
-        if (Intent.ACTION_VIEW.equals(incomingIntent.getAction()) && requestWritePermission()) {
-            importIncomingFile();
+        String filename = loadXmlFileName();
 
-        } else {
-            String filename = loadXmlFileName(); // otherwise, load the previous setting
-            if (filename == null) { // if there's neither, direct the user to choose one
-                Intent getStyleIntent = new Intent(DebatingActivity.this, FormatChooserActivity.class);
-                startActivityForResult(getStyleIntent, CHOOSE_STYLE_REQUEST);
-            }
+        // If there's an incoming style, ask the user whether they want to import it.
+        if (Intent.ACTION_VIEW.equals(getIntent().getAction())) {
+            showDialogToConfirmImport();
+
+        // Otherwise, if there's no style loaded, direct the user to choose one
+        } else if (filename == null) {
+            Intent getStyleIntent = new Intent(DebatingActivity.this, FormatChooserActivity.class);
+            startActivityForResult(getStyleIntent, CHOOSE_STYLE_REQUEST);
         }
 
         //
@@ -1483,8 +1551,13 @@ public class DebatingActivity extends AppCompatActivity {
         return backgroundColour;
     }
 
+    /**
+     * Figures out what the file name should be, from the given URI.
+     * @param uri the URI
+     * @return a file name, or null if it failed to discern the file name.
+     */
     @Nullable
-    private String getDestinationFilenameFromUri(Uri uri) {
+    private String getFilenameFromUri(Uri uri) {
         String filename = null;
         String scheme = uri.getScheme();
 
@@ -1515,14 +1588,18 @@ public class DebatingActivity extends AppCompatActivity {
                 Log.i(TAG, "getDestinationFilenameFromUri: data at column " + dataIndex + ", name at column " + nameIndex);
                 if (dataIndex >= 0) {
                     String path = cursor.getString(dataIndex);
-                    filename = (new File(path)).getName();
-
+                    if (path == null)
+                        Log.w(TAG, "getFilenameFromUri: data column failed, path was null");
+                    else
+                        filename = (new File(path)).getName();
                     Log.i(TAG, "getDestinationFilenameFromUri: got from data column, path: " + path + ", name: " + filename);
-                } else if (nameIndex >= 0) {
+                }
+                if (filename == null && nameIndex >= 0) {
                     filename = cursor.getString(nameIndex);
                     Log.i(TAG, "getDestinationFilenameFromUri: got from name column: " + filename);
                 }
-                else Log.e(TAG, "getDestinationFilenameFromUri: no column for file name available");
+                if (filename == null)
+                    Log.e(TAG, "getFilenameFromUri: file name is still null after trying both columns");
                 cursor.close();
                 break;
 
@@ -1543,6 +1620,44 @@ public class DebatingActivity extends AppCompatActivity {
         }
 
         return filename;
+    }
+
+    /**
+     * Retrieves the file name and an {@link InputStream} from the {@link Intent} that started this
+     * activity. If either can't be found, it shows the appropriate snackbar (so there is no need
+     * for the caller to show another error message), and returns null.
+     * @return a <code>Pair&lt;String, InputStream&gt;</code>, being the file name and input stream,
+     * or null if there was an error.
+     */
+    @Nullable
+    private Pair<String, InputStream> getIncomingFilenameAndInputStream() {
+        Intent intent = getIntent();
+        if (!Intent.ACTION_VIEW.equals(intent.getAction())) {
+            Log.e(TAG, "importIncomingFile: Intent action was not ACTION_VIEW");
+            return null;
+        }
+
+        Log.i(TAG, String.format("importIncomingFile: mime type %s, data %s", intent.getType(), intent.getDataString()));
+
+        Uri uri = intent.getData();
+        String filename = getFilenameFromUri(uri);
+        Log.i(TAG, "importIncomingFile: file name is " + filename);
+
+        if (filename == null) {
+            showSnackbar(Snackbar.LENGTH_LONG, R.string.importDebateFormat_snackbar_error_generic);
+            Log.e(TAG, "importIncomingFile: File name was null");
+            return null;
+        }
+
+        InputStream is;
+        try {
+            is = getContentResolver().openInputStream(uri);
+        } catch (FileNotFoundException e) {
+            showSnackbar(Snackbar.LENGTH_LONG, R.string.importDebateFormat_snackbar_error_generic);
+            Log.e(TAG, "importIncomingFile: Could not resolve file " + uri.toString());
+            return null;
+        }
+        return Pair.create(filename, is);
     }
 
     /**
@@ -1582,33 +1697,10 @@ public class DebatingActivity extends AppCompatActivity {
     }
 
     private void importIncomingFile() {
-
-        Intent intent = getIntent();
-        if (!Intent.ACTION_VIEW.equals(intent.getAction())) {
-            Log.e(TAG, "importIncomingFile: Intent action was not ACTION_VIEW");
-            return;
-        }
-
-        Log.i(TAG, String.format("importIncomingFile: mime type %s, data %s", intent.getType(), intent.getDataString()));
-
-        Uri uri = intent.getData();
-        InputStream is;
-        try {
-            is = getContentResolver().openInputStream(uri);
-        } catch (FileNotFoundException e) {
-            showSnackbar(Snackbar.LENGTH_LONG, R.string.importDebateFormat_snackbar_error_generic);
-            Log.e(TAG, "importIncomingFile: Could not resolve file" + uri.toString());
-            return;
-        }
-
-        String filename = getDestinationFilenameFromUri(uri);
-        Log.i(TAG, "importIncomingFile: file name is " + filename);
-
-        if (filename == null) {
-            showSnackbar(Snackbar.LENGTH_LONG, R.string.importDebateFormat_snackbar_error_generic);
-            Log.e(TAG, "importIncomingFile: File name was null");
-            return;
-        }
+        Pair<String, InputStream> incoming = getIncomingFilenameAndInputStream();
+        if (incoming == null) return;
+        String filename = incoming.first;
+        InputStream is = incoming.second;
 
         FormatXmlFilesManager filesManager = new FormatXmlFilesManager(this);
         filesManager.setLookForUserFiles(true);
@@ -1840,6 +1932,33 @@ public class DebatingActivity extends AppCompatActivity {
         else
             editor.remove(PREFERENCE_XML_FILE_NAME);
         editor.apply();
+    }
+
+    private boolean showDialogToConfirmImport() {
+        Pair<String, InputStream> incoming = getIncomingFilenameAndInputStream();
+        if (incoming == null) return true;
+        String incomingFilename = incoming.first;
+        InputStream is = incoming.second;
+        DebateFormatStyleNameExtractor nameExtractor = new DebateFormatStyleNameExtractor(this);
+        FormatXmlFilesManager filesManager = new FormatXmlFilesManager(this);
+        int existingLocation = filesManager.getLocation(incomingFilename);
+
+        try {
+            String incomingStyleName = nameExtractor.getStyleName(is);
+            is.close();
+            String existingStyleName = null;
+            if (existingLocation != FormatXmlFilesManager.LOCATION_NOT_FOUND) {
+                InputStream existingIs = filesManager.open(incomingFilename);
+                existingStyleName = nameExtractor.getStyleName(existingIs);
+                existingIs.close();
+            }
+            boolean needToAskPermissions = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
+            DialogImportFileConfirmFragment fragment = DialogImportFileConfirmFragment.newInstance(needToAskPermissions, incomingFilename, incomingStyleName, existingLocation, existingStyleName);
+            queueDialog(fragment, DIALOG_TAG_IMPORT_CONFIRM);
+        } catch (IOException | SAXException e) {
+            showSnackbar(Snackbar.LENGTH_LONG, R.string.importDebateFormat_snackbar_error_generic);
+        }
+        return false;
     }
 
     /**
