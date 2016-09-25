@@ -704,17 +704,30 @@ public class FormatChooserActivity extends AppCompatActivity {
 
             case "content":
                 // Try to find a display name for it
-                Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-                if (cursor == null) break;
-                cursor.moveToFirst();
+                Cursor cursor = getContentResolver().query(uri,
+                        new String[] {MediaStore.MediaColumns.DISPLAY_NAME}, null, null, null);
+                if (cursor == null) {
+                    Log.e(TAG, "getDestinationFilenameFromUri: cursor was null");
+                    return null;
+                }
+                if (!cursor.moveToFirst()) {
+                    Log.e(TAG, "getDestinationFilenameFromUri: failed moving cursor to first row");
+                    cursor.close();
+                    return null;
+                }
                 int nameIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
-                if (nameIndex >= 0)
-                    filename = cursor.getString(nameIndex);
+                if (nameIndex < 0) {
+                    Log.e(TAG, "getDestinationFilenameFromUri: no column for display name");
+                    cursor.close();
+                    return null;
+                }
+                filename = cursor.getString(nameIndex);
+                if (filename == null)
+                    Log.e(TAG, "getDestinationFilenameFromUri: retrieved file name, but it was null");
                 cursor.close();
                 break;
 
             default:
-                showSnackbar(LENGTH_LONG, R.string.formatChooser_view_error_generic);
                 return null;
         }
 
@@ -755,6 +768,12 @@ public class FormatChooserActivity extends AppCompatActivity {
 
         String filename = getDestinationFilenameFromUri(uri);
         Log.i(TAG, "importIncomingFile: file name is " + filename);
+
+        if (filename == null) {
+            showSnackbar(LENGTH_LONG, R.string.formatChooser_view_error_generic);
+            Log.e(TAG, "importIncomingFile: File name was null");
+            return;
+        }
 
         try {
             mFilesManager.copy(is, filename);

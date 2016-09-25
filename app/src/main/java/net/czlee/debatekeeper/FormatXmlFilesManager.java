@@ -97,7 +97,7 @@ public class FormatXmlFilesManager {
      * @param destinationName the name of the destination file
      * @throws IOException if there was an error dealing with any of the files
      */
-    public void copy(InputStream in, String destinationName) throws IOException {
+    public void copy(InputStream in, @NonNull String destinationName) throws IOException {
 
         // Check we can write to external storage
         if (!isExternalStorageWriteable()) {
