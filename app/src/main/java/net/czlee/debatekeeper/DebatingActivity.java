@@ -1748,15 +1748,16 @@ public class DebatingActivity extends AppCompatActivity {
 
             // We only restore the state if there wasn't an existing debate, i.e. if the service
             // wasn't already running, and if the debate format stored in the saved instance state
-            // matches the debate format we're using now.  Also, only do this once (so set it to
-            // null once restored).
+            // matches the debate format we're using now.
             if (mLastStateBundle != null) {
                 String xmlFileName = mLastStateBundle.getString(BUNDLE_KEY_XML_FILE_NAME);
                 if (xmlFileName != null && xmlFileName.equals(mFormatXmlFileName))
                     mDebateManager.restoreState(BUNDLE_KEY_DEBATE_MANAGER, mLastStateBundle);
-                mLastStateBundle = null;
             }
         }
+
+        // The bundle should only ever be relevant once per activity cycle
+        mLastStateBundle = null;
 
         mViewPager.getAdapter().notifyDataSetChanged();
         mViewPager.setCurrentItem(mDebateManager.getActivePhaseIndex(), false);
