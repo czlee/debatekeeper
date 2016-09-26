@@ -71,14 +71,13 @@
     <!-- Sharing debate formats -->
     <string name="importDebateFormat_dialog_title">Import debate style?</string>
     <string name="importDebateFormat_dialog_message_question">Do you want to import the debate format file %1$s, which describes the style %2$s?</string>
-    <string name="importDebateFormat_dialog_addendum_permissions">You\'ll be asked to enable storage permissions in order to do this. If you already have a custom format file with the same name, it will be overwritten.</string>
     <string name="importDebateFormat_dialog_addendum_overrideBuiltIn">This will override the existing built-in style %1$s.</string>
     <string name="importDebateFormat_dialog_addendum_overwriteExisting">This will overwrite the existing custom format file of the same name, which describes the style %1$s.</string>
     <string name="importDebateFormat_dialog_button_yes">Import</string>
     <string name="importDebateFormat_dialog_button_no">Cancel</string>
     <string name="importDebateFormat_snackbar_error_generic">There was an error opening this file.</string>
     <string name="importDebateFormat_snackbar_success">Successfully imported file %1$s</string>
-    <string name="importDebateFormat_snackbar_error_noWritePermission">You must allow Debatekeeper to write files on your device for a format to be imported.</string>
+    <string name="importDebateFormat_snackbar_error_noWritePermission">You must allow Debatekeeper to write files on your device to import a custom format.</string>
 
     <!-- Menu -->
     <string name="mainScreen_menuItem_resetDebate">Reset debate</string>

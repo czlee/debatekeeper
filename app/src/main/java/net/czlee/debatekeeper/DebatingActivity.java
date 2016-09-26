@@ -160,7 +160,6 @@ public class DebatingActivity extends AppCompatActivity {
     private static final String DIALOG_ARGUMENT_SCHEMA_USED             = "used";
     private static final String DIALOG_ARGUMENT_SCHEMA_SUPPORTED        = "supp";
     private static final String DIALOG_ARGUMENT_FILE_NAME               = "fn";
-    private static final String DIALOG_ARGUMENT_NEED_TO_ASK_PERMISSIONS = "perm";
     private static final String DIALOG_ARGUMENT_INCOMING_STYLE_NAME     = "isn";
     private static final String DIALOG_ARGUMENT_EXISTING_STYLE_NAME     = "esn";
     private static final String DIALOG_ARGUMENT_EXISTING_FILE_LOCATION  = "efl";
@@ -335,11 +334,10 @@ public class DebatingActivity extends AppCompatActivity {
 
     public static class DialogImportFileConfirmFragment extends QueueableDialogFragment {
 
-        static DialogImportFileConfirmFragment newInstance(boolean needToAskPermissions, @NonNull String incomingFilename,
-                                                           @NonNull String incomingStyleName, int existingFileLocation, @Nullable String existingStyleName) {
+        static DialogImportFileConfirmFragment newInstance(@NonNull String incomingFilename, @NonNull String incomingStyleName,
+                                                           int existingFileLocation, @Nullable String existingStyleName) {
             DialogImportFileConfirmFragment fragment = new DialogImportFileConfirmFragment();
             Bundle args = new Bundle();
-            args.putBoolean(DIALOG_ARGUMENT_NEED_TO_ASK_PERMISSIONS, needToAskPermissions);
             args.putString(DIALOG_ARGUMENT_FILE_NAME, incomingFilename);
             args.putString(DIALOG_ARGUMENT_INCOMING_STYLE_NAME, incomingStyleName);
             args.putInt(DIALOG_ARGUMENT_EXISTING_FILE_LOCATION, existingFileLocation);
@@ -368,18 +366,13 @@ public class DebatingActivity extends AppCompatActivity {
                     message.append(getString(R.string.importDebateFormat_dialog_addendum_overwriteExisting, args.getString(DIALOG_ARGUMENT_EXISTING_STYLE_NAME, "<unknown>")));
             }
 
-            if (args.getBoolean(DIALOG_ARGUMENT_NEED_TO_ASK_PERMISSIONS)) {
-                message.append("\n\n");
-                message.append(getString(R.string.importDebateFormat_dialog_addendum_permissions));
-            }
-
             builder.setTitle(R.string.importDebateFormat_dialog_title)
                    .setMessage(message)
                    .setCancelable(false)
                    .setPositiveButton(R.string.importDebateFormat_dialog_button_yes, new DialogInterface.OnClickListener() {
                        @Override
                        public void onClick(DialogInterface dialog, int which) {
-                           if (activity.requestWritePermission()) activity.importIncomingFile();
+                           activity.importIncomingFile();
                            dialog.dismiss();
                        }
                    })
@@ -1037,7 +1030,7 @@ public class DebatingActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         if (requestCode == REQUEST_TO_WRITE_EXTERNAL_STORAGE_FOR_IMPORT) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                importIncomingFile();
+                showDialogToConfirmImport();
             else
                 showSnackbar(Snackbar.LENGTH_LONG, R.string.importDebateFormat_snackbar_error_noWritePermission);
         }
@@ -1115,7 +1108,7 @@ public class DebatingActivity extends AppCompatActivity {
         String filename = loadXmlFileName();
 
         // If there's an incoming style, ask the user whether they want to import it.
-        if (Intent.ACTION_VIEW.equals(getIntent().getAction())) {
+        if (Intent.ACTION_VIEW.equals(getIntent().getAction()) && requestWritePermission()) {
             showDialogToConfirmImport();
 
         // Otherwise, if there's no style loaded, direct the user to choose one
@@ -1939,8 +1932,7 @@ public class DebatingActivity extends AppCompatActivity {
                 existingStyleName = nameExtractor.getStyleName(existingIs);
                 existingIs.close();
             }
-            boolean needToAskPermissions = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
-            DialogImportFileConfirmFragment fragment = DialogImportFileConfirmFragment.newInstance(needToAskPermissions, incomingFilename, incomingStyleName, existingLocation, existingStyleName);
+            DialogImportFileConfirmFragment fragment = DialogImportFileConfirmFragment.newInstance(incomingFilename, incomingStyleName, existingLocation, existingStyleName);
             queueDialog(fragment, DIALOG_TAG_IMPORT_CONFIRM);
         } catch (IOException | SAXException e) {
             showSnackbar(Snackbar.LENGTH_LONG, R.string.importDebateFormat_snackbar_error_generic);
