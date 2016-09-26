@@ -22,6 +22,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -49,15 +50,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.util.Pair;
@@ -164,10 +163,13 @@ public class DebatingActivity extends AppCompatActivity {
     private static final String DIALOG_ARGUMENT_EXISTING_STYLE_NAME     = "esn";
     private static final String DIALOG_ARGUMENT_EXISTING_FILE_LOCATION  = "efl";
     private static final String DIALOG_ARGUMENT_SUGGESTED_FILE_NAME     = "sfn";
-    private static final String DIALOG_TAG_SCHEMA_TOO_NEW               = "toonew";
-    private static final String DIALOG_TAG_SCHEMA_OUTDATED              = "outdated";
-    private static final String DIALOG_TAG_ERRORS_WITH_XML              = "errors";
-    private static final String DIALOG_TAG_FATAL_PROBLEM                = "fatal";
+
+    // Dialog tags that are attached to particular files must end in "/", as the name of the file
+    // they relate to is appended to the tag.
+    private static final String DIALOG_TAG_SCHEMA_TOO_NEW               = "toonew/";
+    private static final String DIALOG_TAG_SCHEMA_OUTDATED              = "outdated/";
+    private static final String DIALOG_TAG_ERRORS_WITH_XML              = "errors/";
+    private static final String DIALOG_TAG_FATAL_PROBLEM                = "fatal/";
     private static final String DIALOG_TAG_CHANGELOG                    = "changelog";
     private static final String DIALOG_TAG_IMPORT_CONFIRM               = "import";
     private static final String DIALOG_TAG_IMPORT_SUGGEST_REPLACEMENT   = "replace";
@@ -216,7 +218,6 @@ public class DebatingActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setTitle(res.getString(R.string.changelogDialog_title, BuildConfig.VERSION_NAME))
                     .setView(content)
-                    .setCancelable(true)
                     .setPositiveButton(res.getString(R.string.changelogDialog_ok), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -228,13 +229,6 @@ public class DebatingActivity extends AppCompatActivity {
                                 editor.putInt(LAST_CHANGELOG_VERSION_SHOWN, thisChangelogVersionCode);
                                 editor.apply();
                             }
-                            dialog.dismiss();
-                        }
-                    })
-                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            dialog.dismiss();
                         }
                     });
 
@@ -273,13 +267,7 @@ public class DebatingActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(R.string.errorsinXmlFileDialog_title)
                    .setMessage(errorMessage)
-                   .setCancelable(true)
-                   .setPositiveButton(R.string.errorsinXmlFileDialog_button, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
+                   .setPositiveButton(R.string.errorsinXmlFileDialog_button, null);
 
             return builder.create();
         }
@@ -300,7 +288,7 @@ public class DebatingActivity extends AppCompatActivity {
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final FragmentActivity activity = getActivity();
+            final Activity activity = getActivity();
             Bundle args = getArguments();
 
             StringBuilder errorMessage = new StringBuilder(args.getString(DIALOG_ARGUMENT_FATAL_MESSAGE));
@@ -310,7 +298,6 @@ public class DebatingActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setTitle(R.string.fatalProblemWithXmlFileDialog_title)
                    .setMessage(errorMessage)
-                   .setCancelable(true)
                    .setPositiveButton(R.string.fatalProblemWithXmlFileDialog_button, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -320,12 +307,6 @@ public class DebatingActivity extends AppCompatActivity {
                             // as the Fragment won't be active when it comes back.  See:
                             // http://stackoverflow.com/questions/10564474/wrong-requestcode-in-onactivityresult
                             activity.startActivityForResult(intent, CHOOSE_STYLE_REQUEST);
-                        }
-                    })
-                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            activity.finish();
                         }
                     });
 
@@ -356,37 +337,37 @@ public class DebatingActivity extends AppCompatActivity {
             Bundle args = getArguments();
 
             final String incomingFilename = args.getString(DIALOG_ARGUMENT_FILE_NAME);
+            String incomingStyleName = args.getString(DIALOG_ARGUMENT_INCOMING_STYLE_NAME);
+            String existingStyleName = args.getString(DIALOG_ARGUMENT_EXISTING_STYLE_NAME, "<unknown>");
             StringBuilder message = new StringBuilder(getString(R.string.importDebateFormat_dialog_message_question,
-                    incomingFilename, args.getString(DIALOG_ARGUMENT_INCOMING_STYLE_NAME)));
+                    incomingFilename, incomingStyleName));
 
             switch (args.getInt(DIALOG_ARGUMENT_EXISTING_FILE_LOCATION)) {
                 case FormatXmlFilesManager.LOCATION_ASSETS:
                     message.append("\n\n");
-                    message.append(getString(R.string.importDebateFormat_dialog_addendum_overrideBuiltIn, args.getString(DIALOG_ARGUMENT_EXISTING_STYLE_NAME, "<unknown>")));
+                    message.append(getString(R.string.importDebateFormat_dialog_addendum_overrideBuiltIn, existingStyleName));
                     break;
                 case FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE:
                     message.append("\n\n");
-                    message.append(getString(R.string.importDebateFormat_dialog_addendum_overwriteExisting, args.getString(DIALOG_ARGUMENT_EXISTING_STYLE_NAME, "<unknown>")));
+                    if (incomingStyleName != null && incomingStyleName.equals(existingStyleName))
+                        message.append(getString(R.string.importDebateFormat_dialog_addendum_overwriteExistingSameName, existingStyleName));
+                    else
+                        message.append(getString(R.string.importDebateFormat_dialog_addendum_overwriteExistingDifferentName, existingStyleName));
             }
 
             builder.setTitle(R.string.importDebateFormat_dialog_title)
-                   .setMessage(message)
-                   .setCancelable(false)
+                   .setMessage(Html.fromHtml(message.toString()))
                    .setPositiveButton(R.string.importDebateFormat_dialog_button_yes, new DialogInterface.OnClickListener() {
                        @Override
                        public void onClick(DialogInterface dialog, int which) {
                            activity.importIncomingFile(incomingFilename);
-                           dialog.dismiss();
                        }
                    })
-                   .setNegativeButton(R.string.importDebateFormat_dialog_button_no, new DialogInterface.OnClickListener() {
-                       @Override
-                       public void onClick(DialogInterface dialog, int which) {
-                           dialog.dismiss();
-                       }
-                   });
+                   .setNegativeButton(R.string.importDebateFormat_dialog_button_no, null);
 
-            return builder.create();
+            AlertDialog dialog = builder.create();
+            dialog.setCanceledOnTouchOutside(false);
+            return dialog;
         }
 
     }
@@ -415,31 +396,26 @@ public class DebatingActivity extends AppCompatActivity {
             final String suggestedFilename = args.getString(DIALOG_ARGUMENT_SUGGESTED_FILE_NAME);
 
             builder.setTitle(R.string.replaceDebateFormat_dialog_title)
-                    .setMessage(getString(R.string.replaceDebateFormat_dialog_message, args.getString(DIALOG_ARGUMENT_INCOMING_STYLE_NAME),
-                            suggestedFilename, incomingFilename))
-                    .setCancelable(false)
+                    .setMessage(Html.fromHtml(getString(R.string.replaceDebateFormat_dialog_message,
+                            args.getString(DIALOG_ARGUMENT_INCOMING_STYLE_NAME), suggestedFilename, incomingFilename)))
                     .setPositiveButton(R.string.replaceDebateFormat_dialog_button_replace, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             activity.importIncomingFile(suggestedFilename);
-                            dialog.dismiss();
                         }
                     })
                     .setNeutralButton(R.string.replaceDebateFormat_dialog_button_addNew, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             activity.importIncomingFile(incomingFilename);
-                            dialog.dismiss();
                         }
                     })
-                    .setNegativeButton(R.string.replaceDebateFormat_dialog_button_cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
+                    .setNegativeButton(R.string.replaceDebateFormat_dialog_button_cancel, null);
 
-            return builder.create();
+
+            AlertDialog dialog = builder.create();
+            dialog.setCanceledOnTouchOutside(false);
+            return dialog;
         }
 
     }
@@ -478,7 +454,6 @@ public class DebatingActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setTitle(R.string.schemaTooNewDialog_title)
                    .setMessage(message)
-                   .setCancelable(false)
                    .setPositiveButton(R.string.schemaTooNewDialog_button_upgrade, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -489,15 +464,11 @@ public class DebatingActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                     })
-                .setNegativeButton(R.string.schemaTooNewDialog_button_ignore, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // To ignore, just dismiss the dialog and return to whatever was happening before
-                        dialog.dismiss();
-                    }
-                });
+                .setNegativeButton(R.string.schemaTooNewDialog_button_ignore, null);
 
-            return builder.create();
+            AlertDialog dialog = builder.create();
+            dialog.setCanceledOnTouchOutside(false);
+            return dialog;
         }
     }
 
@@ -522,7 +493,6 @@ public class DebatingActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setTitle(R.string.schemaOutdatedDialog_title)
                     .setMessage(message)
-                    .setCancelable(false)
                     .setNegativeButton(R.string.schemaOutdatedDialog_button_learnMore, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -533,15 +503,11 @@ public class DebatingActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                     })
-                    .setPositiveButton(R.string.schemaOutdatedDialog_button_ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // To ignore, just dismiss the dialog and return to whatever was happening before
-                            dialog.dismiss();
-                        }
-                    });
+                    .setPositiveButton(R.string.schemaOutdatedDialog_button_ok, null);
 
-            return builder.create();
+            AlertDialog dialog = builder.create();
+            dialog.setCanceledOnTouchOutside(false);
+            return dialog;
         }
     }
 
@@ -1452,7 +1418,7 @@ public class DebatingActivity extends AppCompatActivity {
                 dfbfx = dfbfx1;
 
                 QueueableDialogFragment fragment = DialogSchemaTooOldFragment.newInstance(filename);
-                queueDialog(fragment, DIALOG_TAG_SCHEMA_OUTDATED);
+                queueDialog(fragment, DIALOG_TAG_SCHEMA_OUTDATED + filename);
             }
         }
 
@@ -1460,7 +1426,7 @@ public class DebatingActivity extends AppCompatActivity {
         // schema 1.0), prompt the user to upgrade the app.
         if (dfbfx.isSchemaTooNew()) {
             QueueableDialogFragment fragment = DialogSchemaTooNewFragment.newInstance(dfbfx.getSchemaVersion(), dfbfx.getSupportedSchemaVersion(), filename);
-            queueDialog(fragment, DIALOG_TAG_SCHEMA_TOO_NEW);
+            queueDialog(fragment, DIALOG_TAG_SCHEMA_TOO_NEW + filename);
         }
 
         if (df.numberOfSpeeches() == 0)
@@ -1469,7 +1435,7 @@ public class DebatingActivity extends AppCompatActivity {
 
         if (dfbfx.hasErrors()) {
             QueueableDialogFragment fragment = DialogErrorsWithXmlFileFragment.newInstance(dfbfx.getErrorLog(), mFormatXmlFileName);
-            queueDialog(fragment, DIALOG_TAG_ERRORS_WITH_XML);
+            queueDialog(fragment, DIALOG_TAG_ERRORS_WITH_XML + filename);
         }
 
         return df;
@@ -1770,7 +1736,7 @@ public class DebatingActivity extends AppCompatActivity {
                 df = buildDebateFromXml(mFormatXmlFileName);
             } catch (FatalXmlError e) {
                 QueueableDialogFragment fragment = DialogFatalProblemWithXmlFileFragment.newInstance(e.getMessage(), mFormatXmlFileName);
-                queueDialog(fragment, DIALOG_TAG_FATAL_PROBLEM);
+                queueDialog(fragment, DIALOG_TAG_FATAL_PROBLEM + mFormatXmlFileName);
 
                 // We still need to notify of a data set change when there ends up being no
                 // debate format
@@ -1837,7 +1803,7 @@ public class DebatingActivity extends AppCompatActivity {
     private void queueDialog(QueueableDialogFragment fragment, String tag) {
         if (!mDialogBlocking) {
             mDialogBlocking = true;
-            showDialog(fragment, tag);
+            fragment.show(getFragmentManager(), tag);
         }
         else mDialogsInWaiting.add(Pair.create(tag, fragment));
     }
@@ -2041,33 +2007,25 @@ public class DebatingActivity extends AppCompatActivity {
     }
 
     /**
-     * Shows the dialog given, allowing state loss as a workaround for a bug in Android
-     * (possibly issue #7132432)
-     *
-     * <p>For more information see:</p>
-     * <ul>
-     * <li>https://github.com/android/platform_frameworks_support/commit/4ccc001f3f883190ac8d900c4f69d71fda94690e</li>
-     * <li>http://stackoverflow.com/questions/12105064/actions-in-onactivityresult-and-error-can-not-perform-this-action-after-onsavei</li>
-     * <li>http://stackoverflow.com/questions/14262312/java-lang-illegalstateexception-can-not-perform-this-action-after-onsaveinstanc</li>
-     * </ul>
-     *
-     * @param fragment a {@link DialogFragment} instance
-     * @param tag the tag for the fragment
-     */
-    private void showDialog(DialogFragment fragment, String tag) {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.add(fragment, tag);
-        ft.commitAllowingStateLoss();
-    }
-
-    /**
      * Shows the next queued dialog if there is one, otherwise notes that there are no dialogs
      * blocking.
      */
     private void showNextQueuedDialog() {
+        // First, remove now-irrelevant dialogs from list
+        Iterator<Pair<String, QueueableDialogFragment>> iterator = mDialogsInWaiting.iterator();
+        while (iterator.hasNext()) {
+            Pair<String, QueueableDialogFragment> pair = iterator.next();
+            String[] tags = pair.first.split("/", 2);
+            if (tags.length == 2 && !tags[1].equals(mFormatXmlFileName)) {
+                iterator.remove();
+                Log.i(TAG, "showNextQueuedDialog: cleared dialog " + pair.first);
+            }
+        }
+
+        // Then, show the next one
         if (mDialogsInWaiting.size() > 0) {
             Pair<String, QueueableDialogFragment> pair = mDialogsInWaiting.remove(0);
-            showDialog(pair.second, pair.first);
+            pair.second.show(getFragmentManager(), pair.first);
             mDialogBlocking = true;  // it should already be true, but just to be safe
         }
         else mDialogBlocking = false;

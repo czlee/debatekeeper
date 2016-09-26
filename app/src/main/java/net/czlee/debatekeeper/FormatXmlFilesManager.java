@@ -135,15 +135,17 @@ class FormatXmlFilesManager {
      * @throws IOException
      */
     @NonNull
-    public String[] userFileList() throws IOException {
+    String[] userFileList() throws IOException {
         if (!mLookForUserFiles)
             return new String[0];
 
         File userFilesDirectory = getUserFilesDirectory();
-        if (userFilesDirectory != null)
-            return userFilesDirectory.list();
-        else
-            return new String[0];
+        if (userFilesDirectory != null) {
+            String[] list = userFilesDirectory.list();
+            if (list != null) return list;
+        }
+
+        return new String[0];
     }
 
     /**

@@ -70,14 +70,17 @@
 
     <!-- Sharing debate formats -->
     <string name="importDebateFormat_dialog_title">Import debate style?</string>
-    <string name="importDebateFormat_dialog_message_question">Do you want to import the debate format file %1$s, which describes the style \"%2$s\"?</string>
-    <string name="importDebateFormat_dialog_addendum_overrideBuiltIn">This will override the existing built-in style \"%1$s\".</string>
-    <string name="importDebateFormat_dialog_addendum_overwriteExisting">This will overwrite the existing custom format file of the same name, which describes the style \"%1$s\".</string>
+    <string name="importDebateFormat_dialog_message_question">Do you want to import the debate format file &lt;b>%1$s&lt;/b>, which describes the style \"%2$s\"?</string>
+    <string name="importDebateFormat_dialog_addendum_overrideBuiltIn">This will override the existing built-in \"%1$s\" style.</string>
+    <string name="importDebateFormat_dialog_addendum_overwriteExistingSameName">This will overwrite the existing \"%1$s\" style.</string>
+    <string name="importDebateFormat_dialog_addendum_overwriteExistingDifferentName">
+        This will overwrite the existing custom style \"%1$s\", because its file has the same name.
+        If you don\'t want to lose %1$s, cancel and then import using a different file name.</string>
     <string name="importDebateFormat_placeholder_unknownStyleName">(unknown)</string>
     <string name="importDebateFormat_dialog_button_yes">Import</string>
     <string name="importDebateFormat_dialog_button_no">Cancel</string>
     <string name="replaceDebateFormat_dialog_title">Replace debate style?</string>
-    <string name="replaceDebateFormat_dialog_message">You already have a debate style called \"%1$s\". Do you want to <b>replace it</b>, overwriting file %2$s, or <b>add another</b> \"%1$s\" using the file name %3$s?</string>
+    <string name="replaceDebateFormat_dialog_message">You already have a debate style called \"%1$s\". Do you want to &lt;b>replace it&lt;/b>, overwriting file %2$s, or &lt;b>add another&lt;/b> \"%1$s\" using the file name %3$s?</string>
     <string name="replaceDebateFormat_dialog_button_replace">Replace</string>
     <string name="replaceDebateFormat_dialog_button_addNew">Add another</string>
     <string name="replaceDebateFormat_dialog_button_cancel">Cancel</string>
@@ -97,8 +100,8 @@
     <string name="fatalProblemWithXmlFileDialog_title">Oh no!</string>
     <string name="fatalProblemWithXmlFileDialog_button">Choose style</string>
     <string name="fatalProblemWithXmlFileDialog_message_noSpeeches">"There are no speeches in this debate style file."</string>
-    <string name="fatalProblemWithXmlFileDialog_message_cannotRead">"I've hit a problem opening this debate style file. If this is a custom format, it might be because storage permissions are disabled."</string>
-    <string name="fatalProblemWithXmlFileDialog_message_cannotFind">"I've hit a problem opening this debate style file. If this is a custom format, it might be because storage permissions are disabled."</string>
+    <string name="fatalProblemWithXmlFileDialog_message_cannotRead">"I've hit a problem opening this debate style file. If this is a custom format, it might be because the file is deleted or because storage permissions are disabled."</string>
+    <string name="fatalProblemWithXmlFileDialog_message_cannotFind">"I've hit a problem opening this debate style file. If this is a custom format, it might be because the file is deleted or because storage permissions are disabled."</string>
     <string name="fatalProblemWithXmlFileDialog_message_badXml">"There's a problem with the XML in this debate style file. The error was:\n\n%1$s\n"</string>
     <string name="fatalProblemWithXmlFileDialog_message_suffix">"\nPlease choose another style."</string>
     <string name="fatalProblemWithXmlFileDialog_noSchemaVersion_suffix">"No schema version was specified; please ask the author of this XML file to specify one.\n"</string>
