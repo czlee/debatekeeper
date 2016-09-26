@@ -57,7 +57,7 @@
     <string name="viewFormat_fileLocationValue_userDefined">Fichier d\'utilisateur</string>
     <string name="viewFormat_fileNameLabel">Nom de fichier</string>
     <string name="viewFormat_futureSchemaVersion">Schema pas pris en charge (version %1$s)</string>
-    <string name="viewFormat_invalidSchemaVersion">Version de schema invalide \"%1$s\"</string>
+    <string name="viewFormat_invalidSchemaVersion">Version de schema invalide « %1$s »</string>
     <string name="viewFormat_levelLabel">Niveau</string>
     <string name="viewFormat_outdatedSchemaVersion">Utilise un schema obsolète (version %1$s)</string>
     <string name="viewFormat_prepTimeLabel">Temps de préparation</string>
@@ -67,7 +67,6 @@
     <string name="viewFormat_timeDescription_controlledPrepSuffix">, dirigé</string>
     <string name="viewFormat_timeDescription_lengthInMinutesSeconds">dure %s</string>
     <string name="formatChooser_lookForCustom_errorNoReadPermission">Pour que les formats d\'utilisateur puisse être lus, vous devez permettre Debatekeeper de lire les fichiers sur votre appareil.</string>
-    <string name="formatChooser_actionBar_confirmName">Confirmer</string>
     <string name="formatChooser_lookForCustomCheckbox_text">Rechercher des formats d\'utilisateur (<a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">En savoir plus</a>)</string>
     <plurals name="viewFormat_timeDescription_lengthInMinutesOnly">
         <item quantity="one">%d minute</item>
@@ -154,41 +153,68 @@
     <string name="fatalProblemWithXmlFileDialog_noSchemaVersion_suffix">"Aucune version de schema est spécifiée; veuillez demander de l\'auteur de ce fichier XML à spécifier une.\n"</string>
     <string name="fatalProblemWithXmlFileDialog_schemaTooNew_suffix">"Cette version de schema (%1$s) n'est pas prise en charge. Vous devrez peut-être metter à jour cette application.\n"</string>
     <string name="dialogs_fileName_suffix">\n\n[Fichier : %1$s]</string>
-    <string name="xml2Error_periodType_defaultBgColor_invalid">L\'attribut « default-bgcolor » du type de période (period-type) \'%2$s\' est non valable : \'%1$s\'</string>
-    <string name="xml2Error_periodType_poisAllowed_invalid">L\'attribut « pois-allowed » du type de période (period-type) \'%2$s\' est non valable : \'%1$s\' (ça doit être \'true\' ou \'false\')</string>
-    <string name="xml2error_bell_number_invalid">Le nombre de sonnettes à %3$s dans %2$s est non valable : \'%1$s\'</string>
-    <string name="xml2error_bell_pauseOnBell_invalid">Le valeur de l\'attribut « pois-allowed » du type de période (period-type) \'%2$s\' est non valable : \'%1$s\' (ça doit être \'true\' ou \'false\')</string>
-    <string name="xml2error_bell_time_invalid">Le temps d\'une sonnette dans %2$s est non valable : \'%1$s\'</string>
+    <string name="xml2Error_periodType_defaultBgColor_invalid">L\'attribut « default-bgcolor » du type de période (period-type) « %2$s » est non valable : « %1$s »</string>
+    <string name="xml2Error_periodType_poisAllowed_invalid">L\'attribut « pois-allowed » du type de période (period-type) « %2$s » est non valable : « %1$s » (ça doit être \'true\' ou \'false\')</string>
+    <string name="xml2error_bell_number_invalid">Le nombre de sonnettes à %3$s dans %2$s est non valable : « %1$s »</string>
+    <string name="xml2error_bell_pauseOnBell_invalid">Le valeur de l\'attribut « pois-allowed » du type de période (period-type) « %2$s » est non valable : « %1$s » (ça doit être \'true\' ou \'false\')</string>
+    <string name="xml2error_bell_time_invalid">Le temps d\'une sonnette dans %2$s est non valable : « %1$s »</string>
     <string name="xml2error_bell_time_null">Aucun nom (name) n\'est spécifié pour une sonnette dans %2$s.</string>
-    <string name="xml2error_periodType_name_blank">Le nom (name) pour le type de période (period-type) \'%1$s\' ne doit pas être vide</string>
-    <string name="xml2error_periodType_name_null">Aucun nom (name) n\'est spécifié pour le type de période (period-type) \'%1$s\'</string>
+    <string name="xml2error_periodType_name_blank">Le nom (name) pour le type de période (period-type) « %1$s » ne doit pas être vide</string>
+    <string name="xml2error_periodType_name_null">Aucun nom (name) n\'est spécifié pour le type de période (period-type) « %1$s »</string>
     <string name="xml2error_periodType_ref_blank">L\'attribut \'ref\' pour les types de période (period-type) ne doit pas être vide</string>
     <string name="xml2error_periodType_ref_null">Aucune référence (ref) n\'est spécifiée pour un type de période (period-type)</string>
     <string name="xml2error_prepTimeControlled_length_invalid">Le durée (length) du temps dirigé de préparation (prep-time-controlled) est un temps non valable : \'%1$s\'</string>
     <string name="xml2error_prepTimeControlled_length_null">Le temps dirigé de préparation (prep-time-controlled) n\'a pas de durée (length)</string>
-    <string name="xml2error_prepTimeSimple_length_invalid">Le durée (length) du temps de préparation (prep-time) est un temps non valable : \'%1$s\'</string>
+    <string name="xml2error_prepTimeSimple_length_invalid">Le durée (length) du temps de préparation (prep-time) est un temps non valable : « %1$s »</string>
     <string name="xml2error_prepTimeSimple_length_null">Le temps de préparation (prep-time) n\'a pas de durée (length)</string>
     <string name="xml2error_prepTime_multiple">Un temps de préparation (prep-time) est un temps dirigé de préparation (prep-time-controlled) sont tous deux trouvés.</string>
     <string name="xml2error_root_noName">Aucun nom (name) n\'est spécifié pour ce format de débat</string>
-    <string name="xml2error_speechFormat_length_invalid">Le durée (length) du type de discours (speech-type) \'%2$s\' est un temps non valable : \'%1$s\'</string>
-    <string name="xml2error_speechFormat_length_null">Aucune durée est spécifiée pour le type de discours (speech-type) \'%1$s\'</string>
+    <string name="xml2error_speechFormat_length_invalid">Le durée (length) du type de discours (speech-type) « %2$s » est un temps non valable : « %1$s »</string>
+    <string name="xml2error_speechFormat_length_null">Aucune durée est spécifiée pour le type de discours (speech-type) « %1$s »</string>
     <string name="xml2error_speechFormat_ref_blank">L\'attribut \'ref\' pour les types de discours (speech-type) ne doit pas être vide</string>
     <string name="xml2error_speechFormat_ref_null">Aucune référence (ref) n\'est spécifiée pour un type de discours (speech-type)</string>
-    <string name="xml2error_speech_format_null">Aucun type est spécifiée pour le discours (speech) \'%1$s\'</string>
+    <string name="xml2error_speech_format_null">Aucun type est spécifiée pour le discours (speech) « %1$s »</string>
     <string name="xml2error_speech_name_null">Pour un discours, aucun nom n\'est pas spécifié</string>
-    <string name="xmlError_rootInvalidSchemaVersion">La version du schema est non valable : \'%1$s\'</string>
+    <string name="xmlError_rootInvalidSchemaVersion">La version du schema est non valable : « %1$s »</string>
     <string name="xmlError_rootNewSchemaVersion">Seulement les versions du schema jusqu\'à %2$s sont prises en charge (ce fichier utilise version %1$s); ça signifie peut-être</string>
     <string name="xmlError_rootNoSchemaVersion">Ce format de débat n\'a pas de version de schema, donc il est impossible de savoir si vous avez besoin de mettre à jour pour que l\'application puisse prendre en charge ce fichier !</string>
     <string name="mainScreen_overtimeFormat">+%1$s</string>
     <string name="prepTimeBellDescription_proportional">à %1$s%% du temp de prép</string>
     <string name="mainScreen_menuItem_ringBells">Faire sonner les sonnettes</string>
     <string name="changelogDialog_message">
-        • Nouvelle icône (grâce à Zandi Speedy-Willis) et thème mise à jour\n
-        • Accès rapide pour activer ou désactiver les sonnettes\n
-        • Autres améliorations à l\'interface utilisateur
+          • Nouvelle icône (grâce à Zandi Speedy-Willis) et thème mise à jour
+        \n• Partagez les formats de débat d\'utilisateur, y compris avec Android Beam (sur les appareils pris en charge)
+        \n• Accès rapide pour activer ou désactiver les sonnettes
+        \n• Autres améliorations à l\'interface utilisateur
     </string>
     <string name="schemaOutdatedDialog_button_learnMore">En savoir plus</string>
     <string name="schemaOutdatedDialog_button_ok">OK</string>
     <string name="schemaOutdatedDialog_message">Ce fichier de format de débat utilise la version de schema 1.0, pour laquelle la prise en charge sera supprimée dans la prochaine version de Debatekeeper. Veuillez convertir ce fichier en version de schema 2.1.</string>
     <string name="schemaOutdatedDialog_title">Avertissement</string>
+    <string name="formatChooser_actionBar_share">Partager</string>
+    <string name="formatChooser_actionBar_confirm">Confirmer</string>
+    <string name="formatChooser_share_chooserTitle">Partager ce format de débat avec…</string>
+    <string name="formatChooser_share_error_builtInFile">Vous ne pouvez pas partager les formats intégrés.</string>
+    <string name="formatChooser_share_error_generic">Une erreur s\'est produite lors du partage de ce fichier.</string>
+    <string name="formatChooser_share_error_noFileSelected">Aucun fichier selectionné.</string>
+    <string name="formatChooser_share_error_notFound">Le fichier %1$s est introuvable.</string>
+    <string name="importDebateFormat_dialog_addendum_overrideBuiltIn">Cette action rédefinira la style intégrée et existante %1$s.</string>
+    <string name="importDebateFormat_dialog_button_no">Annuler</string>
+    <string name="importDebateFormat_dialog_button_yes">Importer</string>
+    <string name="importDebateFormat_dialog_message_question">Voulez-vous importer le fichier de format de débat %1$s, qui décrit la style %2$s ?</string>
+    <string name="importDebateFormat_dialog_title">Importer style de débat ?</string>
+    <string name="importDebateFormat_snackbar_error_generic">Une erreur s\'est produite lors de l\'ouverture de ce fichier.</string>
+    <string name="importDebateFormat_snackbar_error_noWritePermission">Vous devez permettre Debatekeeper d\'écrire des fichiers sur votre appareil pour qu\'un format puisse être importé.</string>
+    <string name="importDebateFormat_snackbar_success">Importé le fichier %1$s avec succès</string>
+    <string name="intentFilter_importStyle">Debatekeeper</string>
+    <string name="mainScreen_snackbar_beamNonExternalFile">Vous ne pouvez pas utiliser Android Beam pour partager les styles intégrées.</string>
+    <string name="mainScreen_snackbar_beam_error_generic">Une erreur s\'est produite lors de l\'envoi de ce fichier de format de débat.</string>
+    <string name="importDebateFormat_dialog_addendum_overwriteExistingDifferentName">Cette action écrasera la style existante d\'utilisateur « %1$s », parce que le fichier qui la décrit a le même nom. Si vous ne voulez pas perdre %1$s, annulez, et puis réimporter avec un nom différent.</string>
+    <string name="importDebateFormat_dialog_addendum_overwriteExistingSameName">Cette action écrasera la style existant « %1$s ».</string>
+    <string name="importDebateFormat_placeholder_unknownStyleName">(indéterminé)</string>
+    <string name="replaceDebateFormat_dialog_button_addNew">Ajouter une nouvelle</string>
+    <string name="replaceDebateFormat_dialog_button_cancel">Annuler</string>
+    <string name="replaceDebateFormat_dialog_button_replace">Remplacer</string>
+    <string name="replaceDebateFormat_dialog_message">Vous avez déjà une style de débat appelée « %1$s ». Voulez-vous &lt;b>la remplacer&lt;/b>, en écrasant le fichier %2$s, ou &lt;b>ajouter une nouvelle style&lt;/b> « %1$s » en utilisant le nom de fichier %3$s ?</string>
+    <string name="replaceDebateFormat_dialog_title">Remplacer style de débat ?</string>
 </resources>
