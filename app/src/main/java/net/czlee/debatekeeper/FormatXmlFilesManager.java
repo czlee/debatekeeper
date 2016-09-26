@@ -127,6 +127,25 @@ class FormatXmlFilesManager {
         return openFromAssets(filename);
     }
 
+
+    /**
+     * Returns a list of all user files, i.e. files in external storage.
+     * @return an array of Strings, possibly empty, each being an existent file name in external
+     * storage.
+     * @throws IOException
+     */
+    @NonNull
+    public String[] userFileList() throws IOException {
+        if (!mLookForUserFiles)
+            return new String[0];
+
+        File userFilesDirectory = getUserFilesDirectory();
+        if (userFilesDirectory != null)
+            return userFilesDirectory.list();
+        else
+            return new String[0];
+    }
+
     /**
      * Returns a list of all files available in the relevant locations.
      * @return an array of Strings, each being an existent file name (but not necessarily a valid
@@ -137,14 +156,7 @@ class FormatXmlFilesManager {
         HashSet<String> compiledSet = new HashSet<>();
 
         // First add files in the user files directory...
-        if (mLookForUserFiles) {
-            File userFilesDirectory = getUserFilesDirectory();
-            if (userFilesDirectory != null) {
-                String[] userFilesList = userFilesDirectory.list();
-                if (userFilesList != null)
-                    Collections.addAll(compiledSet, userFilesList);
-            }
-        }
+        Collections.addAll(compiledSet, userFileList());
 
         // Then add files in the assets...
         String[] assetList = mAssets.list(ASSETS_PATH);

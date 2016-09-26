@@ -163,12 +163,14 @@ public class DebatingActivity extends AppCompatActivity {
     private static final String DIALOG_ARGUMENT_INCOMING_STYLE_NAME     = "isn";
     private static final String DIALOG_ARGUMENT_EXISTING_STYLE_NAME     = "esn";
     private static final String DIALOG_ARGUMENT_EXISTING_FILE_LOCATION  = "efl";
+    private static final String DIALOG_ARGUMENT_SUGGESTED_FILE_NAME     = "sfn";
     private static final String DIALOG_TAG_SCHEMA_TOO_NEW               = "toonew";
     private static final String DIALOG_TAG_SCHEMA_OUTDATED              = "outdated";
     private static final String DIALOG_TAG_ERRORS_WITH_XML              = "errors";
     private static final String DIALOG_TAG_FATAL_PROBLEM                = "fatal";
     private static final String DIALOG_TAG_CHANGELOG                    = "changelog";
     private static final String DIALOG_TAG_IMPORT_CONFIRM               = "import";
+    private static final String DIALOG_TAG_IMPORT_SUGGEST_REPLACEMENT   = "replace";
 
     private static final int CHOOSE_STYLE_REQUEST                         = 0;
     private static final int REQUEST_TO_WRITE_EXTERNAL_STORAGE_FOR_IMPORT = 21;
@@ -353,8 +355,9 @@ public class DebatingActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             Bundle args = getArguments();
 
+            final String incomingFilename = args.getString(DIALOG_ARGUMENT_FILE_NAME);
             StringBuilder message = new StringBuilder(getString(R.string.importDebateFormat_dialog_message_question,
-                    args.getString(DIALOG_ARGUMENT_FILE_NAME), args.getString(DIALOG_ARGUMENT_INCOMING_STYLE_NAME)));
+                    incomingFilename, args.getString(DIALOG_ARGUMENT_INCOMING_STYLE_NAME)));
 
             switch (args.getInt(DIALOG_ARGUMENT_EXISTING_FILE_LOCATION)) {
                 case FormatXmlFilesManager.LOCATION_ASSETS:
@@ -372,7 +375,7 @@ public class DebatingActivity extends AppCompatActivity {
                    .setPositiveButton(R.string.importDebateFormat_dialog_button_yes, new DialogInterface.OnClickListener() {
                        @Override
                        public void onClick(DialogInterface dialog, int which) {
-                           activity.importIncomingFile();
+                           activity.importIncomingFile(incomingFilename);
                            dialog.dismiss();
                        }
                    })
@@ -382,6 +385,59 @@ public class DebatingActivity extends AppCompatActivity {
                            dialog.dismiss();
                        }
                    });
+
+            return builder.create();
+        }
+
+    }
+
+    public static class DialogSuggestReplacementFragment extends QueueableDialogFragment {
+
+        static DialogSuggestReplacementFragment newInstance(@NonNull String incomingFilename, @NonNull String styleName,
+                                                            @NonNull String suggestedFilename) {
+            DialogSuggestReplacementFragment fragment = new DialogSuggestReplacementFragment();
+            Bundle args = new Bundle();
+            args.putString(DIALOG_ARGUMENT_FILE_NAME, incomingFilename);
+            args.putString(DIALOG_ARGUMENT_INCOMING_STYLE_NAME, styleName);
+            args.putString(DIALOG_ARGUMENT_SUGGESTED_FILE_NAME, suggestedFilename);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final DebatingActivity activity = (DebatingActivity) getActivity();
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            Bundle args = getArguments();
+
+            final String incomingFilename = args.getString(DIALOG_ARGUMENT_FILE_NAME);
+            final String suggestedFilename = args.getString(DIALOG_ARGUMENT_SUGGESTED_FILE_NAME);
+
+            builder.setTitle(R.string.replaceDebateFormat_dialog_title)
+                    .setMessage(getString(R.string.replaceDebateFormat_dialog_message, args.getString(DIALOG_ARGUMENT_INCOMING_STYLE_NAME),
+                            suggestedFilename, incomingFilename))
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.replaceDebateFormat_dialog_button_replace, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            activity.importIncomingFile(suggestedFilename);
+                            dialog.dismiss();
+                        }
+                    })
+                    .setNeutralButton(R.string.replaceDebateFormat_dialog_button_addNew, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            activity.importIncomingFile(incomingFilename);
+                            dialog.dismiss();
+                        }
+                    })
+                    .setNegativeButton(R.string.replaceDebateFormat_dialog_button_cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
 
             return builder.create();
         }
@@ -1676,10 +1732,9 @@ public class DebatingActivity extends AppCompatActivity {
         updateGui();
     }
 
-    private void importIncomingFile() {
+    private void importIncomingFile(String filename) {
         Pair<String, InputStream> incoming = getIncomingFilenameAndInputStream();
         if (incoming == null) return;
-        String filename = incoming.first;
         InputStream is = incoming.second;
 
         FormatXmlFilesManager filesManager = new FormatXmlFilesManager(this);
@@ -1914,30 +1969,75 @@ public class DebatingActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    private boolean showDialogToConfirmImport() {
+    private void showDialogToConfirmImport() {
         Pair<String, InputStream> incoming = getIncomingFilenameAndInputStream();
-        if (incoming == null) return true;
+        if (incoming == null) return;
         String incomingFilename = incoming.first;
         InputStream is = incoming.second;
+
         DebateFormatStyleNameExtractor nameExtractor = new DebateFormatStyleNameExtractor(this);
         FormatXmlFilesManager filesManager = new FormatXmlFilesManager(this);
         int existingLocation = filesManager.getLocation(incomingFilename);
 
+        String incomingStyleName, existingStyleName;
+
         try {
-            String incomingStyleName = nameExtractor.getStyleName(is);
+            incomingStyleName = nameExtractor.getStyleName(is);
             is.close();
-            String existingStyleName = null;
-            if (existingLocation != FormatXmlFilesManager.LOCATION_NOT_FOUND) {
+        } catch (IOException | SAXException e) {
+            showSnackbar(Snackbar.LENGTH_LONG, R.string.importDebateFormat_snackbar_error_generic);
+            return;
+        }
+
+        existingStyleName = null;
+        if (existingLocation != FormatXmlFilesManager.LOCATION_NOT_FOUND) {
+            // If there's an existing file, grab its style name and prompt to replace. (We don't
+            // give an option not to replace.
+            try {
                 InputStream existingIs = filesManager.open(incomingFilename);
                 existingStyleName = nameExtractor.getStyleName(existingIs);
                 existingIs.close();
+            } catch (IOException | SAXException e) {
+                existingStyleName = getString(R.string.importDebateFormat_placeholder_unknownStyleName);
+                Log.e(TAG, "showDialogToConfirmImport: error parsing existing file");
             }
-            DialogImportFileConfirmFragment fragment = DialogImportFileConfirmFragment.newInstance(incomingFilename, incomingStyleName, existingLocation, existingStyleName);
-            queueDialog(fragment, DIALOG_TAG_IMPORT_CONFIRM);
-        } catch (IOException | SAXException e) {
-            showSnackbar(Snackbar.LENGTH_LONG, R.string.importDebateFormat_snackbar_error_generic);
+
+        } else {
+            // If it wasn't found, check if the style name happens to match any other file, since we
+            // may want to change the file name in order to overwrite the existing file (to avoid
+            // duplicates that arise because the system changed the file name during transmission).
+            // We'll do this only if there's exactly one existing file -- if there are already
+            // duplicates, we can't reliably tell which one to pick.
+            String otherStyleName, suggestedFilename = null;
+            String userFileList[] = new String[0];
+            int numberOfDuplicatesFound = 0;
+            try {
+                userFileList = filesManager.userFileList();
+            } catch (IOException e) {
+                Log.e(TAG, "showDialogToConfirmImport: I/O error checking other files");
+            }
+            for (String otherFilename : userFileList) {
+                try {
+                    InputStream otherIs = filesManager.open(otherFilename);
+                    otherStyleName = nameExtractor.getStyleName(otherIs);
+                    otherIs.close();
+                } catch (IOException | SAXException e) {
+                    continue;
+                }
+                if (incomingStyleName.equals(otherStyleName)) {
+                    numberOfDuplicatesFound++;
+                    suggestedFilename = otherFilename;
+                }
+            }
+            if (numberOfDuplicatesFound == 1) {
+                DialogSuggestReplacementFragment fragment = DialogSuggestReplacementFragment.newInstance(incomingFilename, incomingStyleName, suggestedFilename);
+                queueDialog(fragment, DIALOG_TAG_IMPORT_SUGGEST_REPLACEMENT);
+                return;
+            }
         }
-        return false;
+
+        DialogImportFileConfirmFragment fragment = DialogImportFileConfirmFragment.newInstance(incomingFilename, incomingStyleName, existingLocation, existingStyleName);
+        queueDialog(fragment, DIALOG_TAG_IMPORT_CONFIRM);
     }
 
     /**
