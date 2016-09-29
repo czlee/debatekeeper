@@ -146,12 +146,14 @@ public class DebatingActivity extends AppCompatActivity {
     private boolean              mBellsEnabled           = true;
     private boolean              mSpeechKeepScreenOn;
     private boolean              mPrepTimeKeepScreenOn;
+    private boolean              mImportIntentHandled    = false;
 
     private boolean mDialogBlocking = false;
     private ArrayList<Pair<String, QueueableDialogFragment>> mDialogsInWaiting = new ArrayList<>();
 
     private static final String BUNDLE_KEY_DEBATE_MANAGER               = "dm";
     private static final String BUNDLE_KEY_XML_FILE_NAME                = "xmlfn";
+    private static final String BUNDLE_KEY_IMPORT_INTENT_HANDLED        = "iih";
     private static final String PREFERENCE_XML_FILE_NAME                = "xmlfn";
     private static final String LAST_CHANGELOG_VERSION_SHOWN            = "lastChangeLog";
     private static final String DIALOG_ARGUMENT_FATAL_MESSAGE           = "fm";
@@ -363,7 +365,12 @@ public class DebatingActivity extends AppCompatActivity {
                            activity.importIncomingFile(incomingFilename);
                        }
                    })
-                   .setNegativeButton(R.string.importDebateFormat_dialog_button_no, null);
+                   .setNegativeButton(R.string.importDebateFormat_dialog_button_no, new DialogInterface.OnClickListener() {
+                       @Override
+                       public void onClick(DialogInterface dialog, int which) {
+                           activity.mImportIntentHandled = true;
+                       }
+                   });
 
             AlertDialog dialog = builder.create();
             dialog.setCanceledOnTouchOutside(false);
@@ -410,7 +417,12 @@ public class DebatingActivity extends AppCompatActivity {
                             activity.importIncomingFile(incomingFilename);
                         }
                     })
-                    .setNegativeButton(R.string.replaceDebateFormat_dialog_button_cancel, null);
+                    .setNegativeButton(R.string.replaceDebateFormat_dialog_button_cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            activity.mImportIntentHandled = true;
+                        }
+                    });
 
 
             AlertDialog dialog = builder.create();
@@ -1129,8 +1141,13 @@ public class DebatingActivity extends AppCompatActivity {
         // Find the style file name.
         String filename = loadXmlFileName();
 
-        // If there's an incoming style, ask the user whether they want to import it.
-        if (Intent.ACTION_VIEW.equals(getIntent().getAction()) && requestWritePermission()) {
+        // If there's an incoming style, and it wasn't handled before a screen rotation, ask the
+        // user whether they want to import it.
+        if (savedInstanceState != null) {
+            mImportIntentHandled = savedInstanceState.getBoolean(BUNDLE_KEY_IMPORT_INTENT_HANDLED, false);
+            Log.d(TAG, "onCreate: import intent handled is " + mImportIntentHandled);
+        }
+        if (Intent.ACTION_VIEW.equals(getIntent().getAction()) && !mImportIntentHandled && requestWritePermission()) {
             showDialogToConfirmImport();
 
         // Otherwise, if there's no style loaded, direct the user to choose one
@@ -1182,6 +1199,7 @@ public class DebatingActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle bundle) {
         bundle.putString(BUNDLE_KEY_XML_FILE_NAME, mFormatXmlFileName);
+        bundle.putBoolean(BUNDLE_KEY_IMPORT_INTENT_HANDLED, mImportIntentHandled);
         if (mDebateManager != null)
             mDebateManager.saveState(BUNDLE_KEY_DEBATE_MANAGER, bundle);
     }
@@ -1718,6 +1736,7 @@ public class DebatingActivity extends AppCompatActivity {
         showSnackbar(Snackbar.LENGTH_SHORT, R.string.importDebateFormat_snackbar_success, filename);
 
         // Now, load the debate
+        mImportIntentHandled = true;
         setXmlFileName(filename);
         resetDebate();
     }
