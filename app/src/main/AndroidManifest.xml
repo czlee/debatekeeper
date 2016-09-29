@@ -18,7 +18,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.czlee.debatekeeper"
     android:installLocation="auto"
-    android:versionCode="20"
+    android:versionCode="21"
     android:versionName="1.2-dev">
 
     <uses-permission android:name="android.permission.VIBRATE" />
