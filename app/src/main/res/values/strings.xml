@@ -127,7 +127,7 @@
 
     <!-- Changelog dialog -->
     <!-- By convention, this should be changed to match the manifest versionCode when the changelog changes. -->
-    <integer name="changelogDialog_versionCode">20</integer>
+    <integer name="changelogDialog_versionCode">21</integer>
     <string name="changelogDialog_title">What\'s new in version %1$s</string>
     <string name="changelogDialog_message">
           • New icon (thanks to Zandi Speedy-Willis) and updated theme
