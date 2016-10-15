@@ -1,11 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<debate-format schema-version="2.0">
-  <name>Middle School Debate</name>
+<debate-format schema-version="2.1">
+  <name>Middle School Public Debate Program</name>
+  <short-name>MSPDP</short-name>
   <info>
     <region>United States</region>
     <level>Middle School</level>
     <used-at>Middle School Public Debate Program</used-at>
-    <description>3 vs 3, POIs allowed, 1st Prop, 1st Opp, 2nd Prop, 2nd Opp 5 minutes, Opp Rebuttal, Prop Rebuttal 4 minutes</description>
+    <description>3 vs 3, 8-minute constructives (by 1st and 2nd), 4-minute rebuttals (by 3rd), POIs allowed</description>
   </info>
   <prep-time length="20:00"/>
   <speech-types>
