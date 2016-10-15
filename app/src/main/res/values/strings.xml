@@ -127,12 +127,13 @@
 
     <!-- Changelog dialog -->
     <!-- By convention, this should be changed to match the manifest versionCode when the changelog changes. -->
-    <integer name="changelogDialog_versionCode">21</integer>
+    <integer name="changelogDialog_versionCode">22</integer>
     <string name="changelogDialog_title">What\'s new in version %1$s</string>
     <string name="changelogDialog_message">
           • New icon (thanks to Zandi Speedy-Willis) and updated theme
         \n• Share custom debate formats, including via Android Beam (for Android 4.1 and above)
         \n• Quick access to turning bells on or off
+        \n• Added MSPDP and Paris V styles
         \n• Other user interface improvements
     </string>
     <string name="changelogDialog_dontShow">Don\'t show this again</string>
