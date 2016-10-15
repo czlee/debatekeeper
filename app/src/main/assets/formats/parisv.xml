@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<debate-format schema-version="2.1">
+  <name>Paris V</name>
+  <info>
+    <region>France</region>
+    <level>University</level>
+    <level>High School</level>
+    <used-at>French Debating Association</used-at>
+    <description>Two teams of five, 6-minute speeches, POIs allowed</description>
+  </info>
+  <prep-time length="15:00"/>
+  <speech-types>
+    <speech-type ref="all" length="6:00" first-period="normal">
+      <bell time="1:00" number="1" next-period="pois-allowed"/>
+      <bell time="5:00" number="1" next-period="warning"/>
+      <bell time="finish" number="2" next-period="overtime"/>
+    </speech-type>
+  </speech-types>
+  <speeches>
+    <speech type="all">
+      <name>1st Speaker for the Government</name>
+    </speech>
+    <speech type="all">
+      <name>1st Speaker for the Opposition</name>
+    </speech>
+    <speech type="all">
+      <name>2nd Speaker for the Government</name>
+    </speech>
+    <speech type="all">
+      <name>2nd Speaker for the Opposition</name>
+    </speech>
+    <speech type="all">
+      <name>3rd Speaker for the Government</name>
+    </speech>
+    <speech type="all">
+      <name>3rd Speaker for the Opposition</name>
+    </speech>
+    <speech type="all">
+      <name>4th Speaker for the Government</name>
+    </speech>
+    <speech type="all">
+      <name>4th Speaker for the Opposition</name>
+    </speech>
+    <speech type="all">
+      <name>5th Speaker for the Government</name>
+    </speech>
+    <speech type="all">
+      <name>5th Speaker for the Opposition</name>
+    </speech>
+  </speeches>
+</debate-format>
