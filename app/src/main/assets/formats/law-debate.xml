@@ -5,7 +5,7 @@
 	<region>Switzerland</region>
 	<level>University</level>
 	<used-at>Seminars (Rechtsdebatten)</used-at>
-	<description>Two-teams-debate with opening statement (7"), comeback [replica/duplica] (3"), and closing statement (1") each</description>
+	<description>Two-teams-debate with opening statement (7'), comeback [replica/duplica] (3'), and closing statement (1') each</description>
 </info>
 <speech-types>
 	<speech-type ref="opening" length="7:00" first-period="normal">;
