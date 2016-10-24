@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<debate-format schema-version="2.1">
+<name>Juridical Debates - Rechtsdebatten</name>
+<info>
+	<region>Switzerland</region>
+	<level>University</level>
+	<used-at>Seminars (Rechtsdebatten)</used-at>
+	<description>Two-teams-debate with opening statement (7"), comeback [replica/duplica] (3"), and closing statement (1") each</description>
+</info>
+<speech-types>
+	<speech-type ref="opening" length="7:00" first-period="normal">;
+		<bell time="5:00" number="1" next-period="warning" />
+		<bell time="7:00" number="2" next-period="overtime" />
+	</speech-type>
+	<speech-type ref="comeback" length="3:00" first-period="normal">;
+		<bell time="2:00" number="1" next-period="warning" />
+		<bell time="3:00" number="2" next-period="overtime" />
+	</speech-type>
+	<speech-type ref="closing" length="1:00" first-period="normal">;
+		<bell time="0:45" number="1" next-period="warning" />
+		<bell time="1:00" number="2" next-period="overtime" />
+	</speech-type>
+</speech-types>
+<speeches>
+    <speech type="opening">
+      <name>Team 1 - Affirmative (pro arguments)</name>
+    </speech>
+    <speech type="opening">
+      <name>Team 2 - Negative (contra arguments)</name>
+    </speech>
+    <speech type="comeback">
+      <name>Team 1 - comeback (replica)</name>
+    </speech>
+    <speech type="comeback">
+      <name>Team 2 - comeback (duplica)</name>
+    </speech>
+    <speech type="closing">
+      <name>Team 1 - closing statement</name>
+    </speech>
+    <speech type="closing">
+      <name>Team 2 - closing statement</name>
+    </speech>
+</speeches>
+</debate-format>
