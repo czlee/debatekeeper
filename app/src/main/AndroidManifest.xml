@@ -18,8 +18,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.czlee.debatekeeper"
     android:installLocation="auto"
-    android:versionCode="22"
-    android:versionName="1.2-beta.1">
+    android:versionCode="23"
+    android:versionName="1.2">
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
