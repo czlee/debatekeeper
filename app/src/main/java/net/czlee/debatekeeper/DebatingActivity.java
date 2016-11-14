@@ -1131,7 +1131,7 @@ public class DebatingActivity extends AppCompatActivity {
         //
         // Configure NFC
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC) &&
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
             if (nfcAdapter != null)
                 nfcAdapter.setBeamPushUrisCallback(new BeamFileUriCallback(), this);
