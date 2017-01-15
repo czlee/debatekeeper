@@ -61,9 +61,6 @@ import javax.xml.parsers.ParserConfigurationException;
  * to provide mechanisms for handling resources.  It does, however, have to handle global
  * period types, which it delegates to {@link PeriodInfoManager}.</p>
  *
- * <p>Unlike {@link DebateFormatBuilderForSchema1}, this class does not do error checking that is
- * handled by the schema.  It does do error checking that is not handled by the schema.</p>
- *
  * @author Chuan-Zheng Lee
  *
  */
@@ -371,7 +368,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
         // If there is a next period specified, and it is not "#stay", set it accordingly
         String nextPeriod = xu.findAttributeText(element, R.string.xml2attrName_bell_nextPeriod);
         if (nextPeriod != null) {
-            if (!nextPeriod.equals(getString(R.string.xml1attrValue_common_stay))) {
+            if (!nextPeriod.equals(getString(R.string.xml2attrValue_common_stay))) {
                 PeriodInfo npi = mPeriodInfoManager.getPeriodInfo(nextPeriod);
                 if (npi == null)
                     logXmlError(R.string.dfb2error_periodInfo_notFound, nextPeriod);
@@ -461,7 +458,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
         // If there is a first period specified, and it is not "#stay", set it accordingly
         String firstPeriod = xu.findAttributeText(element, R.string.xml2attrName_controlledTimeFirstPeriod);
         if (firstPeriod != null) {
-            if (!firstPeriod.equals(getString(R.string.xml1attrValue_common_stay))) {
+            if (!firstPeriod.equals(getString(R.string.xml2attrValue_common_stay))) {
                 PeriodInfo npi = mPeriodInfoManager.getPeriodInfo(firstPeriod);
                 if (npi == null)
                     logXmlError(R.string.dfb2error_periodInfo_notFound, firstPeriod); // not checked by schema

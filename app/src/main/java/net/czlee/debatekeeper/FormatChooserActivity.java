@@ -53,7 +53,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import net.czlee.debatekeeper.debateformat.DebateFormatInfo;
-import net.czlee.debatekeeper.debateformat.DebateFormatInfoExtractorForSchema1;
+import net.czlee.debatekeeper.debateformat.DebateFormatInfoForSchema1;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfoForSchema2;
 import net.czlee.debatekeeper.debateformat.DebateFormatStyleNameExtractor;
 import net.czlee.debatekeeper.debateformat.XmlUtilities;
@@ -585,10 +585,9 @@ public class FormatChooserActivity extends AppCompatActivity {
 
         // If it's not 2.0, check to see if it is 1.0 or 1.1
         if (!dfi2.isSchemaSupported()) {
-            DebateFormatInfoExtractorForSchema1 dfie = new DebateFormatInfoExtractorForSchema1(this);
             is.close();
             is = mFilesManager.open(filename); // open again to try schema 1.0
-            DebateFormatInfo dfi1 = dfie.getDebateFormatInfo(is);
+            DebateFormatInfo dfi1 = new DebateFormatInfoForSchema1(this, is);
             if (dfi1.isSchemaSupported()) return dfi1;
         }
 

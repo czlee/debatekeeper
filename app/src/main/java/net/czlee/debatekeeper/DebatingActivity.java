@@ -60,7 +60,6 @@ import android.text.Html;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.util.Pair;
-import android.util.Xml;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -86,13 +85,12 @@ import net.czlee.debatekeeper.debateformat.DebateFormatStyleNameExtractor;
 import net.czlee.debatekeeper.debateformat.DebatePhaseFormat;
 import net.czlee.debatekeeper.debateformat.PeriodInfo;
 import net.czlee.debatekeeper.debateformat.PrepTimeFormat;
+import net.czlee.debatekeeper.debateformat.SchemaVersion1Checker;
 import net.czlee.debatekeeper.debateformat.SpeechFormat;
 import net.czlee.debatekeeper.debatemanager.DebateManager;
 import net.czlee.debatekeeper.debatemanager.DebateManager.DebatePhaseTag;
 
-import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -983,42 +981,6 @@ public class DebatingActivity extends AppCompatActivity {
         }
     }
 
-    private class CheckForOutdatedSchemaDoneException extends SAXException {
-
-        final boolean isVersion1;
-
-        CheckForOutdatedSchemaDoneException(boolean isVersion1) {
-            this.isVersion1 = isVersion1;
-        }
-    }
-
-    /**
-     * XML handler that checks if the first element is "debateformat" and its version starts with
-     * "1." (i.e. is 1.0 or 1.1).
-     */
-    private class CheckForOutdatedSchemaXMLContentHandler extends DefaultHandler {
-
-        @Override
-        public void startElement(String uri, String localName, String qName,
-                                 Attributes atts) throws SAXException {
-
-            Resources res = getResources();
-            String DEBATING_TIMER_URI = res.getString(R.string.xml_uri);
-
-            if (!uri.equals(DEBATING_TIMER_URI))
-                return;
-
-            if (localName.equals(res.getString(R.string.xml1elemName_root))) {
-                String version = atts.getValue(DEBATING_TIMER_URI,
-                        res.getString(R.string.xml1attrName_root_schemaVersion));
-                if (version.startsWith("1."))
-                    throw new CheckForOutdatedSchemaDoneException(true);
-                else
-                    throw new CheckForOutdatedSchemaDoneException(false);
-            }
-        }
-    }
-
     //******************************************************************************************
     // Public methods
     //******************************************************************************************
@@ -1446,7 +1408,7 @@ public class DebatingActivity extends AppCompatActivity {
         }
 
         // If the schema wasn't supported, check if it looks like it might be a schema 1.0 file.
-        // If it does, throw a fatal error.
+        // If it does, show an error and refuse to load the file.
         if (!dfbfx.isSchemaSupported()) {
 
             try {
@@ -1457,9 +1419,7 @@ public class DebatingActivity extends AppCompatActivity {
             }
 
             try {
-                Xml.parse(is, Xml.Encoding.UTF_8, new CheckForOutdatedSchemaXMLContentHandler());
-            } catch (CheckForOutdatedSchemaDoneException e) {
-                if (e.isVersion1) {
+                if (SchemaVersion1Checker.checkIfVersion1(this, is)) {
                     QueueableDialogFragment fragment = DialogSchemaTooOldFragment.newInstance(filename);
                     queueDialog(fragment, DIALOG_TAG_SCHEMA_OUTDATED + filename);
                 }
