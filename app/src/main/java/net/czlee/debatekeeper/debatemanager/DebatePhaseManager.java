@@ -17,8 +17,8 @@
 
 package net.czlee.debatekeeper.debatemanager;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import android.os.Bundle;
+import android.util.Log;
 
 import net.czlee.debatekeeper.AlertManager;
 import net.czlee.debatekeeper.debateformat.BellInfo;
@@ -26,8 +26,9 @@ import net.czlee.debatekeeper.debateformat.BellSoundInfo;
 import net.czlee.debatekeeper.debateformat.DebatePhaseFormat;
 import net.czlee.debatekeeper.debateformat.PeriodInfo;
 import net.czlee.debatekeeper.debateformat.SpeechFormat;
-import android.os.Bundle;
-import android.util.Log;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * <p>DebatePhaseManager manages the mechanics of a single phase of a debate.  A "phase" of a debate
@@ -400,7 +401,7 @@ public class DebatePhaseManager extends DebateElementManager {
      * Does an overtime bell.
      */
     private void doOvertimeBell() {
-        Log.v(TAG, "overtime bell at %s" + mCurrentTime);
+        Log.v(TAG, "overtime bell at " + mCurrentTime);
         mAlertManager.playBell(new BellSoundInfo(3));
     }
 
