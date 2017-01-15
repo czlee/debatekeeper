@@ -63,8 +63,8 @@ public class DebateFormatStyleNameExtractor {
     }
 
     /**
-     * This class just looks for the string inside &lt;debateformat name="...">
-     * and saves it to <code>mCurrentStyleName</code>.
+     * This class just looks for first &lt;name&gt; element and saves its contents to
+     * <code>mCurrentStyleName</code>.
      */
     private class GetDebateFormatNameXmlContentHandler extends DefaultHandler {
 

@@ -60,6 +60,7 @@ import android.text.Html;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.util.Pair;
+import android.util.Xml;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -80,7 +81,6 @@ import net.czlee.debatekeeper.AlertManager.FlashScreenMode;
 import net.czlee.debatekeeper.debateformat.BellInfo;
 import net.czlee.debatekeeper.debateformat.DebateFormat;
 import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml;
-import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXmlForSchema1;
 import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXmlForSchema2;
 import net.czlee.debatekeeper.debateformat.DebateFormatStyleNameExtractor;
 import net.czlee.debatekeeper.debateformat.DebatePhaseFormat;
@@ -90,7 +90,9 @@ import net.czlee.debatekeeper.debateformat.SpeechFormat;
 import net.czlee.debatekeeper.debatemanager.DebateManager;
 import net.czlee.debatekeeper.debatemanager.DebateManager.DebatePhaseTag;
 
+import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -981,6 +983,42 @@ public class DebatingActivity extends AppCompatActivity {
         }
     }
 
+    private class CheckForOutdatedSchemaDoneException extends SAXException {
+
+        final boolean isVersion1;
+
+        CheckForOutdatedSchemaDoneException(boolean isVersion1) {
+            this.isVersion1 = isVersion1;
+        }
+    }
+
+    /**
+     * XML handler that checks if the first element is "debateformat" and its version starts with
+     * "1." (i.e. is 1.0 or 1.1).
+     */
+    private class CheckForOutdatedSchemaXMLContentHandler extends DefaultHandler {
+
+        @Override
+        public void startElement(String uri, String localName, String qName,
+                                 Attributes atts) throws SAXException {
+
+            Resources res = getResources();
+            String DEBATING_TIMER_URI = res.getString(R.string.xml_uri);
+
+            if (!uri.equals(DEBATING_TIMER_URI))
+                return;
+
+            if (localName.equals(res.getString(R.string.xml1elemName_root))) {
+                String version = atts.getValue(DEBATING_TIMER_URI,
+                        res.getString(R.string.xml1attrName_root_schemaVersion));
+                if (version.startsWith("1."))
+                    throw new CheckForOutdatedSchemaDoneException(true);
+                else
+                    throw new CheckForOutdatedSchemaDoneException(false);
+            }
+        }
+    }
+
     //******************************************************************************************
     // Public methods
     //******************************************************************************************
@@ -1407,11 +1445,9 @@ public class DebatingActivity extends AppCompatActivity {
                     R.string.fatalProblemWithXmlFileDialog_message_badXml, e.getMessage()), e);
         }
 
-        // If the schema wasn't supported, try schema 1.0 to see if it works
+        // If the schema wasn't supported, check if it looks like it might be a schema 1.0 file.
+        // If it does, throw a fatal error.
         if (!dfbfx.isSchemaSupported()) {
-
-            DebateFormat df1;
-            DebateFormatBuilderFromXml dfbfx1 = new DebateFormatBuilderFromXmlForSchema1(this);
 
             try {
                 is.close();
@@ -1421,27 +1457,20 @@ public class DebatingActivity extends AppCompatActivity {
             }
 
             try {
-                df1 = dfbfx1.buildDebateFromXml(is);
-            } catch (IOException e) {
-                throw new FatalXmlError(getString(R.string.fatalProblemWithXmlFileDialog_message_cannotRead), e);
+                Xml.parse(is, Xml.Encoding.UTF_8, new CheckForOutdatedSchemaXMLContentHandler());
+            } catch (CheckForOutdatedSchemaDoneException e) {
+                if (e.isVersion1) {
+                    QueueableDialogFragment fragment = DialogSchemaTooOldFragment.newInstance(filename);
+                    queueDialog(fragment, DIALOG_TAG_SCHEMA_OUTDATED + filename);
+                }
             } catch (SAXException e) {
                 throw new FatalXmlError(getString(
                         R.string.fatalProblemWithXmlFileDialog_message_badXml, e.getMessage()), e);
-            }
-
-            // If it's looking good, replace, but prompt user to convert the file.
-            // (Otherwise, pretend this schema 1.0 attempt never happened.)
-            if (dfbfx1.isSchemaSupported()) {
-                df    = df1;
-                dfbfx = dfbfx1;
-
-                QueueableDialogFragment fragment = DialogSchemaTooOldFragment.newInstance(filename);
-                queueDialog(fragment, DIALOG_TAG_SCHEMA_OUTDATED + filename);
+            } catch (IOException e) {
+                throw new FatalXmlError(getString(R.string.fatalProblemWithXmlFileDialog_message_cannotRead), e);
             }
         }
 
-        // If the schema still isn't supported (even after possibly having been replaced by
-        // schema 1.0), prompt the user to upgrade the app.
         if (dfbfx.isSchemaTooNew()) {
             QueueableDialogFragment fragment = DialogSchemaTooNewFragment.newInstance(dfbfx.getSchemaVersion(), dfbfx.getSupportedSchemaVersion(), filename);
             queueDialog(fragment, DIALOG_TAG_SCHEMA_TOO_NEW + filename);

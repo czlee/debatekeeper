@@ -99,7 +99,7 @@
 
     <string name="fatalProblemWithXmlFileDialog_title">Oh no!</string>
     <string name="fatalProblemWithXmlFileDialog_button">Choose style</string>
-    <string name="fatalProblemWithXmlFileDialog_message_noSpeeches">"There are no speeches in this debate style file."</string>
+    <string name="fatalProblemWithXmlFileDialog_message_noSpeeches">"There are no speeches in this debate style file. (This might be because the file isn't supported or isn't well-formed.)"</string>
     <string name="fatalProblemWithXmlFileDialog_message_cannotRead">"I've hit a problem opening this debate style file. If this is a custom format, it might be because the file is deleted or because storage permissions are disabled."</string>
     <string name="fatalProblemWithXmlFileDialog_message_cannotFind">"I've hit a problem opening this debate style file. If this is a custom format, it might be because the file is deleted or because storage permissions are disabled."</string>
     <string name="fatalProblemWithXmlFileDialog_message_badXml">"There's a problem with the XML in this debate style file. The error was:\n\n%1$s\n"</string>
@@ -116,8 +116,8 @@
     <string name="schemaTooNewDialog_button_ignore">Ignore</string>
     <string name="schemaTooNewDialog_message">This debate format file uses a schema (%1$s) newer than supported (%2$s) by this app version (%3$s). Check for updates on Google Play?</string>
 
-    <string name="schemaOutdatedDialog_title">Warning</string>
-    <string name="schemaOutdatedDialog_message">This debate format file uses schema version 1.0, support for which will be removed in the next version of Debatekeeper. Please convert this file to schema version 2.1.</string>
+    <string name="schemaOutdatedDialog_title">File no longer supported</string>
+    <string name="schemaOutdatedDialog_message">This debate format file uses schema version 1.0, which is no longer supported. Please convert this file to schema version 2.1.</string>
     <string name="schemaOutdatedDialog_moreInfoUrl" translatable="false">https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file</string>
     <string name="schemaOutdatedDialog_button_learnMore">Learn more</string>
     <string name="schemaOutdatedDialog_button_ok">OK</string>
