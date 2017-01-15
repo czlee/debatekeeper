@@ -17,308 +17,62 @@
 
 package net.czlee.debatekeeper.debateformat;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import android.content.Context;
+import android.util.Xml;
 
 import net.czlee.debatekeeper.R;
 import net.czlee.debatekeeper.debateformat.XmlUtilities.IllegalSchemaVersionException;
-import android.content.Context;
-import android.text.format.DateUtils;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 /**
- * Passive data class for holding quick information about a debate format. This
- * is NOT the same as the {@link DebateFormat} class itself.
- * <code>DebateFormatInfoForSchema1</code> holds only information that is human-readable
- * on an "information" screen about the debate format. Specifically:
- * <ul>
- * <li><code>DebateFormatInfoForSchema1</code>, unlike <code>DebateFormat</code>,
- * <b>does</b> store the information between the &lt;info&gt; tags.</li>
- * <li><code>DebateFormatInfoForSchema1</code> does <b>not</b> have
- * <code>SpeechFormat</code>s, <code>BellInfo</code>s or <code>PeriodInfo</code>
- * s.</li>
- * <li>In fact, <code>DebateFormatInfoForSchema1</code> does <b>not</b> store anything
- * about periods at all.</li>
- * <li><code>DebateFormatInfoForSchema1</code> stores only enough information about the
- * speeches to be able to describe them quickly.</li>
- * </ul>
+ * Extracts and holds very basic information about schema 1.0 files. Retained with minimal
+ * functionality as a transition from supporting schema 1.0 to not knowing that schema 1.0 exists.
  *
  * @author Chuan-Zheng Lee
  * @since  2012-06-20
  */
 public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
 
-    private final Context mContext;
-
-    private       String                            name          = new String();
-    private       String                            schemaVersion = null;
-    private final ArrayList<String>                 regions       = new ArrayList<String>();
-    private final ArrayList<String>                 levels        = new ArrayList<String>();
-    private final ArrayList<String>                 usedAts       = new ArrayList<String>();
-    private final HashMap<String, Resource>         resources     = new HashMap<String, Resource>();
-    private final HashMap<String, SpeechFormatInfo> speechFormats = new HashMap<String, SpeechFormatInfo>();
-    private final ArrayList<SpeechInfo>             speeches      = new ArrayList<SpeechInfo>();
-    private       PrepTimeInfo                      prepFormat    = null;
-    private       String                            description   = new String("-");
+    private String mName;
+    private String mSchemaVersion = null;
 
     private static final String MINIMUM_SCHEMA_VERSION = "1.0";
     private static final String MAXIMUM_SCHEMA_VERSION = "1.1";
 
-    public DebateFormatInfoForSchema1(Context context) {
-        super();
-        this.mContext = context;
+    private final Context mContext;
+    private final String  DEBATING_TIMER_URI;
+
+    public DebateFormatInfoForSchema1(Context context, InputStream is) throws IOException, SAXException {
+        mContext           = context;
+        DEBATING_TIMER_URI = context.getString(R.string.xml_uri);
+
+        Xml.parse(is, Xml.Encoding.UTF_8, new DebateFormatInfoContentHandler());
     }
 
-    // ******************************************************************************************
-    // Private classes
-    // ******************************************************************************************
-    private class MiniBellInfo {
-        private final long time;
-        private final boolean pause;
-        public MiniBellInfo(long time, boolean pause) {
-            super();
-            this.time = time;
-            this.pause = pause;
-        }
-        public long getTime() {
-            return time;
-        }
-        public boolean isPause() {
-            return pause;
-        }
-    }
-
-    private class PrepTimeInfo extends SpeechFormatOrPrepInfo {
-
-        private final boolean controlled;
-
-        public PrepTimeInfo(long length, boolean controlled) {
-            super(length);
-            this.controlled = controlled;
-        }
+    private class DebateFormatInfoContentHandler extends DefaultHandler {
 
         @Override
-        public String getDescription() {
-            // Length line
-            String description;
-            if (length % 60 == 0){
-                long minutes = length / 60;
-                description = mContext.getResources().getQuantityString(R.plurals.viewFormat_timeDescription_lengthInMinutesOnly, (int) minutes, minutes);
-            } else
-                description = mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, DateUtils.formatElapsedTime(length));
+        public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 
-            if (controlled)
-                description += mContext.getString(R.string.viewFormat_timeDescription_controlledPrepSuffix);
+            if (!uri.equals(DEBATING_TIMER_URI))
+                return;
 
-            if (getBells().size() > 0) {
-                String bellsDesc = getBellsString();
-                description += "\n" + bellsDesc;
+            if (localName.equals(mContext.getString(R.string.xml1elemName_root))) {
+                String name = atts.getValue(DEBATING_TIMER_URI, mContext.getString(R.string.xml1attrName_root_name));
+                if (name != null) mName = name;
+
+                String schemaVersion = atts.getValue(DEBATING_TIMER_URI, mContext.getString(R.string.xml1attrName_root_schemaVersion));
+                if (schemaVersion != null) mSchemaVersion = schemaVersion;
             }
 
-            return description;
         }
-    }
-
-    private class Resource {
-        private final ArrayList<MiniBellInfo> bells = new ArrayList<MiniBellInfo>();
-
-        public void addBell(long time, boolean pause) {
-            this.bells.add(new MiniBellInfo(time, pause));
-        }
-        protected ArrayList<MiniBellInfo> getBells() {
-            return bells;
-        }
-    }
-
-    private class SpeechFormatInfo extends SpeechFormatOrPrepInfo {
-        public SpeechFormatInfo(long length) {
-            super(length);
-        }
-
-        /**
-         * Adds all the bells in a {@link Resource} to this SpeechFormatOrPrepInfo.
-         * @param res the <code>Resource</code> to add
-         */
-        public void addResource(Resource res) {
-            Iterator<MiniBellInfo> biIterator = res.getBells().iterator();
-            MiniBellInfo bi;
-            while (biIterator.hasNext()) {
-                bi = biIterator.next();
-                this.addBell(bi.getTime(), bi.isPause());
-            }
-        }
-
-    }
-
-    private class SpeechFormatOrPrepInfo extends Resource {
-        protected final long length;
-
-        public SpeechFormatOrPrepInfo(long length) {
-            super();
-            this.length = length;
-        }
-
-        public String getDescription() {
-            // Length line
-            String description;
-            if (length % 60 == 0) {
-                long minutes = length / 60;
-                description = mContext.getResources().getQuantityString(R.plurals.viewFormat_timeDescription_lengthInMinutesOnly, (int) minutes, minutes);
-            } else
-                description = mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, DateUtils.formatElapsedTime(length));
-
-            if (getBells().size() > 0) {
-                String bellsDesc = getBellsString();
-                description += "\n" + bellsDesc;
-            }
-
-            return description;
-        }
-
-        public long getLength() {
-            return length;
-        }
-
-        protected String getBellsString() {
-            String bellsList = concatenateBellTimes(getBells());
-            String bellsDesc = mContext.getResources().getQuantityString(R.plurals.viewFormat_timeDescription_bellsList, getBells().size(), bellsList);
-            return bellsDesc;
-        }
-
-        /**
-         * Concatenates all the bell times in a list into a single user-readable string
-         * @param list a list of <code>MiniBellInfo</code>s
-         * @return the single string listing all the bell times
-         */
-        private String concatenateBellTimes(ArrayList<MiniBellInfo> list) {
-            StringBuilder str = new StringBuilder();
-            Iterator<MiniBellInfo> iterator = list.iterator();
-
-            while (iterator.hasNext()) {
-                MiniBellInfo bi = iterator.next();
-                str.append(DateUtils.formatElapsedTime(bi.getTime()));
-                if (bi.isPause())
-                    str.append(mContext.getString(R.string.mainScreen_pauseOnBellIndicator));
-
-                // If there's one after this, add a comma
-                if (iterator.hasNext()) str.append(", ");
-            }
-
-            return str.toString();
-        }
-    }
-
-    private class SpeechInfo {
-        private final String name;
-        private final String format;
-        public SpeechInfo(String name, String format) {
-            super();
-            this.name = name;
-            this.format = format;
-        }
-        public String getFormat() {
-            return format;
-        }
-        public String getName() {
-            return name;
-        }
-
-    }
-
-    // ******************************************************************************************
-    // Public methods
-    // ******************************************************************************************
-
-    /**
-     * Adds a bell to the prep time in this debate format.
-     * Does nothing if there is no prep time in this debate format.
-     * @param time the bell time within the speech
-     * @param pause <b>true</b> if this bell pauses the timer, <b>false</b> if not
-     */
-    public void addBellToPrepTime(long time, boolean pause) {
-        if (prepFormat == null) return;
-        prepFormat.addBell(time, pause);
-    }
-
-    /**
-     * Adds a bell to a resource in this debate format.
-     * @param time the bell time within the speech
-     * @param pause <b>true</b> if this bell pauses the timer, <b>false</b> if not
-     * @param resourceRef the short reference for the resource to which this bell should be added
-     */
-    public void addBellToResource(long time, boolean pause, String resourceRef) {
-        resources.get(resourceRef).addBell(time, pause);
-    }
-
-    /**
-     * Adds a bell to a speech format in this debate format.
-     * @param time the bell time within the speech
-     * @param pause <b>true</b> if this bell pauses the timer, <b>false</b> if not
-     * @param speechRef the short reference for the speech format to which this bell should be added
-     */
-    public void addBellToSpeechFormat(long time, boolean pause, String speechRef) {
-        speechFormats.get(speechRef).addBell(time, pause);
-    }
-
-    /**
-     * Adds a finish bell to the prep time in this debate format.
-     * @param pause <b>true</b> if this bell pauses the timer, <b>false</b> if not
-     */
-    public void addFinishBellToPrepTime(boolean pause) {
-        if (prepFormat == null) return;
-        long finishTime = prepFormat.getLength();
-        addBellToPrepTime(finishTime, pause);
-    }
-
-    /**
-     * Adds a finish bell to a speech format in this debate format.
-     * @param pause <b>true</b> if this bell pauses the timer, <b>false</b> if not
-     * @param speechRef the short reference for the speech format to which this bell should be added
-     */
-    public void addFinishBellToSpeechFormat(boolean pause, String speechRef) {
-        SpeechFormatOrPrepInfo sfi = speechFormats.get(speechRef);
-        long finishTime = sfi.getLength();
-        addBellToSpeechFormat(finishTime, pause, speechRef);
-    }
-
-    public void addLevel(String level) {
-        levels.add(level);
-    }
-
-    /**
-     * Adds a prep time format to this debate format.
-     * Does nothing if a prep time format has already been added.
-     * @param length the length in seconds of the prep time
-     */
-    public void addPrepTime(long length, boolean controlled) {
-        if (prepFormat != null) return;
-        prepFormat = new PrepTimeInfo(length, controlled);
-    }
-
-    public void addRegion(String region) {
-        regions.add(region);
-    }
-
-    public void addResource(String ref) {
-        resources.put(ref, new Resource());
-    }
-
-    public void addSpeech(String name, String formatRef) {
-        speeches.add(new SpeechInfo(name, formatRef));
-    }
-
-    /**
-     * Adds a speech format to this debate format.
-     * @param ref a short reference for this speech format
-     * @param length the length in seconds of this speech
-     */
-    public void addSpeechFormat(String ref, long length) {
-        speechFormats.put(ref, new SpeechFormatInfo(length));
-    }
-
-    public void addUsedAt(String usedAt) {
-        usedAts.add(usedAt);
     }
 
     /* (non-Javadoc)
@@ -326,7 +80,7 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
      */
     @Override
     public String getDescription() {
-        return description;
+        return "";
     }
 
     /* (non-Javadoc)
@@ -334,7 +88,7 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
      */
     @Override
     public ArrayList<String> getLevels() {
-        return levels;
+        return new ArrayList<>();
     }
 
     /* (non-Javadoc)
@@ -342,7 +96,7 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
      */
     @Override
     public String getName() {
-        return name;
+        return mName;
     }
 
     /* (non-Javadoc)
@@ -350,8 +104,7 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
      */
     @Override
     public String getPrepTimeDescription() {
-        if (prepFormat == null) return null;
-        else return prepFormat.getDescription();
+        return null;
     }
 
     /* (non-Javadoc)
@@ -359,7 +112,7 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
      */
     @Override
     public ArrayList<String> getRegions() {
-        return regions;
+        return new ArrayList<>();
     }
 
     /**
@@ -367,7 +120,7 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
      */
     @Override
     public String getSchemaVersion() {
-        return schemaVersion;
+        return mSchemaVersion;
     }
 
     /* (non-Javadoc)
@@ -375,14 +128,7 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
      */
     @Override
     public ArrayList<String[]> getSpeeches() {
-        ArrayList<String[]> result = new ArrayList<String[]>();
-        Iterator<SpeechInfo> iterator = speeches.iterator();
-        while (iterator.hasNext()) {
-            SpeechInfo speech = iterator.next();
-            String[] pair = {speech.getName(), speech.getFormat()};
-            result.add(pair);
-        }
-        return result;
+        return new ArrayList<>();
     }
 
     /* (non-Javadoc)
@@ -390,22 +136,7 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
      */
     @Override
     public ArrayList<String[]> getSpeechFormatDescriptions() {
-        ArrayList<String[]> result = new ArrayList<String[]>();
-        Iterator<SpeechInfo> iterator = speeches.iterator();
-        HashSet<String> seenFormatRefs = new HashSet<String>();
-
-        while (iterator.hasNext()) {
-            String formatRef = iterator.next().getFormat();
-            if (!seenFormatRefs.contains(formatRef) && speechFormats.containsKey(formatRef)) {
-                seenFormatRefs.add(formatRef);
-                SpeechFormatOrPrepInfo sti = speechFormats.get(formatRef);
-                String typeDesc = sti.getDescription();
-                String[] pair = {formatRef, typeDesc};
-                result.add(pair);
-            }
-        }
-
-        return result;
+        return new ArrayList<>();
     }
 
     /* (non-Javadoc)
@@ -413,50 +144,19 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
      */
     @Override
     public ArrayList<String> getUsedAts() {
-        return usedAts;
-    }
-
-    public boolean hasResource(String ref) {
-        return resources.containsKey(ref);
-    }
-
-    public boolean hasSpeechFormat(String ref) {
-        return speechFormats.containsKey(ref);
+        return new ArrayList<>();
     }
 
     @Override
     public boolean isSchemaSupported() {
-        if (schemaVersion == null)
+        if (mSchemaVersion == null)
             return false; // either not built, or if it was built then probably the wrong schema
         try {
-            return (XmlUtilities.compareSchemaVersions(schemaVersion, MAXIMUM_SCHEMA_VERSION) <= 0)
-                    && (XmlUtilities.compareSchemaVersions(schemaVersion, MINIMUM_SCHEMA_VERSION) >= 0);
+            return (XmlUtilities.compareSchemaVersions(mSchemaVersion, MAXIMUM_SCHEMA_VERSION) <= 0)
+                    && (XmlUtilities.compareSchemaVersions(mSchemaVersion, MINIMUM_SCHEMA_VERSION) >= 0);
         } catch (IllegalSchemaVersionException e) {
             return false;
         }
-    }
-
-    /**
-     * Instructs that all the bells in a specified resource should be included in a specified
-     * speech format
-     * @param speechRef the short reference for the speech format
-     * @param resourceRef the short reference for the resource
-     */
-    public void includeResource(String speechRef, String resourceRef) {
-        Resource res = resources.get(resourceRef);
-        speechFormats.get(speechRef).addResource(res);
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setSchemaVersion(String schemaVersion) {
-        this.schemaVersion = schemaVersion;
     }
 
 }
