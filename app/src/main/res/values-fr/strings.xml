@@ -87,7 +87,7 @@
     <string name="pref_firstOvertimeBell_title">Première cloche du temps excédentaire</string>
     <string name="pref_flashScreenMode_title">Faire clignoter l\'écran</string>
     <string name="pref_keepScreenOn_offSummary">Appliquer la mise en veille normale de l\'écran</string>
-    <string name="pref_keepScreenOn_onSummary">Désactivate la mise en veille de l\'écran lorsque la chronomètre fonctionne</string>
+    <string name="pref_keepScreenOn_onSummary">Désactivater la mise en veille de l\'écran lorsque la chronomètre fonctionne</string>
     <string name="pref_ringBells_onSummary">Cloches sonneront\n(Tout le monde sauf le chronométreur devrait désactiver cette option)</string>
     <string name="pref_ringBells_offSummary">Cloches ne sonneront pas\n(Cette option ne touchera pas les autres sons de votre appareil)</string>
     <string name="pref_vibrateMode_offSummary">Ne pas faire vibrer</string>
@@ -146,8 +146,8 @@
     <string name="errorsinXmlFileDialog_message_prefix">"Ce fichier de format de débat pose des problèmes. J\'essayerai de le faire marcher, mais ça ne fonctionnera probablement pas. Les problèmes sont comme suit :\n"</string>
     <string name="errorsinXmlFileDialog_button">OK</string>
     <string name="fatalProblemWithXmlFileDialog_message_badXml">"Il y a un problème avec le XML dans ce fichier de format de débat. L\'erreur est comme suit :\n\n%1$s\n"</string>
-    <string name="fatalProblemWithXmlFileDialog_message_cannotFind">J\'ai renconté une problème en ouvrant ce fichier de format de débat. Si c\'est un format d\'utilisateur, c\'est peut-être parce que l\'autorisation de stockage est désactivée.</string>
-    <string name="fatalProblemWithXmlFileDialog_message_cannotRead">J\'ai renconté une problème en ouvrant ce fichier de format de débat. Si c\'est un format d\'utilisateur, c\'est peut-être parce que l\'autorisation de stockage est désactivée.</string>
+    <string name="fatalProblemWithXmlFileDialog_message_cannotFind">J\'ai rencontré une problème en ouvrant ce fichier de format de débat. Si c\'est un format d\'utilisateur, c\'est peut-être parce que l\'autorisation de stockage est désactivée.</string>
+    <string name="fatalProblemWithXmlFileDialog_message_cannotRead">J\'ai rencontré une problème en ouvrant ce fichier de format de débat. Si c\'est un format d\'utilisateur, c\'est peut-être parce que l\'autorisation de stockage est désactivée.</string>
     <string name="fatalProblemWithXmlFileDialog_message_noSpeeches">Il n\'y a aucun discours dans ce fichier de format de débat. (C\'est peut-être parce que le fichier n\'est pas pris en charge ou n\'est pas bien formé.)</string>
     <string name="fatalProblemWithXmlFileDialog_message_suffix">"\nVeuillez choisir un autre style."</string>
     <string name="fatalProblemWithXmlFileDialog_noSchemaVersion_suffix">"Aucune version de schema est spécifiée; veuillez demander de l\'auteur de ce fichier XML à spécifier une.\n"</string>
@@ -176,7 +176,7 @@
     <string name="xml2error_speech_format_null">Aucun type est spécifiée pour le discours (speech) « %1$s »</string>
     <string name="xml2error_speech_name_null">Pour un discours, aucun nom n\'est pas spécifié</string>
     <string name="xmlError_rootInvalidSchemaVersion">La version du schema est non valable : « %1$s »</string>
-    <string name="xmlError_rootNewSchemaVersion">Seulement les versions du schema jusqu\'à %2$s sont prises en charge (ce fichier utilise version %1$s); ça signifie peut-être</string>
+    <string name="xmlError_rootNewSchemaVersion">Seulement les versions du schema jusqu'à %2$s sont prises en charge (ce fichier utilise version %1$s); ça signifie peut-être que vous avez besoin de mettre à jour l'application.</string>
     <string name="xmlError_rootNoSchemaVersion">Ce format de débat n\'a pas de version de schema, donc il est impossible de savoir si vous avez besoin de mettre à jour pour que l\'application puisse prendre en charge ce fichier !</string>
     <string name="mainScreen_overtimeFormat">+%1$s</string>
     <string name="prepTimeBellDescription_proportional">à %1$s%% du temp de prép</string>
@@ -209,7 +209,7 @@
     <string name="intentFilter_importStyle">Debatekeeper</string>
     <string name="mainScreen_snackbar_beamNonExternalFile">Vous ne pouvez pas utiliser Android Beam pour partager les styles intégrées.</string>
     <string name="mainScreen_snackbar_beam_error_generic">Une erreur s\'est produite lors de l\'envoi de ce fichier de format de débat.</string>
-    <string name="importDebateFormat_dialog_addendum_overwriteExistingDifferentName">Cette action écrasera la style existante d\'utilisateur « %1$s », parce que le fichier qui la décrit a le même nom. Si vous ne voulez pas perdre %1$s, annulez, et puis réimporter avec un nom différent.</string>
+    <string name="importDebateFormat_dialog_addendum_overwriteExistingDifferentName">Cette action écrasera la style existante d\'utilisateur « %1$s », parce que le fichier qui la décrit a le même nom. Si vous ne voulez pas perdre %1$s, annulez, et puis réimportez avec un nom différent.</string>
     <string name="importDebateFormat_dialog_addendum_overwriteExistingSameName">Cette action écrasera la style existant « %1$s ».</string>
     <string name="importDebateFormat_placeholder_unknownStyleName">(indéterminé)</string>
     <string name="replaceDebateFormat_dialog_button_addNew">Ajouter une nouvelle</string>
