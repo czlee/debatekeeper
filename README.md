@@ -13,9 +13,10 @@ which are configurable.
 
 The website for this app is at http://tryingtoreason.wordpress.com/debatekeeper.
 
-You can install the app on the Google Play Store:
-
-[![Get this app on Google Play](http://www.android.com/images/brand/get_it_on_play_logo_large.png)](https://play.google.com/store/apps/details?id=net.czlee.debatekeeper)
+<a href="https://f-droid.org/packages/net.czlee.debatekeeper" target="_blank">
+<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="110"/></a>
+<a href="https://play.google.com/store/apps/details?id=net.czlee.debatekeeper" target="_blank">
+<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Get it on Google Play" height="110"/></a>
 
 Licence
 -------
