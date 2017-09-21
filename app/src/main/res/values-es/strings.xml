@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+ * Copyright (C) 2012 Phillip Cao, Chuan-Zheng Lee
+ *
+ * This file is part of the Debatekeeper app, which is licensed under the
+ * GNU General Public Licence version 3 (GPLv3).  You can redistribute
+ * and/or modify it under the terms of the GPLv3, and you must not use
+ * this file except in compliance with the GPLv3.
+ *
+ * This app is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public Licence for more details.
+ *
+ * You should have received a copy of the GNU General Public Licence
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<resources>
+
+    <string name="app_name" translatable="false">Debatekeeper</string>
+    <string name="activityName_Debating_withoutFormat" translatable="false">Debatekeeper</string>
+    <string name="activityName_GlobalSettings">Ajustes</string>
+    <string name="activityName_FormatChooser">Elegir estilo</string>
+    <string name="activityName_PrepTimeBellsEdit">Sonidos del tiempo de preparación</string>
+    <string name="intentFilter_importStyle">Debatekeeper</string>
+
+    <string name="app_marketUri" translatable="false">market://details?id=net.czlee.debatekeeper</string>
+
+    <!-- Buttons -->
+    <string name="mainScreen_controlButton_startTimer_text">Comenzar</string>
+    <string name="mainScreen_controlButton_stopTimer_text">Parar</string>
+    <string name="mainScreen_controlButton_resumeTimer_text">Continuar</string>
+    <string name="mainScreen_controlButton_resetTimer_text">Reiniciar</string>
+    <string name="mainScreen_controlButton_nextPhase_text">Siguiente</string>
+    <string name="mainScreen_controlButton_chooseStyle_text">Elegir estilo</string>
+    <string name="mainScreen_playBell_buttonText">Campana</string>
+    <string name="mainScreen_poiTimer_buttonText">Pregunta</string>
+
+    <!-- Notices -->
+    <string name="notification_title" translatable="false">Debatekeeper</string>
+
+    <string name="mainScreen_overtimeFormat">+%1$s</string>
+
+    <string name="mainScreen_bellsList_noBells">"; sin campanas"</string>
+    <plurals name="mainScreen_bellsList_normal">
+        <item quantity="one">"; campanas al min %1$s"</item>
+        <item quantity="other">"; campanas a los %1$s min"</item>
+    </plurals>
+    <string name="mainScreen_bellsList_nextOvertimeBell">"; siguiente campana de tiempo límite al min %1$s"</string>
+    <string name="mainScreen_bellsList_noOvertimeBells">"; sin campanas de tiempo límite"</string>
+
+    <plurals name="mainScreen_timeInMinutes">
+        <item quantity="one">%d minuto</item>
+        <item quantity="other">%d minutos</item>
+    </plurals>
+    <string name="mainScreen_speechLength">%s en total</string>
+    <string name="mainScreen_prepTimeLength">%s permitidos</string>
+    <string name="mainScreen_prepTimeControlledIndicator">", controlado"</string>
+    <string name="mainScreen_pauseOnBellIndicator">" (pausa)"</string>
+    <string name="mainScreen_silentBellIndicator">" (silencio)"</string>
+
+    <string name="mainScreen_snackbar_resetDebate">Todos los temporizadores del debate se reinician</string>
+    <string name="mainScreen_noDebateLoaded_text">No se ha cargado ningún debate</string>
+
+    <string name="prepTime_title">Tiempo de preparación</string>
+
+    <string name="mainScreen_snackbar_editTextDiscardChangesInfo_limitedBelow">Para descartar los cambios, pulsa el botón de atrás. (No puedes establecer el tiempo límite.)</string>
+    <string name="mainScreen_snackbar_editTextDiscardChangesInfo_limitedAbove">Para descartar los cambios, pulsa el botón de atrás. (No puedes establecer un tiempo mayor que 23:59.)</string>
+    <string name="mainScreen_snackbar_beamNonExternalFile">No puedes usar Android Beam para enviar estilos de serie.</string>
+    <string name="mainScreen_snackbar_beam_error_generic">Hubo un error leyendo el archivo del formato del debate.</string>
+
+    <!-- Sharing debate formats -->
+    <string name="importDebateFormat_dialog_title">¿Importar estilo de debate?</string>
+    <string name="importDebateFormat_dialog_message_question">¿Quieres importar el archivo del formato del debate &lt;b>%1$s&lt;/b>, que describe el estilo \"%2$s\"?</string>
+    <string name="importDebateFormat_dialog_addendum_overrideBuiltIn">Esto sobreescribirá el actual estilo \"%1$s\" de serie.</string>
+    <string name="importDebateFormat_dialog_addendum_overwriteExistingSameName">Esto sobreescribirá el actual estilo \"%1$s\".</string>
+    <string name="importDebateFormat_dialog_addendum_overwriteExistingDifferentName">
+        Esto sobreescribirá el actual estilo personalizado \"%1$s\", porque comparten el mismo nombre.
+        Si no quieres perder %1$s, cancela y entonces impórtalo con un archivo de otro nombre.</string>
+    <string name="importDebateFormat_placeholder_unknownStyleName">(desconocido)</string>
+    <string name="importDebateFormat_dialog_button_yes">Importar</string>
+    <string name="importDebateFormat_dialog_button_no">Cancelar</string>
+    <string name="replaceDebateFormat_dialog_title">¿Reemplazar el estilo de debate?</string>
+    <string name="replaceDebateFormat_dialog_message">Ya tienes un estilo de debate llamado \"%1$s\". ¿Quieres &lt;b>reemplazarlo&lt;/b>, sobreescribiendo el archivo %2$s, o &lt;b>añadir otro&lt;/b> \"%1$s\" usando el nombre del archivo %3$s?</string>
+    <string name="replaceDebateFormat_dialog_button_replace">Reemplazar</string>
+    <string name="replaceDebateFormat_dialog_button_addNew">Añadir otro</string>
+    <string name="replaceDebateFormat_dialog_button_cancel">Cancelar</string>
+    <string name="importDebateFormat_snackbar_error_generic">Se ha producido un error abriendo el archivo.</string>
+    <string name="importDebateFormat_snackbar_success">Se ha importado el archivo %1$s de forma excitosa</string>
+    <string name="importDebateFormat_snackbar_error_noWritePermission">Debes permitir a Debatekeeper que edite archivos en tu dispositivo para importar un formato personalizado.</string>
+
+    <!-- Menu -->
+    <string name="mainScreen_menuItem_resetDebate">Reiniciar debate</string>
+    <string name="mainScreen_menuItem_settings">Ajustes</string>
+    <string name="mainScreen_menuItem_chooseFormat">Estilos de debate</string>
+    <string name="mainScreen_menuItem_ringBells">Hacer sonar las campanas</string>
+
+    <!-- Dialogs -->
+    <string name="dialogs_fileName_suffix">\n\n[Archivo: %1$s]</string>
+
+    <string name="fatalProblemWithXmlFileDialog_title">¡Oh no!</string>
+    <string name="fatalProblemWithXmlFileDialog_button">Elije el estilo</string>
+    <string name="fatalProblemWithXmlFileDialog_message_noSpeeches">"No hay intervenciones en este estilo de debate. (Puede deberse a que el archivo no esté soportado o a que no se ha formado bien.)"</string>
+    <string name="fatalProblemWithXmlFileDialog_message_cannotRead">"He encontrado un problema abriendo este archivo de estilo de debate. Si es un formato personallizado puede que el archivo se haya eliminado o porque los permisos de almacenamiento están deshabilitados."</string>
+    <string name="fatalProblemWithXmlFileDialog_message_cannotFind">""He encontrado un problema abriendo este archivo de estilo de debate. Si es un formato personallizado puede que el archivo se haya eliminado o porque los permisos de almacenamiento están deshabilitados."</string>
+    <string name="fatalProblemWithXmlFileDialog_message_badXml">"Hay un problema con el archivo XML en este estilo de debate. El error es:\n\n%1$s\n"</string>
+    <string name="fatalProblemWithXmlFileDialog_message_suffix">"\nPor favor, selecciona otro estilo de debate."</string>
+    <string name="fatalProblemWithXmlFileDialog_noSchemaVersion_suffix">"No se ha especificado la versión del esquema; por favor, díselo al autor de este archivo XML para especificarlo.\n"</string>
+    <string name="fatalProblemWithXmlFileDialog_schemaTooNew_suffix">"Esta verisón del esquema (%1$s) no está soportada. Deberías actualizar la aplicación.\n"</string>
+
+    <string name="errorsinXmlFileDialog_title">Atención</string>
+    <string name="errorsinXmlFileDialog_button">Vale</string>
+    <string name="errorsinXmlFileDialog_message_prefix">"Hay varios problemas con el título del archivo del formato de este debate. Intentaré trabajar con él, pero probablemente no funcione adecuadamente. Los problemas son:\n"</string>
+
+    <string name="schemaTooNewDialog_title">¿Actualizar aplicación?</string>
+    <string name="schemaTooNewDialog_button_upgrade">Revisar actualizaciones</string>
+    <string name="schemaTooNewDialog_button_ignore">Ignorar</string>
+    <string name="schemaTooNewDialog_message">El archivo del formato de este debate usa un esquema (%1$s) más nuevo que el soportado (%2$s) por esta verisón de la aplicación (%3$s). ¿Revisar si hay actualizaciones en Google Play?</string>
+
+    <string name="schemaOutdatedDialog_title">Archivo ya no soportado</string>
+    <string name="schemaOutdatedDialog_message">El archivo del formato de debate usa un esquema con la versión 1.0, que ya no está soportada. Por favor, convierta el esquema del archivo a la versión 2.1.</string>
+    <string name="schemaOutdatedDialog_moreInfoUrl" translatable="false">https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file</string>
+    <string name="schemaOutdatedDialog_button_learnMore">Leer más</string>
+    <string name="schemaOutdatedDialog_button_ok">Vale</string>
+
+    <!-- POI timer -->
+    <string name="poiTimer_moreInfoUrl" translatable="false">https://github.com/czlee/debatekeeper/wiki/Points-of-information</string>
+
+</resources>
