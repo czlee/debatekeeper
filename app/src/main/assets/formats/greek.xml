@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <debate-format schema-version="2.0">
-	<name>Australs (6 minutes)</name>
+	<name>Greek</name>
 	<info>
 		<region>Greece</region>
 		<level>School</level>
-		<used-at>Arsakeio Dual Speeches Championship</used-at>
-		<used-at>Greek School Championship</used-at>
-		<description>3 vs 3, 6-minute speeches, 4-minute replies, no POIs allowed</description>
+		<used-at>Arsakeio Debating Championship</used-at>
+		<used-at>Greek Public Schools Debating Championship</used-at>
+		<description>3 vs 3, 6-minute substantive  speeches, 4-minute replies, no POIs allowed on replies</description>
 	</info>
 	<prep-time length="30:00"/>
 	<speech-types>
