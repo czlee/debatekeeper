@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prefCategory_overtimeBells_title">Überziehungsklingeln</string>
+    <string name="prefCategory_pois_title">POIs</string>
+    <string name="prefCategory_prepTime_title">Vorbereitungszeit</string>
+    <string name="prefCategory_bells_title">Klingeln</string>
+    <string name="prefCategory_general_title">Allgemein</string>
+    <string name="pref_ringBells_title">Klingeln</string>
+    <string name="pref_ringBells_onSummary">Klingeln sind angeschaltet\n(Alle außer dem Zeitnehmer sollten dies ausschalten)</string>
+    <string name="pref_ringBells_offSummary">Klingeln sind ausgeschaltet\n(Beeinflusst nicht andere Töne des Geräts)</string>
+    <string name="pref_vibrateMode_title">Vibrieren</string>
+    <string name="pref_vibrateMode_onSummary">Zu Klingel-Zeiten vibrieren</string>
+    <string name="pref_vibrateMode_offSummary">Nicht vibrieren</string>
+    <string name="pref_flashScreenMode_title">Bildschirmleuchten</string>
+    <string-array name="pref_flashScreenMode_summaries">
+        <item>Bildschirm nicht aufleuchten lassen</item>
+        <item>Stroboskopleuchten zu Klingel-Zeiten</item>
+        <item>Kurz weiß aufleuchten zu Klingel-Zeiten</item>
+    </string-array>
+    <string-array name="pref_flashScreenMode_entries">
+        <item>Aus</item>
+        <item>Stroboskop</item>
+        <item>Weiß</item>
+    </string-array>
+    <string name="pref_overtimeBellsEnable_title">Überziehungsklingeln einschalten</string>
+    <string name="pref_overtimeBellsEnable_onSummary">Überziehungsklingeln wie unten angegeben</string>
+    <string name="pref_overtimeBellsEnable_offSummary">Kein Überziehungsklingeln</string>
+    <string name="pref_firstOvertimeBell_title">Erstes Überziehungsklingeln</string>
+    <string name="pref_firstOvertimeBell_summary">Erstes Überziehungsklingeln nach %s Sekunden…</string>
+    <string name="pref_firstOvertimeBell_dialogMessage">"Sekunden nach Ablauf der Zeit bis zum ersten Überziehungsklingeln:"</string>
+    <string name="pref_overtimeBellPeriod_title">Folgendes Überziehungsklingeln</string>
+    <string name="pref_overtimeBellPeriod_summary">…und danach alle %s Sekunden</string>
+    <string name="pref_overtimeBellPeriod_dialogMessage">"Sekunden zwischen Überziehungsklingeln (nach dem ersten):"</string>
+    <string name="pref_countDirection_title">Zählrichtung</string>
+    <string-array name="pref_countDirection_summaries">
+        <item>Aufwärts zählen</item>
+        <item>Abwärts zählen</item>
+    </string-array>
+    <string-array name="pref_countDirection_entries">
+        <item>Aufwärts zählen</item>
+        <item>Abwärts zählen</item>
+    </string-array>
+    <string name="pref_backgroundColourArea_title">Hintergrundfarbe</string>
+    <string-array name="pref_backgroundColourArea_summaries">
+        <item>Hintergrund über ganze Debatte schwarz lassen</item>
+        <item>Obere Leiste je nach Redenabschnitt färben</item>
+        <item>Ganze Fläche je nach Redenabschnitt färben</item>
+    </string-array>
+    <string-array name="pref_backgroundColourArea_entries">
+        <item>Aus</item>
+        <item>Obere Leiste</item>
+        <item>Ganze Fläche</item>
+    </string-array>
+    <string name="pref_keepScreenOn_title">Bildschirm anlassen</string>
+    <string name="pref_keepScreenOn_onSummary">Bildschirm anlassen solange Zeit läuft</string>
+    <string name="pref_keepScreenOn_offSummary">Normale Einstellung für Ruhezustand verwenden</string>
+    <string name="pref_prepTimer_enable_title">Vorbereitungszeit</string>
+    <string name="pref_prepTimer_enable_onSummary">Timer für Vorbereitungszeit verwenden</string>
+    <string name="pref_prepTimer_enable_offSummary">Nicht Timer für Vorbereitungszeit verwenden</string>
+    <string-array name="pref_prepTimer_countDirection_summaries">
+        <item>Aufwärts zählen der Vorbereitungszeit</item>
+        <item>Abwärts zählen der Vorbereitungszeit</item>
+    </string-array>
+    <string name="pref_prepTimer_keepScreenOn_onSummary">Bildschirm anlassen solange Vorbereitungszeit läuft</string>
+    <string name="pref_prepTimer_keepScreenOn_offSummary">Normale Einstellung für Ruhezustand während der Vorbereitungszeit verwenden</string>
+    <string name="pref_prepTimer_bells_title">Klingeln in der Vorbereitungszeit</string>
+    <string name="pref_prepTimer_bells_summary">In der Vorbereitungszeit verwendete Klingelzeiten bearbeiten</string>
+
+    <string name="pref_poiTimer_enable_title">POI-Timer</string>
+    <string name="pref_poiTimer_enable_onSummary">POI-Timer anzeigen wenn angebracht</string>
+    <string name="pref_poiTimer_enable_offSummary">POI-Timer verstecken</string>
+    <string name="pref_poiTimer_buzzerEnable_title">Buzzer-Ton</string>
+    <string name="pref_poiTimer_buzzerEnable_onSummary">Buzzer-Ton wenn POI-Timer abläuft</string>
+    <string name="pref_poiTimer_buzzerEnable_offSummary">Keine POI-Buzzer</string>
+    <string name="pref_poiTimer_vibrateEnable_title">Vibrieren</string>
+    <string name="pref_poiTimer_vibrateEnable_onSummary">Vibrieren wenn POI-Timer abläuft</string>
+    <string name="pref_poiTimer_vibrateEnable_offSummary">Nicht bei POIs vibrieren</string>
+    <string name="pref_poiTimer_flashScreenMode_dialogTitle">Bildschirmleuchten für POIs</string>
+    <string-array name="pref_poiTimer_flashScreenMode_summaries">
+        <item>Bildschirm nicht bei POIs aufleuchten lassen</item>
+        <item>Stroboskopleuchten wenn POI-Timer abläuft</item>
+        <item>Kurz weiß aufleuchten wenn POI-Timer abläuft</item>
+    </string-array>
+    <string name="pref_poiTimer_learnMore_title">Mehr erfahren</string>
+    <string name="pref_poiTimer_learnMore_summary">Mehr über POI-Timer erfahren (Öffnet Web-Browser)</string>
+</resources>
