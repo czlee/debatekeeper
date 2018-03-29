@@ -262,10 +262,11 @@ public class FormatChooserActivity extends AppCompatActivity {
             if (dfi != null) {
                 FormatChooserActivity.populateBasicInfo(view, dfi);
                 populatePrepTimeInfo(view, dfi);
+                ArrayList<String[]> speechDescr = dfi.getSpeechFormatDescriptions();
                 populateTwoColumnTable(view, R.id.viewFormat_table_speechTypes, R.layout.speech_type_row,
-                        dfi.getSpeechFormatDescriptions());
+                        speechDescr);
                 populateTwoColumnTable(view, R.id.viewFormat_table_speeches, R.layout.speech_row,
-                        dfi.getSpeeches());
+                        dfi.getSpeeches(speechDescr));
                 builder.setTitle(dfi.getName());
             } else {
                 builder.setTitle(filename);

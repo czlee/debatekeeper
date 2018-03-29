@@ -33,6 +33,7 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -216,6 +217,9 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             reference = xu.findAttributeText(element, R.string.xml2attrName_common_ref);
             if (reference == null) continue;
 
+            String speechName = xu.findLocalElementText(element, R.string.xml2elemName_name);
+            if (speechName == null) speechName = reference;
+
             Long length;
             try {
                 length = xu.findAttributeAsTime(element, R.string.xml2attrName_controlledTimeLength);
@@ -228,7 +232,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             NodeList bells = xu.findAllElements(element, R.string.xml2elemName_bell);
             description += "\n" + buildBellsString(bells, length);
 
-            String [] pair = {reference, description};
+            String [] pair = {speechName, description, reference};
             result.add(pair);
 
         }
@@ -240,13 +244,21 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
      * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getSpeeches()
      */
     @Override
-    public ArrayList<String[]> getSpeeches() {
+    public ArrayList<String[]> getSpeeches(ArrayList<String[]> descriptions) {
         ArrayList<String[]> result = new ArrayList<>();
 
         if (mRootElement == null) return result;
         Element speechesElement = xu.findElement(mRootElement, R.string.xml2elemName_speechesList);
         if (speechesElement == null) return result;
         NodeList speechFormats = xu.findAllElements(speechesElement, R.string.xml2elemName_speech);
+
+        // Build a map from format string to description
+        HashMap<String, String> refToDescr = new HashMap<String, String>();
+        for (int i = 0; i < descriptions.size(); i++) {
+            String descr = descriptions.get(i)[0];
+            String ref = descriptions.get(i)[2];
+            refToDescr.put(ref, descr);
+        }
 
         for (int i = 0; i < speechFormats.getLength(); i++) {
             String name, format;
@@ -258,7 +270,10 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             format = xu.findAttributeText(element, R.string.xml2attrName_speech_format);
             if (format == null) continue;
 
-            String [] pair = {name, format};
+            String descr = refToDescr.get(format);
+            if (descr == null) descr = format;
+
+            String [] pair = {name, descr};
             result.add(pair);
 
         }
