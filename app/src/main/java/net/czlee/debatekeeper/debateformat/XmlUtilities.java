@@ -124,7 +124,7 @@ public class XmlUtilities {
             Element candidate = (Element)candidates.item(i);
             // Store 'lang' attribute
             String langAttr = candidate.getAttribute(langAttrName);
-            if (langAttr.isEmpty()) langAttr = "en-US";
+            if (langAttr.isEmpty()) langAttr = "en-US"; // TODO?: Require attribute for schema 2.2?
             if (langToCandidate.containsKey(langAttr)) continue;
             langToCandidate.put(langAttr, candidate);
             allLang.add(langAttr);

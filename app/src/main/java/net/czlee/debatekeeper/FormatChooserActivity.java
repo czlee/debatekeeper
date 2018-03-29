@@ -102,7 +102,7 @@ public class FormatChooserActivity extends AppCompatActivity {
     public  static final int RESULT_ERROR = RESULT_FIRST_USER;
     public  static final int RESULT_UNCHANGED = RESULT_FIRST_USER + 1;
 
-    public static final String CURRENT_SCHEMA_VERSION = "2.1";
+    public static final String CURRENT_SCHEMA_VERSION = "2.2";
 
     public static final String EXTRA_XML_FILE_NAME = "xmlfn";
 

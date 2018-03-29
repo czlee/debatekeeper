@@ -56,9 +56,11 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
     private final XmlUtilities xu;
     private final Element mRootElement;
     private final Element mInfoElement; // keep <info> readily accessible for performance
+    private final boolean mLangSupported;
 
     private static final String MINIMUM_SCHEMA_VERSION = "2.0";
-    private static final String MAXIMUM_SCHEMA_VERSION = "2.1";
+    private static final String LANG_SCHEMA_VERSION = "2.2";
+    private static final String MAXIMUM_SCHEMA_VERSION = "2.2";
 
     public DebateFormatInfoForSchema2(Context context, InputStream is) {
         mContext = context;
@@ -82,6 +84,14 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
         else
             mInfoElement = null;
 
+        String schemaVersion = getSchemaVersion();
+        boolean langSupported;
+        try {
+            langSupported = (schemaVersion != null) && (XmlUtilities.compareSchemaVersions(schemaVersion, LANG_SCHEMA_VERSION) >= 0);
+        } catch (IllegalSchemaVersionException e) {
+            langSupported = false;
+        }
+        mLangSupported = langSupported;
     }
 
     //******************************************************************************************
@@ -115,15 +125,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
      */
     @Override
     public ArrayList<String> getRegions() {
-        ArrayList<String> result = new ArrayList<>();
-        if (mInfoElement == null) return result; // empty list
-        NodeList regionsList = xu.findAllElements(mInfoElement, R.string.xml2elemName_info_region);
-        for (int i = 0; i < regionsList.getLength(); i++) {
-            Element element = (Element) regionsList.item(i);
-            String text = element.getTextContent();
-            result.add(text);
-        }
-        return result;
+        return getMultiValues(mInfoElement, R.string.xml2elemName_info_region);
     }
 
     /* (non-Javadoc)
@@ -131,15 +133,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
      */
     @Override
     public ArrayList<String> getLevels() {
-        ArrayList<String> result = new ArrayList<>();
-        if (mInfoElement == null) return result; // empty list
-        NodeList levelsList = xu.findAllElements(mInfoElement, R.string.xml2elemName_info_level);
-        for (int i = 0; i < levelsList.getLength(); i++) {
-            Element element = (Element) levelsList.item(i);
-            String text = element.getTextContent();
-            result.add(text);
-        }
-        return result;
+        return getMultiValues(mInfoElement, R.string.xml2elemName_info_level);
     }
 
     /* (non-Javadoc)
@@ -147,15 +141,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
      */
     @Override
     public ArrayList<String> getUsedAts() {
-        ArrayList<String> result = new ArrayList<>();
-        if (mInfoElement == null) return result; // empty list
-        NodeList usedAtsList = xu.findAllElements(mInfoElement, R.string.xml2elemName_info_usedAt);
-        for (int i = 0; i < usedAtsList.getLength(); i++) {
-            Element element = (Element) usedAtsList.item(i);
-            String text = element.getTextContent();
-            result.add(text);
-        }
-        return result;
+        return getMultiValues(mInfoElement, R.string.xml2elemName_info_usedAt);
     }
 
     /* (non-Javadoc)
@@ -360,6 +346,24 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             return mContext.getResources().getQuantityString(R.plurals.viewFormat_timeDescription_lengthInMinutesOnly, (int) minutes, minutes);
         } else
             return mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, DateUtils.formatElapsedTime(length));
+    }
+
+    private ArrayList<String> getMultiValues(Element parent, int tagNameResId) {
+        ArrayList<String> result = new ArrayList<>();
+        if (parent == null) return result; // empty list
+        NodeList elements = xu.findAllElements(parent, tagNameResId);
+        for (int i = 0; i < elements.getLength(); i++) {
+            Element element = (Element) elements.item(i);
+            String text;
+            if (mLangSupported) {
+                // TODO: Poorly handles missing <text> elements
+                text = xu.findLocalElementText(element, R.string.xml2attrName_textElement);
+            } else {
+                text = element.getTextContent();
+            }
+            result.add(text);
+        }
+        return result;
     }
 }
 

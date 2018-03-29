@@ -73,7 +73,7 @@
     <string name="schemaTooNewDialog_button_ignore">Ignorieren</string>
     <string name="schemaTooNewDialog_message">Diese Debattierformatdatei verwendet ein Schema (%1$s) welches zu neu ist. Diese App-Version (%3$s) unterstützt Schema %2$s. Auf Google Play nach Updates suchen?</string>
     <string name="schemaOutdatedDialog_title">Datei nicht mehr unterstützt</string>
-    <string name="schemaOutdatedDialog_message">Diese Debattierformatdatei verwendet Schema-Version 1.0 welches nicht mehr unterstützt wird. Bitte konvertieren Sie es zu Schema-Version 2.1.</string>
+    <string name="schemaOutdatedDialog_message">Diese Debattierformatdatei verwendet Schema-Version 1.0 welches nicht mehr unterstützt wird. Bitte konvertieren Sie es zu Schema-Version 2.2.</string>
     <string name="schemaOutdatedDialog_button_learnMore">Mehr erfahren</string>
     <string name="schemaOutdatedDialog_button_ok">OK</string>
     <string name="changelogDialog_title">Was ist neu in version %1$s</string>
