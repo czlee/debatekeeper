@@ -16,14 +16,10 @@
 -->
 <resources>
 
-    <string name="app_name" translatable="false">Debatekeeper</string>
-    <string name="activityName_Debating_withoutFormat" translatable="false">Debatekeeper</string>
     <string name="activityName_GlobalSettings">Ajustes</string>
     <string name="activityName_FormatChooser">Elegir estilo</string>
     <string name="activityName_PrepTimeBellsEdit">Sonidos del tiempo de preparación</string>
     <string name="intentFilter_importStyle">Debatekeeper</string>
-
-    <string name="app_marketUri" translatable="false">market://details?id=net.czlee.debatekeeper</string>
 
     <!-- Buttons -->
     <string name="mainScreen_controlButton_startTimer_text">Comenzar</string>
@@ -36,8 +32,6 @@
     <string name="mainScreen_poiTimer_buttonText">Pregunta</string>
 
     <!-- Notices -->
-    <string name="notification_title" translatable="false">Debatekeeper</string>
-
     <string name="mainScreen_overtimeFormat">+%1$s</string>
 
     <string name="mainScreen_bellsList_noBells">"; sin campanas"</string>
@@ -118,11 +112,6 @@
 
     <string name="schemaOutdatedDialog_title">Archivo ya no soportado</string>
     <string name="schemaOutdatedDialog_message">El archivo del formato de debate usa un esquema con la versión 1.0, que ya no está soportada. Por favor, convierta el esquema del archivo a la versión 2.1.</string>
-    <string name="schemaOutdatedDialog_moreInfoUrl" translatable="false">https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file</string>
     <string name="schemaOutdatedDialog_button_learnMore">Leer más</string>
     <string name="schemaOutdatedDialog_button_ok">Vale</string>
-
-    <!-- POI timer -->
-    <string name="poiTimer_moreInfoUrl" translatable="false">https://github.com/czlee/debatekeeper/wiki/Points-of-information</string>
-
 </resources>
