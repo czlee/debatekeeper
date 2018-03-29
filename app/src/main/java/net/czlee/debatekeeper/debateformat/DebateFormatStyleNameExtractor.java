@@ -12,6 +12,8 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * DebateFormatStyleNameExtractor provides a method to extract the style name (and only the style
@@ -69,27 +71,47 @@ public class DebateFormatStyleNameExtractor {
     private class GetDebateFormatNameXmlContentHandler extends DefaultHandler {
 
         private StringBuilder mNameBuffer = null;
+        private String mCurrentLang = null;
+        private int mLevel = 0;
+        private ArrayList<String> mLanguages;
+        /// Names, keyed by language
+        private HashMap<String, String> mNames;
 
         @Override
         public void characters(char[] ch, int start, int length) throws SAXException {
-            String str = new String(ch, start, length);
             if (mNameBuffer == null) return;
+            String str = new String(ch, start, length);
             mNameBuffer = mNameBuffer.append(str);
         }
 
         @Override
+        public void endDocument() throws SAXException {
+            LanguageChooser languageChooser = new LanguageChooser();
+            // Choose appropriate name language
+            String bestLang = languageChooser.choose(mLanguages.toArray(new String[0]));
+            // Map back to the matching name
+            mCurrentStyleName = mNames.get(bestLang);
+            throw new AllInformationFoundException();
+        }
+
+        @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
-            if (localName.equals(mResources.getString(R.string.xml2elemName_name))) {
-                mCurrentStyleName = mNameBuffer.toString();
-                throw new AllInformationFoundException();
-                // We don't need to parse any more once we finish getting the style name
+            if (mNameBuffer != null) {
+                if(!mNames.containsKey(mCurrentLang)) {
+                    mLanguages.add(mCurrentLang);
+                    mNames.put(mCurrentLang, mNameBuffer.toString());
+                }
+                mNameBuffer = null;
             }
+            --mLevel;
         }
 
         @Override
         public void startDocument() throws SAXException {
             // initialise
             mCurrentStyleName = null;
+            mNames = new HashMap<String, String>();
+            mLanguages = new ArrayList<String>();
         }
 
         @Override
@@ -99,10 +121,7 @@ public class DebateFormatStyleNameExtractor {
             if (!uri.equals(DEBATING_TIMER_URI))
                 return;
 
-            // To keep things light, we just use the attribute of the root element
-            // (schema 1) or the first <name> element (schema 2), whichever we find
-            // first.  We don't actually check the schema version, nor do we check
-            // that the <name> element is actually the right one.
+            // Schema 1: Use the attribute of the root element
 
             if (localName.equals(mResources.getString(R.string.xml1elemName_root))) {
                 mCurrentStyleName = atts.getValue(DEBATING_TIMER_URI,
@@ -111,8 +130,16 @@ public class DebateFormatStyleNameExtractor {
                 // We don't need to parse any more once we find the style name
             }
 
-            if (localName.equals(mResources.getString(R.string.xml2elemName_name)))
+            // Schema 2: Track all <name> elements of the root, stored by language
+
+            if ((mLevel == 1) // Look for <name> elements below root
+                && localName.equals(mResources.getString(R.string.xml2elemName_name))) {
                 mNameBuffer = new StringBuilder();
+                mCurrentLang = atts.getValue(mResources.getString(R.string.xml2attrName_language));
+                if ((mCurrentLang == null) || mCurrentLang.isEmpty()) mCurrentLang = "en-US";
+            }
+
+            ++mLevel;
         }
     }
 
