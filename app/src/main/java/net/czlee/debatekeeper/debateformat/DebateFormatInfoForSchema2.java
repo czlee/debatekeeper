@@ -94,7 +94,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
     @Override
     public String getName() {
         if (mRootElement == null) return "";
-        String result = xu.findElementText(mRootElement, R.string.xml2elemName_name);
+        String result = xu.findLocalElementText(mRootElement, R.string.xml2elemName_name);
         if (result == null) return "";
         else return result;
     }
@@ -105,7 +105,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
     @Override
     public String getDescription() {
         if (mInfoElement == null) return "-";
-        String result = xu.findElementText(mInfoElement, R.string.xml2elemName_info_desc);
+        String result = xu.findLocalElementText(mInfoElement, R.string.xml2elemName_info_desc);
         if (result == null) return "-";
         else return result;
     }
@@ -266,7 +266,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             String name, format;
             Element element = (Element) speechFormats.item(i);
 
-            name = xu.findElementText(element, R.string.xml2elemName_speech_name);
+            name = xu.findLocalElementText(element, R.string.xml2elemName_speech_name);
             if (name == null) continue;
 
             format = xu.findAttributeText(element, R.string.xml2attrName_speech_format);

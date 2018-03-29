@@ -74,6 +74,8 @@
             <string name="xml2elemName_speech_name" translatable="false">name</string>
             <string name="xml2attrName_speech_format" translatable="false">type</string>
 
+    <string name="xml2attrName_language" translatable="false">lang</string>
+
     <!-- Version 2 error messages -->
 
     <string name="xml2error_root_noName">"No name was specified for this debate format"</string>

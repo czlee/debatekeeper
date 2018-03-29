@@ -27,4 +27,5 @@ dependencies {
     compile 'com.android.support:support-v4:26.1.0'
     compile 'com.android.support:support-vector-drawable:26.1.0'
     compile 'com.android.support:design:26.1.0'
+    compile 'com.ibm.icu:icu4j:61.1'
 }
