@@ -4,17 +4,18 @@
   <info>
     <region>New Zealand</region>
     <level>University</level>
-    <used-at>New Zealand Universities Prepared Debating Championships</used-at>
-    <description>3 vs 3, 10-minute speeches, 5-minute replies, POIs allowed</description>
+    <used-at>New Zealand Universities Debating Championships</used-at>
+    <description>3 vs 3, 8-minute speeches, 4-minute replies, POIs allowed</description>
   </info>
+  <prep-time length="30:00"/>
   <speech-types>
-    <speech-type ref="substantive" length="10:00" first-period="normal">
+    <speech-type ref="substantive" length="8:00" first-period="normal">
       <bell time="1:00" number="1" next-period="pois-allowed"/>
-      <bell time="9:00" number="1" next-period="warning"/>
+      <bell time="7:00" number="1" next-period="warning"/>
       <bell time="finish" number="2" next-period="overtime"/>
     </speech-type>
-    <speech-type ref="reply" length="5:00" first-period="normal">
-      <bell time="4:00" number="1" next-period="warning"/>
+    <speech-type ref="reply" length="4:00" first-period="normal">
+      <bell time="3:00" number="1" next-period="warning"/>
       <bell time="finish" number="2" next-period="overtime"/>
     </speech-type>
   </speech-types>
