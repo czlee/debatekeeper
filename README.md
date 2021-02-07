@@ -15,7 +15,34 @@ The website for this app is at http://tryingtoreason.wordpress.com/debatekeeper.
 
 You can install the app on the Google Play Store:
 
-[![Get this app on Google Play](http://www.android.com/images/brand/get_it_on_play_logo_large.png)](https://play.google.com/store/apps/details?id=net.czlee.debatekeeper)
+<a href='https://play.google.com/store/apps/details?id=net.czlee.debatekeeper&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' height='72px' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
+
+What is the status of this app?
+-------------------------------
+_Last updated: 7 February 2021_
+
+It hasn't been updated since 2016. Since then, my debating software priorities
+have mostly been with [Tabbycat](https://github.com/TabbycatDebate/tabbycat),
+and since 2019, my life priorities have generally been outside debating.
+
+Since then, Android's moved through a few versions, so the next task will be
+to update the source code to support the latest versions and to follow current
+Android project conventions. That basic maintenance work will need to precede
+any of the currently pending (and future) pull requests, and because it's been
+so long, I think it's a bit of a project in its own right. I don't know when 
+I'll get to it, but I'm hoping I'll get a chance in the fourth quarter of
+2021.
+
+Consider this an open invitation for anyone else to pick this up and run with
+it, if you're interested. It's licensed under the GPLv3, so any prospective
+developer would be bound by those licensing terms. If you have any questions
+about updating it to work with the current Android SDK, I'll probably be just
+as lost as you, but you're still welcome to send me an email (find my email
+address in the commit logs of this repository). You can create your own
+Google Developer account and release it yourself, or if you've got the
+repository to build on the latest version of Android Studio, I'm happy to see
+if I can build it myself and push an APK under the official Google Play Store
+entry (_i.e._, my one).
 
 Licence
 -------
