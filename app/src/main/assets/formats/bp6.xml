@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<debate-format schema-version="2.0">
+	<name>British Parliamentary (6 minutes)</name>
+	<info>
+		<region>Greece</region>
+		<level>University</level>
+		<used-at>Panhellenic Debating Championship</used-at>
+		<used-at>Deree Invitational Tournament</used-at>
+		<description>Four teams of two, 6 minute speeches, POIs allowed</description>
+	</info>
+	<prep-time length="15:00"/>
+	<speech-types>
+		<speech-type ref="all" length="6:00" first-period="normal">
+			<bell time="1:00" number="1" next-period="pois-allowed"/>
+			<bell time="5:00" number="1" next-period="warning"/>
+			<bell time="finish" number="2" next-period="overtime"/>
+		</speech-type>
+	</speech-types>
+	<speeches>
+		<speech type="all">
+			<name>Prime Minister</name>
+		</speech>
+		<speech type="all">
+			<name>Leader of the Opposition</name>
+		</speech>
+		<speech type="all">
+			<name>Deputy Prime Minister</name>
+		</speech>
+		<speech type="all">
+			<name>Deputy Leader of the Opposition</name>
+		</speech>
+		<speech type="all">
+			<name>Member for the Government</name>
+		</speech>
+		<speech type="all">
+			<name>Member for the Opposition</name>
+		</speech>
+		<speech type="all">
+			<name>Government Whip</name>
+		</speech>
+		<speech type="all">
+			<name>Opposition Whip</name>
+		</speech>
+	</speeches>
+</debate-format>
