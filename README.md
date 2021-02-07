@@ -48,7 +48,7 @@ Licence
 -------
 This app (and all source code, with exceptions noted below) is licensed under
 the GNU General Public Licence version 3.  You can find a copy of this licence
-in the "license.txt" file, or go to http://www.gnu.org/licenses/gpl-3.0.html.
+in the "licence.txt" file, or go to http://www.gnu.org/licenses/gpl-3.0.html.
 
 This app makes use of Mike Novak's
 [NumberPicker for Android](https://github.com/mrn/numberpicker) library.
