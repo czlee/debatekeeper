@@ -106,7 +106,7 @@ I'll add it to the repository.
 of positions, _etc._) at the contact details below and I'll write
 the XML file and add it to the repository.
 
-I've written a page on [how to write a debate format XML file](http://tryingtoreason.wordpress.com/debatekeeper/writing-your-own-debate-format-xml-file/).
+I've written a page on [how to write a debate format XML file](https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file).
 But it is probably easiest in the first instance to look in the **assets/formats**
 directory for the XML files there, and follow those.
 
