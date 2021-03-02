@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<debate-format schema-version="2.1">
+  <name>American Parliamentary 5 Minutes</name>
+  <short-name>APD5</short-name>
+  <info>
+    <region>United States</region>
+    <level>University</level>
+    <used-at>Dutch American Parliamentary Debating</used-at>
+    <description>2 vs 2, POIs allowed, PM LO MG and MO 5 minutes, LO-Whip 3 minutes, PM-Whip 3 minutes</description>
+  </info>
+   <prep-time length="15:00"/>
+  <speech-types>
+    <speech-type ref="pm-const" length="5:00" first-period="normal">
+      <bell time="1:00" number="1" next-period="pois-allowed"/>
+      <bell time="4:00" number="1" next-period="warning"/>
+      <bell time="finish" number="2" next-period="overtime"/>
+    </speech-type>
+    <speech-type ref="constructive" length="5:00" first-period="normal">
+      <bell time="1:00" number="1" next-period="pois-allowed"/>
+      <bell time="4:00" number="1" next-period="warning"/>
+      <bell time="finish" number="2" next-period="overtime"/>
+    </speech-type>
+    <speech-type ref="lo-Whip" length="3:00" first-period="normal">
+      <bell time="3:00" number="1" next-period="warning"/>
+      <bell time="finish" number="2" next-period="overtime"/>
+    </speech-type>
+    <speech-type ref="pm-Whip" length="3:00" first-period="normal">
+      <bell time="3:00" number="1" next-period="warning"/>
+      <bell time="finish" number="2" next-period="overtime"/>
+    </speech-type>
+  </speech-types>
+  <speeches>
+    <speech type="pm-const">
+      <name>Prime Minister's Constructive</name>
+    </speech>
+    <speech type="constructive">
+      <name>Leader of the Opposition's Constructive</name>
+    </speech>
+    <speech type="constructive">
+      <name>Member of the Government</name>
+    </speech>
+    <speech type="constructive">
+      <name>Member of the Opposition</name>
+    </speech>
+    <speech type="lo-Whip">
+      <name>Leader of the Opposition's Whip</name>
+    </speech>
+    <speech type="pm-Whip">
+      <name>Prime Minister's Whip</name>
+    </speech>
+  </speeches>
+</debate-format>
