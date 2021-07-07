@@ -117,7 +117,7 @@
     <string name="schemaTooNewDialog_message">This debate format file uses a schema (%1$s) newer than supported (%2$s) by this app version (%3$s). Check for updates on Google Play?</string>
 
     <string name="schemaOutdatedDialog_title">File no longer supported</string>
-    <string name="schemaOutdatedDialog_message">This debate format file uses schema version 1.0, which is no longer supported. Please convert this file to schema version 2.1.</string>
+    <string name="schemaOutdatedDialog_message">This debate format file uses schema version 1.0, which is no longer supported. Please convert this file to schema version 2.2.</string>
     <string name="schemaOutdatedDialog_moreInfoUrl" translatable="false">https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file</string>
     <string name="schemaOutdatedDialog_button_learnMore">Learn more</string>
     <string name="schemaOutdatedDialog_button_ok">OK</string>

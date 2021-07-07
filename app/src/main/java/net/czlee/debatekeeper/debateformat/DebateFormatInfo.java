@@ -82,11 +82,12 @@ public interface DebateFormatInfo {
 
     /**
      * Returns a list of speeches in this debate format.
+     * @param  descriptions Value returned by getSpeechFormatDescriptions()
      * @return An <code>ArrayList</code> of <code>String</code> arrays. Each
      *         <code>String</code> array has two elements.  The first element
      *         is the name of the speech, the second element is the reference
      *         for the format that speech uses.
      */
-    public abstract ArrayList<String[]> getSpeeches();
+    public abstract ArrayList<String[]> getSpeeches(ArrayList<String[]> descriptions);
 
 }

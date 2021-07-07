@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="activityName_GlobalSettings">Einstellungen</string>
+    <string name="activityName_FormatChooser">Format auswählen</string>
+    <string name="activityName_PrepTimeBellsEdit">Klingeln Vorbereitungszeit</string>
+    <string name="mainScreen_controlButton_startTimer_text">Start</string>
+    <string name="mainScreen_controlButton_stopTimer_text">Stopp</string>
+    <string name="mainScreen_controlButton_resumeTimer_text">Fortfahren</string>
+    <string name="mainScreen_controlButton_resetTimer_text">Zurücksetzen</string>
+    <string name="mainScreen_controlButton_nextPhase_text">Weiter</string>
+    <string name="mainScreen_controlButton_chooseStyle_text">Format auswählen</string>
+    <string name="mainScreen_playBell_buttonText">Klingel</string>
+    <string name="mainScreen_bellsList_noBells">; keine Klingeln</string>
+    <plurals name="mainScreen_bellsList_normal">
+        <item quantity="one">"; Klingel bei %1$s"</item>
+        <item quantity="other">"; Klingeln bei %1$s"</item>
+    </plurals>
+    <string name="mainScreen_bellsList_nextOvertimeBell">; nächste Überziehungsklingel bei %1$s</string>
+    <string name="mainScreen_bellsList_noOvertimeBells">; keine Überziehungsklingeln</string>
+    <plurals name="mainScreen_timeInMinutes">
+        <item quantity="one">%d Minute</item>
+        <item quantity="other">%d Minuten</item>
+    </plurals>
+    <string name="mainScreen_speechLength">%s lang</string>
+    <string name="mainScreen_prepTimeLength">%s erlaubt</string>
+    <string name="mainScreen_prepTimeControlledIndicator">, kontrolliert</string>
+    <string name="mainScreen_pauseOnBellIndicator">" (Pause)"</string>
+    <string name="mainScreen_silentBellIndicator">" (Still)"</string>
+    <string name="mainScreen_snackbar_resetDebate">Alle Timer zurückgesetzt</string>
+    <string name="mainScreen_noDebateLoaded_text">Keine Debatte geladen</string>
+    <string name="prepTime_title">Vorbereitungszeit</string>
+    <string name="mainScreen_snackbar_editTextDiscardChangesInfo_limitedBelow">Um Änderungen zu verwerfen drücke auf Zurück. (Die Zeit kann nicht auf eine Überziehungszeit gesetzt werden.)</string>
+    <string name="mainScreen_snackbar_editTextDiscardChangesInfo_limitedAbove">Um Änderungen zu verwerfen drücke auf Zurück. (Die Zeit kann nicht größer als 23:59 gesetzt werden.)</string>
+    <string name="mainScreen_snackbar_beamNonExternalFile">Android Beam kann nicht verwendet werden um eingebaute Formate zu teilen.</string>
+    <string name="mainScreen_snackbar_beam_error_generic">Fehler beim Beamen der Debattierformatdatei.</string>
+    <string name="importDebateFormat_dialog_title">Debattierformat importieren?</string>
+    <string name="importDebateFormat_dialog_message_question">Möchten Sie die Debattierformatdatei <b>%1$s</b>, welche das Format %2$s beschreibt, importieren?</string>
+    <string name="importDebateFormat_dialog_addendum_overrideBuiltIn">Das eingebaute Debattierformat %1$s wird außer Kraft gesetzt.</string>
+    <string name="importDebateFormat_dialog_addendum_overwriteExistingSameName">Das eingebaute Debattierformat %1$s wird überschrieben.</string>
+    <string name="importDebateFormat_dialog_addendum_overwriteExistingDifferentName">
+        Das benutzerdefinierte Debattierformat %1$s wird überschrieben da dessen Datei den gleichen Namen hat.
+        Wenn Sie %1$s nicht verlieren wollen, brechen sie ab und importieren Sie mit einem anderen Dateinamen.</string>
+    <string name="importDebateFormat_placeholder_unknownStyleName">(Unbekannt)</string>
+    <string name="importDebateFormat_dialog_button_yes">Importieren</string>
+    <string name="importDebateFormat_dialog_button_no">Abbrechen</string>
+    <string name="replaceDebateFormat_dialog_title">Debattierformat ersetzen?</string>
+    <string name="replaceDebateFormat_dialog_message">Sie haben bereits ein Debattierformat mit dem Namen %1$s. Möchten Sie es <b>ersetzen</b> und dabei die Datei %2$s überschreiben, oder ein weiteres %1$s <b>hinzufügen</b> mit dem Dateinamen %3$s?</string>
+    <string name="replaceDebateFormat_dialog_button_replace">Ersetzen</string>
+    <string name="replaceDebateFormat_dialog_button_addNew">Hinzufügen</string>
+    <string name="replaceDebateFormat_dialog_button_cancel">Abbrechen</string>
+    <string name="importDebateFormat_snackbar_error_generic">Fehler beim Öffnen der Datei.</string>
+    <string name="importDebateFormat_snackbar_success">Datei %1$s erfolgreich importiert.</string>
+    <string name="importDebateFormat_snackbar_error_noWritePermission">Debatekeeper braucht Erlaubnis Dateien auf Ihrem Gerät zu schreiben um benutzerdefinierte Formate zu importieren.</string>
+    <string name="mainScreen_menuItem_resetDebate">Debatte Zurücksetzen</string>
+    <string name="mainScreen_menuItem_settings">Einstellungen</string>
+    <string name="mainScreen_menuItem_chooseFormat">Debattierformate</string>
+    <string name="mainScreen_menuItem_ringBells">Klingeln</string>
+    <string name="dialogs_fileName_suffix">\n\n[Datei: %1$s]</string>
+    <string name="fatalProblemWithXmlFileDialog_title">Oh Nein!</string>
+    <string name="fatalProblemWithXmlFileDialog_button">Debattierformat auswählen</string>
+    <string name="fatalProblemWithXmlFileDialog_message_noSpeeches">Es gibt keine Reden in dieser Debattierformatdatei. (Es könnte sein dass die Datei nicht unterstützt wird oder fehlerhaft ist.)</string>
+    <string name="fatalProblemWithXmlFileDialog_message_cannotRead">Es gab ein Problem beim Öffnen dieser Debattierformatdatei. Wenn es ein benutzerdefiniertes Format ist wurde möglicherweise die Datei gelöscht oder Zugriffsberechtigungen wurden entzogen.</string>
+    <string name="fatalProblemWithXmlFileDialog_message_cannotFind">Es gab ein Problem beim Öffnen dieser Debattierformatdatei. Wenn es ein benutzerdefiniertes Format ist wurde möglicherweise die Datei gelöscht oder Zugriffsberechtigungen wurden entzogen.</string>
+    <string name="fatalProblemWithXmlFileDialog_message_badXml">Es gibt ein Problem mit dem XML in dieser Debattierformatdatei. Der Fehler war:\n\n%1$s</string>
+    <string name="fatalProblemWithXmlFileDialog_message_suffix">"\nBitte wählen Sie ein anderes Format."</string>
+    <string name="fatalProblemWithXmlFileDialog_noSchemaVersion_suffix">"Es wurde keine Schemaversion spezifiziert; Bitten Sie den Autor der XML-Datei darum eines zu spezifizieren.\n"</string>
+    <string name="fatalProblemWithXmlFileDialog_schemaTooNew_suffix">"Diese Schemaversion (%1$s) wird nicht unterstützt.  Sie müssen eventuell die App aktualisieren.\n"</string>
+    <string name="errorsinXmlFileDialog_title">Warnung</string>
+    <string name="errorsinXmlFileDialog_button">OK</string>
+    <string name="errorsinXmlFileDialog_message_prefix">"Es gibt ein paar Probleme mit dieser Debattierformatdatei. Ich versuche damit zu arbeiten, aber es wird vermutlich nicht richtig funktionieren. Die Probleme sind:\n"</string>
+    <string name="schemaTooNewDialog_title">App aktualisieren?</string>
+    <string name="schemaTooNewDialog_button_upgrade">Nach Updates suchen</string>
+    <string name="schemaTooNewDialog_button_ignore">Ignorieren</string>
+    <string name="schemaTooNewDialog_message">Diese Debattierformatdatei verwendet ein Schema (%1$s) welches zu neu ist. Diese App-Version (%3$s) unterstützt Schema %2$s. Auf Google Play nach Updates suchen?</string>
+    <string name="schemaOutdatedDialog_title">Datei nicht mehr unterstützt</string>
+    <string name="schemaOutdatedDialog_message">Diese Debattierformatdatei verwendet Schema-Version 1.0 welches nicht mehr unterstützt wird. Bitte konvertieren Sie es zu Schema-Version 2.2.</string>
+    <string name="schemaOutdatedDialog_button_learnMore">Mehr erfahren</string>
+    <string name="schemaOutdatedDialog_button_ok">OK</string>
+    <string name="changelogDialog_title">Was ist neu in version %1$s</string>
+    <string name="changelogDialog_dontShow">Nicht noch einmal zeigen</string>
+    <string name="changelogDialog_ok">Okay, weiter gehts!</string>
+</resources>

@@ -242,14 +242,14 @@ public class PeriodInfoManager {
             throw new PeriodInfoException(R.string.xml2error_periodType_ref_blank);
 
         // Extract the name and check for validity
-        name = xu.findElementText(element, R.string.xml2elemName_periodType_name);
+        name = xu.findLocalElementText(element, R.string.xml2elemName_periodType_name);
         if (name == null)
             throw new PeriodInfoException(R.string.xml2error_periodType_name_null, ref);
         if (name.length() == 0)
             throw new PeriodInfoException(R.string.xml2error_periodType_name_blank, ref);
 
         // Extract the description (there are no constraints on this field)
-        description = xu.findElementText(element, R.string.xml2elemName_periodType_display);
+        description = xu.findLocalElementText(element, R.string.xml2elemName_periodType_display);
 
         // Parse the default background colour, if there is one
         defaultBackgroundColorStr = xu.findElementText(element, R.string.xml2elemName_periodType_defaultBackgroundColor);

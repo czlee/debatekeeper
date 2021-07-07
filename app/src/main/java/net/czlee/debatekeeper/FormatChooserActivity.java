@@ -102,7 +102,7 @@ public class FormatChooserActivity extends AppCompatActivity {
     public  static final int RESULT_ERROR = RESULT_FIRST_USER;
     public  static final int RESULT_UNCHANGED = RESULT_FIRST_USER + 1;
 
-    public static final String CURRENT_SCHEMA_VERSION = "2.1";
+    public static final String CURRENT_SCHEMA_VERSION = "2.2";
 
     public static final String EXTRA_XML_FILE_NAME = "xmlfn";
 
@@ -262,10 +262,11 @@ public class FormatChooserActivity extends AppCompatActivity {
             if (dfi != null) {
                 FormatChooserActivity.populateBasicInfo(view, dfi);
                 populatePrepTimeInfo(view, dfi);
+                ArrayList<String[]> speechDescr = dfi.getSpeechFormatDescriptions();
                 populateTwoColumnTable(view, R.id.viewFormat_table_speechTypes, R.layout.speech_type_row,
-                        dfi.getSpeechFormatDescriptions());
+                        speechDescr);
                 populateTwoColumnTable(view, R.id.viewFormat_table_speeches, R.layout.speech_row,
-                        dfi.getSpeeches());
+                        dfi.getSpeeches(speechDescr));
                 builder.setTitle(dfi.getName());
             } else {
                 builder.setTitle(filename);

@@ -55,7 +55,7 @@
     <bool   name="prefDefault_ringBells">true</bool>
 
     <!-- Vibrate mode -->
-    <string name="pref_vibrateMode_title">Vibrator</string>
+    <string name="pref_vibrateMode_title">Vibrate</string>
     <string name="pref_vibrateMode_onSummary">Vibrate at bell times</string>
     <string name="pref_vibrateMode_offSummary">Don\'t vibrate</string>
     <bool   name="prefDefault_vibrateMode">false</bool>

@@ -127,7 +127,7 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
      * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getSpeeches()
      */
     @Override
-    public ArrayList<String[]> getSpeeches() {
+    public ArrayList<String[]> getSpeeches(ArrayList<String[]> descriptions) {
         return new ArrayList<>();
     }
 
@@ -135,9 +135,7 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
      * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getSpeechFormatDescriptions()
      */
     @Override
-    public ArrayList<String[]> getSpeechFormatDescriptions() {
-        return new ArrayList<>();
-    }
+    public ArrayList<String[]> getSpeechFormatDescriptions() { return new ArrayList<>(); }
 
     /* (non-Javadoc)
      * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getUsedAts()
