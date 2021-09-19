@@ -19,8 +19,13 @@ You can install the app on the Google Play Store:
 
 What is the status of this app?
 -------------------------------
-_Last updated: 7 February 2021_
+_19 September 2021:_
+I'm currently seeing if I can update Debatekeeper so that it at least uses a
+more up-to-date Android SDK (version 30). If it works out, I'll do this update,
+and maybe attend to some of the simpler issues. But I won't be adding any new
+features, so the open invitation below still stands.
 
+_7 February 2021:_ 
 It hasn't been updated since 2016. Since then, my debating software priorities
 have mostly been with [Tabbycat](https://github.com/TabbycatDebate/tabbycat),
 and since 2019, my life priorities have generally been outside debating.
