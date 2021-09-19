@@ -20,8 +20,9 @@ package net.czlee.debatekeeper.debatemanager;
 import android.app.Service;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
 import android.util.Log;
+
+import androidx.viewpager.widget.PagerAdapter;
 
 import net.czlee.debatekeeper.AlertManager;
 import net.czlee.debatekeeper.DebatingTimerService.GuiUpdateBroadcastSender;

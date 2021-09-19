@@ -26,7 +26,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.PowerManager;
 import android.os.Vibrator;
-import android.support.v7.app.NotificationCompat;
+
+import androidx.core.app.NotificationCompat;
 
 import net.czlee.debatekeeper.debateformat.BellSoundInfo;
 
@@ -358,7 +359,7 @@ public class AlertManager
      */
     public void wakeUpScreenForPause() {
         int flags = PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.FULL_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE;
-        PowerManager.WakeLock temporaryWakeLock = mPowerManager.newWakeLock(flags, "Debatekeeper-pause");
+        PowerManager.WakeLock temporaryWakeLock = mPowerManager.newWakeLock(flags, "debatekeeper:pause");
         temporaryWakeLock.acquire(3000);
     }
 
@@ -378,7 +379,7 @@ public class AlertManager
             mWakeLock = null;
         }
 
-        mWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Debatekeeper");
+        mWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "debatekeeper:main");
 
         // Either we have the lock or we don't, we don't need to count how many times we locked
         // it.  Turning this off makes it okay to acquire or release multiple times.
@@ -515,7 +516,7 @@ public class AlertManager
     private void wakeUpScreenForBell(long wakeTime) {
         if (mActivityActive) {
             int flags = PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.FULL_WAKE_LOCK;
-            PowerManager.WakeLock temporaryWakeLock = mPowerManager.newWakeLock(flags, "Debatekeeper-bell");
+            PowerManager.WakeLock temporaryWakeLock = mPowerManager.newWakeLock(flags, "debatekeeper:bell");
             temporaryWakeLock.acquire(wakeTime);
         }
     }

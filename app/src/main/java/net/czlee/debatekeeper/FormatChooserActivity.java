@@ -27,16 +27,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
@@ -51,6 +41,18 @@ import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.DialogFragment;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import net.czlee.debatekeeper.debateformat.DebateFormatInfo;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfoForSchema1;
@@ -68,7 +70,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 
-import static android.support.design.widget.Snackbar.LENGTH_SHORT;
+import static com.google.android.material.snackbar.Snackbar.LENGTH_SHORT;
 
 /**
  * This Activity displays a list of formats for the user to choose from. It
@@ -449,12 +451,13 @@ public class FormatChooserActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_TO_READ_EXTERNAL_STORAGE) {
             // If we've just received read permissions, refresh the styles list.
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 refreshStylesList();
 
-            //  Otherwise, uncheck the checkbox and show an error message.
+                //  Otherwise, uncheck the checkbox and show an error message.
             else {
                 CheckBox checkbox = (CheckBox) findViewById(R.id.formatChooser_lookForCustomCheckbox);
                 if (checkbox != null) checkbox.setChecked(false);
@@ -794,7 +797,7 @@ public class FormatChooserActivity extends AppCompatActivity {
         if (coordinator != null) {
             Snackbar snackbar = Snackbar.make(coordinator, string, duration);
             View snackbarText = snackbar.getView();
-            TextView textView = (TextView) snackbarText.findViewById(android.support.design.R.id.snackbar_text);
+            TextView textView = (TextView) snackbarText.findViewById(com.google.android.material.R.id.snackbar_text);
             if (textView != null) textView.setMaxLines(5);
             snackbar.show();
         }

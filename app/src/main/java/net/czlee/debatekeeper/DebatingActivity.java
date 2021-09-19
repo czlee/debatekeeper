@@ -46,16 +46,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -74,6 +64,18 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import net.czlee.debatekeeper.AlertManager.FlashScreenListener;
 import net.czlee.debatekeeper.AlertManager.FlashScreenMode;
@@ -1062,6 +1064,7 @@ public class DebatingActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_TO_WRITE_EXTERNAL_STORAGE_FOR_IMPORT) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 showDialogToConfirmImport();
@@ -1198,6 +1201,7 @@ public class DebatingActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
         bundle.putString(BUNDLE_KEY_XML_FILE_NAME, mFormatXmlFileName);
         bundle.putBoolean(BUNDLE_KEY_IMPORT_INTENT_HANDLED, mImportIntentHandled);
         if (mDebateManager != null)
@@ -2046,7 +2050,7 @@ public class DebatingActivity extends AppCompatActivity {
         if (coordinator != null) {
             Snackbar snackbar = Snackbar.make(coordinator, string, duration);
             View snackbarText = snackbar.getView();
-            TextView textView = (TextView) snackbarText.findViewById(android.support.design.R.id.snackbar_text);
+            TextView textView = (TextView) snackbarText.findViewById(com.google.android.material.R.id.snackbar_text);
             if (textView != null) textView.setMaxLines(5);
             snackbar.show();
         }
