@@ -22,7 +22,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -71,6 +70,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener;
@@ -193,7 +193,7 @@ public class DebatingActivity extends AppCompatActivity {
 
     public static class QueueableDialogFragment extends DialogFragment {
         @Override
-        public void onDismiss(DialogInterface dialog) {
+        public void onDismiss(@NonNull DialogInterface dialog) {
             super.onDismiss(dialog);
             DebatingActivity activity;
             try {
@@ -1816,7 +1816,7 @@ public class DebatingActivity extends AppCompatActivity {
     private void queueDialog(QueueableDialogFragment fragment, String tag) {
         if (!mDialogBlocking) {
             mDialogBlocking = true;
-            fragment.show(getFragmentManager(), tag);
+            fragment.show(getSupportFragmentManager(), tag);
         }
         else mDialogsInWaiting.add(Pair.create(tag, fragment));
     }
@@ -2038,7 +2038,7 @@ public class DebatingActivity extends AppCompatActivity {
         // Then, show the next one
         if (mDialogsInWaiting.size() > 0) {
             Pair<String, QueueableDialogFragment> pair = mDialogsInWaiting.remove(0);
-            pair.second.show(getFragmentManager(), pair.first);
+            pair.second.show(getSupportFragmentManager(), pair.first);
             mDialogBlocking = true;  // it should already be true, but just to be safe
         }
         else mDialogBlocking = false;
