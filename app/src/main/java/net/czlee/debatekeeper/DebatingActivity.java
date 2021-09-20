@@ -64,10 +64,13 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
@@ -133,12 +136,12 @@ public class DebatingActivity extends AppCompatActivity {
     private Button      mRightControlButton;
     private ImageButton mPlayBellButton;
 
-    private final ControlButtonSpec CONTROL_BUTTON_START_TIMER  = new ControlButtonSpec(R.string.mainScreen_controlButton_startTimer_text,  new ControlButtonStartTimerOnClickListener());
-    private final ControlButtonSpec CONTROL_BUTTON_STOP_TIMER   = new ControlButtonSpec(R.string.mainScreen_controlButton_stopTimer_text,   new ControlButtonStopTimerOnClickListener());
+    private final ControlButtonSpec CONTROL_BUTTON_START_TIMER  = new ControlButtonSpec(R.string.mainScreen_controlButton_startTimer_text, new ControlButtonStartTimerOnClickListener());
+    private final ControlButtonSpec CONTROL_BUTTON_STOP_TIMER   = new ControlButtonSpec(R.string.mainScreen_controlButton_stopTimer_text, new ControlButtonStopTimerOnClickListener());
     private final ControlButtonSpec CONTROL_BUTTON_CHOOSE_STYLE = new ControlButtonSpec(R.string.mainScreen_controlButton_chooseStyle_text, new ControlButtonChooseStyleOnClickListener());
-    private final ControlButtonSpec CONTROL_BUTTON_RESET_TIMER  = new ControlButtonSpec(R.string.mainScreen_controlButton_resetTimer_text,  new ControlButtonResetActiveDebatePhaseOnClickListener());
+    private final ControlButtonSpec CONTROL_BUTTON_RESET_TIMER  = new ControlButtonSpec(R.string.mainScreen_controlButton_resetTimer_text, new ControlButtonResetActiveDebatePhaseOnClickListener());
     private final ControlButtonSpec CONTROL_BUTTON_RESUME_TIMER = new ControlButtonSpec(R.string.mainScreen_controlButton_resumeTimer_text, new ControlButtonStartTimerOnClickListener());
-    private final ControlButtonSpec CONTROL_BUTTON_NEXT_PHASE   = new ControlButtonSpec(R.string.mainScreen_controlButton_nextPhase_text,   new ControlButtonNextDebatePhaseOnClickListener());
+    private final ControlButtonSpec CONTROL_BUTTON_NEXT_PHASE   = new ControlButtonSpec(R.string.mainScreen_controlButton_nextPhase_text, new ControlButtonNextDebatePhaseOnClickListener());
 
     private String               mFormatXmlFileName      = null;
     private CountDirection       mCountDirection         = CountDirection.COUNT_UP;
@@ -151,7 +154,7 @@ public class DebatingActivity extends AppCompatActivity {
     private boolean              mImportIntentHandled    = false;
 
     private boolean mDialogBlocking = false;
-    private ArrayList<Pair<String, QueueableDialogFragment>> mDialogsInWaiting = new ArrayList<>();
+    private final ArrayList<Pair<String, QueueableDialogFragment>> mDialogsInWaiting = new ArrayList<>();
 
     private static final String BUNDLE_KEY_DEBATE_MANAGER               = "dm";
     private static final String BUNDLE_KEY_XML_FILE_NAME                = "xmlfn";
@@ -187,6 +190,33 @@ public class DebatingActivity extends AppCompatActivity {
     private final BroadcastReceiver mGuiUpdateBroadcastReceiver = new GuiUpdateBroadcastReceiver();
     private final ServiceConnection mConnection = new DebatingTimerServiceConnection();
 
+    private final ActivityResultLauncher<Intent> mChooseStyleLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    switch (result.getResultCode()) {
+                        case RESULT_OK:
+                            String filename = result.getData().getStringExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME);
+                            if (filename != null) {
+                                Log.v(TAG, "Got file name " + filename);
+                                setXmlFileName(filename);
+                                resetDebate();
+                            }
+                            break;
+
+                        case FormatChooserActivity.RESULT_ERROR:
+                            Log.w(TAG, "Got error from FormatChooserActivity");
+                            setXmlFileName(null);
+                            if (mBinder != null) mBinder.releaseDebateManager();
+                            mDebateManager = null;
+                            updateTitle();
+                            updateGui();
+                            invalidateOptionsMenu();
+                    }
+                }
+            });
+
     //******************************************************************************************
     // Public classes
     //******************************************************************************************
@@ -216,23 +246,20 @@ public class DebatingActivity extends AppCompatActivity {
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final Activity activity = getActivity();
             View content = activity.getLayoutInflater().inflate(R.layout.changelog_dialog, null);
-            final CheckBox doNotShowAgain = (CheckBox) content.findViewById(R.id.changelogDialog_dontShow);
+            final CheckBox doNotShowAgain = content.findViewById(R.id.changelogDialog_dontShow);
             final Resources res = getResources();
 
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setTitle(res.getString(R.string.changelogDialog_title, BuildConfig.VERSION_NAME))
                     .setView(content)
-                    .setPositiveButton(res.getString(R.string.changelogDialog_ok), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Take note of "do not show again" setting
-                            if (doNotShowAgain.isChecked()) {
-                                SharedPreferences prefs = activity.getPreferences(MODE_PRIVATE);
-                                Editor editor = prefs.edit();
-                                int thisChangelogVersionCode = res.getInteger(R.integer.changelogDialog_versionCode);
-                                editor.putInt(LAST_CHANGELOG_VERSION_SHOWN, thisChangelogVersionCode);
-                                editor.apply();
-                            }
+                    .setPositiveButton(res.getString(R.string.changelogDialog_ok), (dialog, which) -> {
+                        // Take note of "do not show again" setting
+                        if (doNotShowAgain.isChecked()) {
+                            SharedPreferences prefs = activity.getPreferences(MODE_PRIVATE);
+                            Editor editor = prefs.edit();
+                            int thisChangelogVersionCode = res.getInteger(R.integer.changelogDialog_versionCode);
+                            editor.putInt(LAST_CHANGELOG_VERSION_SHOWN, thisChangelogVersionCode);
+                            editor.apply();
                         }
                     });
 
@@ -302,17 +329,14 @@ public class DebatingActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setTitle(R.string.fatalProblemWithXmlFileDialog_title)
                    .setMessage(errorMessage)
-                   .setPositiveButton(R.string.fatalProblemWithXmlFileDialog_button, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(activity, FormatChooserActivity.class);
+                   .setPositiveButton(R.string.fatalProblemWithXmlFileDialog_button, (dialog, which) -> {
+                       Intent intent = new Intent(activity, FormatChooserActivity.class);
 
-                            // We want to start this from the Activity, not from this Fragment,
-                            // as the Fragment won't be active when it comes back.  See:
-                            // http://stackoverflow.com/questions/10564474/wrong-requestcode-in-onactivityresult
-                            activity.startActivityForResult(intent, CHOOSE_STYLE_REQUEST);
-                        }
-                    });
+                       // We want to start this from the Activity, not from this Fragment,
+                       // as the Fragment won't be active when it comes back.  See:
+                       // http://stackoverflow.com/questions/10564474/wrong-requestcode-in-onactivityresult
+                       activity.startActivityForResult(intent, CHOOSE_STYLE_REQUEST);
+                   });
 
             return builder.create();
         }
@@ -361,18 +385,8 @@ public class DebatingActivity extends AppCompatActivity {
 
             builder.setTitle(R.string.importDebateFormat_dialog_title)
                    .setMessage(Html.fromHtml(message.toString()))
-                   .setPositiveButton(R.string.importDebateFormat_dialog_button_yes, new DialogInterface.OnClickListener() {
-                       @Override
-                       public void onClick(DialogInterface dialog, int which) {
-                           activity.importIncomingFile(incomingFilename);
-                       }
-                   })
-                   .setNegativeButton(R.string.importDebateFormat_dialog_button_no, new DialogInterface.OnClickListener() {
-                       @Override
-                       public void onClick(DialogInterface dialog, int which) {
-                           activity.mImportIntentHandled = true;
-                       }
-                   });
+                   .setPositiveButton(R.string.importDebateFormat_dialog_button_yes, (dialog, which) -> activity.importIncomingFile(incomingFilename))
+                   .setNegativeButton(R.string.importDebateFormat_dialog_button_no, (dialog, which) -> activity.mImportIntentHandled = true);
 
             AlertDialog dialog = builder.create();
             dialog.setCanceledOnTouchOutside(false);
@@ -407,24 +421,9 @@ public class DebatingActivity extends AppCompatActivity {
             builder.setTitle(R.string.replaceDebateFormat_dialog_title)
                     .setMessage(Html.fromHtml(getString(R.string.replaceDebateFormat_dialog_message,
                             args.getString(DIALOG_ARGUMENT_INCOMING_STYLE_NAME), suggestedFilename, incomingFilename)))
-                    .setPositiveButton(R.string.replaceDebateFormat_dialog_button_replace, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            activity.importIncomingFile(suggestedFilename);
-                        }
-                    })
-                    .setNeutralButton(R.string.replaceDebateFormat_dialog_button_addNew, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            activity.importIncomingFile(incomingFilename);
-                        }
-                    })
-                    .setNegativeButton(R.string.replaceDebateFormat_dialog_button_cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            activity.mImportIntentHandled = true;
-                        }
-                    });
+                    .setPositiveButton(R.string.replaceDebateFormat_dialog_button_replace, (dialog, which) -> activity.importIncomingFile(suggestedFilename))
+                    .setNeutralButton(R.string.replaceDebateFormat_dialog_button_addNew, (dialog, which) -> activity.importIncomingFile(incomingFilename))
+                    .setNegativeButton(R.string.replaceDebateFormat_dialog_button_cancel, (dialog, which) -> activity.mImportIntentHandled = true);
 
 
             AlertDialog dialog = builder.create();
@@ -468,16 +467,13 @@ public class DebatingActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setTitle(R.string.schemaTooNewDialog_title)
                    .setMessage(message)
-                   .setPositiveButton(R.string.schemaTooNewDialog_button_upgrade, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Open Google Play to upgrade
-                            Uri uri = Uri.parse(getString(R.string.app_marketUri));
-                            Intent intent = new Intent(Intent.ACTION_VIEW);
-                            intent.setData(uri);
-                            startActivity(intent);
-                        }
-                    })
+                   .setPositiveButton(R.string.schemaTooNewDialog_button_upgrade, (dialog, which) -> {
+                       // Open Google Play to upgrade
+                       Uri uri = Uri.parse(getString(R.string.app_marketUri));
+                       Intent intent = new Intent(Intent.ACTION_VIEW);
+                       intent.setData(uri);
+                       startActivity(intent);
+                   })
                 .setNegativeButton(R.string.schemaTooNewDialog_button_ignore, null);
 
             AlertDialog dialog = builder.create();
@@ -507,15 +503,12 @@ public class DebatingActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setTitle(R.string.schemaOutdatedDialog_title)
                     .setMessage(message)
-                    .setNegativeButton(R.string.schemaOutdatedDialog_button_learnMore, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Open web browser with page about schema versions
-                            Uri uri = Uri.parse(getString(R.string.schemaOutdatedDialog_moreInfoUrl));
-                            Intent intent = new Intent(Intent.ACTION_VIEW);
-                            intent.setData(uri);
-                            startActivity(intent);
-                        }
+                    .setNegativeButton(R.string.schemaOutdatedDialog_button_learnMore, (dialog, which) -> {
+                        // Open web browser with page about schema versions
+                        Uri uri = Uri.parse(getString(R.string.schemaOutdatedDialog_moreInfoUrl));
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(uri);
+                        startActivity(intent);
                     })
                     .setPositiveButton(R.string.schemaOutdatedDialog_button_ok, null);
 
@@ -551,7 +544,7 @@ public class DebatingActivity extends AppCompatActivity {
         }
     }
 
-    private class ControlButtonSpec {
+    private static class ControlButtonSpec {
         int textResId;
         View.OnClickListener onClickListener;
 
@@ -565,7 +558,7 @@ public class DebatingActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(DebatingActivity.this, FormatChooserActivity.class);
-            startActivityForResult(intent, CHOOSE_STYLE_REQUEST);
+            mChooseStyleLauncher.launch(intent);
         }
     }
 
@@ -680,7 +673,7 @@ public class DebatingActivity extends AppCompatActivity {
         private static final String NO_DEBATE_LOADED = "no_debate_loaded";
 
         @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
+        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
             DebatePhaseTag dpt = (DebatePhaseTag) object;
             View view = mViewsMap.get(dpt);
             if (view == null) {
@@ -698,7 +691,7 @@ public class DebatingActivity extends AppCompatActivity {
         }
 
         @Override
-        public int getItemPosition(Object object) {
+        public int getItemPosition(@NonNull Object object) {
 
             // If it was the "no debate loaded" screen and there is now a debate loaded,
             // then the View no longer exists.  Likewise if there is no debate loaded and
@@ -708,19 +701,17 @@ public class DebatingActivity extends AppCompatActivity {
                 return POSITION_NONE;
 
             // If it was "no debate loaded" and there is still no debate loaded, it's unchanged.
-            if (mDebateManager == null && NO_DEBATE_LOADED.equals(tag.specialTag))
+            if (mDebateManager == null)
                 return POSITION_UNCHANGED;
-
-            // That covers all situations in which mDebateManager could be null. Just to be safe:
-            assert mDebateManager != null;
 
             // If there's no messy debate format changing or loading, delegate this function to the
             // DebateManager.
             return mDebateManager.getPhaseIndexForTag((DebatePhaseTag) object);
         }
 
+        @NonNull
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
+        public Object instantiateItem(@NonNull ViewGroup container, int position) {
 
             if (mDebateManager == null) {
                 // Load the "no debate loaded" screen.
@@ -742,11 +733,11 @@ public class DebatingActivity extends AppCompatActivity {
             v.findViewById(R.id.debateTimer_currentTime).setOnLongClickListener(new CurrentTimeOnLongClickListener());
 
             // Set the time picker to 24-hour time
-            TimePicker currentTimePicker = (TimePicker) v.findViewById(R.id.debateTimer_currentTimePicker);
+            TimePicker currentTimePicker = v.findViewById(R.id.debateTimer_currentTimePicker);
             currentTimePicker.setIs24HourView(true);
 
             // Set the POI timer OnClickListener
-            Button poiTimerButton = (Button) v.findViewById(R.id.debateTimer_poiTimerButton);
+            Button poiTimerButton = v.findViewById(R.id.debateTimer_poiTimerButton);
             poiTimerButton.setOnClickListener(new PoiButtonOnClickListener());
 
             // Update the debate timer display
@@ -769,13 +760,13 @@ public class DebatingActivity extends AppCompatActivity {
         }
 
         @Override
-        public boolean isViewFromObject(View view, Object object) {
+        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
             DebatePhaseTag dpt = (DebatePhaseTag) object;
             return mViewsMap.containsKey(dpt) && (mViewsMap.get(dpt) == view);
         }
 
         @Override
-        public void setPrimaryItem(ViewGroup container, int position, Object object) {
+        public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
 
             // Log.d(TAG, "setPrimaryItem for position " + position);
             View original = mDebateTimerDisplay;
@@ -841,62 +832,56 @@ public class DebatingActivity extends AppCompatActivity {
 
         @Override
         public void flashScreenOff() {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    // Restore the original colours
-                    // It takes a bit of brain-work to figure out what they should be.  We actually
-                    // do this brain-work because the correct colours should be considered volatile
-                    // - this timer can happen at any time so there is no guarantee they haven't
-                    // changed since the last time we checked.
-                    int textColour, backgroundColour;
-                    Resources resources = getResources();
-                    if (mDebateManager != null) {
-                        DebatePhaseFormat dpf = mDebateManager.getActivePhaseFormat();
-                        boolean overtime = mDebateManager.getActivePhaseCurrentTime() > dpf.getLength();
-                        textColour = resources.getColor((overtime) ? R.color.overtimeTextColour : android.R.color.primary_text_dark);
-                        backgroundColour = getBackgroundColorFromPeriodInfo(dpf, mDebateManager.getActivePhaseCurrentPeriodInfo());
-                    } else {
-                        textColour = resources.getColor(android.R.color.primary_text_dark);
-                        backgroundColour = COLOUR_TRANSPARENT;
-                    }
-
-                    updateDebateTimerDisplayColours(mDebateTimerDisplay, textColour, backgroundColour);
-
-                    // Set the background colour of the root view to be black again.
-                    View rootView = findViewById(R.id.mainScreen_rootView);
-                    if (rootView != null) rootView.setBackgroundColor(resources.getColor(android.R.color.black));
+            runOnUiThread(() -> {
+                // Restore the original colours
+                // It takes a bit of brain-work to figure out what they should be.  We actually
+                // do this brain-work because the correct colours should be considered volatile
+                // - this timer can happen at any time so there is no guarantee they haven't
+                // changed since the last time we checked.
+                int textColour, backgroundColour;
+                Resources resources = getResources();
+                if (mDebateManager != null) {
+                    DebatePhaseFormat dpf = mDebateManager.getActivePhaseFormat();
+                    boolean overtime = mDebateManager.getActivePhaseCurrentTime() > dpf.getLength();
+                    textColour = resources.getColor((overtime) ? R.color.overtimeTextColour : android.R.color.primary_text_dark);
+                    backgroundColour = getBackgroundColorFromPeriodInfo(dpf, mDebateManager.getActivePhaseCurrentPeriodInfo());
+                } else {
+                    textColour = resources.getColor(android.R.color.primary_text_dark);
+                    backgroundColour = COLOUR_TRANSPARENT;
                 }
+
+                updateDebateTimerDisplayColours(mDebateTimerDisplay, textColour, backgroundColour);
+
+                // Set the background colour of the root view to be black again.
+                View rootView = findViewById(R.id.mainScreen_rootView);
+                if (rootView != null) rootView.setBackgroundColor(resources.getColor(android.R.color.black));
             });
         }
 
         @Override
         public void flashScreenOn(final int colour) {
 
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+            runOnUiThread(() -> {
 
-                    // We need to figure out how to colour the text.
-                    // Basically we want to colour the text to whatever the background colour is now.
-                    // So the whole screen is coloured, it'll be the current background colour for
-                    // the current period.  If not, it'll be black (make sure we don't make the
-                    // text transparent though!).
-                    int invertedTextColour;
-                    if (mBackgroundColourArea == BackgroundColourArea.WHOLE_SCREEN && mDebateManager != null)
-                        invertedTextColour = getBackgroundColorFromPeriodInfo(mDebateManager.getActivePhaseFormat(), mDebateManager.getActivePhaseCurrentPeriodInfo());
-                    else
-                        invertedTextColour = getResources().getColor(android.R.color.black);
+                // We need to figure out how to colour the text.
+                // Basically we want to colour the text to whatever the background colour is now.
+                // So the whole screen is coloured, it'll be the current background colour for
+                // the current period.  If not, it'll be black (make sure we don't make the
+                // text transparent though!).
+                int invertedTextColour;
+                if (mBackgroundColourArea == BackgroundColourArea.WHOLE_SCREEN && mDebateManager != null)
+                    invertedTextColour = getBackgroundColorFromPeriodInfo(mDebateManager.getActivePhaseFormat(), mDebateManager.getActivePhaseCurrentPeriodInfo());
+                else
+                    invertedTextColour = getResources().getColor(android.R.color.black);
 
-                    // So we invert the text colour and set all background colours to transparent.
-                    // Everything will be restored by flashScreenOff().
-                    updateDebateTimerDisplayColours(mDebateTimerDisplay, invertedTextColour, COLOUR_TRANSPARENT);
+                // So we invert the text colour and set all background colours to transparent.
+                // Everything will be restored by flashScreenOff().
+                updateDebateTimerDisplayColours(mDebateTimerDisplay, invertedTextColour, COLOUR_TRANSPARENT);
 
-                    // Having completed preparations, set the background colour of the root view to
-                    // flash the screen.
-                    View rootView = findViewById(R.id.mainScreen_rootView);
-                    if (rootView != null) rootView.setBackgroundColor(colour);
-                }
+                // Having completed preparations, set the background colour of the root view to
+                // flash the screen.
+                View rootView = findViewById(R.id.mainScreen_rootView);
+                if (rootView != null) rootView.setBackgroundColor(colour);
             });
         }
     }
@@ -920,7 +905,7 @@ public class DebatingActivity extends AppCompatActivity {
         }
     }
 
-    private class FatalXmlError extends Exception {
+    private static class FatalXmlError extends Exception {
 
         private static final long serialVersionUID = -1774973645180296278L;
 
@@ -1024,7 +1009,7 @@ public class DebatingActivity extends AppCompatActivity {
         case R.id.mainScreen_menuItem_chooseFormat:
             Intent getStyleIntent = new Intent(this, FormatChooserActivity.class);
             getStyleIntent.putExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME, mFormatXmlFileName);
-            startActivityForResult(getStyleIntent, CHOOSE_STYLE_REQUEST);
+            mChooseStyleLauncher.launch(getStyleIntent);
             return true;
         case R.id.mainScreen_menuItem_resetDebate:
             if (mDebateManager == null) return true;
@@ -1063,7 +1048,7 @@ public class DebatingActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_TO_WRITE_EXTERNAL_STORAGE_FOR_IMPORT) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
@@ -1078,48 +1063,20 @@ public class DebatingActivity extends AppCompatActivity {
     //******************************************************************************************
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == CHOOSE_STYLE_REQUEST) {
-
-            switch (resultCode) {
-                case RESULT_OK:
-                    String filename = data.getStringExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME);
-                    if (filename != null) {
-                        Log.v(TAG, "Got file name " + filename);
-                        setXmlFileName(filename);
-                        resetDebate();
-                    }
-                    break;
-
-                case FormatChooserActivity.RESULT_ERROR:
-                    Log.w(TAG, "Got error from FormatChooserActivity");
-                    setXmlFileName(null);
-                    if (mBinder != null) mBinder.releaseDebateManager();
-                    mDebateManager = null;
-                    updateTitle();
-                    updateGui();
-                    invalidateOptionsMenu();
-            }
-        }
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_debate);
-        setSupportActionBar((Toolbar) findViewById(R.id.mainScreen_toolbar));
+        setSupportActionBar(findViewById(R.id.mainScreen_toolbar));
 
-        mLeftControlButton       = (Button) findViewById(R.id.mainScreen_leftControlButton);
-        mLeftCentreControlButton = (Button) findViewById(R.id.mainScreen_leftCentreControlButton);
-        mCentreControlButton     = (Button) findViewById(R.id.mainScreen_centreControlButton);
-        mRightControlButton      = (Button) findViewById(R.id.mainScreen_rightControlButton);
-        mPlayBellButton          = (ImageButton) findViewById(R.id.mainScreen_playBellButton);
+        mLeftControlButton       = findViewById(R.id.mainScreen_leftControlButton);
+        mLeftCentreControlButton = findViewById(R.id.mainScreen_leftCentreControlButton);
+        mCentreControlButton     = findViewById(R.id.mainScreen_centreControlButton);
+        mRightControlButton      = findViewById(R.id.mainScreen_rightControlButton);
+        mPlayBellButton          = findViewById(R.id.mainScreen_playBellButton);
 
         //
         // ViewPager
-        mViewPager = (EnableableViewPager) findViewById(R.id.mainScreen_debateTimerViewPager);
+        mViewPager = findViewById(R.id.mainScreen_debateTimerViewPager);
         mViewPager.setAdapter(new DebateTimerDisplayPagerAdapter());
         mViewPager.addOnPageChangeListener(new DebateTimerDisplayOnPageChangeListener());
         mViewPager.setPageMargin(1);
@@ -1156,7 +1113,7 @@ public class DebatingActivity extends AppCompatActivity {
         // Otherwise, if there's no style loaded, direct the user to choose one
         } else if (filename == null) {
             Intent getStyleIntent = new Intent(DebatingActivity.this, FormatChooserActivity.class);
-            startActivityForResult(getStyleIntent, CHOOSE_STYLE_REQUEST);
+            mChooseStyleLauncher.launch(getStyleIntent);
         }
 
         //
@@ -1200,7 +1157,7 @@ public class DebatingActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle bundle) {
+    protected void onSaveInstanceState(@NonNull Bundle bundle) {
         super.onSaveInstanceState(bundle);
         bundle.putString(BUNDLE_KEY_XML_FILE_NAME, mFormatXmlFileName);
         bundle.putBoolean(BUNDLE_KEY_IMPORT_INTENT_HANDLED, mImportIntentHandled);
@@ -1459,7 +1416,7 @@ public class DebatingActivity extends AppCompatActivity {
      */
     private void editCurrentTimeFinish(boolean save) {
 
-        TimePicker currentTimePicker = (TimePicker) mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTimePicker);
+        TimePicker currentTimePicker = mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTimePicker);
 
         if (currentTimePicker == null) {
             Log.e(TAG, "editCurrentTimeFinish: currentTimePicker was null");
@@ -1476,7 +1433,7 @@ public class DebatingActivity extends AppCompatActivity {
             // We're using this in hours and minutes, not minutes and seconds
             int minutes = currentTimePicker.getCurrentHour();
             int seconds = currentTimePicker.getCurrentMinute();
-            long newTime = minutes * 60 + seconds;
+            long newTime = minutes * 60L + seconds;
             // Invert the time if in count-down mode
             newTime = subtractFromSpeechLengthIfCountingDown(newTime);
             mDebateManager.setActivePhaseCurrentTime(newTime);
@@ -1502,7 +1459,7 @@ public class DebatingActivity extends AppCompatActivity {
         // Only if things were in a valid state do we enter edit time mode
         mIsEditingTime = true;
 
-        TimePicker currentTimePicker = (TimePicker) mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTimePicker);
+        TimePicker currentTimePicker = mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTimePicker);
 
         if (currentTimePicker == null) {
             Log.e(TAG, "editCurrentTimeFinish: currentTimePicker was null");
@@ -1988,7 +1945,7 @@ public class DebatingActivity extends AppCompatActivity {
             // We'll do this only if there's exactly one existing file -- if there are already
             // duplicates, we can't reliably tell which one to pick.
             String otherStyleName, suggestedFilename = null;
-            String userFileList[] = new String[0];
+            String[] userFileList = new String[0];
             int numberOfDuplicatesFound = 0;
             try {
                 userFileList = filesManager.userFileList();
@@ -2050,7 +2007,7 @@ public class DebatingActivity extends AppCompatActivity {
         if (coordinator != null) {
             Snackbar snackbar = Snackbar.make(coordinator, string, duration);
             View snackbarText = snackbar.getView();
-            TextView textView = (TextView) snackbarText.findViewById(com.google.android.material.R.id.snackbar_text);
+            TextView textView = snackbarText.findViewById(com.google.android.material.R.id.snackbar_text);
             if (textView != null) textView.setMaxLines(5);
             snackbar.show();
         }
@@ -2177,10 +2134,10 @@ public class DebatingActivity extends AppCompatActivity {
 
         // If it passed all those checks, populate the timer display
 
-        TextView periodDescriptionText = (TextView) debateTimerDisplay.findViewById(R.id.debateTimer_periodDescriptionText);
-        TextView speechNameText = (TextView) debateTimerDisplay.findViewById(R.id.debateTimer_speechNameText);
-        TextView currentTimeText = (TextView) debateTimerDisplay.findViewById(R.id.debateTimer_currentTime);
-        TextView infoLineText = (TextView) debateTimerDisplay.findViewById(R.id.debateTimer_informationLine);
+        TextView periodDescriptionText = debateTimerDisplay.findViewById(R.id.debateTimer_periodDescriptionText);
+        TextView speechNameText = debateTimerDisplay.findViewById(R.id.debateTimer_speechNameText);
+        TextView currentTimeText = debateTimerDisplay.findViewById(R.id.debateTimer_currentTime);
+        TextView infoLineText = debateTimerDisplay.findViewById(R.id.debateTimer_informationLine);
 
         // The information at the top of the screen
         speechNameText.setText(phaseName);
@@ -2351,7 +2308,7 @@ public class DebatingActivity extends AppCompatActivity {
      * @param dpf the {@link DebatePhaseFormat} relevant for this <code>debateTimerDisplay</code>
      */
     private void updatePoiTimerButton(View debateTimerDisplay, DebatePhaseFormat dpf) {
-        Button poiButton = (Button) debateTimerDisplay.findViewById(R.id.debateTimer_poiTimerButton);
+        Button poiButton = debateTimerDisplay.findViewById(R.id.debateTimer_poiTimerButton);
 
         // Display only when user has POI timer enabled, and a debate is loaded and the current
         // speech has POIs in it.
