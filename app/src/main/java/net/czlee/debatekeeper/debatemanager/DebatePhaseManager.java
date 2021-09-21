@@ -391,8 +391,7 @@ public class DebatePhaseManager extends DebateElementManager {
         long timeSinceFirstOvertimeBell = overtimeAmount - mFirstOvertimeBellTime;
 
         if (mOvertimeBellPeriod > 0)
-            if (timeSinceFirstOvertimeBell % mOvertimeBellPeriod == 0)
-                return true;
+            return timeSinceFirstOvertimeBell % mOvertimeBellPeriod == 0;
 
         return false;
     }

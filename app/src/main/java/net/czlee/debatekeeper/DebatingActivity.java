@@ -1005,21 +1005,21 @@ public class DebatingActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         editCurrentTimeFinish(false);
-        switch (item.getItemId()) {
-        case R.id.mainScreen_menuItem_chooseFormat:
+        int itemId = item.getItemId();
+        if (itemId == R.id.mainScreen_menuItem_chooseFormat) {
             Intent getStyleIntent = new Intent(this, FormatChooserActivity.class);
             getStyleIntent.putExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME, mFormatXmlFileName);
             mChooseStyleLauncher.launch(getStyleIntent);
             return true;
-        case R.id.mainScreen_menuItem_resetDebate:
+        } else if (itemId == R.id.mainScreen_menuItem_resetDebate) {
             if (mDebateManager == null) return true;
             resetDebate();
             showSnackbar(SNACKBAR_DURATION_RESET_DEBATE, R.string.mainScreen_snackbar_resetDebate);
             return true;
-        case R.id.mainScreen_menuItem_settings:
+        } else if (itemId == R.id.mainScreen_menuItem_settings) {
             startActivity(new Intent(this, GlobalSettingsActivity.class));
             return true;
-        case R.id.mainScreen_menuItem_ringBells:
+        } else if (itemId == R.id.mainScreen_menuItem_ringBells) {
             // Edit the preference, then apply the changes.
             // Don't fetch the current preference - if there is an inconsistency, we want the toggle
             // to reflect what this activity thinks silent mode is.
@@ -1028,9 +1028,8 @@ public class DebatingActivity extends AppCompatActivity {
             boolean success = editor.commit(); // we want this to block until it returns
             if (success) applyPreferences(); // this will update mBellsEnabled
             return true;
-        default:
-            return super.onOptionsItemSelected(item);
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

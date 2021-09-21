@@ -29,6 +29,6 @@ public interface PrepTimeFormat extends DebatePhaseFormat {
     /**
      * @return <code>true</code> if this format is "controlled" prep time
      */
-    public abstract boolean isControlled();
+    boolean isControlled();
 
 }

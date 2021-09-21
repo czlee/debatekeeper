@@ -22,6 +22,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
 import net.czlee.debatekeeper.AlertManager;
@@ -151,6 +152,7 @@ public class DebateManager {
             this.key = key;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return key;

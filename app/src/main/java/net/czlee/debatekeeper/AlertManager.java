@@ -75,7 +75,7 @@ public class AlertManager
     private       FlashScreenMode       mFlashScreenMode     = FlashScreenMode.OFF;
 
     // Preferences for POI bells
-    private       boolean               mPoiBuzzerEnabled;
+    private       boolean               mPoiBuzzerEnabled;  // for future use
     private       boolean               mPoiVibrateEnabled = true;
     private       FlashScreenMode       mPoiFlashScreenMode  = FlashScreenMode.SOLID_FLASH;
 
@@ -306,6 +306,7 @@ public class AlertManager
         this.mVibrateMode = vibrateMode;
     }
 
+    // for future use
     void setPoiBuzzerEnabled(boolean poiBuzzerEnabled) {
         this.mPoiBuzzerEnabled = poiBuzzerEnabled;
     }

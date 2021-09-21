@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 public class GlobalSettingsActivity extends AppCompatActivity {
 
@@ -14,7 +13,7 @@ public class GlobalSettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         // Set the action bar
-        setSupportActionBar((Toolbar) findViewById(R.id.globalSettings_toolbar));
+        setSupportActionBar(findViewById(R.id.globalSettings_toolbar));
         ActionBar bar = getSupportActionBar();
         if (bar != null) bar.setDisplayHomeAsUpEnabled(true);
     }

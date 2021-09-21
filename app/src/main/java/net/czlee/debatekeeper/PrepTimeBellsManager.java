@@ -23,12 +23,13 @@ import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import net.czlee.debatekeeper.debateformat.BellInfo;
 import net.czlee.debatekeeper.debateformat.PrepTimeSimpleFormat;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Locale;
@@ -110,7 +111,7 @@ public class PrepTimeBellsManager {
 
     }
 
-    private abstract class PrepTimeBellByTime implements PrepTimeBellSpec {
+    private abstract static class PrepTimeBellByTime implements PrepTimeBellSpec {
 
         protected final long time;
 
@@ -144,12 +145,12 @@ public class PrepTimeBellsManager {
          * @throws PrepTimeBellConstructorException if there is some other problem with the preferences
          */
         public PrepTimeBellByTime(SharedPreferences prefs, int index) throws PrepTimeBellConstructorException {
-            String type = prefs.getString(String.valueOf(index) + KEY_TYPE, "");
+            String type = prefs.getString(index + KEY_TYPE, "");
             if (!type.equals(getValueType()))
                 throw new PrepTimeBellWrongTypeException(index, getValueType(), type);
-            if (!prefs.contains(String.valueOf(index) + KEY_TIME))
+            if (!prefs.contains(index + KEY_TIME))
                 throw new PrepTimeBellConstructorException(index, "No time found");
-            this.time = prefs.getLong(String.valueOf(index) + KEY_TIME, 0);
+            this.time = prefs.getLong(index + KEY_TIME, 0);
         }
 
         @Override
@@ -160,8 +161,8 @@ public class PrepTimeBellsManager {
 
         @Override
         public void saveToPreferences(SharedPreferences.Editor editor, int index) {
-            editor.putString(String.valueOf(index) + KEY_TYPE, getValueType());
-            editor.putLong(String.valueOf(index) + KEY_TIME, time);
+            editor.putString(index + KEY_TYPE, getValueType());
+            editor.putLong(index + KEY_TIME, time);
         }
 
         protected abstract String getValueType();
@@ -172,12 +173,12 @@ public class PrepTimeBellsManager {
      * Thrown from {@link PrepTimeBellSpec} constructors if there is a problem with the
      * contents of the {@link SharedPreferences} file
      */
-    private class PrepTimeBellConstructorException extends Exception {
+    private static class PrepTimeBellConstructorException extends Exception {
 
         private static final long serialVersionUID = -3348760736240420667L;
 
         public PrepTimeBellConstructorException(int index, String detailMessage) {
-            super(String.valueOf(index) + ": " + detailMessage);
+            super(index + ": " + detailMessage);
         }
 
         public PrepTimeBellConstructorException(String detailMessage) {
@@ -207,6 +208,7 @@ public class PrepTimeBellsManager {
                 return null;
         }
 
+        @NonNull
         @Override
         public String toString() {
             if (time == 0) return mContext.getString(R.string.prepTimeBellDescription_atFinish);
@@ -245,6 +247,7 @@ public class PrepTimeBellsManager {
                 return null;
         }
 
+        @NonNull
         @Override
         public String toString() {
             if (time == 0) return mContext.getString(R.string.prepTimeBellDescription_atStart);
@@ -294,12 +297,12 @@ public class PrepTimeBellsManager {
          * @throws PrepTimeBellConstructorException if there is some other problem with the preferences
          */
         public PrepTimeBellProportional(SharedPreferences prefs, int index) throws PrepTimeBellConstructorException {
-            String type = prefs.getString(String.valueOf(index) + KEY_TYPE, "");
+            String type = prefs.getString(index + KEY_TYPE, "");
             if (!type.equals(getValueType()))
                 throw new PrepTimeBellWrongTypeException(index, getValueType(), type);
-            if (!prefs.contains(String.valueOf(index) + KEY_PROPORTION))
+            if (!prefs.contains(index + KEY_PROPORTION))
                 throw new PrepTimeBellConstructorException(index, "No proportion found");
-            this.proportion = Double.parseDouble(prefs.getString(String.valueOf(index) + KEY_PROPORTION, "0"));
+            this.proportion = Double.parseDouble(prefs.getString(index + KEY_PROPORTION, "0"));
         }
 
         @Override
@@ -317,15 +320,16 @@ public class PrepTimeBellsManager {
 
         @Override
         public void saveToPreferences(SharedPreferences.Editor editor, int index) {
-            editor.putString(String.valueOf(index) + KEY_TYPE, getValueType());
-            editor.putString(String.valueOf(index) + KEY_PROPORTION, String.valueOf(proportion));
+            editor.putString(index + KEY_TYPE, getValueType());
+            editor.putString(index + KEY_PROPORTION, String.valueOf(proportion));
         }
 
+        @NonNull
         @Override
         public String toString() {
             if (proportion == 0) return mContext.getString(R.string.prepTimeBellDescription_atStart);
             if (proportion == 1) return mContext.getString(R.string.prepTimeBellDescription_atFinish);
-            Double percentage = proportion * 100;
+            double percentage = proportion * 100;
             String percentageStr;
             if (percentage == Math.round(percentage)) percentageStr = String.format(Locale.getDefault(), "%d", Math.round(percentage));
             else percentageStr = String.format(Locale.getDefault(), "%.1f", percentage);
@@ -348,7 +352,7 @@ public class PrepTimeBellsManager {
      * Thrown from {@link PrepTimeBellSpec} constructors if the type stored in the
      * {@link SharedPreferences} file does not match the class of the constructor.
      */
-    private class PrepTimeBellWrongTypeException extends PrepTimeBellConstructorException {
+    private static class PrepTimeBellWrongTypeException extends PrepTimeBellConstructorException {
 
         private static final long serialVersionUID = 7237927620650297337L;
 
@@ -498,12 +502,7 @@ public class PrepTimeBellsManager {
 
         // Then, sort the bells in order of priority.
         // Currently, this sorts them in descending order of number of bells to play.
-        Collections.sort(allBells, new Comparator<BellInfo>() {
-            @Override
-            public int compare(BellInfo lhs, BellInfo rhs) {
-                return rhs.getBellSoundInfo().getTimesToPlay() - lhs.getBellSoundInfo().getTimesToPlay();
-            }
-        });
+        Collections.sort(allBells, (lhs, rhs) -> rhs.getBellSoundInfo().getTimesToPlay() - lhs.getBellSoundInfo().getTimesToPlay());
 
         // Then, run through the bells, adding only non-duplicates.
         Iterator<BellInfo> allBellsIterator = allBells.iterator();

@@ -33,7 +33,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -86,12 +85,6 @@ public class PrepTimeBellsEditActivity extends AppCompatActivity {
     //******************************************************************************************
 
     public static class DialogAddOrEditBellFragment extends DialogFragment {
-
-        @Override
-        public void onActivityCreated(Bundle savedInstanceState) {
-            super.onActivityCreated(savedInstanceState);
-
-        }
 
         @NonNull
         @Override
@@ -164,12 +157,7 @@ public class PrepTimeBellsEditActivity extends AppCompatActivity {
 
                 title = getString(R.string.prepTimeBellsEditor_addBellDialog_title);
                 confirmButtonText = getString(R.string.prepTimeBellsEditor_addBellDialog_confirmButton);
-                confirmOnClickListener = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                };
+                confirmOnClickListener = (dialog, which) -> dialog.cancel();
             }
 
             // When the text field gains focus, select all
@@ -177,12 +165,7 @@ public class PrepTimeBellsEditActivity extends AppCompatActivity {
                    .setView(content)
                    .setCancelable(true)
                    .setPositiveButton(confirmButtonText, confirmOnClickListener)
-                   .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
+                   .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel());
 
             return builder.create();
         }
@@ -247,30 +230,21 @@ public class PrepTimeBellsEditActivity extends AppCompatActivity {
             builder.setTitle(R.string.prepTimeBellsEditor_clearAllDialog_title)
                    .setMessage("")
                    .setCancelable(true)
-                   .setPositiveButton(R.string.prepTimeBellsEditor_clearAllDialog_confirmButton, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            boolean spareFinish = activity.mPtbm.hasBellsOtherThanFinish();
-                            activity.mPtbm.deleteAllBells(spareFinish);
-                            activity.refreshBellsList();
-                        }
-                    })
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
+                   .setPositiveButton(R.string.prepTimeBellsEditor_clearAllDialog_confirmButton, (dialog, which) -> {
+                       boolean spareFinish = activity.mPtbm.hasBellsOtherThanFinish();
+                       activity.mPtbm.deleteAllBells(spareFinish);
+                       activity.refreshBellsList();
+                   })
+                   .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel());
 
-            Dialog dialog = builder.create();
+            AlertDialog dialog = builder.create();
 
             int messageResId = (activity.mPtbm.hasFinishBell() && activity.mPtbm.hasBellsOtherThanFinish()) ?
                     R.string.prepTimeBellsEditor_clearAllDialog_message_withFinishBell :
                         R.string.prepTimeBellsEditor_clearAllDialog_message_noFinishBell;
-            AlertDialog alert = (AlertDialog) dialog;
-            alert.setMessage(getString(messageResId));
+            dialog.setMessage(getString(messageResId));
 
-            return alert;
+            return dialog;
         }
 
     }
@@ -336,13 +310,9 @@ public class PrepTimeBellsEditActivity extends AppCompatActivity {
         registerForContextMenu(findViewById(R.id.prepTimeBellsEditor_bellsList));
 
         // Register for the list to show a toast on non-long click
-        ((ListView) findViewById(R.id.prepTimeBellsEditor_bellsList)).setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-                Toast.makeText(PrepTimeBellsEditActivity.this,
-                        R.string.prepTimeBellsEditor_contextMenu_tip, Toast.LENGTH_SHORT).show();
-            }
-        });
+        ((ListView) findViewById(R.id.prepTimeBellsEditor_bellsList)).setOnItemClickListener(
+                (parent, view, pos, id) -> Toast.makeText(PrepTimeBellsEditActivity.this,
+                        R.string.prepTimeBellsEditor_contextMenu_tip, Toast.LENGTH_SHORT).show());
 
         // Set the action bar
         ActionBar bar = getSupportActionBar();
@@ -353,21 +323,20 @@ public class PrepTimeBellsEditActivity extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-        switch (item.getItemId()) {
-        case R.id.prepTimeBellsEditor_contextMenu_edit:
+        final int itemId = item.getItemId();
+        if (itemId == R.id.prepTimeBellsEditor_contextMenu_edit) {
             Bundle args = mPtbm.getBellBundle(info.position);
             args.putInt(KEY_INDEX, info.position);
             DialogFragment fragment = new DialogAddOrEditBellFragment();
             fragment.setArguments(args);
             fragment.show(getSupportFragmentManager(), DIALOG_TAG_EDIT_BELL);
             return true;
-        case R.id.prepTimeBellsEditor_contextMenu_delete:
+        } else if (itemId == R.id.prepTimeBellsEditor_contextMenu_delete) {
             mPtbm.deleteBell(info.position);
             refreshBellsList();
             return true;
-        default:
-            return super.onContextItemSelected(item);
         }
+        return super.onContextItemSelected(item);
     }
 
     @Override
@@ -413,7 +382,7 @@ public class PrepTimeBellsEditActivity extends AppCompatActivity {
             // We're using this in hours and minutes, not minutes and seconds
             int minutes = timePicker.getCurrentHour();
             int seconds = timePicker.getCurrentMinute();
-            long time = minutes * 60 + seconds;
+            long time = minutes * 60L + seconds;
             if (typeSelected == ADD_PREP_TIME_BELL_TYPE_START)
                 bundle.putString(PrepTimeBellsManager.KEY_TYPE, PrepTimeBellsManager.VALUE_TYPE_START);
             else
@@ -423,7 +392,7 @@ public class PrepTimeBellsEditActivity extends AppCompatActivity {
         case ADD_PREP_TIME_BELL_TYPE_PERCENTAGE:
             Editable text = editText.getText();
             bundle.putString(PrepTimeBellsManager.KEY_TYPE, PrepTimeBellsManager.VALUE_TYPE_PROPORTIONAL);
-            Double percentage = Double.parseDouble(text.toString());
+            double percentage = Double.parseDouble(text.toString());
             double value = percentage / 100;
             bundle.putDouble(PrepTimeBellsManager.KEY_PROPORTION, value);
             break;
@@ -433,29 +402,21 @@ public class PrepTimeBellsEditActivity extends AppCompatActivity {
     }
 
     private DialogInterface.OnClickListener getAddBellDialogOnClickListener() {
-        return new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int which) {
-                Dialog dialog = (Dialog) dialogInterface;
-                Bundle newBundle = createBellBundleFromAddOrEditDialog(dialog);
-                mPtbm.addFromBundle(newBundle);
-                refreshBellsList();
-            }
+        return (dialogInterface, which) -> {
+            Dialog dialog = (Dialog) dialogInterface;
+            Bundle newBundle = createBellBundleFromAddOrEditDialog(dialog);
+            mPtbm.addFromBundle(newBundle);
+            refreshBellsList();
         };
     }
 
     private DialogInterface.OnClickListener getEditBellDialogOnClickListener(final int index) {
-        return new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int which) {
-                Dialog dialog = (Dialog) dialogInterface;
-                Bundle newBundle = createBellBundleFromAddOrEditDialog(dialog);
-                mPtbm.replaceFromBundle(index, newBundle);
-                refreshBellsList();
-            }
+        return (dialogInterface, which) -> {
+            Dialog dialog = (Dialog) dialogInterface;
+            Bundle newBundle = createBellBundleFromAddOrEditDialog(dialog);
+            mPtbm.replaceFromBundle(index, newBundle);
+            refreshBellsList();
         };
-
     }
-
 
 }

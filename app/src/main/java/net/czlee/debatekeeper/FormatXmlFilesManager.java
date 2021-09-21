@@ -60,7 +60,7 @@ class FormatXmlFilesManager {
     static final int LOCATION_EXTERNAL_STORAGE = 1;
     static final int LOCATION_NOT_FOUND       = -1;
 
-    private boolean mLookForUserFiles = false;
+    private boolean mLookForUserFiles;
 
     FormatXmlFilesManager(Context context) {
         mAssets = context.getAssets();
@@ -133,7 +133,7 @@ class FormatXmlFilesManager {
      * Returns a list of all user files, i.e. files in external storage.
      * @return an array of Strings, possibly empty, each being an existent file name in external
      * storage.
-     * @throws IOException
+     * @throws IOException if there is a problem with some file
      */
     @NonNull
     String[] userFileList() throws IOException {
@@ -153,7 +153,7 @@ class FormatXmlFilesManager {
      * Returns a list of all files available in the relevant locations.
      * @return an array of Strings, each being an existent file name (but not necessarily a valid
      * XML file)
-     * @throws IOException
+     * @throws IOException if there is a problem with some file
      */
     public String[] list() throws IOException {
         HashSet<String> compiledSet = new HashSet<>();
@@ -167,7 +167,7 @@ class FormatXmlFilesManager {
             Collections.addAll(compiledSet, assetList);
 
         // Finally, return the combined list.
-        return compiledSet.toArray(new String[compiledSet.size()]);
+        return compiledSet.toArray(new String[0]);
     }
 
     /**

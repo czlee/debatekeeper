@@ -22,10 +22,11 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
+
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceManager;
+import androidx.preference.PreferenceFragmentCompat;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,7 +35,7 @@ import java.util.HashSet;
  * @author Chuan-Zheng Lee
  * @since  2012-05-14
  */
-public class GlobalSettingsFragment extends PreferenceFragment {
+public class GlobalSettingsFragment extends PreferenceFragmentCompat {
 
     private final HashMap<String, Integer> mPreferenceToSummaryResIdMap = new HashMap<>();
     private final HashMap<String, Integer> mPreferenceToDefaultResIdMap = new HashMap<>();
@@ -64,8 +65,7 @@ public class GlobalSettingsFragment extends PreferenceFragment {
     // Public methods
     //******************************************************************************************
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.overtime_bell_number_settings);
         addPreferencesFromResource(R.xml.general_settings);
 
@@ -119,25 +119,19 @@ public class GlobalSettingsFragment extends PreferenceFragment {
 
         // Set what the "Learn More" option in POIs timer category does
         getPreferenceManager().findPreference(KEY_POI_TIMER_LEARN_MORE)
-            .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    Uri uri = Uri.parse(getString(R.string.poiTimer_moreInfoUrl));
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    startActivity(intent);
-                    return true;
-                }
+            .setOnPreferenceClickListener(preference -> {
+                Uri uri = Uri.parse(getString(R.string.poiTimer_moreInfoUrl));
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+                return true;
             });
 
         // Set what the "Prep timer bells" option does
         Preference prefPrepTimerBells = getPreferenceManager().findPreference(KEY_PREP_TIMER_BELLS);
-        prefPrepTimerBells.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                Intent intent = new Intent(getActivity(), PrepTimeBellsEditActivity.class);
-                startActivity(intent);
-                return true;
-            }
+        prefPrepTimerBells.setOnPreferenceClickListener(preference -> {
+            Intent intent = new Intent(getActivity(), PrepTimeBellsEditActivity.class);
+            startActivity(intent);
+            return true;
         });
 
     }

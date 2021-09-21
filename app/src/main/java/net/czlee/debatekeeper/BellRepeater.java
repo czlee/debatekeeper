@@ -53,7 +53,7 @@ public class BellRepeater {
 
     private final Context           mContext;
     private final BellSoundInfo     mSoundInfo;
-    private       BellRepeaterState mState            = BellRepeaterState.INITIAL;
+    private       BellRepeaterState mState;
     private       MediaPlayer       mMediaPlayer;
     private       int               mRepetitionsSoFar = 0;
     private       Timer             mTimer            = null;
@@ -99,31 +99,23 @@ public class BellRepeater {
             // If it's not the last repetition, set the completion listener to change the state to
             // PREPARED, so that on the next run() we know to use start() rather than seekTo().
             if (++mRepetitionsSoFar < mSoundInfo.getTimesToPlay()) {
-                mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        mState = BellRepeaterState.PREPARED;
-                        // Log.i("BellRepeater", "Media player completed");
-                    }
+                mMediaPlayer.setOnCompletionListener(mp -> {
+                    mState = BellRepeaterState.PREPARED;
+                    // Log.i("BellRepeater", "Media player completed");
                 });
 
             // If it's the last repetition, set the completion listener to release the player and
             // change the state to FINISHED, and cancel the timer (i.e. clean everything up).
             } else {
-                mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        // The MediaPlayer coming here should be the same one as mMediaPlayer in the BellRepeater class
-                        if (mp != mMediaPlayer){
-                            Log.e(TAG, "OnCompletionListener mp wasn't the same as mMediaPlayer!");
-                        }
-                        mMediaPlayer.release();
-                        mMediaPlayer = null;
-                        mState = BellRepeaterState.FINISHED;
-                        // Log.i("BellRepeater", "Over and out");
+                mMediaPlayer.setOnCompletionListener(mp -> {
+                    // The MediaPlayer coming here should be the same one as mMediaPlayer in the BellRepeater class
+                    if (mp != mMediaPlayer){
+                        Log.e(TAG, "OnCompletionListener mp wasn't the same as mMediaPlayer!");
                     }
+                    mMediaPlayer.release();
+                    mMediaPlayer = null;
+                    mState = BellRepeaterState.FINISHED;
+                    // Log.i("BellRepeater", "Over and out");
                 });
 
                 mTimer.cancel();
@@ -168,20 +160,16 @@ public class BellRepeater {
             mMediaPlayer.setVolume(1, 1);
             // On Error, release it and shut it down and put it away.
             // But log a message so that we know...
-            mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-
-                @Override
-                public boolean onError(MediaPlayer mp, int what, int extra) {
-                    Log.e(TAG, "The media player went into an errored state! Releasing.");
-                    // The MediaPlayer coming here should be the same one as mMediaPlayer in the BellRepeater class
-                    if (mp != mMediaPlayer)
-                        Log.e(TAG, "OnErrorListener mp wasn't the same as mMediaPlayer!");
-                    if (!tryAcquireSemaphore()) return false;
-                    mMediaPlayer.release();
-                    mMediaPlayer = null;
-                    releaseSemaphore();
-                    return false;
-                }
+            mMediaPlayer.setOnErrorListener((mp, what, extra) -> {
+                Log.e(TAG, "The media player went into an errored state! Releasing.");
+                // The MediaPlayer coming here should be the same one as mMediaPlayer in the BellRepeater class
+                if (mp != mMediaPlayer)
+                    Log.e(TAG, "OnErrorListener mp wasn't the same as mMediaPlayer!");
+                if (!tryAcquireSemaphore()) return false;
+                mMediaPlayer.release();
+                mMediaPlayer = null;
+                releaseSemaphore();
+                return false;
             });
 
             mRepetitionsSoFar = 0;

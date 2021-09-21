@@ -17,11 +17,12 @@
 
 package net.czlee.debatekeeper;
 
+import static com.google.android.material.snackbar.Snackbar.LENGTH_SHORT;
+
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ClipData;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -42,11 +43,11 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -70,18 +71,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 
-import static com.google.android.material.snackbar.Snackbar.LENGTH_SHORT;
-
 /**
  * This Activity displays a list of formats for the user to choose from. It
  * returns a file name to the calling activity.
  *
  * @author Chuan-Zheng Lee
  * @since  2012-06-17
- */
-/**
- * @author Chuan-Zheng Lee
- *
  */
 public class FormatChooserActivity extends AppCompatActivity {
 
@@ -115,7 +110,7 @@ public class FormatChooserActivity extends AppCompatActivity {
     /**
      * Passive data class storing a filename and a style name.
      */
-    public class DebateFormatListEntry {
+    public static class DebateFormatListEntry {
 
         private final String filename;
         private final String styleName;
@@ -133,6 +128,7 @@ public class FormatChooserActivity extends AppCompatActivity {
             return styleName;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return styleName;
@@ -183,13 +179,7 @@ public class FormatChooserActivity extends AppCompatActivity {
             builder.setTitle(R.string.ioErrorDialog_title)
                    .setMessage(R.string.ioErrorDialog_message)
                    .setCancelable(false)
-                   .setPositiveButton(R.string.ioErrorDialog_button,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    activity.finish();
-                                }
-                            });
+                   .setPositiveButton(R.string.ioErrorDialog_button, (dialog, which) -> activity.finish());
             return builder.create();
         }
 
@@ -226,12 +216,7 @@ public class FormatChooserActivity extends AppCompatActivity {
             builder.setTitle(R.string.blankDetailsDialog_title)
                    .setCancelable(true)
                    .setMessage(getString(R.string.blankDetailsDialog_text, filename, e.getMessage()))
-                   .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
+                   .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.cancel());
             return builder.create();
         }
 
@@ -256,23 +241,16 @@ public class FormatChooserActivity extends AppCompatActivity {
                 return getBlankDetailsDialog(filename, e);
             }
 
-            String schemaVersion = null;
-            if (dfi != null) schemaVersion = dfi.getSchemaVersion();
-
+            String schemaVersion = dfi.getSchemaVersion();
             populateFileInfo(view, filename, schemaVersion);
 
-            if (dfi != null) {
-                FormatChooserActivity.populateBasicInfo(view, dfi);
-                populatePrepTimeInfo(view, dfi);
-                populateTwoColumnTable(view, R.id.viewFormat_table_speechTypes, R.layout.speech_type_row,
-                        dfi.getSpeechFormatDescriptions());
-                populateTwoColumnTable(view, R.id.viewFormat_table_speeches, R.layout.speech_row,
-                        dfi.getSpeeches());
-                builder.setTitle(dfi.getName());
-            } else {
-                builder.setTitle(filename);
-            }
-
+            FormatChooserActivity.populateBasicInfo(view, dfi);
+            populatePrepTimeInfo(view, dfi);
+            populateTwoColumnTable(view, R.id.viewFormat_table_speechTypes, R.layout.speech_type_row,
+                    dfi.getSpeechFormatDescriptions());
+            populateTwoColumnTable(view, R.id.viewFormat_table_speeches, R.layout.speech_row,
+                    dfi.getSpeeches());
+            builder.setTitle(dfi.getName());
             builder.setCancelable(true);
 
             AlertDialog dialog = builder.create();
@@ -325,17 +303,17 @@ public class FormatChooserActivity extends AppCompatActivity {
         /**
          * Populates a table from an ArrayList of String arrays.
          * @param view the view in which to find the resources
-         * @param tableResΙd A resource ID pointing to a <code>TableLayout</code>
-         * @param rowResΙd A resource ID pointing to a <code>TableRow</code> <b>layout file</b>.
+         * @param tableResId A resource ID pointing to a <code>TableLayout</code>
+         * @param rowResId A resource ID pointing to a <code>TableRow</code> <b>layout file</b>.
          * (Not the <code>TableRow</code> itself.)
          * TableRow must have at least two TextView elements, which must have IDs "text1" and "text2".
          * @param list the list of String arrays.  Each array must have two elements.
          */
-        private void populateTwoColumnTable(View view, int tableResΙd, int rowResΙd, ArrayList<String[]> list) {
-            TableLayout table = (TableLayout) view.findViewById(tableResΙd);
+        private void populateTwoColumnTable(View view, int tableResId, int rowResId, ArrayList<String[]> list) {
+            TableLayout table = (TableLayout) view.findViewById(tableResId);
 
             for (String[] rowText : list) {
-                TableRow row = (TableRow) View.inflate(getActivity(), rowResΙd, null);
+                TableRow row = (TableRow) View.inflate(getActivity(), rowResId, null);
                 ((TextView) row.findViewById(R.id.text1)).setText(rowText[0].concat(" "));
                 ((TextView) row.findViewById(R.id.text2)).setText(rowText[1].concat(" "));
                 table.addView(row);
@@ -395,7 +373,7 @@ public class FormatChooserActivity extends AppCompatActivity {
      * A comparator for DebateFormatListEntries, which sorts the debate formats alphabetically
      * by style name.
      */
-    private class StyleEntryComparatorByStyleName implements
+    private static class StyleEntryComparatorByStyleName implements
             Comparator<DebateFormatListEntry> {
 
         @Override
@@ -427,13 +405,13 @@ public class FormatChooserActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.formatChooser_actionBar_ok:
-                confirmSelectionAndReturn();
-                return true;
-            case R.id.formatChooser_actionBar_share:
-                shareSelection();
-                return true;
+        final int itemId = item.getItemId();
+        if (itemId == R.id.formatChooser_actionBar_ok) {
+            confirmSelectionAndReturn();
+            return true;
+        } else if (itemId == R.id.formatChooser_actionBar_share) {
+            shareSelection();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -450,7 +428,7 @@ public class FormatChooserActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_TO_READ_EXTERNAL_STORAGE) {
             // If we've just received read permissions, refresh the styles list.
@@ -607,8 +585,7 @@ public class FormatChooserActivity extends AppCompatActivity {
      */
     private void populateBasicInfo(View view, String filename) throws IOException, SAXException {
         DebateFormatInfo dfi = getDebateFormatInfo(filename);
-        if (dfi != null)
-            populateBasicInfo(view, dfi);
+        populateBasicInfo(view, dfi);
     }
 
     /**
