@@ -16,11 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingTop="@dimen/view_format_list_item_padding"
-    android:paddingBottom="@dimen/view_format_list_item_padding" >
+    android:paddingBottom="@dimen/view_format_list_item_padding"
+    tools:viewBindingIgnore="true" >
     <include
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

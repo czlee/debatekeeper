@@ -51,7 +51,7 @@ import java.util.ArrayList;
  *  </ul>
  *
  * <p>DebateManager is <b>not</b> capable of handling the GUI, but it sends a message to the
- * DebatingActivity to update the GUI.</p>
+ * {@DebatingTimerFragment} to update the GUI.</p>
  *
  * <p>The internal mechanics of a single speech are handled by {@link DebatePhaseManager}.</p>
  *
