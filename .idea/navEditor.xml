@@ -8,7 +8,7 @@
             <LayoutPositions>
               <option name="myPositions">
                 <map>
-                  <entry key="debatingActivity">
+                  <entry key="debatingTimerFragment">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
@@ -17,28 +17,25 @@
                             <option name="y" value="40" />
                           </Point>
                         </option>
-                      </LayoutPositions>
-                    </value>
-                  </entry>
-                  <entry key="globalSettingsFragment">
-                    <value>
-                      <LayoutPositions>
-                        <option name="myPosition">
-                          <Point>
-                            <option name="x" value="392" />
-                            <option name="y" value="42" />
-                          </Point>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_debatingTimerFragment_to_formatChooserFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
                         </option>
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="prepTimeBellsEditActivity">
+                  <entry key="formatChooserFragment">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="388" />
-                            <option name="y" value="-267" />
+                            <option name="x" value="295" />
+                            <option name="y" value="41" />
                           </Point>
                         </option>
                       </LayoutPositions>

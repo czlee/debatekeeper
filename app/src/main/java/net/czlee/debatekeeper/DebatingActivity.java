@@ -24,24 +24,15 @@ import androidx.appcompat.app.AppCompatActivity;
 /**
  * This is the main activity for the Debatekeeper application. It hosts all of the fragments.
  *
- * It also manages the service connection, because
- *
  * @author Chuan-Zheng Lee
  * @since  2021-09-22
  */
 public class DebatingActivity extends AppCompatActivity {
 
-    private static final String TAG = "DebatingActivity";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        if (savedInstanceState == null) {
-            DebatingTimerFragment fragment = new DebatingTimerFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.main_content, fragment).commit();
-        }
     }
 
 }

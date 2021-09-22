@@ -24,8 +24,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckedTextView;
 
-import net.czlee.debatekeeper.FormatChooserActivity.DebateFormatListEntry;
-import net.czlee.debatekeeper.FormatChooserActivity.FormatChooserActivityBinder;
+import net.czlee.debatekeeper.FormatChooserFragment.DebateFormatListEntry;
+import net.czlee.debatekeeper.FormatChooserFragment.FormatChooserFragmentBinder;
 
 import org.xml.sax.SAXException;
 
@@ -42,12 +42,12 @@ import java.util.List;
  * @since  2012-06-20
  */
 public class DebateFormatEntryArrayAdapter extends
-        ArrayAdapter<FormatChooserActivity.DebateFormatListEntry> {
+        ArrayAdapter<DebateFormatListEntry> {
 
-    private final FormatChooserActivityBinder mBinder;
+    private final FormatChooserFragmentBinder mBinder;
 
     public DebateFormatEntryArrayAdapter(Context context,
-            List<DebateFormatListEntry> objects, FormatChooserActivityBinder binder) {
+            List<DebateFormatListEntry> objects, FormatChooserFragmentBinder binder) {
         super(context, android.R.layout.simple_list_item_single_choice, objects);
         mBinder = binder;
     }

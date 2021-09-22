@@ -17,12 +17,15 @@
 
 package net.czlee.debatekeeper;
 
+import static android.app.Activity.RESULT_FIRST_USER;
 import static com.google.android.material.snackbar.Snackbar.LENGTH_SHORT;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -30,11 +33,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CheckBox;
@@ -45,16 +49,17 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import net.czlee.debatekeeper.databinding.ActivityFormatChooserBinding;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfo;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfoForSchema1;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfoForSchema2;
@@ -78,11 +83,12 @@ import java.util.Iterator;
  * @author Chuan-Zheng Lee
  * @since  2012-06-17
  */
-public class FormatChooserActivity extends AppCompatActivity {
+public class FormatChooserFragment extends Fragment {
 
     private static final String TAG = "FormatChooserActivity";
     public static final String FILES_AUTHORITY = "net.czlee.debatekeeper.fileprovider";
 
+    private ActivityFormatChooserBinding mViewBinding;
     private FormatXmlFilesManager mFilesManager;
     private ListView mStylesListView;
 
@@ -100,8 +106,6 @@ public class FormatChooserActivity extends AppCompatActivity {
     public  static final int RESULT_UNCHANGED = RESULT_FIRST_USER + 1;
 
     public static final String CURRENT_SCHEMA_VERSION = "2.1";
-
-    public static final String EXTRA_XML_FILE_NAME = "xmlfn";
 
     //******************************************************************************************
     // Public classes
@@ -144,7 +148,7 @@ public class FormatChooserActivity extends AppCompatActivity {
      * @author Chuan-Zheng Lee
      *
      */
-    public class FormatChooserActivityBinder {
+    public class FormatChooserFragmentBinder {
         DetailsButtonOnClickListener getDetailsButtonOnClickListener(String filename) {
             return new DetailsButtonOnClickListener(filename);
         }
@@ -157,7 +161,7 @@ public class FormatChooserActivity extends AppCompatActivity {
         }
 
         void populateBasicInfo(View view, String filename) throws IOException, SAXException {
-            FormatChooserActivity.this.populateBasicInfo(view, filename);
+            FormatChooserFragment.this.populateBasicInfo(view, filename);
         }
 
     }
@@ -168,18 +172,19 @@ public class FormatChooserActivity extends AppCompatActivity {
      * @author Chuan-Zheng Lee
      *
      */
-    public static class ListIOErrorDialogFragment extends DialogFragment {
+    public class ListIOErrorDialogFragment extends DialogFragment {
 
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final FormatChooserActivity activity = (FormatChooserActivity) getActivity();
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
             builder.setTitle(R.string.ioErrorDialog_title)
                    .setMessage(R.string.ioErrorDialog_message)
                    .setCancelable(false)
-                   .setPositiveButton(R.string.ioErrorDialog_button, (dialog, which) -> activity.finish());
+                   .setPositiveButton(R.string.ioErrorDialog_button, (dialog, which) -> {
+                        FormatChooserFragmentDirections.ActionLoadFormat action = FormatChooserFragmentDirections.actionLoadFormat();
+                        NavHostFragment.findNavController(getParentFragment()).navigate(action);
+                   });
             return builder.create();
         }
 
@@ -211,8 +216,7 @@ public class FormatChooserActivity extends AppCompatActivity {
          * @return the {@link AlertDialog}
          */
         private AlertDialog getBlankDetailsDialog(String filename, Exception e) {
-            FormatChooserActivity activity = (FormatChooserActivity) getActivity();
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
             builder.setTitle(R.string.blankDetailsDialog_title)
                    .setCancelable(true)
                    .setMessage(getString(R.string.blankDetailsDialog_text, filename, e.getMessage()))
@@ -228,13 +232,14 @@ public class FormatChooserActivity extends AppCompatActivity {
          * @return the {@link AlertDialog}
          */
         private AlertDialog getMoreDetailsDialog(String filename) {
-            FormatChooserActivity activity = (FormatChooserActivity) getActivity();
+            Activity activity = requireActivity();
+            FormatChooserFragment parent = (FormatChooserFragment) getParentFragment();
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             View view = View.inflate(activity, R.layout.view_format_full, null);
 
             DebateFormatInfo dfi;
             try {
-                dfi = activity.getDebateFormatInfo(filename);
+                dfi = parent.getDebateFormatInfo(filename);
             } catch (IOException e) {
                 return getBlankDetailsDialog(filename, e);
             } catch (SAXException e) {
@@ -244,7 +249,7 @@ public class FormatChooserActivity extends AppCompatActivity {
             String schemaVersion = dfi.getSchemaVersion();
             populateFileInfo(view, filename, schemaVersion);
 
-            FormatChooserActivity.populateBasicInfo(view, dfi);
+            FormatChooserFragment.populateBasicInfo(view, dfi);
             populatePrepTimeInfo(view, dfi);
             populateTwoColumnTable(view, R.id.viewFormat_table_speechTypes, R.layout.speech_type_row,
                     dfi.getSpeechFormatDescriptions());
@@ -266,10 +271,10 @@ public class FormatChooserActivity extends AppCompatActivity {
          */
         private void populateFileInfo(View view, String filename, String schemaVersion) {
 
-            FormatChooserActivity activity = (FormatChooserActivity) getActivity();
+            FormatChooserFragment parent = (FormatChooserFragment) getParentFragment();
 
             // Display its location if it's not a built-in file
-            if (activity.mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE) {
+            if (parent.mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE) {
                 TextView fileLocationText = (TextView) view.findViewById(R.id.viewFormat_fileLocationValue);
                 fileLocationText.setText(getString(R.string.viewFormat_fileLocationValue_userDefined));
                 fileLocationText.setVisibility(View.VISIBLE);
@@ -350,9 +355,23 @@ public class FormatChooserActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             DialogFragment fragment = MoreDetailsDialogFragment.newInstance(filename);
-            fragment.show(getSupportFragmentManager(), DIALOG_TAG_MORE_DETAILS);
+            fragment.show(getChildFragmentManager(), DIALOG_TAG_MORE_DETAILS);
         }
 
+    }
+
+    private class FormatChooserMenuItemClickListener implements Toolbar.OnMenuItemClickListener {
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            final int itemId = item.getItemId();
+            if (itemId == R.id.formatChooser_actionBar_ok) {
+                confirmSelectionAndReturn();
+                return true;
+            } else if (itemId == R.id.formatChooser_actionBar_share) {
+                shareSelection();
+                return true;
+            } else return false;
+        }
     }
 
     private class LookForCustomCheckboxOnClickListener implements OnClickListener {
@@ -388,44 +407,13 @@ public class FormatChooserActivity extends AppCompatActivity {
         public void onItemClick(AdapterView<?> parent, View view, int position,
                 long id) {
             mStylesArrayAdapter.notifyDataSetChanged();
-            invalidateOptionsMenu();
+            updateToolbar();
         }
     }
 
     //******************************************************************************************
     // Public methods
     //******************************************************************************************
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.format_chooser_action_bar, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        final int itemId = item.getItemId();
-        if (itemId == R.id.formatChooser_actionBar_ok) {
-            confirmSelectionAndReturn();
-            return true;
-        } else if (itemId == R.id.formatChooser_actionBar_share) {
-            shareSelection();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        // disable the share button if the current selection isn't shareable
-        MenuItem resetDebateItem = menu.findItem(R.id.formatChooser_actionBar_share);
-        String filename = getSelectedFilename();
-        boolean selectionShareable = filename != null && mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE;
-        resetDebateItem.setVisible(selectionShareable);
-
-        return super.onPrepareOptionsMenu(menu);
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -437,7 +425,7 @@ public class FormatChooserActivity extends AppCompatActivity {
 
                 //  Otherwise, uncheck the checkbox and show an error message.
             else {
-                CheckBox checkbox = (CheckBox) findViewById(R.id.formatChooser_lookForCustomCheckbox);
+                CheckBox checkbox = mViewBinding.formatChooserLookForCustomCheckbox;
                 if (checkbox != null) checkbox.setChecked(false);
                 mFilesManager.setLookForUserFiles(false);
                 showSnackbar(Snackbar.LENGTH_LONG, R.string.formatChooser_lookForCustom_errorNoReadPermission);
@@ -449,28 +437,36 @@ public class FormatChooserActivity extends AppCompatActivity {
     // Protected methods
     //******************************************************************************************
 
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_format_chooser);
-        setSupportActionBar((Toolbar) findViewById(R.id.formatChooser_toolbar));
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mViewBinding = ActivityFormatChooserBinding.inflate(inflater, container, false);
+        return mViewBinding.getRoot();
+    }
 
-        mFilesManager = new FormatXmlFilesManager(this);
-        mStylesArrayAdapter = new DebateFormatEntryArrayAdapter(this, mStylesList,
-                new FormatChooserActivityBinder());
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
-        // Set the action bar
-        ActionBar bar = getSupportActionBar();
-        if (bar != null) bar.setDisplayHomeAsUpEnabled(true);
+        super.onViewCreated(view, savedInstanceState);
+
+        mViewBinding.formatChooserToolbar.inflateMenu(R.menu.format_chooser_action_bar);
+        mViewBinding.formatChooserToolbar.setOnMenuItemClickListener(new FormatChooserMenuItemClickListener());
+        mViewBinding.formatChooserToolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
+        mViewBinding.formatChooserToolbar.setNavigationOnClickListener(
+                (v) -> NavHostFragment.findNavController(this).navigateUp());
+
+        Context context = requireContext();
+        mFilesManager = new FormatXmlFilesManager(context);
+        mStylesArrayAdapter = new DebateFormatEntryArrayAdapter(context, mStylesList,
+                new FormatChooserFragmentBinder());
 
         // Configure the checkbox
         mInitialLookForCustomFormats = mFilesManager.isLookingForUserFiles();
-        CheckBox checkbox = (CheckBox) findViewById(R.id.formatChooser_lookForCustomCheckbox);
-        if (checkbox != null) {
-            checkbox.setMovementMethod(LinkMovementMethod.getInstance());
-            checkbox.setOnClickListener(new LookForCustomCheckboxOnClickListener());
-            checkbox.setChecked(mInitialLookForCustomFormats);
-        }
+        CheckBox checkbox = mViewBinding.formatChooserLookForCustomCheckbox;
+        checkbox.setMovementMethod(LinkMovementMethod.getInstance());
+        checkbox.setOnClickListener(new LookForCustomCheckboxOnClickListener());
+        checkbox.setChecked(mInitialLookForCustomFormats);
 
         // If we need it, ask the user for read permission. If it's not already granted, treat the
         // initial setting as false.
@@ -478,18 +474,16 @@ public class FormatChooserActivity extends AppCompatActivity {
             mInitialLookForCustomFormats = requestReadPermission(); // note: this method may show an alert to the user
         }
 
+        // Configure the ListView
+        mStylesListView = mViewBinding.formatChooserStylesList;
+        mStylesListView.setAdapter(mStylesArrayAdapter);
+        mStylesListView.setOnItemClickListener(new StylesListViewOnItemClickListener());
+
         // Populate the styles list
         populateStylesList();
 
-        // Configure the ListView
-        mStylesListView = (ListView) findViewById(R.id.formatChooser_stylesList);
-        if (mStylesListView != null) {
-            mStylesListView.setAdapter(mStylesArrayAdapter);
-            mStylesListView.setOnItemClickListener(new StylesListViewOnItemClickListener());
-        }
-
         // Select and scroll to the incoming selection (if existent)
-        String incomingFilename = getIntent().getStringExtra(EXTRA_XML_FILE_NAME);
+        String incomingFilename = FormatChooserFragmentArgs.fromBundle(getArguments()).getXmlFileName();
         setSelectionAndScroll(incomingFilename);
     }
 
@@ -502,24 +496,25 @@ public class FormatChooserActivity extends AppCompatActivity {
      */
     private void confirmSelectionAndReturn() {
         String selectedFilename = getSelectedFilename();
-        String incomingFilename = getIntent().getStringExtra(EXTRA_XML_FILE_NAME);
+        String incomingFilename = FormatChooserFragmentArgs.fromBundle(getArguments()).getXmlFileName();
+
+        FormatChooserFragmentDirections.ActionLoadFormat action = FormatChooserFragmentDirections.actionLoadFormat();
 
         if (selectedFilename != null && selectedFilename.equals(incomingFilename) &&
                 mInitialLookForCustomFormats == mFilesManager.isLookingForUserFiles()) {
-            setResult(RESULT_UNCHANGED);
+            action.setXmlFileName(null);
+            Log.v(TAG, "Returning no file, selection wasn't changed");
 
         } else if (selectedFilename == null) {
-            setResult(RESULT_ERROR);
-            Log.e(TAG, "Returning error, no entry found");
+            action.setXmlFileName(null);
+            Log.e(TAG, "Returning no file, no entry found");
 
         } else {
-            Intent intent = new Intent();
+            action.setXmlFileName(selectedFilename);
             Log.v(TAG, "File name is " + selectedFilename);
-            intent.putExtra(EXTRA_XML_FILE_NAME, selectedFilename);
-            setResult(RESULT_OK, intent);
         }
 
-        this.finish();
+        NavHostFragment.findNavController(this).navigate(action);
     }
 
     /**
@@ -562,13 +557,13 @@ public class FormatChooserActivity extends AppCompatActivity {
         is = mFilesManager.open(filename);
 
         // Assume it's a 2.0 schema first.
-        DebateFormatInfoForSchema2 dfi2 = new DebateFormatInfoForSchema2(this, is);
+        DebateFormatInfoForSchema2 dfi2 = new DebateFormatInfoForSchema2(requireContext(), is);
 
         // If it's not 2.0, check to see if it is 1.0 or 1.1
         if (!dfi2.isSchemaSupported()) {
             is.close();
             is = mFilesManager.open(filename); // open again to try schema 1.0
-            DebateFormatInfo dfi1 = new DebateFormatInfoForSchema1(this, is);
+            DebateFormatInfo dfi1 = new DebateFormatInfoForSchema1(requireContext(), is);
             if (dfi1.isSchemaSupported()) return dfi1;
         }
 
@@ -596,14 +591,14 @@ public class FormatChooserActivity extends AppCompatActivity {
      */
     private void populateStylesList() {
         String[] fileList;
-        DebateFormatStyleNameExtractor nameExtractor = new DebateFormatStyleNameExtractor(this);
+        DebateFormatStyleNameExtractor nameExtractor = new DebateFormatStyleNameExtractor(requireContext());
 
         try {
              fileList = mFilesManager.list();
         } catch (IOException e) {
             e.printStackTrace();
             ListIOErrorDialogFragment fragment = new ListIOErrorDialogFragment();
-            fragment.show(getSupportFragmentManager(), DIALOG_TAG_LIST_IO_ERROR);
+            fragment.show(getChildFragmentManager(), DIALOG_TAG_LIST_IO_ERROR);
             return;
         }
 
@@ -640,7 +635,7 @@ public class FormatChooserActivity extends AppCompatActivity {
         // Sort alphabetically by style name and tell observers
         mStylesArrayAdapter.sort(new StyleEntryComparatorByStyleName());
         mStylesArrayAdapter.notifyDataSetChanged();
-        invalidateOptionsMenu();
+        updateToolbar();
     }
 
     /**
@@ -683,11 +678,13 @@ public class FormatChooserActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
             return true;
 
-        boolean granted = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+        Activity activity = requireActivity();
+
+        boolean granted = ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED;
 
         if (!granted) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                     REQUEST_TO_READ_EXTERNAL_STORAGE);
         }
 
@@ -742,7 +739,7 @@ public class FormatChooserActivity extends AppCompatActivity {
 
         Uri fileUri;
         try {
-            fileUri = FileProvider.getUriForFile(this, FILES_AUTHORITY, file);
+            fileUri = FileProvider.getUriForFile(requireContext(), FILES_AUTHORITY, file);
         } catch (IllegalArgumentException e) {
             Log.e(TAG, "shareSelection: tried to get file from outside allowable paths");
             showSnackbar(LENGTH_SHORT, R.string.formatChooser_share_error_generic);
@@ -759,10 +756,8 @@ public class FormatChooserActivity extends AppCompatActivity {
         // apps like Gmail don't seem to honour it, and there's almost no third-party posts on the
         // topic. It also doesn't seem to be harmful, though.
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            ClipData clipData = new ClipData(filename, new String[]{"text/xml"}, new ClipData.Item(fileUri));
-            shareIntent.setClipData(clipData);
-        }
+        ClipData clipData = new ClipData(filename, new String[]{"text/xml"}, new ClipData.Item(fileUri));
+        shareIntent.setClipData(clipData);
 
         Intent chooserIntent = Intent.createChooser(shareIntent, getString(R.string.formatChooser_share_chooserTitle));
         startActivity(chooserIntent);
@@ -770,14 +765,12 @@ public class FormatChooserActivity extends AppCompatActivity {
 
     private void showSnackbar(int duration, int stringResId, Object... formatArgs) {
         String string = getString(stringResId, formatArgs);
-        View coordinator = findViewById(R.id.formatChooser_coordinator);
-        if (coordinator != null) {
-            Snackbar snackbar = Snackbar.make(coordinator, string, duration);
-            View snackbarText = snackbar.getView();
-            TextView textView = (TextView) snackbarText.findViewById(com.google.android.material.R.id.snackbar_text);
-            if (textView != null) textView.setMaxLines(5);
-            snackbar.show();
-        }
+        View coordinator = mViewBinding.formatChooserCoordinator;
+        Snackbar snackbar = Snackbar.make(coordinator, string, duration);
+        View snackbarText = snackbar.getView();
+        TextView textView = (TextView) snackbarText.findViewById(com.google.android.material.R.id.snackbar_text);
+        if (textView != null) textView.setMaxLines(5);
+        snackbar.show();
     }
 
     /**
@@ -799,6 +792,16 @@ public class FormatChooserActivity extends AppCompatActivity {
             str = str.concat(iterator.next());
         }
         return str;
+    }
+
+    private void updateToolbar() {
+        Menu menu = mViewBinding.formatChooserToolbar.getMenu();
+
+        // disable the share button if the current selection isn't shareable
+        MenuItem resetDebateItem = menu.findItem(R.id.formatChooser_actionBar_share);
+        String filename = getSelectedFilename();
+        boolean selectionShareable = filename != null && mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE;
+        resetDebateItem.setVisible(selectionShareable);
     }
 
     /**

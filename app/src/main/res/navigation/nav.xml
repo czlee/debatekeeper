@@ -1,4 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav"/>
+    android:id="@+id/nav"
+    app:startDestination="@id/debatingTimerFragment">
+    <fragment
+        android:id="@+id/debatingTimerFragment"
+        android:name="net.czlee.debatekeeper.DebatingTimerFragment"
+        android:label="DebatingTimerFragment" >
+        <action
+            android:id="@+id/action_chooseFormat"
+            app:destination="@id/formatChooserFragment" />
+        <argument
+            android:name="xmlFileName"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/formatChooserFragment"
+        android:name="net.czlee.debatekeeper.FormatChooserFragment"
+        android:label="FormatChooserFragment" >
+        <argument
+            android:name="xmlFileName"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_loadFormat"
+            app:destination="@id/debatingTimerFragment"
+            app:popUpTo="@id/debatingTimerFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+</navigation>

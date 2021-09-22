@@ -17,7 +17,6 @@
 
 package net.czlee.debatekeeper;
 
-import static android.app.Activity.RESULT_OK;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
 
@@ -67,10 +66,6 @@ import android.widget.TimePicker;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcher;
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -78,7 +73,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -168,7 +165,7 @@ public class DebatingTimerFragment extends Fragment {
     private final ArrayList<Pair<String, QueueableDialogFragment>> mDialogsInWaiting = new ArrayList<>();
 
     private static final String BUNDLE_KEY_DEBATE_MANAGER               = "dm";
-    private static final String BUNDLE_KEY_XML_FILE_NAME                = "xmlfn";
+    public  static final String BUNDLE_KEY_XML_FILE_NAME                = "xmlfn";
     private static final String BUNDLE_KEY_IMPORT_INTENT_HANDLED        = "iih";
     private static final String PREFERENCE_XML_FILE_NAME                = "xmlfn";
     private static final String LAST_CHANGELOG_VERSION_SHOWN            = "lastChangeLog";
@@ -192,7 +189,6 @@ public class DebatingTimerFragment extends Fragment {
     private static final String DIALOG_TAG_IMPORT_CONFIRM               = "import";
     private static final String DIALOG_TAG_IMPORT_SUGGEST_REPLACEMENT   = "replace";
 
-    private static final int CHOOSE_STYLE_REQUEST                         = 0;
     private static final int REQUEST_TO_WRITE_EXTERNAL_STORAGE_FOR_IMPORT = 21;
     private static final int SNACKBAR_DURATION_RESET_DEBATE               = 1200;
     private static final int COLOUR_TRANSPARENT                           = 0;
@@ -213,34 +209,6 @@ public class DebatingTimerFragment extends Fragment {
         }
     };
 
-    private final ActivityResultLauncher<Intent> mChooseStyleLauncher = registerForActivityResult(
-            // TODO: Change this to use navigation component
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    switch (result.getResultCode()) {
-                        case RESULT_OK:
-                            String filename = result.getData().getStringExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME);
-                            if (filename != null) {
-                                Log.v(TAG, "Got file name " + filename);
-                                setXmlFileName(filename);
-                                resetDebate();
-                            }
-                            break;
-
-                        case FormatChooserActivity.RESULT_ERROR:
-                            Log.w(TAG, "Got error from FormatChooserActivity");
-                            setXmlFileName(null);
-                            if (mBinder != null) mBinder.releaseDebateManager();
-                            mDebateManager = null;
-                            updateTitle();
-                            updateGui();
-                            updateToolbar();
-                    }
-                }
-            });
-
     //******************************************************************************************
     // Public classes
     //******************************************************************************************
@@ -249,16 +217,16 @@ public class DebatingTimerFragment extends Fragment {
         @Override
         public void onDismiss(@NonNull DialogInterface dialog) {
             super.onDismiss(dialog);
-            DebatingTimerFragment fragment;
+            DebatingTimerFragment parent;
             try {
-                fragment = (DebatingTimerFragment) getParentFragment();
+                parent = (DebatingTimerFragment) getParentFragment();
             } catch (ClassCastException e) {
                 Log.e(TAG, "QueueableDialogFragment.onDismiss: class cast exception in QueueableDialogFragment");
                 return;
             }
-            if (fragment != null) {
+            if (parent != null) {
                 Log.w(TAG, "QueueableDialogFragment.onDismiss: fragment was null");
-                fragment.showNextQueuedDialog();
+                parent.showNextQueuedDialog();
             }
         }
     }
@@ -354,12 +322,8 @@ public class DebatingTimerFragment extends Fragment {
             builder.setTitle(R.string.fatalProblemWithXmlFileDialog_title)
                     .setMessage(errorMessage)
                     .setPositiveButton(R.string.fatalProblemWithXmlFileDialog_button, (dialog, which) -> {
-                        Intent intent = new Intent(activity, FormatChooserActivity.class);
-
-                        // We want to start this from the Activity, not from this Fragment,
-                        // as the Fragment won't be active when it comes back.  See:
-                        // http://stackoverflow.com/questions/10564474/wrong-requestcode-in-onactivityresult
-                        activity.startActivityForResult(intent, CHOOSE_STYLE_REQUEST);
+                        DebatingTimerFragmentDirections.ActionChooseFormat action = DebatingTimerFragmentDirections.actionChooseFormat();
+                        NavHostFragment.findNavController(getParentFragment()).navigate(action);
                     });
 
             return builder.create();
@@ -437,7 +401,7 @@ public class DebatingTimerFragment extends Fragment {
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final DebatingTimerFragment fragment = (DebatingTimerFragment) getParentFragment();
+            final DebatingTimerFragment parent = (DebatingTimerFragment) getParentFragment();
             final Context context = requireContext();
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             Bundle args = getArguments();
@@ -449,11 +413,11 @@ public class DebatingTimerFragment extends Fragment {
                     .setMessage(Html.fromHtml(getString(R.string.replaceDebateFormat_dialog_message,
                             args.getString(DIALOG_ARGUMENT_INCOMING_STYLE_NAME), suggestedFilename, incomingFilename)))
                     .setPositiveButton(R.string.replaceDebateFormat_dialog_button_replace,
-                            (dialog, which) -> fragment.importIncomingFile(suggestedFilename))
+                            (dialog, which) -> parent.importIncomingFile(suggestedFilename))
                     .setNeutralButton(R.string.replaceDebateFormat_dialog_button_addNew,
-                            (dialog, which) -> fragment.importIncomingFile(incomingFilename))
+                            (dialog, which) -> parent.importIncomingFile(incomingFilename))
                     .setNegativeButton(R.string.replaceDebateFormat_dialog_button_cancel,
-                            (dialog, which) -> fragment.mImportIntentHandled = true);
+                            (dialog, which) -> parent.mImportIntentHandled = true);
 
 
             AlertDialog dialog = builder.create();
@@ -587,8 +551,8 @@ public class DebatingTimerFragment extends Fragment {
     private class ControlButtonChooseStyleOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(requireActivity(), FormatChooserActivity.class);
-            mChooseStyleLauncher.launch(intent);
+            DebatingTimerFragmentDirections.ActionChooseFormat action = DebatingTimerFragmentDirections.actionChooseFormat();
+            NavHostFragment.findNavController(DebatingTimerFragment.this).navigate(action);
         }
     }
 
@@ -844,16 +808,16 @@ public class DebatingTimerFragment extends Fragment {
 
     }
 
-    private class DebatingTimerFragmentMenuItemClickListener implements Toolbar.OnMenuItemClickListener {
+    private class DebatingTimerMenuItemClickListener implements Toolbar.OnMenuItemClickListener {
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             editCurrentTimeFinish(false);
             int itemId = item.getItemId();
             if (itemId == R.id.mainScreen_menuItem_chooseFormat) {
-                Intent getStyleIntent = new Intent(requireActivity(), FormatChooserActivity.class);
-                getStyleIntent.putExtra(FormatChooserActivity.EXTRA_XML_FILE_NAME, mFormatXmlFileName);
-                mChooseStyleLauncher.launch(getStyleIntent);
+                DebatingTimerFragmentDirections.ActionChooseFormat action = DebatingTimerFragmentDirections.actionChooseFormat();
+                action.setXmlFileName(mFormatXmlFileName);
+                NavHostFragment.findNavController(DebatingTimerFragment.this).navigate(action);
                 return true;
             } else if (itemId == R.id.mainScreen_menuItem_resetDebate) {
                 if (mDebateManager == null) return true;
@@ -956,6 +920,7 @@ public class DebatingTimerFragment extends Fragment {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
+            Log.d("DebatingTimerServiceCon", "connected");
             mBinder = (DebatingTimerService.DebatingTimerServiceBinder) service;
             initialiseDebate();
             restoreBinder();
@@ -963,6 +928,7 @@ public class DebatingTimerFragment extends Fragment {
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
+            Log.d("DebatingTimerServiceCon", "disconnected");
             mDebateManager = null;
             mViewPager.getAdapter().notifyDataSetChanged();
         }
@@ -1030,6 +996,27 @@ public class DebatingTimerFragment extends Fragment {
         }
     }
 
+    private class XmlFileNameFragmentResultListener implements FragmentResultListener {
+
+        @Override
+        public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+            String filename = result.getString(BUNDLE_KEY_XML_FILE_NAME);
+            if (filename != null) {
+                Log.v(TAG, "Got file name " + filename);
+                setXmlFileName(filename);
+                resetDebate();
+            } else {
+                Log.e(TAG, "File name returned was null");
+                setXmlFileName(null);
+                if (mBinder != null) mBinder.releaseDebateManager();
+                mDebateManager = null;
+                updateTitle();
+                updateGui();
+                updateToolbar();
+            }
+        }
+    }
+
     //******************************************************************************************
     // Public methods
     //******************************************************************************************
@@ -1067,7 +1054,7 @@ public class DebatingTimerFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mViewBinding.mainScreenToolbar.inflateMenu(R.menu.debating_activity_menu);
-        mViewBinding.mainScreenToolbar.setOnMenuItemClickListener(new DebatingTimerFragmentMenuItemClickListener());
+        mViewBinding.mainScreenToolbar.setOnMenuItemClickListener(new DebatingTimerMenuItemClickListener());
 
         mLeftControlButton       = mViewBinding.mainScreenLeftControlButton;
         mLeftCentreControlButton = mViewBinding.mainScreenLeftCentreControlButton;
@@ -1105,22 +1092,30 @@ public class DebatingTimerFragment extends Fragment {
         }
 
         //
-        // Find the style file name.
+        // If there's a file name passed in (presumably from FormatChooserFragment), use it,
+        // otherwise load from preferences.
         String filename = loadXmlFileName();
+        String incomingFilename = DebatingTimerFragmentArgs.fromBundle(getArguments()).getXmlFileName();
+        if (incomingFilename != null && !incomingFilename.equals(filename)) {
+            Log.d(TAG, "onViewCreated: new incoming file received " + incomingFilename);
+            setXmlFileName(incomingFilename);
+            resetDebate();
+            filename = incomingFilename;
+        }
 
         // If there's an incoming style, and it wasn't handled before a screen rotation, ask the
         // user whether they want to import it.
         if (savedInstanceState != null) {
             mImportIntentHandled = savedInstanceState.getBoolean(BUNDLE_KEY_IMPORT_INTENT_HANDLED, false);
-            Log.d(TAG, "onCreate: import intent handled is " + mImportIntentHandled);
+            Log.d(TAG, "onViewCreated: import intent handled is " + mImportIntentHandled);
         }
         if (Intent.ACTION_VIEW.equals(activity.getIntent().getAction()) && !mImportIntentHandled && requestWritePermission()) {
             showDialogToConfirmImport();
 
         // Otherwise, if there's no style loaded, direct the user to choose one
         } else if (filename == null) {
-            Intent getStyleIntent = new Intent(activity, FormatChooserActivity.class);
-            mChooseStyleLauncher.launch(getStyleIntent);
+            DebatingTimerFragmentDirections.ActionChooseFormat action = DebatingTimerFragmentDirections.actionChooseFormat();
+            NavHostFragment.findNavController(this).navigate(action);
         }
 
         //
@@ -1356,6 +1351,8 @@ public class DebatingTimerFragment extends Fragment {
         DebateFormat df;
         FormatXmlFilesManager filesManager = new FormatXmlFilesManager(context);
 
+        Log.v(TAG, "building debate...");
+
         try {
             is = filesManager.open(filename);
         } catch (IOException e) {
@@ -1370,9 +1367,12 @@ public class DebatingTimerFragment extends Fragment {
         } catch (IOException e) {
             throw new FatalXmlError(getString(R.string.fatalProblemWithXmlFileDialog_message_cannotRead), e);
         } catch (SAXException e) {
+            Log.e(TAG, "bad xml");
             throw new FatalXmlError(getString(
                     R.string.fatalProblemWithXmlFileDialog_message_badXml, e.getMessage()), e);
         }
+
+        Log.v(TAG, "still building debate...");
 
         // If the schema wasn't supported, check if it looks like it might be a schema 1.0 file.
         // If it does, show an error and refuse to load the file.
@@ -1708,6 +1708,7 @@ public class DebatingTimerFragment extends Fragment {
 
         mDebateManager = mBinder.getDebateManager();
         if (mDebateManager == null) {
+            Log.d(TAG, "initialiseDebate: creating debate manager");
 
             DebateFormat df;
             try {
@@ -1732,6 +1733,8 @@ public class DebatingTimerFragment extends Fragment {
                 if (xmlFileName != null && xmlFileName.equals(mFormatXmlFileName))
                     mDebateManager.restoreState(BUNDLE_KEY_DEBATE_MANAGER, mLastStateBundle);
             }
+        } else {
+            Log.d(TAG, "initialiseDebate: debate manager already existed");
         }
 
         // The bundle should only ever be relevant once per activity cycle
@@ -1780,6 +1783,7 @@ public class DebatingTimerFragment extends Fragment {
      * @param tag the tag that would be passed to showDialog()
      */
     private void queueDialog(QueueableDialogFragment fragment, String tag) {
+        Log.d(TAG, "queueing dialog: " + tag);
         if (!mDialogBlocking) {
             mDialogBlocking = true;
             fragment.show(getChildFragmentManager(), tag);
@@ -1827,19 +1831,6 @@ public class DebatingTimerFragment extends Fragment {
     }
 
     /**
-     *  Sets up a single button
-     */
-    private void setButton(Button button, ControlButtonSpec spec) {
-        if (spec == null)
-            button.setVisibility(View.GONE);
-        else {
-            button.setText(spec.textResId);
-            button.setOnClickListener(spec.onClickListener);
-            button.setVisibility(View.VISIBLE);
-        }
-    }
-
-    /**
      * Requests the <code>WRITE_EXTERNAL_STORAGE</code> permission if it hasn't already been granted.
      * We do this here, not in {@link FormatXmlFilesManager}, so that {@link DebatingActivity}
      * doesn't ask for the permission.
@@ -1865,6 +1856,19 @@ public class DebatingTimerFragment extends Fragment {
         }
 
         return granted;
+    }
+
+    /**
+     *  Sets up a single button
+     */
+    private void setButton(Button button, ControlButtonSpec spec) {
+        if (spec == null)
+            button.setVisibility(View.GONE);
+        else {
+            button.setText(spec.textResId);
+            button.setOnClickListener(spec.onClickListener);
+            button.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
@@ -2284,6 +2288,8 @@ public class DebatingTimerFragment extends Fragment {
 
         updateDebateTimerDisplay();
         updateControls();
+        updateTitle();
+        updateToolbar();
     }
 
     /**
