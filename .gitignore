@@ -21,10 +21,8 @@ gen/
 
 # Gradle files
 .gradle/
+/.idea/
 local.properties
-/.idea/workspace.xml
-/.idea/libraries
-/.idea/deploymentTargetDropDown.xml
 .DS_Store
 build
 *.iml
