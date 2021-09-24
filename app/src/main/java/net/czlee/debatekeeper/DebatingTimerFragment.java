@@ -131,6 +131,7 @@ public class DebatingTimerFragment extends Fragment {
     private Bundle           mLastStateBundle;
     private View             mDebateTimerDisplay;
     private boolean          mIsEditingTime = false;
+    private boolean          mIsOpeningFormatChooser = false;
     private final Semaphore  mFlashScreenSemaphore = new Semaphore(1, true);
 
     private EnableableViewPager mViewPager;
@@ -322,8 +323,8 @@ public class DebatingTimerFragment extends Fragment {
             builder.setTitle(R.string.fatalProblemWithXmlFileDialog_title)
                     .setMessage(errorMessage)
                     .setPositiveButton(R.string.fatalProblemWithXmlFileDialog_button, (dialog, which) -> {
-                        DebatingTimerFragmentDirections.ActionChooseFormat action = DebatingTimerFragmentDirections.actionChooseFormat();
-                        NavHostFragment.findNavController(getParentFragment()).navigate(action);
+                        dialog.dismiss();
+                        ((DebatingTimerFragment) getParentFragment()).navigateToFormatChooser(null);
                     });
 
             return builder.create();
@@ -551,8 +552,7 @@ public class DebatingTimerFragment extends Fragment {
     private class ControlButtonChooseStyleOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            DebatingTimerFragmentDirections.ActionChooseFormat action = DebatingTimerFragmentDirections.actionChooseFormat();
-            NavHostFragment.findNavController(DebatingTimerFragment.this).navigate(action);
+            navigateToFormatChooser(null);
         }
     }
 
@@ -815,9 +815,7 @@ public class DebatingTimerFragment extends Fragment {
             editCurrentTimeFinish(false);
             int itemId = item.getItemId();
             if (itemId == R.id.mainScreen_menuItem_chooseFormat) {
-                DebatingTimerFragmentDirections.ActionChooseFormat action = DebatingTimerFragmentDirections.actionChooseFormat();
-                action.setXmlFileName(mFormatXmlFileName);
-                NavHostFragment.findNavController(DebatingTimerFragment.this).navigate(action);
+                navigateToFormatChooser(mFormatXmlFileName);
                 return true;
             } else if (itemId == R.id.mainScreen_menuItem_resetDebate) {
                 if (mDebateManager == null) return true;
@@ -968,6 +966,7 @@ public class DebatingTimerFragment extends Fragment {
                 updateGui();
                 updateToolbar();
             }
+            mIsOpeningFormatChooser = false;  // clear flag
         }
     }
 
@@ -1102,7 +1101,8 @@ public class DebatingTimerFragment extends Fragment {
         //
         // If there's a file name passed in (presumably from FormatChooserFragment), use it,
         // otherwise load from preferences.
-        String filename = loadXmlFileName();
+        SharedPreferences prefs = activity.getPreferences(MODE_PRIVATE);
+        mFormatXmlFileName = prefs.getString(PREFERENCE_XML_FILE_NAME, null);
 
         // If there's an incoming style, and it wasn't handled before a screen rotation, ask the
         // user whether they want to import it.
@@ -1112,17 +1112,19 @@ public class DebatingTimerFragment extends Fragment {
         }
         if (Intent.ACTION_VIEW.equals(activity.getIntent().getAction()) && !mImportIntentHandled && requestWritePermission()) {
             showDialogToConfirmImport();
-        } else if (filename == null) {
-            // FIXME This checks too soon - need to figure out how to wait for FormatChooserFragmentResultListener
+        } else if (mFormatXmlFileName == null) {
             // Otherwise, if there's no style loaded, direct the user to choose one
-            Log.v(TAG, "no file loaded, redirecting to choose format");
-            DebatingTimerFragmentDirections.ActionChooseFormat action = DebatingTimerFragmentDirections.actionChooseFormat();
-            NavHostFragment.findNavController(this).navigate(action);
+            if (!mIsOpeningFormatChooser) {
+                Log.v(TAG, "no file loaded, redirecting to choose format");
+                navigateToFormatChooser(null);
+            } else {
+                Log.v(TAG, "no file loaded, but returned from format chooser, so staying put");
+                mIsOpeningFormatChooser = false;
+            }
         }
 
         //
         // If there's been an update, show the changelog.
-        SharedPreferences prefs = activity.getPreferences(MODE_PRIVATE);
         Resources res = getResources();
         int thisChangelogVersion = res.getInteger(R.integer.changelogDialog_versionCode);
         int lastChangelogVersionShown = prefs.getInt(LAST_CHANGELOG_VERSION_SHOWN, 0);
@@ -1151,6 +1153,7 @@ public class DebatingTimerFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle bundle) {
+        Log.d(TAG, "hello, I am onSaveInstanceState");
         super.onSaveInstanceState(bundle);
         bundle.putString(BUNDLE_KEY_XML_FILE_NAME, mFormatXmlFileName);
         bundle.putBoolean(BUNDLE_KEY_IMPORT_INTENT_HANDLED, mImportIntentHandled);
@@ -1163,6 +1166,7 @@ public class DebatingTimerFragment extends Fragment {
         Log.d(TAG, "hello, I am onStart");  // TODO
 
         super.onStart();
+
         restoreBinder();
         LocalBroadcastManager.getInstance(requireContext()).registerReceiver(mGuiUpdateBroadcastReceiver,
                 new IntentFilter(DebatingTimerService.UPDATE_GUI_BROADCAST_ACTION));
@@ -1762,11 +1766,15 @@ public class DebatingTimerFragment extends Fragment {
         return info.firstInstallTime == info.lastUpdateTime;
     }
 
-    private String loadXmlFileName() {
-        SharedPreferences sp = requireActivity().getPreferences(MODE_PRIVATE);
-        String filename = sp.getString(PREFERENCE_XML_FILE_NAME, null);
-        mFormatXmlFileName = filename;
-        return filename;
+    /**
+     * Navigates to FormatChooserActivity.
+     */
+    private void navigateToFormatChooser(@Nullable String xmlFileName) {
+        DebatingTimerFragmentDirections.ActionChooseFormat action = DebatingTimerFragmentDirections.actionChooseFormat();
+        mIsOpeningFormatChooser = true;
+        if (xmlFileName != null)
+            action.setXmlFileName(xmlFileName);
+        NavHostFragment.findNavController(DebatingTimerFragment.this).navigate(action);
     }
 
     /**
@@ -2283,7 +2291,7 @@ public class DebatingTimerFragment extends Fragment {
         }
 
         mPreviousSpeechBackPressedCallback.setEnabled(
-                mDebateManager == null || (!mDebateManager.isInFirstPhase() && !mDebateManager.isRunning()));
+                mDebateManager != null && !mDebateManager.isInFirstPhase() && !mDebateManager.isRunning());
 
         updateDebateTimerDisplay();
         updateControls();
