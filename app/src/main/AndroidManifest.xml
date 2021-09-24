@@ -52,8 +52,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".PrepTimeBellsEditActivity"
-            android:label="@string/activityName_PrepTimeBellsEdit"
+            android:name=".PrepTimeBellsEditFragment"
+            android:label="@string/fragmentName_PrepTimeBellsEdit"
             android:parentActivityName=".DebatingActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

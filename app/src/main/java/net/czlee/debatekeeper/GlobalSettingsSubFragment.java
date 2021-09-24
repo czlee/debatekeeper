@@ -23,6 +23,9 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.navigation.NavDirections;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -129,8 +132,8 @@ public class GlobalSettingsSubFragment extends PreferenceFragmentCompat {
         // Set what the "Prep timer bells" option does
         Preference prefPrepTimerBells = getPreferenceManager().findPreference(KEY_PREP_TIMER_BELLS);
         prefPrepTimerBells.setOnPreferenceClickListener(preference -> {
-            Intent intent = new Intent(getActivity(), PrepTimeBellsEditActivity.class);
-            startActivity(intent);
+            @NonNull NavDirections action = SettingsFragmentDirections.actionEditPrepTimeBells();
+            NavHostFragment.findNavController(GlobalSettingsSubFragment.this).navigate(action);
             return true;
         });
 

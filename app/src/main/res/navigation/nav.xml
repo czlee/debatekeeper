@@ -33,5 +33,13 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="net.czlee.debatekeeper.SettingsFragment"
-        android:label="settingsFragment" />
+        android:label="settingsFragment" >
+        <action
+            android:id="@+id/action_editPrepTimeBells"
+            app:destination="@id/prepTimeBellsEditFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/prepTimeBellsEditFragment"
+        android:name="net.czlee.debatekeeper.PrepTimeBellsEditFragment"
+        android:label="PrepTimeBellsEditFragment" />
 </navigation>

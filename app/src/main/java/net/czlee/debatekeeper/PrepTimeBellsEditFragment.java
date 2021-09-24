@@ -17,9 +17,13 @@
 
 package net.czlee.debatekeeper;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -27,10 +31,12 @@ import android.text.Editable;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
@@ -41,10 +47,12 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
+
+import net.czlee.debatekeeper.databinding.ActivityPrepTimeBellsEditBinding;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
@@ -61,7 +69,9 @@ import java.util.Locale;
  * @since  2013-02-02
  *
  */
-public class PrepTimeBellsEditActivity extends AppCompatActivity {
+public class PrepTimeBellsEditFragment extends Fragment {
+
+    private ActivityPrepTimeBellsEditBinding mViewBinding;
 
     private PrepTimeBellsManager mPtbm;
 
@@ -93,16 +103,17 @@ public class PrepTimeBellsEditActivity extends AppCompatActivity {
         }
 
         private Dialog getAddOrEditBellDialog() {
-            final PrepTimeBellsEditActivity activity = (PrepTimeBellsEditActivity) getActivity();
+            final Activity activity = requireActivity();
+            final PrepTimeBellsEditFragment parent = (PrepTimeBellsEditFragment) getParentFragment();
 
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
             View content = activity.getLayoutInflater().inflate(R.layout.add_prep_time_bell, null);
 
             // Take note of the form elements
-            final Spinner    typeSpinner = (Spinner)    content.findViewById(R.id.addPrepTimeBellDialog_typeSpinner);
-            final TimePicker timePicker  = (TimePicker) content.findViewById(R.id.addPrepTimeBellDialog_timePicker);
-            final EditText   editText    = (EditText)   content.findViewById(R.id.addPrepTimeBellDialog_editText);
+            final Spinner    typeSpinner = content.findViewById(R.id.addPrepTimeBellDialog_typeSpinner);
+            final TimePicker timePicker  = content.findViewById(R.id.addPrepTimeBellDialog_timePicker);
+            final EditText   editText    = content.findViewById(R.id.addPrepTimeBellDialog_editText);
 
             // Format the form elements
             timePicker.setIs24HourView(true);
@@ -139,7 +150,7 @@ public class PrepTimeBellsEditActivity extends AppCompatActivity {
 
                 title = getString(R.string.prepTimeBellsEditor_addBellDialog_title);
                 confirmButtonText = getString(R.string.prepTimeBellsEditor_addBellDialog_confirmButton);
-                confirmOnClickListener = activity.getAddBellDialogOnClickListener();
+                confirmOnClickListener = parent.getAddBellDialogOnClickListener();
 
             } else if (DIALOG_TAG_EDIT_BELL.equals(getTag())) {
 
@@ -147,9 +158,9 @@ public class PrepTimeBellsEditActivity extends AppCompatActivity {
                 int index = getArguments().getInt(KEY_INDEX);
 
                 title = getString(R.string.prepTimeBellsEditor_editBellDialog_title,
-                        activity.mPtbm.getBellDescription(index));
+                        parent.mPtbm.getBellDescription(index));
                 confirmButtonText = getString(R.string.prepTimeBellsEditor_editBellDialog_confirmButton);
-                confirmOnClickListener = activity.getEditBellDialogOnClickListener(index);
+                confirmOnClickListener = parent.getEditBellDialogOnClickListener(index);
 
             } else {
 
@@ -171,8 +182,8 @@ public class PrepTimeBellsEditActivity extends AppCompatActivity {
         }
 
         private void prepareAddBellDialogView(View view) {
-            final TimePicker timePicker  = (TimePicker) view.findViewById(R.id.addPrepTimeBellDialog_timePicker);
-            final EditText   editText    = (EditText)   view.findViewById(R.id.addPrepTimeBellDialog_editText);
+            final TimePicker timePicker  = view.findViewById(R.id.addPrepTimeBellDialog_timePicker);
+            final EditText   editText    = view.findViewById(R.id.addPrepTimeBellDialog_editText);
 
             // Defaults
             timePicker.setCurrentHour(DEFAULT_MINUTES);
@@ -187,9 +198,9 @@ public class PrepTimeBellsEditActivity extends AppCompatActivity {
         private void prepareEditBellDialogView(View view) {
             final Bundle args = getArguments();
 
-            final Spinner    typeSpinner = (Spinner)    view.findViewById(R.id.addPrepTimeBellDialog_typeSpinner);
-            final TimePicker timePicker  = (TimePicker) view.findViewById(R.id.addPrepTimeBellDialog_timePicker);
-            final EditText   editText    = (EditText)   view.findViewById(R.id.addPrepTimeBellDialog_editText);
+            final Spinner    typeSpinner = view.findViewById(R.id.addPrepTimeBellDialog_typeSpinner);
+            final TimePicker timePicker  = view.findViewById(R.id.addPrepTimeBellDialog_timePicker);
+            final EditText   editText    = view.findViewById(R.id.addPrepTimeBellDialog_editText);
 
             // Defaults
             timePicker.setCurrentHour(DEFAULT_MINUTES);
@@ -224,22 +235,24 @@ public class PrepTimeBellsEditActivity extends AppCompatActivity {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-            final PrepTimeBellsEditActivity activity = (PrepTimeBellsEditActivity) getActivity();
+            final Activity activity = requireActivity();
+            final PrepTimeBellsEditFragment parent = (PrepTimeBellsEditFragment) getParentFragment();
+
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
             builder.setTitle(R.string.prepTimeBellsEditor_clearAllDialog_title)
                    .setMessage("")
                    .setCancelable(true)
                    .setPositiveButton(R.string.prepTimeBellsEditor_clearAllDialog_confirmButton, (dialog, which) -> {
-                       boolean spareFinish = activity.mPtbm.hasBellsOtherThanFinish();
-                       activity.mPtbm.deleteAllBells(spareFinish);
-                       activity.refreshBellsList();
+                       boolean spareFinish = parent.mPtbm.hasBellsOtherThanFinish();
+                       parent.mPtbm.deleteAllBells(spareFinish);
+                       parent.refreshBellsList();
                    })
                    .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel());
 
             AlertDialog dialog = builder.create();
 
-            int messageResId = (activity.mPtbm.hasFinishBell() && activity.mPtbm.hasBellsOtherThanFinish()) ?
+            int messageResId = (parent.mPtbm.hasFinishBell() && parent.mPtbm.hasBellsOtherThanFinish()) ?
                     R.string.prepTimeBellsEditor_clearAllDialog_message_withFinishBell :
                         R.string.prepTimeBellsEditor_clearAllDialog_message_noFinishBell;
             dialog.setMessage(getString(messageResId));
@@ -258,7 +271,7 @@ public class PrepTimeBellsEditActivity extends AppCompatActivity {
         public void onClick(View v) {
             // Generate the "add bell" dialog
             DialogFragment fragment = new DialogAddOrEditBellFragment();
-            fragment.show(getSupportFragmentManager(), DIALOG_TAG_ADD_BELL);
+            fragment.show(getChildFragmentManager(), DIALOG_TAG_ADD_BELL);
         }
     }
 
@@ -267,7 +280,7 @@ public class PrepTimeBellsEditActivity extends AppCompatActivity {
         public void onClick(View v) {
             // Generate the "are you sure?" dialog
             DialogFragment fragment = new DialogClearBellsFragment();
-            fragment.show(getSupportFragmentManager(), DIALOG_TAG_CLEAR_ALL_BELLS);
+            fragment.show(getChildFragmentManager(), DIALOG_TAG_CLEAR_ALL_BELLS);
         }
     }
 
@@ -275,49 +288,58 @@ public class PrepTimeBellsEditActivity extends AppCompatActivity {
     // Public methods
     //******************************************************************************************
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
         String title = getString(R.string.prepTimeBellsEditor_contextMenu_header,
                 mPtbm.getBellDescription(info.position));
         menu.setHeaderTitle(title);
-        MenuInflater inflater = getMenuInflater();
+        MenuInflater inflater = requireActivity().getMenuInflater();
         inflater.inflate(R.menu.prep_time_bells_list_context, menu);
     }
 
     //******************************************************************************************
-    // Protected methods
+    // Public methods
     //******************************************************************************************
 
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_prep_time_bells_edit);
-        setSupportActionBar((Toolbar) findViewById(R.id.prepTimeBellsEditor_toolbar));
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mViewBinding = ActivityPrepTimeBellsEditBinding.inflate(inflater, container, false);
+        return mViewBinding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        Context context = requireContext();
 
         // Open the preferences file and instantiate the PrepTimeBellsManager
-        SharedPreferences prefs = getSharedPreferences(PrepTimeBellsManager.PREP_TIME_BELLS_PREFERENCES_NAME, MODE_PRIVATE);
-        mPtbm = new PrepTimeBellsManager(this);
+        SharedPreferences prefs = context.getSharedPreferences(PrepTimeBellsManager.PREP_TIME_BELLS_PREFERENCES_NAME, MODE_PRIVATE);
+        mPtbm = new PrepTimeBellsManager(context);
         mPtbm.loadFromPreferences(prefs);
 
         // Populate the list
         refreshBellsList();
 
         // Set the OnClickListeners
-        findViewById(R.id.prepTimeBellsEditor_addBellButton).setOnClickListener(new AddButtonOnClickListener());
-        findViewById(R.id.prepTimeBellsEditor_clearAllButton).setOnClickListener(new ClearButtonOnClickListener());
+        mViewBinding.prepTimeBellsEditorAddBellButton.setOnClickListener(new AddButtonOnClickListener());
+        mViewBinding.prepTimeBellsEditorClearAllButton.setOnClickListener(new ClearButtonOnClickListener());
 
         // Register a context menu for the bells list items
-        registerForContextMenu(findViewById(R.id.prepTimeBellsEditor_bellsList));
+        registerForContextMenu(mViewBinding.prepTimeBellsEditorBellsList);
 
         // Register for the list to show a toast on non-long click
-        ((ListView) findViewById(R.id.prepTimeBellsEditor_bellsList)).setOnItemClickListener(
-                (parent, view, pos, id) -> Toast.makeText(PrepTimeBellsEditActivity.this,
+        mViewBinding.prepTimeBellsEditorBellsList.setOnItemClickListener(
+                (parent, v, pos, id) -> Toast.makeText(context,
                         R.string.prepTimeBellsEditor_contextMenu_tip, Toast.LENGTH_SHORT).show());
 
         // Set the action bar
-        ActionBar bar = getSupportActionBar();
-        if (bar != null)
-            bar.setDisplayHomeAsUpEnabled(true);
+        mViewBinding.prepTimeBellsEditorToolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
+        mViewBinding.prepTimeBellsEditorToolbar.setNavigationOnClickListener(
+                (v) -> NavHostFragment.findNavController(this).navigateUp());
     }
 
     @Override
@@ -329,7 +351,7 @@ public class PrepTimeBellsEditActivity extends AppCompatActivity {
             args.putInt(KEY_INDEX, info.position);
             DialogFragment fragment = new DialogAddOrEditBellFragment();
             fragment.setArguments(args);
-            fragment.show(getSupportFragmentManager(), DIALOG_TAG_EDIT_BELL);
+            fragment.show(getChildFragmentManager(), DIALOG_TAG_EDIT_BELL);
             return true;
         } else if (itemId == R.id.prepTimeBellsEditor_contextMenu_delete) {
             mPtbm.deleteBell(info.position);
@@ -340,9 +362,9 @@ public class PrepTimeBellsEditActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
-        SharedPreferences prefs = getSharedPreferences(PrepTimeBellsManager.PREP_TIME_BELLS_PREFERENCES_NAME, MODE_PRIVATE);
+        SharedPreferences prefs = requireContext().getSharedPreferences(PrepTimeBellsManager.PREP_TIME_BELLS_PREFERENCES_NAME, MODE_PRIVATE);
         mPtbm.saveToPreferences(prefs);
     }
 
@@ -361,18 +383,18 @@ public class PrepTimeBellsEditActivity extends AppCompatActivity {
             descriptionsIterator.set(description.substring(0, 1).toUpperCase(Locale.getDefault()) + description.substring(1));
         }
 
-        ListView view = (ListView) findViewById(R.id.prepTimeBellsEditor_bellsList);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, descriptions);
+        ListView view = mViewBinding.prepTimeBellsEditorBellsList;
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, descriptions);
         view.setAdapter(adapter);
 
         // Disable the "clear" button if there is nothing to clear
-        findViewById(R.id.prepTimeBellsEditor_clearAllButton).setEnabled(mPtbm.hasBells());
+        mViewBinding.prepTimeBellsEditorClearAllButton.setEnabled(mPtbm.hasBells());
     }
 
     private static Bundle createBellBundleFromAddOrEditDialog(final Dialog dialog) {
-        final Spinner    typeSpinner = (Spinner)    dialog.findViewById(R.id.addPrepTimeBellDialog_typeSpinner);
-        final TimePicker timePicker  = (TimePicker) dialog.findViewById(R.id.addPrepTimeBellDialog_timePicker);
-        final EditText   editText    = (EditText)   dialog.findViewById(R.id.addPrepTimeBellDialog_editText);
+        final Spinner    typeSpinner = dialog.findViewById(R.id.addPrepTimeBellDialog_typeSpinner);
+        final TimePicker timePicker  = dialog.findViewById(R.id.addPrepTimeBellDialog_timePicker);
+        final EditText   editText    = dialog.findViewById(R.id.addPrepTimeBellDialog_editText);
 
         int typeSelected = typeSpinner.getSelectedItemPosition();
         Bundle bundle = new Bundle();

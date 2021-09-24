@@ -2356,7 +2356,7 @@ public class DebatingTimerFragment extends Fragment {
             else
                 toolbar.setTitle(mDebateManager.getDebateFormatName());
         }
-        else toolbar.setTitle(R.string.activityName_Debating_withoutFormat);
+        else toolbar.setTitle(R.string.fragmentName_Debating_withoutFormat);
 
         Menu menu = toolbar.getMenu();
 

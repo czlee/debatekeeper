@@ -17,10 +17,10 @@
 <resources>
 
     <string name="app_name" translatable="false">Debatekeeper</string>
-    <string name="activityName_Debating_withoutFormat" translatable="false">Debatekeeper</string>
+    <string name="fragmentName_Debating_withoutFormat" translatable="false">Debatekeeper</string>
     <string name="fragmentName_GlobalSettings">Settings</string>
-    <string name="activityName_FormatChooser">Choose style</string>
-    <string name="activityName_PrepTimeBellsEdit">Prep timer bells</string>
+    <string name="fragmentName_FormatChooser">Choose style</string>
+    <string name="fragmentName_PrepTimeBellsEdit">Prep timer bells</string>
     <string name="intentFilter_importStyle">Debatekeeper</string>
 
     <string name="app_marketUri" translatable="false">market://details?id=net.czlee.debatekeeper</string>
