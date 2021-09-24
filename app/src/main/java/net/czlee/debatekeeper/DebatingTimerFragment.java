@@ -1195,32 +1195,8 @@ public class DebatingTimerFragment extends Fragment {
 
         try {
 
-            // Boolean preference: Ring bells
-            //  - Backwards compatibility measure
-            // This changed from "silent mode" (true meaning no bells) to "ring bells" (true
-            // meaning ring bells), i.e. it was inverted, in version 1.2, so there is backwards
-            // compatibility to take care of.  Backward compatibility applies if (a) ringBells is
-            // NOT present AND (b) silentMode IS present. In this case, retrieve the old silentMode
-            // preference, delete it and write the opposite into the new ringBells preference. In
-            // all other cases, just use the normal mechanism (i.e. retrieve if present, use
-            // default if not).
-
-            if (!prefs.contains(res.getString(R.string.pref_ringBells_key)) &&
-                    prefs.contains(res.getString(R.string.pref_silentMode_key))) {
-                boolean oldSilentMode = prefs.getBoolean(res.getString(R.string.pref_silentMode_key), false);
-                mBellsEnabled = !oldSilentMode;
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putBoolean(res.getString(R.string.pref_ringBells_key), mBellsEnabled);
-                editor.remove(res.getString(R.string.pref_silentMode_key));
-                editor.apply();
-                Log.i(TAG, String.format("replaced silentMode (%b) with ringBells (%b)", oldSilentMode, mBellsEnabled));
-            } else {
-                // Normal mechanism
-                mBellsEnabled = prefs.getBoolean(res.getString(R.string.pref_ringBells_key), res.getBoolean(R.bool.prefDefault_ringBells));
-            }
-
-
             // The boolean preferences
+            mBellsEnabled = prefs.getBoolean(res.getString(R.string.pref_ringBells_key), res.getBoolean(R.bool.prefDefault_ringBells));
             vibrateMode = prefs.getBoolean(res.getString(R.string.pref_vibrateMode_key), res.getBoolean(R.bool.prefDefault_vibrateMode));
             overtimeBellsEnabled = prefs.getBoolean(res.getString(R.string.pref_overtimeBellsEnable_key), res.getBoolean(R.bool.prefDefault_overtimeBellsEnable));
 

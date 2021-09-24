@@ -38,9 +38,6 @@
     <string name="pref_prepTimer_keepScreenOn_key" translatable="false">prepTimerKeepScreenOn</string>
     <string name="pref_prepTimer_bells_key" translatable="false">prepTimerBells</string>
 
-    <!-- Keys for backwards-compatibility -->
-    <string name="pref_silentMode_key" translatable="false">silentMode</string> <!-- replaced in version 1.2 -->
-
     <!-- Category titles -->
     <string name="prefCategory_overtimeBells_title">Overtime bells</string>
     <string name="prefCategory_pois_title">Points of information</string>
