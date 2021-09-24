@@ -25,10 +25,5 @@
             app:argType="string"
             app:nullable="true"
             android:defaultValue="@null" />
-        <action
-            android:id="@+id/action_loadFormat"
-            app:destination="@id/debatingTimerFragment"
-            app:popUpTo="@id/debatingTimerFragment"
-            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

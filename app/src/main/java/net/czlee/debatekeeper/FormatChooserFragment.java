@@ -17,7 +17,6 @@
 
 package net.czlee.debatekeeper;
 
-import static android.app.Activity.RESULT_FIRST_USER;
 import static com.google.android.material.snackbar.Snackbar.LENGTH_SHORT;
 
 import android.Manifest;
@@ -102,8 +101,14 @@ public class FormatChooserFragment extends Fragment {
     private static final String DIALOG_TAG_MORE_DETAILS = "md";
     private static final String DIALOG_TAG_LIST_IO_ERROR = "io";
 
-    public  static final int RESULT_ERROR = RESULT_FIRST_USER;
-    public  static final int RESULT_UNCHANGED = RESULT_FIRST_USER + 1;
+    public static final String BUNDLE_KEY_RESULT         = "res";
+    public static final String BUNDLE_KEY_XML_FILE_NAME  = "xmlfn";
+    public static final String REQUEST_KEY_CHOOSE_FORMAT = "choose-format";
+
+    public static final int RESULT_SUCCESS      = 0;
+    public static final int RESULT_ERROR        = 1;
+    public static final int RESULT_UNCHANGED    = 2;
+    public static final int RESULT_NO_SELECTION = 3;
 
     public static final String CURRENT_SCHEMA_VERSION = "2.1";
 
@@ -182,8 +187,11 @@ public class FormatChooserFragment extends Fragment {
                    .setMessage(R.string.ioErrorDialog_message)
                    .setCancelable(false)
                    .setPositiveButton(R.string.ioErrorDialog_button, (dialog, which) -> {
-                        FormatChooserFragmentDirections.ActionLoadFormat action = FormatChooserFragmentDirections.actionLoadFormat();
-                        NavHostFragment.findNavController(getParentFragment()).navigate(action);
+                       Bundle result = new Bundle();
+                       result.putInt(BUNDLE_KEY_RESULT, RESULT_ERROR);
+                       result.putString(BUNDLE_KEY_XML_FILE_NAME, null);
+                       getParentFragmentManager().setFragmentResult(REQUEST_KEY_CHOOSE_FORMAT, result);
+                       NavHostFragment.findNavController(this).navigateUp();
                    });
             return builder.create();
         }
@@ -498,23 +506,27 @@ public class FormatChooserFragment extends Fragment {
         String selectedFilename = getSelectedFilename();
         String incomingFilename = FormatChooserFragmentArgs.fromBundle(getArguments()).getXmlFileName();
 
-        FormatChooserFragmentDirections.ActionLoadFormat action = FormatChooserFragmentDirections.actionLoadFormat();
+        Bundle result = new Bundle();
 
         if (selectedFilename != null && selectedFilename.equals(incomingFilename) &&
                 mInitialLookForCustomFormats == mFilesManager.isLookingForUserFiles()) {
-            action.setXmlFileName(null);
+            result.putInt(BUNDLE_KEY_RESULT, RESULT_UNCHANGED);
+            result.putString(BUNDLE_KEY_XML_FILE_NAME, null);
             Log.v(TAG, "Returning no file, selection wasn't changed");
 
         } else if (selectedFilename == null) {
-            action.setXmlFileName(null);
-            Log.e(TAG, "Returning no file, no entry found");
+            result.putInt(BUNDLE_KEY_RESULT, RESULT_NO_SELECTION);
+            result.putString(BUNDLE_KEY_XML_FILE_NAME, null);
+            Log.e(TAG, "Returning no file, no selection found");
 
         } else {
-            action.setXmlFileName(selectedFilename);
+            result.putInt(BUNDLE_KEY_RESULT, RESULT_SUCCESS);
+            result.putString(BUNDLE_KEY_XML_FILE_NAME, selectedFilename);
             Log.v(TAG, "File name is " + selectedFilename);
         }
 
-        NavHostFragment.findNavController(this).navigate(action);
+        getParentFragmentManager().setFragmentResult(REQUEST_KEY_CHOOSE_FORMAT, result);
+        NavHostFragment.findNavController(this).navigateUp();
     }
 
     /**

@@ -124,8 +124,8 @@ public class DebatingTimerFragment extends Fragment {
 
     private static final String TAG = "DebatingTimerFragment";
 
-    private DebatingTimerService.DebatingTimerServiceBinder mBinder;
-    private final ServiceConnection mConnection = new DebatingTimerServiceConnection();
+    private DebatingTimerService.DebatingTimerServiceBinder mServiceBinder;
+    private final ServiceConnection mServiceConnection = new DebatingTimerServiceConnection();
 
     private DebateManager    mDebateManager;
     private Bundle           mLastStateBundle;
@@ -165,7 +165,7 @@ public class DebatingTimerFragment extends Fragment {
     private final ArrayList<Pair<String, QueueableDialogFragment>> mDialogsInWaiting = new ArrayList<>();
 
     private static final String BUNDLE_KEY_DEBATE_MANAGER               = "dm";
-    public  static final String BUNDLE_KEY_XML_FILE_NAME                = "xmlfn";
+    private static final String BUNDLE_KEY_XML_FILE_NAME                = "xmlfn";
     private static final String BUNDLE_KEY_IMPORT_INTENT_HANDLED        = "iih";
     private static final String PREFERENCE_XML_FILE_NAME                = "xmlfn";
     private static final String LAST_CHANGELOG_VERSION_SHOWN            = "lastChangeLog";
@@ -920,15 +920,15 @@ public class DebatingTimerFragment extends Fragment {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
-            Log.d("DebatingTimerServiceCon", "connected");
-            mBinder = (DebatingTimerService.DebatingTimerServiceBinder) service;
+            Log.d(TAG, "service connected");
+            mServiceBinder = (DebatingTimerService.DebatingTimerServiceBinder) service;
             initialiseDebate();
             restoreBinder();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            Log.d("DebatingTimerServiceCon", "disconnected");
+            Log.d(TAG, "service disconnected");
             mDebateManager = null;
             mViewPager.getAdapter().notifyDataSetChanged();
         }
@@ -944,6 +944,30 @@ public class DebatingTimerFragment extends Fragment {
 
         FatalXmlError(String detailMessage, Throwable throwable) {
             super(detailMessage, throwable);
+        }
+    }
+
+    private class FormatChooserFragmentResultListener implements FragmentResultListener {
+
+        @Override
+        public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+            int outcome = result.getInt(FormatChooserFragment.BUNDLE_KEY_RESULT);
+            String filename = result.getString(FormatChooserFragment.BUNDLE_KEY_XML_FILE_NAME);
+            if (outcome == FormatChooserFragment.RESULT_UNCHANGED) {
+                Log.v(TAG, "Format was unchanged");
+            } else if (filename != null) {
+                Log.v(TAG, "Got file name " + filename);
+                setXmlFileName(filename);
+                resetDebate();
+            } else {
+                Log.e(TAG, "File name returned was null");
+                setXmlFileName(null);
+                if (mServiceBinder != null) mServiceBinder.releaseDebateManager();
+                mDebateManager = null;
+                updateTitle();
+                updateGui();
+                updateToolbar();
+            }
         }
     }
 
@@ -980,7 +1004,7 @@ public class DebatingTimerFragment extends Fragment {
     private class PlayBellButtonOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            mBinder.getAlertManager().playSingleBell();
+            mServiceBinder.getAlertManager().playSingleBell();
         }
     }
 
@@ -992,27 +1016,6 @@ public class DebatingTimerFragment extends Fragment {
                     mDebateManager.stopPoiTimer();
                 else
                     mDebateManager.startPoiTimer();
-            }
-        }
-    }
-
-    private class XmlFileNameFragmentResultListener implements FragmentResultListener {
-
-        @Override
-        public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-            String filename = result.getString(BUNDLE_KEY_XML_FILE_NAME);
-            if (filename != null) {
-                Log.v(TAG, "Got file name " + filename);
-                setXmlFileName(filename);
-                resetDebate();
-            } else {
-                Log.e(TAG, "File name returned was null");
-                setXmlFileName(null);
-                if (mBinder != null) mBinder.releaseDebateManager();
-                mDebateManager = null;
-                updateTitle();
-                updateGui();
-                updateToolbar();
             }
         }
     }
@@ -1034,11 +1037,20 @@ public class DebatingTimerFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "hello, I am onCreate"); // TODO
         super.onCreate(savedInstanceState);
 
         OnBackPressedDispatcher dispatcher = requireActivity().getOnBackPressedDispatcher();
         dispatcher.addCallback(this, mPreviousSpeechBackPressedCallback);
         dispatcher.addCallback(this, mFinishEditingTimeBackPressedCallback);
+
+        getParentFragmentManager().setFragmentResultListener(FormatChooserFragment.REQUEST_KEY_CHOOSE_FORMAT,
+                this, new FormatChooserFragmentResultListener());
+
+        // Bind to the timer service
+        Activity activity = requireActivity();
+        Intent serviceIntent = new Intent(activity, DebatingTimerService.class);
+        activity.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -1050,6 +1062,7 @@ public class DebatingTimerFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "hello, I am onViewCreated"); // TODO
 
         super.onViewCreated(view, savedInstanceState);
 
@@ -1077,14 +1090,9 @@ public class DebatingTimerFragment extends Fragment {
         mLastStateBundle = savedInstanceState; // This could be null
 
         //
-        // Start the timer service
-        Activity activity = requireActivity();
-        Intent serviceIntent = new Intent(activity, DebatingTimerService.class);
-        activity.startService(serviceIntent);
-        activity.bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
-
-        //
+        // TODO Deprecate Android Beam and make sure Nearby Beam works
         // Configure NFC
+        Activity activity = requireActivity();
         if (activity.getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)) {
             NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(activity);
             if (nfcAdapter != null)
@@ -1095,13 +1103,6 @@ public class DebatingTimerFragment extends Fragment {
         // If there's a file name passed in (presumably from FormatChooserFragment), use it,
         // otherwise load from preferences.
         String filename = loadXmlFileName();
-        String incomingFilename = DebatingTimerFragmentArgs.fromBundle(getArguments()).getXmlFileName();
-        if (incomingFilename != null && !incomingFilename.equals(filename)) {
-            Log.d(TAG, "onViewCreated: new incoming file received " + incomingFilename);
-            setXmlFileName(incomingFilename);
-            resetDebate();
-            filename = incomingFilename;
-        }
 
         // If there's an incoming style, and it wasn't handled before a screen rotation, ask the
         // user whether they want to import it.
@@ -1111,9 +1112,10 @@ public class DebatingTimerFragment extends Fragment {
         }
         if (Intent.ACTION_VIEW.equals(activity.getIntent().getAction()) && !mImportIntentHandled && requestWritePermission()) {
             showDialogToConfirmImport();
-
-        // Otherwise, if there's no style loaded, direct the user to choose one
         } else if (filename == null) {
+            // FIXME This checks too soon - need to figure out how to wait for FormatChooserFragmentResultListener
+            // Otherwise, if there's no style loaded, direct the user to choose one
+            Log.v(TAG, "no file loaded, redirecting to choose format");
             DebatingTimerFragmentDirections.ActionChooseFormat action = DebatingTimerFragmentDirections.actionChooseFormat();
             NavHostFragment.findNavController(this).navigate(action);
         }
@@ -1139,19 +1141,12 @@ public class DebatingTimerFragment extends Fragment {
 
     @Override
     public void onDestroy() {
+        Log.d(TAG, "hello, I am onDestroy"); // TODO
+
         super.onDestroy();
 
         Context context = requireContext();
-        context.unbindService(mConnection);
-
-        DebateManager debateManager = mBinder.getDebateManager();
-        if (debateManager == null || !debateManager.isRunning()) {
-            Intent intent = new Intent(context, DebatingTimerService.class);
-            context.stopService(intent);
-            Log.i(TAG, "Timer is not running, stopped service");
-        } else {
-            Log.i(TAG, "Timer is running, keeping service alive");
-        }
+        context.unbindService(mServiceConnection);
     }
 
     @Override
@@ -1165,6 +1160,8 @@ public class DebatingTimerFragment extends Fragment {
 
     @Override
     public void onStart() {
+        Log.d(TAG, "hello, I am onStart");  // TODO
+
         super.onStart();
         restoreBinder();
         LocalBroadcastManager.getInstance(requireContext()).registerReceiver(mGuiUpdateBroadcastReceiver,
@@ -1175,9 +1172,11 @@ public class DebatingTimerFragment extends Fragment {
 
     @Override
     public void onStop() {
+        Log.d(TAG, "hello, I am onStop");  // TODO
+
         super.onStop();
-        if (mBinder != null) {
-            AlertManager am = mBinder.getAlertManager();
+        if (mServiceBinder != null) {
+            AlertManager am = mServiceBinder.getAlertManager();
             if (am != null) am.activityStop();
         }
         LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(mGuiUpdateBroadcastReceiver);
@@ -1297,8 +1296,8 @@ public class DebatingTimerFragment extends Fragment {
             Log.v(TAG, "Couldn't restore overtime bells, mDebateManager doesn't yet exist");
         }
 
-        if (mBinder != null) {
-            AlertManager am = mBinder.getAlertManager();
+        if (mServiceBinder != null) {
+            AlertManager am = mServiceBinder.getAlertManager();
 
             // Volume control stream is linked to ring bells mode
             am.setBellsEnabled(mBellsEnabled);
@@ -1706,7 +1705,7 @@ public class DebatingTimerFragment extends Fragment {
             return;
         }
 
-        mDebateManager = mBinder.getDebateManager();
+        mDebateManager = mServiceBinder.getDebateManager();
         if (mDebateManager == null) {
             Log.d(TAG, "initialiseDebate: creating debate manager");
 
@@ -1723,7 +1722,7 @@ public class DebatingTimerFragment extends Fragment {
                 return;
             }
 
-            mDebateManager = mBinder.createDebateManager(df);
+            mDebateManager = mServiceBinder.createDebateManager(df);
 
             // We only restore the state if there wasn't an existing debate, i.e. if the service
             // wasn't already running, and if the debate format stored in the saved instance state
@@ -1811,14 +1810,14 @@ public class DebatingTimerFragment extends Fragment {
     }
 
     private void resetDebate() {
-        if (mBinder == null) return;
-        mBinder.releaseDebateManager();
+        if (mServiceBinder == null) return;
+        mServiceBinder.releaseDebateManager();
         initialiseDebate();
     }
 
     private void restoreBinder() {
-        if (mBinder != null) {
-            AlertManager am = mBinder.getAlertManager();
+        if (mServiceBinder != null) {
+            AlertManager am = mServiceBinder.getAlertManager();
             if (am != null) {
                 am.setFlashScreenListener(new DebatingTimerFlashScreenListener());
                 am.activityStart();
@@ -2320,8 +2319,8 @@ public class DebatingTimerFragment extends Fragment {
     }
 
     private void updatePlayBellButton() {
-        if (mBinder != null)
-            mPlayBellButton.setVisibility((mBinder.getAlertManager().isBellsEnabled()) ? View.VISIBLE : View.GONE);
+        if (mServiceBinder != null)
+            mPlayBellButton.setVisibility((mServiceBinder.getAlertManager().isBellsEnabled()) ? View.VISIBLE : View.GONE);
     }
 
     /**
