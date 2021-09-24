@@ -1035,7 +1035,6 @@ public class DebatingTimerFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.d(TAG, "hello, I am onCreate"); // TODO
         super.onCreate(savedInstanceState);
 
         OnBackPressedDispatcher dispatcher = requireActivity().getOnBackPressedDispatcher();
@@ -1065,8 +1064,6 @@ public class DebatingTimerFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        Log.d(TAG, "hello, I am onViewCreated"); // TODO
-
         super.onViewCreated(view, savedInstanceState);
 
         mViewBinding.mainScreenToolbar.inflateMenu(R.menu.debating_activity_menu);
@@ -1142,8 +1139,6 @@ public class DebatingTimerFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "hello, I am onDestroy"); // TODO
-
         super.onDestroy();
 
         Context context = requireContext();
@@ -1152,7 +1147,6 @@ public class DebatingTimerFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle bundle) {
-        Log.d(TAG, "hello, I am onSaveInstanceState");
         super.onSaveInstanceState(bundle);
         bundle.putString(BUNDLE_KEY_XML_FILE_NAME, mFormatXmlFileName);
         bundle.putBoolean(BUNDLE_KEY_IMPORT_INTENT_HANDLED, mImportIntentHandled);
@@ -1162,21 +1156,15 @@ public class DebatingTimerFragment extends Fragment {
 
     @Override
     public void onStart() {
-        Log.d(TAG, "hello, I am onStart");  // TODO
-
         super.onStart();
-
         restoreBinder();
         LocalBroadcastManager.getInstance(requireContext()).registerReceiver(mGuiUpdateBroadcastReceiver,
                 new IntentFilter(DebatingTimerService.UPDATE_GUI_BROADCAST_ACTION));
-
         updateGui();
     }
 
     @Override
     public void onStop() {
-        Log.d(TAG, "hello, I am onStop");  // TODO
-
         super.onStop();
         if (mServiceBinder != null) {
             AlertManager am = mServiceBinder.getAlertManager();
@@ -1225,7 +1213,7 @@ public class DebatingTimerFragment extends Fragment {
                 editor.putBoolean(res.getString(R.string.pref_ringBells_key), mBellsEnabled);
                 editor.remove(res.getString(R.string.pref_silentMode_key));
                 editor.apply();
-                Log.i(TAG, String.format("applyPreferences: replaced silentMode (%b) with ringBells (%b)", oldSilentMode, mBellsEnabled));
+                Log.i(TAG, String.format("replaced silentMode (%b) with ringBells (%b)", oldSilentMode, mBellsEnabled));
             } else {
                 // Normal mechanism
                 mBellsEnabled = prefs.getBoolean(res.getString(R.string.pref_ringBells_key), res.getBoolean(R.bool.prefDefault_ringBells));
@@ -1312,9 +1300,9 @@ public class DebatingTimerFragment extends Fragment {
             am.setPoiVibrateEnabled(poiVibrateEnabled);
             am.setPoiFlashScreenMode(poiFlashScreenMode);
 
-            Log.v(TAG, "successfully applied");
+            Log.v(TAG, "AlertManager preferences applied");
         } else {
-            Log.v(TAG, "Couldn't restore AlertManager preferences; mBinder doesn't yet exist");
+            Log.v(TAG, "Couldn't restore AlertManager preferences; service binder doesn't yet exist");
         }
 
         Activity activity = requireActivity();
@@ -1354,8 +1342,6 @@ public class DebatingTimerFragment extends Fragment {
         DebateFormat df;
         FormatXmlFilesManager filesManager = new FormatXmlFilesManager(context);
 
-        Log.v(TAG, "building debate...");
-
         try {
             is = filesManager.open(filename);
         } catch (IOException e) {
@@ -1374,8 +1360,6 @@ public class DebatingTimerFragment extends Fragment {
             throw new FatalXmlError(getString(
                     R.string.fatalProblemWithXmlFileDialog_message_badXml, e.getMessage()), e);
         }
-
-        Log.v(TAG, "still building debate...");
 
         // If the schema wasn't supported, check if it looks like it might be a schema 1.0 file.
         // If it does, show an error and refuse to load the file.
