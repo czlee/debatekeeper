@@ -962,7 +962,6 @@ public class DebatingTimerFragment extends Fragment {
                 setXmlFileName(null);
                 if (mServiceBinder != null) mServiceBinder.releaseDebateManager();
                 mDebateManager = null;
-                updateTitle();
                 updateGui();
                 updateToolbar();
             }
@@ -1046,6 +1045,11 @@ public class DebatingTimerFragment extends Fragment {
         getParentFragmentManager().setFragmentResultListener(FormatChooserFragment.REQUEST_KEY_CHOOSE_FORMAT,
                 this, new FormatChooserFragmentResultListener());
 
+        // If there's a file name passed in (presumably from FormatChooserFragment), use it,
+        // otherwise load from preferences.
+        SharedPreferences prefs = requireActivity().getPreferences(MODE_PRIVATE);
+        mFormatXmlFileName = prefs.getString(PREFERENCE_XML_FILE_NAME, null);
+
         // Bind to the timer service
         Activity activity = requireActivity();
         Intent serviceIntent = new Intent(activity, DebatingTimerService.class);
@@ -1098,12 +1102,6 @@ public class DebatingTimerFragment extends Fragment {
                 nfcAdapter.setBeamPushUrisCallback(new BeamFileUriCallback(), activity);
         }
 
-        //
-        // If there's a file name passed in (presumably from FormatChooserFragment), use it,
-        // otherwise load from preferences.
-        SharedPreferences prefs = activity.getPreferences(MODE_PRIVATE);
-        mFormatXmlFileName = prefs.getString(PREFERENCE_XML_FILE_NAME, null);
-
         // If there's an incoming style, and it wasn't handled before a screen rotation, ask the
         // user whether they want to import it.
         if (savedInstanceState != null) {
@@ -1125,6 +1123,7 @@ public class DebatingTimerFragment extends Fragment {
 
         //
         // If there's been an update, show the changelog.
+        SharedPreferences prefs = requireActivity().getPreferences(MODE_PRIVATE);
         Resources res = getResources();
         int thisChangelogVersion = res.getInteger(R.integer.changelogDialog_versionCode);
         int lastChangelogVersionShown = prefs.getInt(LAST_CHANGELOG_VERSION_SHOWN, 0);
@@ -1294,7 +1293,7 @@ public class DebatingTimerFragment extends Fragment {
 
             // This is necessary if the debate structure has changed, i.e. if prep time has been
             // enabled or disabled.
-            mViewPager.getAdapter().notifyDataSetChanged();
+            if (mViewPager != null) mViewPager.getAdapter().notifyDataSetChanged();
 
         } else {
             Log.v(TAG, "Couldn't restore overtime bells, mDebateManager doesn't yet exist");
@@ -1321,6 +1320,7 @@ public class DebatingTimerFragment extends Fragment {
         Activity activity = requireActivity();
         activity.setVolumeControlStream((mBellsEnabled) ? AudioManager.STREAM_MUSIC : AudioManager.STREAM_RING);
         updateKeepScreenOn();
+
         updateToolbar();
         updateGui();
     }
@@ -1722,7 +1722,7 @@ public class DebatingTimerFragment extends Fragment {
 
                 // We still need to notify of a data set change when there ends up being no
                 // debate format
-                mViewPager.getAdapter().notifyDataSetChanged();
+                if (mViewPager != null) mViewPager.getAdapter().notifyDataSetChanged();
                 return;
             }
 
@@ -1743,10 +1743,12 @@ public class DebatingTimerFragment extends Fragment {
         // The bundle should only ever be relevant once per activity cycle
         mLastStateBundle = null;
 
-        mViewPager.getAdapter().notifyDataSetChanged();
-        mViewPager.setCurrentItem(mDebateManager.getActivePhaseIndex(), false);
+        if (mViewPager != null) {
+            mViewPager.getAdapter().notifyDataSetChanged();
+            mViewPager.setCurrentItem(mDebateManager.getActivePhaseIndex(), false);
+        }
         applyPreferences();
-        updateTitle();
+        updateToolbar();
     }
 
     /**
@@ -2119,7 +2121,7 @@ public class DebatingTimerFragment extends Fragment {
     private void updateDebateTimerDisplay() {
         if (mDebateManager == null) {
             Log.w("updateDebateTmrDisplay", "mDebateManager was null");
-            mViewPager.getAdapter().notifyDataSetChanged();
+            if (mViewPager != null) mViewPager.getAdapter().notifyDataSetChanged();
             return;
         }
 
@@ -2286,7 +2288,11 @@ public class DebatingTimerFragment extends Fragment {
      */
     private void updateGui() {
         if (mChangingPages) {
-            Log.d(TAG, "Changing pages, don't do updateGui");
+            Log.d(TAG, "Changing pages, don't update GUI");
+            return;
+        }
+        if (!isResumed()) {
+            Log.d(TAG, "Not resumed, don't update GUI");
             return;
         }
 
@@ -2295,7 +2301,6 @@ public class DebatingTimerFragment extends Fragment {
 
         updateDebateTimerDisplay();
         updateControls();
-        updateTitle();
         updateToolbar();
     }
 
@@ -2366,8 +2371,15 @@ public class DebatingTimerFragment extends Fragment {
         }
     }
 
-    void updateTitle() {
+    private void updateToolbar() {
+        if (mViewBinding == null) {
+            Log.d(TAG, "No view binding, skip update toolbar");
+            return;
+        }
+
         Toolbar toolbar = mViewBinding.mainScreenToolbar;
+
+        // update the title
         if (mDebateManager != null) {
             String shortName = mDebateManager.getDebateFormatShortName();
             if (shortName != null)
@@ -2376,10 +2388,8 @@ public class DebatingTimerFragment extends Fragment {
                 toolbar.setTitle(mDebateManager.getDebateFormatName());
         }
         else toolbar.setTitle(R.string.activityName_Debating_withoutFormat);
-    }
 
-    private void updateToolbar() {
-        Menu menu = mViewBinding.mainScreenToolbar.getMenu();
+        Menu menu = toolbar.getMenu();
 
         // show or hide the debate menu button
         MenuItem resetDebateItem = menu.findItem(R.id.mainScreen_menuItem_resetDebate);
