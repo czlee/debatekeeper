@@ -38,7 +38,7 @@ import java.util.HashSet;
  * @author Chuan-Zheng Lee
  * @since  2012-05-14
  */
-public class GlobalSettingsSubFragment extends PreferenceFragmentCompat {
+public class SettingsSubFragment extends PreferenceFragmentCompat {
 
     private final HashMap<String, Integer> mPreferenceToSummaryResIdMap = new HashMap<>();
     private final HashMap<String, Integer> mPreferenceToDefaultResIdMap = new HashMap<>();
@@ -133,7 +133,7 @@ public class GlobalSettingsSubFragment extends PreferenceFragmentCompat {
         Preference prefPrepTimerBells = getPreferenceManager().findPreference(KEY_PREP_TIMER_BELLS);
         prefPrepTimerBells.setOnPreferenceClickListener(preference -> {
             @NonNull NavDirections action = SettingsFragmentDirections.actionEditPrepTimeBells();
-            NavHostFragment.findNavController(GlobalSettingsSubFragment.this).navigate(action);
+            NavHostFragment.findNavController(SettingsSubFragment.this).navigate(action);
             return true;
         });
 

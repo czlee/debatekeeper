@@ -40,7 +40,7 @@ public class DebatingActivity extends AppCompatActivity {
     private static final String TAG = "DebatingActivity";
 
     private DebatingTimerService.DebatingTimerServiceBinder mServiceBinder;
-    private DebatekeeperServiceConnection mServiceConnection = new DebatekeeperServiceConnection();
+    private final DebatekeeperServiceConnection mServiceConnection = new DebatekeeperServiceConnection();
 
     private class DebatekeeperServiceConnection implements ServiceConnection {
 
@@ -59,8 +59,6 @@ public class DebatingActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "hello, I am onCreate"); // TODO
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -74,8 +72,6 @@ public class DebatingActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        Log.d(TAG, "hello, I am onDestroy"); // TODO
-
         super.onDestroy();
 
         unbindService(mServiceConnection);

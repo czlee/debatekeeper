@@ -13,7 +13,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import net.czlee.debatekeeper.databinding.ActivitySettingsBinding;
 
 /**
- * This fragment just hosts {@link GlobalSettingsSubFragment} by wrapping it with a layout that
+ * This fragment just hosts {@link SettingsSubFragment} by wrapping it with a layout that
  * includes a toolbar.
  *
  * An alternative method would've been:

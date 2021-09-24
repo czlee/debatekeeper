@@ -51,14 +51,6 @@
                 <data android:mimeType="text/plain" android:pathPattern=".*\\.xml" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".PrepTimeBellsEditFragment"
-            android:label="@string/fragmentName_PrepTimeBellsEdit"
-            android:parentActivityName=".DebatingActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".DebatingActivity" />
-        </activity>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="net.czlee.debatekeeper.fileprovider"
