@@ -25,8 +25,8 @@ import android.os.Bundle;
 
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
-import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,7 +35,7 @@ import java.util.HashSet;
  * @author Chuan-Zheng Lee
  * @since  2012-05-14
  */
-public class GlobalSettingsFragment extends PreferenceFragmentCompat {
+public class GlobalSettingsSubFragment extends PreferenceFragmentCompat {
 
     private final HashMap<String, Integer> mPreferenceToSummaryResIdMap = new HashMap<>();
     private final HashMap<String, Integer> mPreferenceToDefaultResIdMap = new HashMap<>();

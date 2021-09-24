@@ -75,6 +75,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -817,14 +818,19 @@ public class DebatingTimerFragment extends Fragment {
             if (itemId == R.id.mainScreen_menuItem_chooseFormat) {
                 navigateToFormatChooser(mFormatXmlFileName);
                 return true;
+
             } else if (itemId == R.id.mainScreen_menuItem_resetDebate) {
                 if (mDebateManager == null) return true;
                 resetDebate();
                 showSnackbar(SNACKBAR_DURATION_RESET_DEBATE, R.string.mainScreen_snackbar_resetDebate);
                 return true;
+
             } else if (itemId == R.id.mainScreen_menuItem_settings) {
-                startActivity(new Intent(requireActivity(), GlobalSettingsActivity.class));
+                Log.d(TAG, "opening settings");
+                @NonNull NavDirections action = DebatingTimerFragmentDirections.actionEditSettings();
+                NavHostFragment.findNavController(DebatingTimerFragment.this).navigate(action);
                 return true;
+
             } else if (itemId == R.id.mainScreen_menuItem_ringBells) {
                 // Edit the preference, then apply the changes.
                 // Don't fetch the current preference - if there is an inconsistency, we want the toggle
@@ -834,6 +840,7 @@ public class DebatingTimerFragment extends Fragment {
                 boolean success = editor.commit(); // we want this to block until it returns
                 if (success) applyPreferences(); // this will update mBellsEnabled
                 return true;
+
             }
             else return false;
         }
@@ -1736,7 +1743,7 @@ public class DebatingTimerFragment extends Fragment {
         mIsOpeningFormatChooser = true;
         if (xmlFileName != null)
             action.setXmlFileName(xmlFileName);
-        NavHostFragment.findNavController(DebatingTimerFragment.this).navigate(action);
+        NavHostFragment.findNavController(this).navigate(action);
     }
 
     /**

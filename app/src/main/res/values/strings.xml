@@ -18,7 +18,7 @@
 
     <string name="app_name" translatable="false">Debatekeeper</string>
     <string name="activityName_Debating_withoutFormat" translatable="false">Debatekeeper</string>
-    <string name="activityName_GlobalSettings">Settings</string>
+    <string name="fragmentName_GlobalSettings">Settings</string>
     <string name="activityName_FormatChooser">Choose style</string>
     <string name="activityName_PrepTimeBellsEdit">Prep timer bells</string>
     <string name="intentFilter_importStyle">Debatekeeper</string>

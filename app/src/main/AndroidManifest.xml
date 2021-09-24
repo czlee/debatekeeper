@@ -52,28 +52,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".GlobalSettingsActivity"
-            android:label="@string/activityName_GlobalSettings"
-            android:parentActivityName=".DebatingActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".DebatingActivity" />
-        </activity>
-        <activity
-            android:name=".FormatChooserActivity"
-            android:label="@string/activityName_FormatChooser"
-            android:parentActivityName=".DebatingActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".DebatingActivity" />
-        </activity>
-        <activity
             android:name=".PrepTimeBellsEditActivity"
             android:label="@string/activityName_PrepTimeBellsEdit"
-            android:parentActivityName=".GlobalSettingsActivity">
+            android:parentActivityName=".DebatingActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".GlobalSettingsActivity" />
+                android:value=".DebatingActivity" />
         </activity>
         <provider
             android:name="androidx.core.content.FileProvider"
