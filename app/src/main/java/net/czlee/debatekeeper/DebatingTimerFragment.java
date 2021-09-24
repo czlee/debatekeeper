@@ -1980,8 +1980,10 @@ public class DebatingTimerFragment extends Fragment {
 
         // Then, show the next one
         if (mDialogsInWaiting.size() > 0) {
-            Pair<String, QueueableDialogFragment> pair = mDialogsInWaiting.remove(0);
-            pair.second.show(getChildFragmentManager(), pair.first);
+            if (!isStateSaved()) {
+                Pair<String, QueueableDialogFragment> pair = mDialogsInWaiting.remove(0);
+                pair.second.show(getChildFragmentManager(), pair.first);
+            }
             mDialogBlocking = true;  // it should already be true, but just to be safe
         }
         else mDialogBlocking = false;
