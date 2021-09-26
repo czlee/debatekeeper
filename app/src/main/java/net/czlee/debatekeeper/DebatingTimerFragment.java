@@ -76,6 +76,7 @@ import androidx.fragment.app.FragmentResultListener;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.viewbinding.ViewBinding;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -83,7 +84,9 @@ import com.google.android.material.snackbar.Snackbar;
 
 import net.czlee.debatekeeper.AlertManager.FlashScreenMode;
 import net.czlee.debatekeeper.databinding.ActivityDebateBinding;
+import net.czlee.debatekeeper.databinding.DebateTimerDisplayBinding;
 import net.czlee.debatekeeper.databinding.DialogWithDontShowBinding;
+import net.czlee.debatekeeper.databinding.NoDebateLoadedBinding;
 import net.czlee.debatekeeper.debateformat.BellInfo;
 import net.czlee.debatekeeper.debateformat.DebateFormat;
 import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml;
@@ -130,11 +133,11 @@ public class DebatingTimerFragment extends Fragment {
 
     private DebateManager    mDebateManager;
     private Bundle           mLastStateBundle;
-    private View             mDebateTimerDisplay;
     private boolean          mIsEditingTime = false;
     private boolean          mIsOpeningFormatChooser = false;
     private final Semaphore  mFlashScreenSemaphore = new Semaphore(1, true);
 
+    private ViewBinding         mDebateTimerDisplay;  // normally but not always a DebateTimerDisplayBinding
     private EnableableViewPager mViewPager;
     private boolean             mChangingPages;
 
@@ -320,9 +323,8 @@ public class DebatingTimerFragment extends Fragment {
                             editor.apply();
                         }
                     })
-                    .setPositiveButton(R.string.customFilesMovingDialog_button_ok, (dialog, which) -> {
-                        parent.copyLegacyCustomFiles();
-                    });
+                    .setPositiveButton(R.string.customFilesMovingDialog_button_ok,
+                            (dialog, which) -> parent.copyLegacyCustomFiles());
 
             return builder.create();
         }
@@ -638,25 +640,6 @@ public class DebatingTimerFragment extends Fragment {
         }
     }
 
-    private class CurrentTimeOnLongClickListener implements View.OnLongClickListener {
-
-        @Override
-        public boolean onLongClick(View v) {
-            editCurrentTimeStart();
-            return true;
-        }
-
-    }
-
-    private class DebateTimerDisplayOnClickListener implements View.OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-            editCurrentTimeFinish(true);
-        }
-
-    }
-
     private class DebateTimerDisplayOnPageChangeListener extends ViewPager.SimpleOnPageChangeListener {
 
         @Override
@@ -687,21 +670,21 @@ public class DebatingTimerFragment extends Fragment {
      */
     private class DebateTimerDisplayPagerAdapter extends PagerAdapter {
 
-        private static final String TAG = "DebateTmrDispPagAdapt";
+        private static final String TAG = "DebateTDPagerAdapter";
 
-        private final HashMap<DebateManager.DebatePhaseTag, View> mViewsMap = new HashMap<>();
+        private final HashMap<DebateManager.DebatePhaseTag, ViewBinding> mDisplaysMap = new HashMap<>();
         private static final String NO_DEBATE_LOADED = "no_debate_loaded";
 
         @Override
         public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
             DebateManager.DebatePhaseTag dpt = (DebateManager.DebatePhaseTag) object;
-            View view = mViewsMap.get(dpt);
-            if (view == null) {
+            ViewBinding binding = mDisplaysMap.get(dpt);
+            if (binding == null) {
                 Log.e(TAG, "Nothing found to destroy at position " + position + " - " + object.toString());
                 return;
             }
-            container.removeView(view);
-            mViewsMap.remove(dpt);
+            container.removeView(binding.getRoot());
+            mDisplaysMap.remove(dpt);
         }
 
         @Override
@@ -738,44 +721,47 @@ public class DebatingTimerFragment extends Fragment {
             if (mDebateManager == null) {
                 // Load the "no debate loaded" screen.
                 Log.i(TAG, "No debate loaded");
-                View v = View.inflate(context, R.layout.no_debate_loaded, null);
-                container.addView(v);
+                NoDebateLoadedBinding binding = NoDebateLoadedBinding.inflate(LayoutInflater.from(context));
+                container.addView(binding.getRoot());
                 DebateManager.DebatePhaseTag tag = new DebateManager.DebatePhaseTag();
                 tag.specialTag = NO_DEBATE_LOADED;
-                mViewsMap.put(tag, v);
+                mDisplaysMap.put(tag, binding);
                 return tag;
             }
 
             // The View for the position in question is the inflated debate_timer_display for
             // the relevant timer (prep time or speech).
-            View v = View.inflate(context, R.layout.debate_timer_display, null);
+            DebateTimerDisplayBinding vb = DebateTimerDisplayBinding.inflate(LayoutInflater.from(context));
 
             // OnTouchListeners
-            v.setOnClickListener(new DebateTimerDisplayOnClickListener());
-            v.findViewById(R.id.debateTimer_currentTime).setOnLongClickListener(new CurrentTimeOnLongClickListener());
+            vb.debateTimerRoot.setOnClickListener((view) -> editCurrentTimeFinish(true));
+            vb.debateTimerCurrentTime.setOnLongClickListener(
+                    (view) -> {
+                        editCurrentTimeStart();
+                        return true;
+                    }
+            );
 
             // Set the time picker to 24-hour time
-            TimePicker currentTimePicker = v.findViewById(R.id.debateTimer_currentTimePicker);
-            currentTimePicker.setIs24HourView(true);
+            vb.debateTimerCurrentTimePicker.setIs24HourView(true);
 
             // Set the POI timer OnClickListener
-            Button poiTimerButton = v.findViewById(R.id.debateTimer_poiTimerButton);
-            poiTimerButton.setOnClickListener(new PoiButtonOnClickListener());
+            vb.debateTimerPoiTimer.debateTimerPoiTimerButton.setOnClickListener(new PoiButtonOnClickListener());
 
             // Update the debate timer display
-            long               time = mDebateManager.getPhaseCurrentTime(position);
-            DebatePhaseFormat dpf  = mDebateManager.getPhaseFormat(position);
-            PeriodInfo pi   = dpf.getPeriodInfoForTime(time);
+            long time = mDebateManager.getPhaseCurrentTime(position);
+            DebatePhaseFormat dpf = mDebateManager.getPhaseFormat(position);
+            PeriodInfo pi = dpf.getPeriodInfoForTime(time);
 
-            updateDebateTimerDisplay(v, dpf, pi,
+            updateDebateTimerDisplay(vb, dpf, pi,
                     mDebateManager.getPhaseName(position), time,
                     mDebateManager.getPhaseNextOvertimeBellTime(position));
 
-            container.addView(v);
+            container.addView(vb.getRoot());
 
             // Retrieve a tag and take note of it.
             DebateManager.DebatePhaseTag tag = mDebateManager.getPhaseTagForIndex(position);
-            mViewsMap.put(tag, v);
+            mDisplaysMap.put(tag, vb);
 
             return tag;
 
@@ -784,21 +770,25 @@ public class DebatingTimerFragment extends Fragment {
         @Override
         public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
             DebateManager.DebatePhaseTag dpt = (DebateManager.DebatePhaseTag) object;
-            return mViewsMap.containsKey(dpt) && (mViewsMap.get(dpt) == view);
+            if (!mDisplaysMap.containsKey(dpt))
+                return false;
+            ViewBinding binding = mDisplaysMap.get(dpt);
+            if (binding == null)
+                return false;
+            return binding.getRoot() == view;
         }
 
         @Override
         public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
 
-            // Log.d(TAG, "setPrimaryItem for position " + position);
-            View original = mDebateTimerDisplay;
+            ViewBinding original = mDebateTimerDisplay;
 
             // Note: There is no guarantee that mDebateTimerDisplay will in fact be a debate
             // timer display - it is just whatever view is currently being displayed.  Therefore,
             // other methods should check that mDebateTimerDisplay is in fact a debate timer
             // display (by comparing its ID to R.id.debateTimer_root) before working on it.
             DebateManager.DebatePhaseTag dpt = (DebateManager.DebatePhaseTag) object;
-            mDebateTimerDisplay = mViewsMap.get(dpt);
+            mDebateTimerDisplay = mDisplaysMap.get(dpt);
 
             // Disable the lock that prevents updateGui() from running while the pages are
             // changing.
@@ -820,7 +810,7 @@ public class DebatingTimerFragment extends Fragment {
          */
         void refreshBackgroundColours() {
             if (mDebateManager == null) return;
-            for (Map.Entry<DebateManager.DebatePhaseTag, View> entry : mViewsMap.entrySet()) {
+            for (Map.Entry<DebateManager.DebatePhaseTag, ViewBinding> entry : mDisplaysMap.entrySet()) {
                 int phaseIndex = mDebateManager.getPhaseIndexForTag(entry.getKey());
                 DebatePhaseFormat dpf = mDebateManager.getPhaseFormat(phaseIndex);
                 long time = mDebateManager.getPhaseCurrentTime(phaseIndex);
@@ -1442,12 +1432,12 @@ public class DebatingTimerFragment extends Fragment {
      */
     private void editCurrentTimeFinish(boolean save) {
 
-        TimePicker currentTimePicker = mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTimePicker);
-
-        if (currentTimePicker == null) {
-            Log.e(TAG, "editCurrentTimeFinish: currentTimePicker was null");
+        if (!(mDebateTimerDisplay instanceof DebateTimerDisplayBinding)) {
+            Log.e(TAG, "editCurrentTimeFinish: not a debate timer display");
             return;
         }
+
+        TimePicker currentTimePicker = ((DebateTimerDisplayBinding) mDebateTimerDisplay).debateTimerCurrentTimePicker;
 
         currentTimePicker.clearFocus();
 
@@ -1487,12 +1477,12 @@ public class DebatingTimerFragment extends Fragment {
         mIsEditingTime = true;
         mFinishEditingTimeBackPressedCallback.setEnabled(true);
 
-        TimePicker currentTimePicker = mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTimePicker);
-
-        if (currentTimePicker == null) {
-            Log.e(TAG, "editCurrentTimeFinish: currentTimePicker was null");
+        if (!(mDebateTimerDisplay instanceof DebateTimerDisplayBinding)) {
+            Log.e(TAG, "editCurrentTimeStart: not a debate timer display");
             return;
         }
+
+        TimePicker currentTimePicker = ((DebateTimerDisplayBinding) mDebateTimerDisplay).debateTimerCurrentTimePicker;
 
         long currentTime = mDebateManager.getActivePhaseCurrentTime();
 
@@ -2077,10 +2067,9 @@ public class DebatingTimerFragment extends Fragment {
     private void updateControls() {
         if (mDebateTimerDisplay == null) return;
 
-        if (mDebateManager != null && mDebateTimerDisplay.getId() == R.id.debateTimer_root) {
+        if (mDebateManager != null && mDebateTimerDisplay instanceof DebateTimerDisplayBinding) {
 
-            View currentTimeText   = mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTime);
-            View currentTimePicker = mDebateTimerDisplay.findViewById(R.id.debateTimer_currentTimePicker);
+            DebateTimerDisplayBinding displayBinding = (DebateTimerDisplayBinding) mDebateTimerDisplay;
 
             // If it's the last speaker, don't show a "next speaker" button.
             // Show a "restart debate" button instead.
@@ -2099,11 +2088,11 @@ public class DebatingTimerFragment extends Fragment {
                 break;
             }
 
-            currentTimeText  .setVisibility((mIsEditingTime) ? View.GONE : View.VISIBLE);
-            currentTimePicker.setVisibility((mIsEditingTime) ? View.VISIBLE : View.GONE);
+            displayBinding.debateTimerCurrentTime.setVisibility((mIsEditingTime) ? View.GONE : View.VISIBLE);
+            displayBinding.debateTimerCurrentTimePicker.setVisibility((mIsEditingTime) ? View.VISIBLE : View.GONE);
 
             setButtonsEnable(!mIsEditingTime);
-            currentTimeText.setLongClickable(!mDebateManager.isRunning());
+            displayBinding.debateTimerCurrentTime.setLongClickable(!mDebateManager.isRunning());
             mViewPager.setPagingEnabled(!mIsEditingTime && !mDebateManager.isRunning());
 
         } else {
@@ -2134,45 +2123,40 @@ public class DebatingTimerFragment extends Fragment {
             return;
         }
 
-        updateDebateTimerDisplay(mDebateTimerDisplay,
-                mDebateManager.getActivePhaseFormat(),
-                mDebateManager.getActivePhaseCurrentPeriodInfo(),
-                mDebateManager.getActivePhaseName(),
-                mDebateManager.getActivePhaseCurrentTime(),
-                mDebateManager.getActivePhaseNextOvertimeBellTime());
+        if (mDebateTimerDisplay != null && mDebateTimerDisplay instanceof DebateTimerDisplayBinding) {
+            updateDebateTimerDisplay((DebateTimerDisplayBinding) mDebateTimerDisplay,
+                    mDebateManager.getActivePhaseFormat(),
+                    mDebateManager.getActivePhaseCurrentPeriodInfo(),
+                    mDebateManager.getActivePhaseName(),
+                    mDebateManager.getActivePhaseCurrentTime(),
+                    mDebateManager.getActivePhaseNextOvertimeBellTime());
+        } else {
+            Log.w(TAG, "mDebateTimerDisplay is either null or not a debate timer display");
+        }
     }
 
     /**
      * Updates a debate timer display with relevant information.
-     * @param debateTimerDisplay a {@link View} which should normally be the <code>RelativeLayout</code> in debate_timer_display.xml.
+     * @param binding a {@link DebateTimerDisplayBinding} to populate.
      * @param dpf the {@link DebatePhaseFormat} to be displayed
      * @param pi the {@link PeriodInfo} to be displayed, should be the current one
      * @param phaseName the name of the debate phase
      * @param time the current time in the debate phase
      * @param nextOvertimeBellTime the next overtime bell in the debate phase
      */
-    private void updateDebateTimerDisplay(View debateTimerDisplay, DebatePhaseFormat dpf,
+    private void updateDebateTimerDisplay(@NonNull DebateTimerDisplayBinding binding, DebatePhaseFormat dpf,
             PeriodInfo pi, String phaseName, long time, Long nextOvertimeBellTime) {
 
-        // Make sure it makes sense to run this method now
-
-        if (debateTimerDisplay == null) {
-            Log.w("updateDebateTmrDisplay", "debateTimerDisplay was null");
-            return;
-        }
-        if (debateTimerDisplay.getId() != R.id.debateTimer_root) {
-            Log.w("updateDebateTmrDisplay", "debateTimerDisplay was not the debate timer display");
-            return;
-        }
+        Log.i(TAG, "hello, I am updateDebateTimerDisplay");
 
         // If it passed all those checks, populate the timer display
-
-        TextView periodDescriptionText = debateTimerDisplay.findViewById(R.id.debateTimer_periodDescriptionText);
-        TextView speechNameText = debateTimerDisplay.findViewById(R.id.debateTimer_speechNameText);
-        TextView currentTimeText = debateTimerDisplay.findViewById(R.id.debateTimer_currentTime);
-        TextView infoLineText = debateTimerDisplay.findViewById(R.id.debateTimer_informationLine);
+        TextView periodDescriptionText = binding.debateTimerPeriodDescriptionText;
+        TextView speechNameText = binding.debateTimerSpeechNameText;
+        TextView currentTimeText = binding.debateTimerCurrentTime;
+        TextView infoLineText = binding.debateTimerInformationLine;
 
         // The information at the top of the screen
+        Log.i(TAG, "speech name: " + phaseName);
         speechNameText.setText(phaseName);
         periodDescriptionText.setText(pi.getDescription());
 
@@ -2189,12 +2173,12 @@ public class DebatingTimerFragment extends Fragment {
 
         // If we're updating the current display (as opposed to an inactive debate phase), then
         // don't update colours if there is a flash screen in progress.
-        boolean displayIsActive = debateTimerDisplay == mDebateTimerDisplay;
+        boolean displayIsActive = binding == mDebateTimerDisplay;
         boolean semaphoreAcquired = displayIsActive && mFlashScreenSemaphore.tryAcquire();
 
         // If not current display, or we got the semaphore, we're good to go.  If not, don't bother.
         if (!displayIsActive || semaphoreAcquired) {
-            updateDebateTimerDisplayColours(debateTimerDisplay, currentTimeTextColor, backgroundColour);
+            updateDebateTimerDisplayColours(binding, currentTimeTextColor, backgroundColour);
             if (semaphoreAcquired) mFlashScreenSemaphore.release();
         }
 
@@ -2258,38 +2242,40 @@ public class DebatingTimerFragment extends Fragment {
         infoLineText.setText(infoLine.toString());
 
         // Update the POI timer button
-        updatePoiTimerButton(debateTimerDisplay, dpf);
+        updatePoiTimerButton(binding, dpf);
 
     }
 
     /**
-     * @param view a {@link View} which should often be the <code>RelativeLayout</code> in debate_timer_display.xml,
+     * @param binding a {@link ViewBinding}, normally a {@link DebateTimerDisplayBinding},
      * except in cases where no debate is loaded or something like that.
      * @param timeTextColour the text colour to use for the current time
      * @param backgroundColour the colour to use for the background
      */
-    private void updateDebateTimerDisplayColours(View view, int timeTextColour, int backgroundColour) {
+    private void updateDebateTimerDisplayColours(ViewBinding binding, int timeTextColour, int backgroundColour) {
 
-        boolean viewIsDebateTimerDisplay = view.getId() == R.id.debateTimer_root;
+        if (binding == null) return;
+        DebateTimerDisplayBinding displayBinding = (binding instanceof DebateTimerDisplayBinding) ?
+                (DebateTimerDisplayBinding) binding : null;
 
         switch (mBackgroundColourArea) {
         case TOP_BAR_ONLY:
-            if (viewIsDebateTimerDisplay) {
+            if (displayBinding != null) {
                 // These would only be expected to exist if the view given is the debate timer display
-                view.findViewById(R.id.debateTimer_speechNameText).setBackgroundColor(backgroundColour);
-                view.findViewById(R.id.debateTimer_periodDescriptionText).setBackgroundColor(backgroundColour);
+                displayBinding.debateTimerSpeechNameText.setBackgroundColor(backgroundColour);
+                displayBinding.debateTimerPeriodDescriptionText.setBackgroundColor(backgroundColour);
             }
             break;
         case WHOLE_SCREEN:
-            view.setBackgroundColor(backgroundColour);
+            binding.getRoot().setBackgroundColor(backgroundColour);
             break;
         case DISABLED:
         	// Do nothing
         }
 
         // This would only be expected to exist if the view given is the debate timer display
-        if (viewIsDebateTimerDisplay)
-            ((TextView) view.findViewById(R.id.debateTimer_currentTime)).setTextColor(timeTextColour);
+        if (displayBinding != null)
+            displayBinding.debateTimerCurrentTime.setTextColor(timeTextColour);
     }
 
     /**
@@ -2346,11 +2332,11 @@ public class DebatingTimerFragment extends Fragment {
     }
 
     /**
-     * @param debateTimerDisplay the {@link View} to be updated
+     * @param binding the {@link DebateTimerDisplayBinding} to be updated
      * @param dpf the {@link DebatePhaseFormat} relevant for this <code>debateTimerDisplay</code>
      */
-    private void updatePoiTimerButton(View debateTimerDisplay, DebatePhaseFormat dpf) {
-        Button poiButton = debateTimerDisplay.findViewById(R.id.debateTimer_poiTimerButton);
+    private void updatePoiTimerButton(@NonNull DebateTimerDisplayBinding binding, DebatePhaseFormat dpf) {
+        Button poiButton = binding.debateTimerPoiTimer.debateTimerPoiTimerButton;
 
         // Display only when user has POI timer enabled, and a debate is loaded and the current
         // speech has POIs in it.

@@ -66,6 +66,8 @@
         android:visibility="gone"
         android:timePickerMode="spinner" />
 
-    <include layout="@layout/poi_timer_button" />
+    <include
+        android:id="@+id/debateTimer_poiTimer"
+        layout="@layout/poi_timer_button" />
 
 </RelativeLayout>
