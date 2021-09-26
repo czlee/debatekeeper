@@ -96,7 +96,6 @@ public class FormatChooserFragment extends Fragment {
     private DebateFormatEntryArrayAdapter mStylesArrayAdapter;
     private final ArrayList<DebateFormatListEntry> mStylesList = new ArrayList<>();
 
-    private static final int REQUEST_TO_READ_EXTERNAL_STORAGE = 17;
     private static final String DIALOG_ARGUMENT_FILE_NAME = "fn";
     private static final String DIALOG_TAG_MORE_DETAILS = "md";
     private static final String DIALOG_TAG_LIST_IO_ERROR = "io";
@@ -388,11 +387,7 @@ public class FormatChooserFragment extends Fragment {
             CheckBox checkbox = (CheckBox) v;
             boolean checked = checkbox.isChecked();
             mFilesManager.setLookForUserFiles(checked);
-
-            // If either it's not checked (so we don't care about read permissions), or read
-            // permissions are already there, refresh the styles list. Ask for the permission if
-            // it's not.
-            if (!checked || requestReadPermission()) refreshStylesList();
+            refreshStylesList();
         }
     }
 
@@ -420,31 +415,8 @@ public class FormatChooserFragment extends Fragment {
     }
 
     //******************************************************************************************
-    // Public methods
-    //******************************************************************************************
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_TO_READ_EXTERNAL_STORAGE) {
-            // If we've just received read permissions, refresh the styles list.
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                refreshStylesList();
-
-                //  Otherwise, uncheck the checkbox and show an error message.
-            else {
-                CheckBox checkbox = mViewBinding.formatChooserLookForCustomCheckbox;
-                checkbox.setChecked(false);
-                mFilesManager.setLookForUserFiles(false);
-                showSnackbar(Snackbar.LENGTH_LONG, R.string.formatChooser_lookForCustom_errorNoReadPermission);
-            }
-        }
-    }
-
-    //******************************************************************************************
     // Protected methods
     //******************************************************************************************
-
 
     @Nullable
     @Override
@@ -475,12 +447,6 @@ public class FormatChooserFragment extends Fragment {
         checkbox.setMovementMethod(LinkMovementMethod.getInstance());
         checkbox.setOnClickListener(new LookForCustomCheckboxOnClickListener());
         checkbox.setChecked(mInitialLookForCustomFormats);
-
-        // If we need it, ask the user for read permission. If it's not already granted, treat the
-        // initial setting as false.
-        if (mInitialLookForCustomFormats) {
-            mInitialLookForCustomFormats = requestReadPermission(); // note: this method may show an alert to the user
-        }
 
         // Configure the ListView
         mStylesListView = mViewBinding.formatChooserStylesList;
@@ -675,34 +641,6 @@ public class FormatChooserFragment extends Fragment {
     private String getSelectedFilename() {
         int selectedPosition = mStylesListView.getCheckedItemPosition();
         return convertIndexToFilename(selectedPosition);
-    }
-
-    /**
-     * Requests the <code>READ_EXTERNAL_STORAGE</code> permission if it hasn't already been granted.
-     * We do this here, not in {@link FormatXmlFilesManager}, so that {@link DebatingActivity}
-     * doesn't ask for the permission.
-     *
-     * @return true if the permission is already granted, false otherwise.
-     */
-    private boolean requestReadPermission() {
-
-        // READ_EXTERNAL_STORAGE started being enforced in API level 19 (KITKAT), so skip this check
-        // if we're before then, to avoid calling a constant that's only existed since API level 16
-        // (JELLY_BEAN)
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
-            return true;
-
-        Activity activity = requireActivity();
-
-        boolean granted = ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED;
-
-        if (!granted) {
-            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    REQUEST_TO_READ_EXTERNAL_STORAGE);
-        }
-
-        return granted;
     }
 
     /**

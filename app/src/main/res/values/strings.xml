@@ -86,7 +86,6 @@
     <string name="replaceDebateFormat_dialog_button_cancel">Cancel</string>
     <string name="importDebateFormat_snackbar_error_generic">There was an error opening this file.</string>
     <string name="importDebateFormat_snackbar_success">Successfully imported file %1$s</string>
-    <string name="importDebateFormat_snackbar_error_noWritePermission">You must allow Debatekeeper to write files on your device to import a custom format.</string>
 
     <!-- Menu -->
     <string name="mainScreen_menuItem_resetDebate">Reset debate</string>
@@ -139,11 +138,10 @@
 
     <!-- Copying legacy custom files -->
     <string name="customFilesMovingDialog_title">Custom formats are moving!</string>
-    <string name="customFilesMovingDialog_message">
-        It looks like you have some custom debate format files in the "debatekeeper" directory.
+    <string name="customFilesMovingDialog_message">You have some custom debate format files in the \"debatekeeper\" directory.
         In this update, the location of custom formats is moving. Debatekeeper can copy this files
-        to the new location for you, but you\'ll need to delete them from the legacy location
-        yourself. (Be sure to have a backup!) Copy custom files?
+        to the new location for you, but you\'ll need to delete them from the old location
+        yourself. (Be sure to have a backup!)\n\nCopy custom files?
     </string>
     <string name="customFilesMoving_moreInfoUrl" translatable="false">https://github.com/czlee/debatekeeper/wiki/Custom-format-changes-in-version-1.3</string>
     <string name="customFilesMovingDialog_button_learnMore">Learn more</string>

@@ -60,7 +60,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -106,7 +105,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -141,12 +139,6 @@ public class DebatingTimerFragment extends Fragment {
     private boolean             mChangingPages;
 
     private ActivityDebateBinding mViewBinding;
-
-    private Button      mLeftControlButton;
-    private Button      mLeftCentreControlButton;
-    private Button      mCentreControlButton;
-    private Button      mRightControlButton;
-    private ImageButton mPlayBellButton;
 
     private final ControlButtonSpec CONTROL_BUTTON_START_TIMER  = new ControlButtonSpec(R.string.mainScreen_controlButton_startTimer_text, new ControlButtonStartTimerOnClickListener());
     private final ControlButtonSpec CONTROL_BUTTON_STOP_TIMER   = new ControlButtonSpec(R.string.mainScreen_controlButton_stopTimer_text, new ControlButtonStopTimerOnClickListener());
@@ -1074,17 +1066,6 @@ public class DebatingTimerFragment extends Fragment {
     //******************************************************************************************
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_TO_WRITE_EXTERNAL_STORAGE_FOR_IMPORT) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                showDialogToConfirmImport();
-            else
-                showSnackbar(Snackbar.LENGTH_LONG, R.string.importDebateFormat_snackbar_error_noWritePermission);
-        }
-    }
-
-    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -1120,13 +1101,6 @@ public class DebatingTimerFragment extends Fragment {
         mViewBinding.mainScreenToolbar.inflateMenu(R.menu.debating_activity_menu);
         mViewBinding.mainScreenToolbar.setOnMenuItemClickListener(new DebatingTimerMenuItemClickListener());
 
-        // TODO inline these
-        mLeftControlButton       = mViewBinding.mainScreenLeftControlButton;
-        mLeftCentreControlButton = mViewBinding.mainScreenLeftCentreControlButton;
-        mCentreControlButton     = mViewBinding.mainScreenCentreControlButton;
-        mRightControlButton      = mViewBinding.mainScreenRightControlButton;
-        mPlayBellButton          = mViewBinding.mainScreenPlayBellButton;
-
         //
         // ViewPager
         mViewPager = mViewBinding.mainScreenDebateTimerViewPager;
@@ -1137,7 +1111,7 @@ public class DebatingTimerFragment extends Fragment {
 
         //
         // OnClickListeners
-        mPlayBellButton.setOnClickListener(new PlayBellButtonOnClickListener());
+        mViewBinding.mainScreenPlayBellButton.setOnClickListener(new PlayBellButtonOnClickListener());
 
         mLastStateBundle = savedInstanceState; // This could be null
 
@@ -1169,25 +1143,6 @@ public class DebatingTimerFragment extends Fragment {
                 mIsOpeningFormatChooser = false;
             }
         }
-
-        //
-        // If there's been an update, show the changelog.
-        // TODO move this to onStart()
-        SharedPreferences prefs = requireActivity().getPreferences(MODE_PRIVATE);
-        Resources res = getResources();
-        int thisChangelogVersion = res.getInteger(R.integer.changelogDialog_versionCode);
-        int lastChangelogVersionShown = prefs.getInt(LAST_CHANGELOG_VERSION_SHOWN, 0);
-        if (lastChangelogVersionShown < thisChangelogVersion) {
-            if (isFirstInstall()) {
-                // Don't show on the dialog on first install, but take note of the version.
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putInt(LAST_CHANGELOG_VERSION_SHOWN, thisChangelogVersion);
-                editor.apply();
-            } else {
-                // The dialog will update the preference to the new version code.
-                queueDialog(new DialogChangelogFragment(), DIALOG_TAG_CHANGELOG);
-            }
-        }
     }
 
     @Override
@@ -1215,6 +1170,8 @@ public class DebatingTimerFragment extends Fragment {
                 new IntentFilter(DebatingTimerService.UPDATE_GUI_BROADCAST_ACTION));
         updateGui();
 
+        requestReadPermission();
+        showChangelogDialog();
         copyLegacyCustomFilesPrompt();
     }
 
@@ -1460,7 +1417,10 @@ public class DebatingTimerFragment extends Fragment {
         } catch (IOException e) {
             return; // fail silently
         }
-        if (legacyFiles.length == 0) return;
+        if (legacyFiles.length == 0) {
+            Log.i(TAG, "No legacy files found, no need to copy");
+            return;
+        }
 
         queueDialog(new DialogCustomFilesMovingFragment(), DIALOG_TAG_CUSTOM_FILES_MOVING);
     }
@@ -1918,35 +1878,6 @@ public class DebatingTimerFragment extends Fragment {
     }
 
     /**
-     * TODO Deprecate
-     * Requests the <code>WRITE_EXTERNAL_STORAGE</code> permission if it hasn't already been granted.
-     * We do this here, not in {@link FormatXmlFilesManager}, so that {@link DebatingActivity}
-     * doesn't ask for the permission.
-     *
-     * @return true if the permission is already granted, false otherwise.
-     */
-    private boolean requestWritePermission() {
-
-        // WRITE_EXTERNAL_STORAGE started being enforced in API level 19 (KITKAT), so skip this
-        // check if we're before then, to avoid calling a constant that's only existed since API
-        // level 16 (JELLY_BEAN)
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
-            return true;
-
-        Activity activity = requireActivity();
-
-        boolean granted = ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED;
-
-        if (!granted) {
-            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    REQUEST_TO_WRITE_EXTERNAL_STORAGE_FOR_IMPORT);
-        }
-
-        return granted;
-    }
-
-    /**
      *  Sets up a single button
      */
     private void setButton(Button button, ControlButtonSpec spec) {
@@ -1971,16 +1902,16 @@ public class DebatingTimerFragment extends Fragment {
 
 
         if (left != null && centre == null && right != null) {
-            setButton(mLeftCentreControlButton, left);
-            setButton(mLeftControlButton, null);
-            setButton(mCentreControlButton, null);
+            setButton(mViewBinding.mainScreenLeftCentreControlButton, left);
+            setButton(mViewBinding.mainScreenLeftControlButton, null);
+            setButton(mViewBinding.mainScreenCentreControlButton, null);
         } else {
-            setButton(mLeftCentreControlButton, null);
-            setButton(mLeftControlButton, left);
-            setButton(mCentreControlButton, centre);
+            setButton(mViewBinding.mainScreenLeftCentreControlButton, null);
+            setButton(mViewBinding.mainScreenLeftControlButton, left);
+            setButton(mViewBinding.mainScreenCentreControlButton, centre);
         }
 
-        setButton(mRightControlButton, right);
+        setButton(mViewBinding.mainScreenRightControlButton, right);
     }
 
     /**
@@ -1990,11 +1921,11 @@ public class DebatingTimerFragment extends Fragment {
      */
     private void setButtonsEnable(boolean enable) {
         if (mDebateManager == null) return;
-        mLeftControlButton.setEnabled(enable);
-        mLeftCentreControlButton.setEnabled(enable);
-        mCentreControlButton.setEnabled(enable);
+        mViewBinding.mainScreenLeftControlButton.setEnabled(enable);
+        mViewBinding.mainScreenLeftCentreControlButton.setEnabled(enable);
+        mViewBinding.mainScreenCentreControlButton.setEnabled(enable);
         // Disable the [Next Speaker] button if there are no more speakers
-        mRightControlButton.setEnabled(enable && !mDebateManager.isInLastPhase());
+        mViewBinding.mainScreenRightControlButton.setEnabled(enable && !mDebateManager.isInLastPhase());
     }
 
     private void setXmlFileName(String filename) {
@@ -2006,6 +1937,24 @@ public class DebatingTimerFragment extends Fragment {
         else
             editor.remove(PREFERENCE_XML_FILE_NAME);
         editor.apply();
+    }
+
+    private void showChangelogDialog() {
+        SharedPreferences prefs = requireActivity().getPreferences(MODE_PRIVATE);
+        Resources res = getResources();
+        int thisChangelogVersion = res.getInteger(R.integer.changelogDialog_versionCode);
+        int lastChangelogVersionShown = prefs.getInt(LAST_CHANGELOG_VERSION_SHOWN, 0);
+        if (lastChangelogVersionShown < thisChangelogVersion) {
+            if (isFirstInstall()) {
+                // Don't show on the dialog on first install, but take note of the version.
+                Editor editor = prefs.edit();
+                editor.putInt(LAST_CHANGELOG_VERSION_SHOWN, thisChangelogVersion);
+                editor.apply();
+            } else {
+                // The dialog will update the preference to the new version code.
+                queueDialog(new DialogChangelogFragment(), DIALOG_TAG_CHANGELOG);
+            }
+        }
     }
 
     private void showDialogToConfirmImport() {
@@ -2182,9 +2131,9 @@ public class DebatingTimerFragment extends Fragment {
             // If no debate is loaded, show only one control button, which leads the user to
             // choose a style. (Keep the play bell button enabled.)
             setButtons(CONTROL_BUTTON_CHOOSE_STYLE, null, null);
-            mLeftControlButton.setEnabled(true);
-            mCentreControlButton.setEnabled(false);
-            mRightControlButton.setEnabled(false);
+            mViewBinding.mainScreenLeftControlButton.setEnabled(true);
+            mViewBinding.mainScreenCentreControlButton.setEnabled(false);
+            mViewBinding.mainScreenRightControlButton.setEnabled(false);
 
             // This seems counter-intuitive, but we enable paging if there is no debate loaded,
             // as there is only one page anyway, and this way the "scrolled to the limit"
@@ -2414,7 +2363,7 @@ public class DebatingTimerFragment extends Fragment {
 
     private void updatePlayBellButton() {
         if (mServiceBinder != null)
-            mPlayBellButton.setVisibility((mServiceBinder.getAlertManager().isBellsEnabled()) ? View.VISIBLE : View.GONE);
+            mViewBinding.mainScreenPlayBellButton.setVisibility((mServiceBinder.getAlertManager().isBellsEnabled()) ? View.VISIBLE : View.GONE);
     }
 
     /**
@@ -2495,4 +2444,30 @@ public class DebatingTimerFragment extends Fragment {
         else
             return getResources().getString(R.string.mainScreen_overtimeFormat, DateUtils.formatElapsedTime(-time));
     }
+
+    /**
+     * TODO remove before release
+     * (It's no longer necessary and is here just for testing purposes.
+     */
+    private void requestReadPermission() {
+
+        // READ_EXTERNAL_STORAGE started being enforced in API level 19 (KITKAT), so skip this check
+        // if we're before then, to avoid calling a constant that's only existed since API level 16
+        // (JELLY_BEAN)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
+            return;
+
+        Activity activity = requireActivity();
+
+        boolean granted = ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED;
+
+        if (!granted) {
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    17);
+        }
+
+    }
+
+
 }
