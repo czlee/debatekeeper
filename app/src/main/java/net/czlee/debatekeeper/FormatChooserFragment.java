@@ -493,6 +493,8 @@ public class FormatChooserFragment extends Fragment {
         // Select and scroll to the incoming selection (if existent)
         String incomingFilename = FormatChooserFragmentArgs.fromBundle(getArguments()).getXmlFileName();
         setSelectionAndScroll(incomingFilename);
+
+        updateToolbar();
     }
 
     //******************************************************************************************
@@ -754,6 +756,7 @@ public class FormatChooserFragment extends Fragment {
             fileUri = FileProvider.getUriForFile(requireContext(), FILES_AUTHORITY, file);
         } catch (IllegalArgumentException e) {
             Log.e(TAG, "shareSelection: tried to get file from outside allowable paths");
+            Log.e(TAG, "path was: " + file.getAbsolutePath());
             showSnackbar(LENGTH_SHORT, R.string.formatChooser_share_error_generic);
             return;
         }
@@ -810,10 +813,10 @@ public class FormatChooserFragment extends Fragment {
         Menu menu = mViewBinding.formatChooserToolbar.getMenu();
 
         // disable the share button if the current selection isn't shareable
-        MenuItem resetDebateItem = menu.findItem(R.id.formatChooser_actionBar_share);
+        MenuItem shareItem = menu.findItem(R.id.formatChooser_actionBar_share);
         String filename = getSelectedFilename();
         boolean selectionShareable = filename != null && mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE;
-        resetDebateItem.setVisible(selectionShareable);
+        shareItem.setVisible(selectionShareable);
     }
 
     /**
