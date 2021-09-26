@@ -93,6 +93,12 @@
     <string name="mainScreen_menuItem_chooseFormat">Debate styles</string>
     <string name="mainScreen_menuItem_ringBells">Ring bells</string>
 
+    <!-- Debate load error screen -->
+    <string name="debateLoadErrorScreen_noErrorTitle" translatable="false">No actual error</string>
+    <string name="debateLoadErrorScreen_noErrorMessage" translatable="false">"There isn't actually an error, and this screen shouldn't be showing."</string>
+    <string name="debateLoadErrorScreen_title">Error loading debate</string>
+    <string name="debateLoadErrorScreen_filename">"Couldn't load file: %1$s"</string>
+
     <!-- Dialogs -->
     <string name="dialogs_fileName_suffix">\n\n[File: %1$s]</string>
 

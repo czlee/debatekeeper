@@ -68,6 +68,7 @@ import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
@@ -84,6 +85,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import net.czlee.debatekeeper.AlertManager.FlashScreenMode;
 import net.czlee.debatekeeper.databinding.ActivityDebateBinding;
+import net.czlee.debatekeeper.databinding.DebateLoadErrorBinding;
 import net.czlee.debatekeeper.databinding.DebateTimerDisplayBinding;
 import net.czlee.debatekeeper.databinding.DialogWithDontShowBinding;
 import net.czlee.debatekeeper.databinding.NoDebateLoadedBinding;
@@ -132,6 +134,7 @@ public class DebatingTimerFragment extends Fragment {
     private final ServiceConnection mServiceConnection = new DebatingTimerServiceConnection();
 
     private DebateManager    mDebateManager;
+    private boolean          mDebateLoadError = false;
     private Bundle           mLastStateBundle;
     private boolean          mIsEditingTime = false;
     private boolean          mIsOpeningFormatChooser = false;
@@ -216,10 +219,6 @@ public class DebatingTimerFragment extends Fragment {
                 updateGui();
                 updateKeepScreenOn();
             });
-    private final ControlButtonSpec CONTROL_BUTTON_CHOOSE_STYLE = new ControlButtonSpec(
-            R.string.mainScreen_controlButton_chooseStyle_text,
-            (view) -> navigateToFormatChooser(null)
-    );
     private final ControlButtonSpec CONTROL_BUTTON_RESET_TIMER = new ControlButtonSpec(
             R.string.mainScreen_controlButton_resetTimer_text,
             (view) -> {
@@ -780,6 +779,7 @@ public class DebatingTimerFragment extends Fragment {
 
         @Override
         public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+            Log.i(TAG, "hi, I am setPrimaryItem");
 
             ViewBinding original = mDebateTimerDisplay;
 
@@ -1075,9 +1075,15 @@ public class DebatingTimerFragment extends Fragment {
         mViewBinding.mainScreenPlayBellButton.setOnClickListener(
                 (v) -> mServiceBinder.getAlertManager().playSingleBell()
         );
+        mViewBinding.mainScreenDebateLoadError.debateLoadErrorChooseStyleButton.setOnClickListener(
+                (v) -> navigateToFormatChooser(null)
+        );
+        mViewBinding.mainScreenNoDebateLoaded.noDebateLoadedChooseStyleButton.setOnClickListener(
+                (v) -> navigateToFormatChooser(null)
+        );
 
         // ViewPager
-        mViewPager = mViewBinding.mainScreenDebateTimerViewPager;
+        mViewPager = mViewBinding.mainScreenViewPager;
         mViewPager.setAdapter(new DebateTimerDisplayPagerAdapter());
         mViewPager.addOnPageChangeListener(new DebateTimerDisplayOnPageChangeListener());
         mViewPager.setPageMargin(1);
@@ -1357,6 +1363,15 @@ public class DebatingTimerFragment extends Fragment {
         }
 
         return df;
+    }
+
+    private void clearDebateLoadError() {
+        DebateLoadErrorBinding binding = mViewBinding.mainScreenDebateLoadError;
+        binding.debateLoadErrorTitle.setText(R.string.debateLoadErrorScreen_noErrorTitle);
+        binding.debateLoadErrorMessage.setText(R.string.debateLoadErrorScreen_noErrorMessage);
+        binding.debateLoadErrorFileName.setText(getString(R.string.debateLoadErrorScreen_filename, mFormatXmlFileName));
+        mDebateLoadError = false;
+        updateGui();
     }
 
     /**
@@ -1717,6 +1732,7 @@ public class DebatingTimerFragment extends Fragment {
         }
 
         mDebateManager = mServiceBinder.getDebateManager();
+
         if (mDebateManager == null) {
             Log.d(TAG, "initialiseDebate: creating debate manager");
 
@@ -1724,12 +1740,7 @@ public class DebatingTimerFragment extends Fragment {
             try {
                 df = buildDebateFromXml(mFormatXmlFileName);
             } catch (FatalXmlError e) {
-                QueueableDialogFragment fragment = DialogFatalProblemWithXmlFileFragment.newInstance(e.getMessage(), mFormatXmlFileName);
-                queueDialog(fragment, DIALOG_TAG_FATAL_PROBLEM + mFormatXmlFileName);
-
-                // We still need to notify of a data set change when there ends up being no
-                // debate format
-                if (mViewPager != null) mViewPager.getAdapter().notifyDataSetChanged();
+                setDebateLoadError(e.getMessage());
                 return;
             }
 
@@ -1750,10 +1761,10 @@ public class DebatingTimerFragment extends Fragment {
         // The bundle should only ever be relevant once per activity cycle
         mLastStateBundle = null;
 
-        if (mViewPager != null) {
-            mViewPager.getAdapter().notifyDataSetChanged();
-            mViewPager.setCurrentItem(mDebateManager.getActivePhaseIndex(), false);
-        }
+        Log.d(TAG, "clearing error, notifying view pager");
+        clearDebateLoadError();
+        mViewPager.getAdapter().notifyDataSetChanged();
+        mViewPager.setCurrentItem(mDebateManager.getActivePhaseIndex(), false);
         applyPreferences();
         updateToolbar();
     }
@@ -1874,6 +1885,7 @@ public class DebatingTimerFragment extends Fragment {
             setButton(mViewBinding.mainScreenLeftCentreControlButton, left);
             setButton(mViewBinding.mainScreenLeftControlButton, null);
             setButton(mViewBinding.mainScreenCentreControlButton, null);
+
         } else {
             setButton(mViewBinding.mainScreenLeftCentreControlButton, null);
             setButton(mViewBinding.mainScreenLeftControlButton, left);
@@ -1895,6 +1907,15 @@ public class DebatingTimerFragment extends Fragment {
         mViewBinding.mainScreenCentreControlButton.setEnabled(enable);
         // Disable the [Next Speaker] button if there are no more speakers
         mViewBinding.mainScreenRightControlButton.setEnabled(enable && !mDebateManager.isInLastPhase());
+    }
+
+    private void setDebateLoadError(String message) {
+        DebateLoadErrorBinding binding = mViewBinding.mainScreenDebateLoadError;
+        binding.debateLoadErrorTitle.setText(R.string.debateLoadErrorScreen_title);
+        binding.debateLoadErrorMessage.setText(message);
+        binding.debateLoadErrorFileName.setText(getString(R.string.debateLoadErrorScreen_filename, mFormatXmlFileName));
+        mDebateLoadError = true;
+        updateGui();
     }
 
     private void setXmlFileName(String filename) {
@@ -2065,8 +2086,6 @@ public class DebatingTimerFragment extends Fragment {
      *  The [Bell] button always is on the right of any of the above three buttons.
      */
     private void updateControls() {
-        if (mDebateTimerDisplay == null) return;
-
         if (mDebateManager != null && mDebateTimerDisplay instanceof DebateTimerDisplayBinding) {
 
             DebateTimerDisplayBinding displayBinding = (DebateTimerDisplayBinding) mDebateTimerDisplay;
@@ -2098,8 +2117,8 @@ public class DebatingTimerFragment extends Fragment {
         } else {
             // If no debate is loaded, show only one control button, which leads the user to
             // choose a style. (Keep the play bell button enabled.)
-            setButtons(CONTROL_BUTTON_CHOOSE_STYLE, null, null);
-            mViewBinding.mainScreenLeftControlButton.setEnabled(true);
+            setButtons(null, null, null);
+            mViewBinding.mainScreenLeftControlButton.setEnabled(false);
             mViewBinding.mainScreenCentreControlButton.setEnabled(false);
             mViewBinding.mainScreenRightControlButton.setEnabled(false);
 
@@ -2116,22 +2135,41 @@ public class DebatingTimerFragment extends Fragment {
     /**
      * Updates the debate timer display with the current active debate phase information.
      */
-    private void updateDebateTimerDisplay() {
-        if (mDebateManager == null) {
-            Log.w("updateDebateTmrDisplay", "mDebateManager was null");
-            if (mViewPager != null) mViewPager.getAdapter().notifyDataSetChanged();
-            return;
-        }
+    private void updateMainDisplay() {
 
-        if (mDebateTimerDisplay != null && mDebateTimerDisplay instanceof DebateTimerDisplayBinding) {
-            updateDebateTimerDisplay((DebateTimerDisplayBinding) mDebateTimerDisplay,
-                    mDebateManager.getActivePhaseFormat(),
-                    mDebateManager.getActivePhaseCurrentPeriodInfo(),
-                    mDebateManager.getActivePhaseName(),
-                    mDebateManager.getActivePhaseCurrentTime(),
-                    mDebateManager.getActivePhaseNextOvertimeBellTime());
+        if (mDebateManager == null && mDebateLoadError) {
+            Log.w(TAG, "no debate manager, setting error view");
+            mViewPager.setVisibility(View.GONE);
+            mViewBinding.mainScreenNoDebateLoaded.getRoot().setVisibility(View.GONE);
+            mViewBinding.mainScreenDebateLoadError.getRoot().setVisibility(View.VISIBLE);
+
+        } else if (mDebateManager == null) {
+            Log.w(TAG, "no debate manager, setting no-debate view");
+            mViewPager.setVisibility(View.GONE);
+            mViewBinding.mainScreenNoDebateLoaded.getRoot().setVisibility(View.VISIBLE);
+            mViewBinding.mainScreenDebateLoadError.getRoot().setVisibility(View.GONE);
+
         } else {
-            Log.w(TAG, "mDebateTimerDisplay is either null or not a debate timer display");
+            Log.i(TAG, "setting debate timer display");
+            mViewPager.setVisibility(View.VISIBLE);
+            mViewBinding.mainScreenNoDebateLoaded.getRoot().setVisibility(View.GONE);
+            mViewBinding.mainScreenDebateLoadError.getRoot().setVisibility(View.GONE);
+
+            if (mDebateTimerDisplay != null && mDebateTimerDisplay instanceof DebateTimerDisplayBinding) {
+                Log.d(TAG, "updating debate timer display");
+                updateDebateTimerDisplay((DebateTimerDisplayBinding) mDebateTimerDisplay,
+                        mDebateManager.getActivePhaseFormat(),
+                        mDebateManager.getActivePhaseCurrentPeriodInfo(),
+                        mDebateManager.getActivePhaseName(),
+                        mDebateManager.getActivePhaseCurrentTime(),
+                        mDebateManager.getActivePhaseNextOvertimeBellTime());
+            } else {
+                Log.w(TAG, "mDebateTimerDisplay is either null or not a debate timer display");
+                if (mDebateTimerDisplay == null)
+                    Log.w(TAG, "mDebateTimerDisplay is null");
+                else
+                    Log.w(TAG, "mDebateTimerDisplay is a " + mDebateTimerDisplay.getClass().getName());
+            }
         }
     }
 
@@ -2286,15 +2324,15 @@ public class DebatingTimerFragment extends Fragment {
             Log.d(TAG, "Changing pages, don't update GUI");
             return;
         }
-        if (!isResumed()) {
-            Log.d(TAG, "Not resumed, don't update GUI");
+        if (!isVisible()) {
+            Log.d(TAG, "Not visible, don't update GUI");
             return;
         }
 
         mPreviousSpeechBackPressedCallback.setEnabled(
                 mDebateManager != null && !mDebateManager.isInFirstPhase() && !mDebateManager.isRunning());
 
-        updateDebateTimerDisplay();
+        updateMainDisplay();
         updateControls();
         updateToolbar();
     }

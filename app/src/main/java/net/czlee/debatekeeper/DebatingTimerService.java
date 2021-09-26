@@ -25,6 +25,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 /**
@@ -61,6 +63,8 @@ public class DebatingTimerService extends Service
      * This class is the binder between this service and the DebatingActivity.
      */
     public class DebatingTimerServiceBinder extends Binder {
+
+        @Nullable
         public DebateManager getDebateManager() {
             return mDebateManager;
         }
@@ -69,6 +73,7 @@ public class DebatingTimerService extends Service
             return mAlertManager;
         }
 
+        @NonNull
         public DebateManager createDebateManager(DebateFormat df) {
             releaseDebateManager();
             mDebateManager = new DebateManager(DebatingTimerService.this, df, mAlertManager);
