@@ -140,13 +140,6 @@ public class DebatingTimerFragment extends Fragment {
 
     private ActivityDebateBinding mViewBinding;
 
-    private final ControlButtonSpec CONTROL_BUTTON_START_TIMER  = new ControlButtonSpec(R.string.mainScreen_controlButton_startTimer_text, new ControlButtonStartTimerOnClickListener());
-    private final ControlButtonSpec CONTROL_BUTTON_STOP_TIMER   = new ControlButtonSpec(R.string.mainScreen_controlButton_stopTimer_text, new ControlButtonStopTimerOnClickListener());
-    private final ControlButtonSpec CONTROL_BUTTON_CHOOSE_STYLE = new ControlButtonSpec(R.string.mainScreen_controlButton_chooseStyle_text, new ControlButtonChooseStyleOnClickListener());
-    private final ControlButtonSpec CONTROL_BUTTON_RESET_TIMER  = new ControlButtonSpec(R.string.mainScreen_controlButton_resetTimer_text, new ControlButtonResetActiveDebatePhaseOnClickListener());
-    private final ControlButtonSpec CONTROL_BUTTON_RESUME_TIMER = new ControlButtonSpec(R.string.mainScreen_controlButton_resumeTimer_text, new ControlButtonStartTimerOnClickListener());
-    private final ControlButtonSpec CONTROL_BUTTON_NEXT_PHASE   = new ControlButtonSpec(R.string.mainScreen_controlButton_nextPhase_text, new ControlButtonNextDebatePhaseOnClickListener());
-
     private String               mFormatXmlFileName      = null;
     private CountDirection       mCountDirection         = CountDirection.COUNT_UP;
     private CountDirection       mPrepTimeCountDirection = CountDirection.COUNT_DOWN;
@@ -186,9 +179,7 @@ public class DebatingTimerFragment extends Fragment {
     private static final String DIALOG_TAG_IMPORT_CONFIRM               = "import";
     private static final String DIALOG_TAG_IMPORT_SUGGEST_REPLACEMENT   = "replace";
     private static final String DIALOG_TAG_CUSTOM_FILES_MOVING          = "custom-files-moving";
-    private static final String DIALOG_TAG_CUSTOM_FILES_MOVING_ERROR    = "custom-files-moving-error";
 
-    private static final int REQUEST_TO_WRITE_EXTERNAL_STORAGE_FOR_IMPORT = 21;
     private static final int SNACKBAR_DURATION_RESET_DEBATE               = 1200;
     private static final int COLOUR_TRANSPARENT                           = 0;
 
@@ -207,6 +198,45 @@ public class DebatingTimerFragment extends Fragment {
             goToPreviousSpeech();
         }
     };
+
+    private final ControlButtonSpec CONTROL_BUTTON_START_TIMER = new ControlButtonSpec(
+            R.string.mainScreen_controlButton_startTimer_text,
+            (view) -> {
+                mDebateManager.startTimer();
+                updateGui();
+                updateKeepScreenOn();
+            });
+    private final ControlButtonSpec CONTROL_BUTTON_STOP_TIMER = new ControlButtonSpec(
+            R.string.mainScreen_controlButton_stopTimer_text,
+            (view) -> {
+                mDebateManager.stopTimer();
+                updateGui();
+                updateKeepScreenOn();
+            });
+    private final ControlButtonSpec CONTROL_BUTTON_CHOOSE_STYLE = new ControlButtonSpec(
+            R.string.mainScreen_controlButton_chooseStyle_text,
+            (view) -> navigateToFormatChooser(null)
+    );
+    private final ControlButtonSpec CONTROL_BUTTON_RESET_TIMER = new ControlButtonSpec(
+            R.string.mainScreen_controlButton_resetTimer_text,
+            (view) -> {
+                mDebateManager.resetActivePhase();
+                updateGui();
+            });
+    private final ControlButtonSpec CONTROL_BUTTON_RESUME_TIMER = new ControlButtonSpec(
+            R.string.mainScreen_controlButton_resumeTimer_text,
+            (view) -> {
+                mDebateManager.startTimer();
+                updateGui();
+                updateKeepScreenOn();
+            });
+    private final ControlButtonSpec CONTROL_BUTTON_NEXT_PHASE = new ControlButtonSpec(
+            R.string.mainScreen_controlButton_nextPhase_text,
+            (view) -> {
+                goToNextSpeech();
+                updateGui();
+            });
+
 
     //******************************************************************************************
     // Public classes
@@ -583,47 +613,6 @@ public class DebatingTimerFragment extends Fragment {
         private ControlButtonSpec(int textResId, View.OnClickListener onClickListener) {
             this.textResId = textResId;
             this.onClickListener = onClickListener;
-        }
-    }
-
-    private class ControlButtonChooseStyleOnClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            navigateToFormatChooser(null);
-        }
-    }
-
-    private class ControlButtonNextDebatePhaseOnClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            goToNextSpeech();
-            updateGui();
-        }
-    }
-
-    private class ControlButtonResetActiveDebatePhaseOnClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            mDebateManager.resetActivePhase();
-            updateGui();
-        }
-    }
-
-    private class ControlButtonStartTimerOnClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            mDebateManager.startTimer();
-            updateGui();
-            updateKeepScreenOn();
-        }
-    }
-
-    private class ControlButtonStopTimerOnClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            mDebateManager.stopTimer();
-            updateGui();
-            updateKeepScreenOn();
         }
     }
 
@@ -1042,13 +1031,6 @@ public class DebatingTimerFragment extends Fragment {
         }
     }
 
-    private class PlayBellButtonOnClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            mServiceBinder.getAlertManager().playSingleBell();
-        }
-    }
-
     private class PoiButtonOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
@@ -1100,7 +1082,9 @@ public class DebatingTimerFragment extends Fragment {
 
         mViewBinding.mainScreenToolbar.inflateMenu(R.menu.debating_activity_menu);
         mViewBinding.mainScreenToolbar.setOnMenuItemClickListener(new DebatingTimerMenuItemClickListener());
-        mViewBinding.mainScreenPlayBellButton.setOnClickListener(new PlayBellButtonOnClickListener());
+        mViewBinding.mainScreenPlayBellButton.setOnClickListener(
+                (v) -> mServiceBinder.getAlertManager().playSingleBell()
+        );
 
         // ViewPager
         mViewPager = mViewBinding.mainScreenDebateTimerViewPager;
