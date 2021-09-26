@@ -434,7 +434,7 @@ public class FormatChooserFragment extends Fragment {
                 //  Otherwise, uncheck the checkbox and show an error message.
             else {
                 CheckBox checkbox = mViewBinding.formatChooserLookForCustomCheckbox;
-                if (checkbox != null) checkbox.setChecked(false);
+                checkbox.setChecked(false);
                 mFilesManager.setLookForUserFiles(false);
                 showSnackbar(Snackbar.LENGTH_LONG, R.string.formatChooser_lookForCustom_errorNoReadPermission);
             }

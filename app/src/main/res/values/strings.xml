@@ -127,16 +127,30 @@
 
     <!-- Changelog dialog -->
     <!-- By convention, this should be changed to match the manifest versionCode when the changelog changes. -->
-    <integer name="changelogDialog_versionCode">23</integer>
+    <integer name="changelogDialog_versionCode">24</integer>
     <string name="changelogDialog_title">What\'s new in version %1$s</string>
     <string name="changelogDialog_message">
-          • New icon (thanks to Zandi Speedy-Willis) and updated theme
-        \n• Share custom debate formats, including via Android Beam (for Android 4.1 and above)
-        \n• Quick access to turning bells on or off
-        \n• Added MSPDP and Paris V styles
-        \n• Other user interface improvements
+          • Moving custom formats to new Android location. Note: If you uninstall Debatekeeper,
+            custom formats will be deleted, so be sure to have a backup somewhere else.
+        \n• Other general updates to bring up to date with Android 10
     </string>
     <string name="changelogDialog_dontShow">Don\'t show this again</string>
     <string name="changelogDialog_ok">Okay, roll on!</string>
 
+    <!-- Copying legacy custom files -->
+    <string name="customFilesMovingDialog_title">Custom formats are moving!</string>
+    <string name="customFilesMovingDialog_message">
+        It looks like you have some custom debate format files in the "debatekeeper" directory.
+        In this update, the location of custom formats is moving. Debatekeeper can copy this files
+        to the new location for you, but you\'ll need to delete them from the legacy location
+        yourself. (Be sure to have a backup!) Copy custom files?
+    </string>
+    <string name="customFilesMoving_moreInfoUrl" translatable="false">https://github.com/czlee/debatekeeper/wiki/Custom-format-changes-in-version-1.3</string>
+    <string name="customFilesMovingDialog_button_learnMore">Learn more</string>
+    <string name="customFilesMovingDialog_button_cancel">Don\'t copy</string>
+    <string name="customFilesMovingDialog_button_ok">Copy</string>
+
+    <string name="customFilesMovingErrorDirectory_snackbar">Error: Couldn\'t open the legacy custom formats directory to copy the files.</string>
+    <string name="customFilesMovingErrorFiles_snackbar">%1$d legacy files copied, but errors copying %2$d files: %3$s</string>
+    <string name="customFilesMovingSuccess_snackbar">%1$d legacy files copied and ready to use</string>
 </resources>

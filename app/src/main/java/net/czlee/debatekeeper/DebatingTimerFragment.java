@@ -48,6 +48,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.text.Html;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.util.Pair;
@@ -59,7 +60,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -84,6 +84,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import net.czlee.debatekeeper.AlertManager.FlashScreenMode;
 import net.czlee.debatekeeper.databinding.ActivityDebateBinding;
+import net.czlee.debatekeeper.databinding.DialogWithDontShowBinding;
 import net.czlee.debatekeeper.debateformat.BellInfo;
 import net.czlee.debatekeeper.debateformat.DebateFormat;
 import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml;
@@ -105,6 +106,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -171,6 +173,7 @@ public class DebatingTimerFragment extends Fragment {
     private static final String BUNDLE_KEY_IMPORT_INTENT_HANDLED        = "iih";
     private static final String PREFERENCE_XML_FILE_NAME                = "xmlfn";
     private static final String LAST_CHANGELOG_VERSION_SHOWN            = "lastChangeLog";
+    private static final String LEGACY_CUSTOM_FILES_DISMISSED           = "v1.3-custom-files-dismissed";
     private static final String DIALOG_ARGUMENT_FATAL_MESSAGE           = "fm";
     private static final String DIALOG_ARGUMENT_XML_ERROR_LOG           = "xel";
     private static final String DIALOG_ARGUMENT_SCHEMA_USED             = "used";
@@ -190,6 +193,8 @@ public class DebatingTimerFragment extends Fragment {
     private static final String DIALOG_TAG_CHANGELOG                    = "changelog";
     private static final String DIALOG_TAG_IMPORT_CONFIRM               = "import";
     private static final String DIALOG_TAG_IMPORT_SUGGEST_REPLACEMENT   = "replace";
+    private static final String DIALOG_TAG_CUSTOM_FILES_MOVING          = "custom-files-moving";
+    private static final String DIALOG_TAG_CUSTOM_FILES_MOVING_ERROR    = "custom-files-moving-error";
 
     private static final int REQUEST_TO_WRITE_EXTERNAL_STORAGE_FOR_IMPORT = 21;
     private static final int SNACKBAR_DURATION_RESET_DEBATE               = 1200;
@@ -238,17 +243,17 @@ public class DebatingTimerFragment extends Fragment {
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final Activity activity = getActivity();
-            View content = activity.getLayoutInflater().inflate(R.layout.changelog_dialog, null);
-            final CheckBox doNotShowAgain = content.findViewById(R.id.changelogDialog_dontShow);
             final Resources res = getResources();
+            final Activity activity = requireActivity();
+            final DialogWithDontShowBinding binding = DialogWithDontShowBinding.inflate(LayoutInflater.from(activity));
+            binding.message.setText(R.string.changelogDialog_message);
 
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setTitle(res.getString(R.string.changelogDialog_title, BuildConfig.VERSION_NAME))
-                    .setView(content)
+                    .setView(binding.getRoot())
                     .setPositiveButton(res.getString(R.string.changelogDialog_ok), (dialog, which) -> {
                         // Take note of "do not show again" setting
-                        if (doNotShowAgain.isChecked()) {
+                        if (binding.dontShowAgain.isChecked()) {
                             SharedPreferences prefs = activity.getPreferences(MODE_PRIVATE);
                             SharedPreferences.Editor editor = prefs.edit();
                             int thisChangelogVersionCode = res.getInteger(R.integer.changelogDialog_versionCode);
@@ -260,6 +265,45 @@ public class DebatingTimerFragment extends Fragment {
             return builder.create();
         }
 
+    }
+
+    public static class DialogCustomFilesMovingFragment extends QueueableDialogFragment {
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+            final Resources res = getResources();
+            final Activity activity = requireActivity();
+            final DebatingTimerFragment parent = (DebatingTimerFragment) getParentFragment();
+            final DialogWithDontShowBinding binding = DialogWithDontShowBinding.inflate(LayoutInflater.from(activity));
+            binding.message.setText(R.string.customFilesMovingDialog_message);
+            binding.dontShowAgain.setChecked(false);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            builder.setTitle(res.getString(R.string.customFilesMovingDialog_title))
+                    .setView(binding.getRoot())
+                    .setNeutralButton(R.string.customFilesMovingDialog_button_learnMore, (dialog, which) -> {
+                        // Open web browser with page about schema versions
+                        Uri uri = Uri.parse(getString(R.string.customFilesMoving_moreInfoUrl));
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(uri);
+                        startActivity(intent);
+                    })
+                    .setNegativeButton(R.string.customFilesMovingDialog_button_cancel, (dialog, which) -> {
+                        // Take note of "do not show again" setting
+                        if (binding.dontShowAgain.isChecked()) {
+                            SharedPreferences prefs = activity.getPreferences(MODE_PRIVATE);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putBoolean(LEGACY_CUSTOM_FILES_DISMISSED, true);
+                            editor.apply();
+                        }
+                    })
+                    .setPositiveButton(R.string.customFilesMovingDialog_button_ok, (dialog, which) -> {
+                        parent.copyLegacyCustomFiles();
+                    });
+
+            return builder.create();
+        }
     }
 
     public static class DialogErrorsWithXmlFileFragment extends QueueableDialogFragment {
@@ -1076,6 +1120,7 @@ public class DebatingTimerFragment extends Fragment {
         mViewBinding.mainScreenToolbar.inflateMenu(R.menu.debating_activity_menu);
         mViewBinding.mainScreenToolbar.setOnMenuItemClickListener(new DebatingTimerMenuItemClickListener());
 
+        // TODO inline these
         mLeftControlButton       = mViewBinding.mainScreenLeftControlButton;
         mLeftCentreControlButton = mViewBinding.mainScreenLeftCentreControlButton;
         mCentreControlButton     = mViewBinding.mainScreenCentreControlButton;
@@ -1112,7 +1157,7 @@ public class DebatingTimerFragment extends Fragment {
             mImportIntentHandled = savedInstanceState.getBoolean(BUNDLE_KEY_IMPORT_INTENT_HANDLED, false);
             Log.d(TAG, "onViewCreated: import intent handled is " + mImportIntentHandled);
         }
-        if (Intent.ACTION_VIEW.equals(activity.getIntent().getAction()) && !mImportIntentHandled && requestWritePermission()) {
+        if (Intent.ACTION_VIEW.equals(activity.getIntent().getAction()) && !mImportIntentHandled) {
             showDialogToConfirmImport();
         } else if (mFormatXmlFileName == null) {
             // Otherwise, if there's no style loaded, direct the user to choose one
@@ -1127,6 +1172,7 @@ public class DebatingTimerFragment extends Fragment {
 
         //
         // If there's been an update, show the changelog.
+        // TODO move this to onStart()
         SharedPreferences prefs = requireActivity().getPreferences(MODE_PRIVATE);
         Resources res = getResources();
         int thisChangelogVersion = res.getInteger(R.integer.changelogDialog_versionCode);
@@ -1168,6 +1214,8 @@ public class DebatingTimerFragment extends Fragment {
         LocalBroadcastManager.getInstance(requireContext()).registerReceiver(mGuiUpdateBroadcastReceiver,
                 new IntentFilter(DebatingTimerService.UPDATE_GUI_BROADCAST_ACTION));
         updateGui();
+
+        copyLegacyCustomFilesPrompt();
     }
 
     @Override
@@ -1383,6 +1431,69 @@ public class DebatingTimerFragment extends Fragment {
         }
 
         return df;
+    }
+
+    /**
+     * Legacy support. If there are custom files in the legacy location, prompt the user to copy
+     * them over.
+     */
+    private void copyLegacyCustomFilesPrompt() {
+        // Don't bother if the user has dismissed this prompt
+        SharedPreferences prefs = requireActivity().getPreferences(MODE_PRIVATE);
+        boolean customFilesCopied = prefs.getBoolean(LEGACY_CUSTOM_FILES_DISMISSED, false);
+        if (customFilesCopied) return;
+
+        // Don't bother if the user files directory is not empty
+        FormatXmlFilesManager manager = new FormatXmlFilesManager(requireContext());
+        String[] userFiles;
+        try {
+            userFiles = manager.userFileList();
+        } catch (IOException e) {
+            return; // fail silently
+        }
+        if (userFiles.length > 0) return;
+
+        // Don't bother if the legacy location is empty
+        String[] legacyFiles;
+        try {
+            legacyFiles = manager.legacyUserFileList();
+        } catch (IOException e) {
+            return; // fail silently
+        }
+        if (legacyFiles.length == 0) return;
+
+        queueDialog(new DialogCustomFilesMovingFragment(), DIALOG_TAG_CUSTOM_FILES_MOVING);
+    }
+
+    private void copyLegacyCustomFiles() {
+        FormatXmlFilesManager manager = new FormatXmlFilesManager(requireContext());
+        String[] legacyFiles;
+        try {
+            legacyFiles = manager.legacyUserFileList();
+        } catch (IOException e) {
+            showSnackbar(Snackbar.LENGTH_INDEFINITE, R.string.customFilesMovingErrorDirectory_snackbar);
+            return;
+        }
+
+        ArrayList<String> errorFilenames = new ArrayList<>();
+        int successes = 0;
+
+        for (String filename : legacyFiles) {
+            try {
+                manager.copyLegacyFile(filename);
+            } catch (IOException e) {
+                errorFilenames.add(filename);
+                continue;
+            }
+            successes++;
+        }
+
+        if (errorFilenames.isEmpty()) {
+            showSnackbar(Snackbar.LENGTH_INDEFINITE, R.string.customFilesMovingSuccess_snackbar, successes);
+        } else {
+            showSnackbar(Snackbar.LENGTH_INDEFINITE, R.string.customFilesMovingErrorFiles_snackbar,
+                    successes, errorFilenames.size(), TextUtils.join(", ", errorFilenames));
+        }
     }
 
     /**
@@ -1807,6 +1918,7 @@ public class DebatingTimerFragment extends Fragment {
     }
 
     /**
+     * TODO Deprecate
      * Requests the <code>WRITE_EXTERNAL_STORAGE</code> permission if it hasn't already been granted.
      * We do this here, not in {@link FormatXmlFilesManager}, so that {@link DebatingActivity}
      * doesn't ask for the permission.

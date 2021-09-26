@@ -19,10 +19,8 @@ package net.czlee.debatekeeper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,15 +42,23 @@ import java.util.HashSet;
  *
  * FormatXmlFilesManager also manages the "look for custom formats" preference.
  *
+ * MIGRATION TO APP-SPECIFIC STORAGE
+ * Debatekeeper version 1.3 will target Android 10 (API level 29). It needs to migrate its file
+ * location to the "scoped storage" location before Android 11, so the current code does this:
+ *  - The method migrateToScopedStorage() copies all files from the legacy location to the new
+ *    scoped app-specific location.
+ *  -
+ *
  * @author Chuan-Zheng Lee
  * @since  2012-06-27
  */
 class FormatXmlFilesManager {
 
-    private final AssetManager mAssets;
+    private final Context mContext;
     private final SharedPreferences mPrefs;
     private static final String TAG                                = "FormatXmlFilesManager";
     private static final String XML_FILE_ROOT_DIRECTORY_NAME       = "debatekeeper";
+    private static final String XML_FORMATS_DIRECTORY_NAME         = "formats";
     private static final String ASSETS_PATH                        = "formats";
     private static final String PREFERENCE_LOOK_FOR_CUSTOM_FORMATS = "lookForCustom";
 
@@ -63,7 +69,7 @@ class FormatXmlFilesManager {
     private boolean mLookForUserFiles;
 
     FormatXmlFilesManager(Context context) {
-        mAssets = context.getAssets();
+        mContext = context;
 
         // initialise with the user files preference
         mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -83,20 +89,8 @@ class FormatXmlFilesManager {
      * @throws IOException if there was an error dealing with any of the files
      */
     public void copy(InputStream in, @NonNull String destinationName) throws IOException {
-
-        // Check we can write to external storage
-        if (!isExternalStorageWriteable()) {
-            Log.e(TAG, "copy: can't copy, external storage not writeable");
-            throw new IOException();
-        }
-
         // Figure out where to copy the file to
-        File userFilesDirectory = getOrCreateUserFilesDirectory();
-        if (userFilesDirectory == null) {
-            Log.e(TAG, "copy: can't copy, no user files directory available");
-            throw new IOException();
-        }
-
+        File userFilesDirectory = getAppSpecificUserFilesDirectory();
         File destination = new File(userFilesDirectory, destinationName);
 
         // Open the files
@@ -110,7 +104,27 @@ class FormatXmlFilesManager {
         out.flush();
         in.close();
         out.close();
+    }
 
+    /**
+     * Copies a legacy file to the new app-specific destination.
+     * To be removed in a future version.
+     * @param filename the name of the file to be copied
+     */
+    public void copyLegacyFile(@NonNull String filename) throws IOException {
+        File source = new File(getLegacyUserFilesDirectory(), filename);
+        File destination = new File(getAppSpecificUserFilesDirectory(), filename);
+        InputStream in = new FileInputStream(source);
+        OutputStream out = new FileOutputStream(destination);
+
+        // Copy the file over
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0)
+            out.write(buf, 0, len);
+        out.flush();
+        in.close();
+        out.close();
     }
 
     /**
@@ -127,26 +141,42 @@ class FormatXmlFilesManager {
         }
         return openFromAssets(filename);
     }
+    /**
+     * Returns a list of all user files in the app-specific external storage location.
+     * @return an array of Strings, possibly empty, each being an existent file name in external
+     * storage.
+     * @throws IOException if there is a problem with some file
+     */
+    @NonNull
+    String[] legacyUserFileList() throws IOException {
+        if (!mLookForUserFiles) return new String[0];
 
+        File userFilesDirectory = getLegacyUserFilesDirectory();
+        if (userFilesDirectory == null) return new String[0];
+
+        String[] list = userFilesDirectory.list();
+        if (list == null) return new String[0];
+
+        return list;
+    }
 
     /**
-     * Returns a list of all user files, i.e. files in external storage.
+     * Returns a list of all user files in the app-specific external storage location.
      * @return an array of Strings, possibly empty, each being an existent file name in external
      * storage.
      * @throws IOException if there is a problem with some file
      */
     @NonNull
     String[] userFileList() throws IOException {
-        if (!mLookForUserFiles)
-            return new String[0];
+        if (!mLookForUserFiles) return new String[0];
 
-        File userFilesDirectory = getUserFilesDirectory();
-        if (userFilesDirectory != null) {
-            String[] list = userFilesDirectory.list();
-            if (list != null) return list;
-        }
+        File userFilesDirectory = getAppSpecificUserFilesDirectory();
+        if (userFilesDirectory == null) return new String[0];
 
-        return new String[0];
+        String[] list = userFilesDirectory.list();
+        if (list == null) return new String[0];
+
+        return list;
     }
 
     /**
@@ -162,7 +192,7 @@ class FormatXmlFilesManager {
         Collections.addAll(compiledSet, userFileList());
 
         // Then add files in the assets...
-        String[] assetList = mAssets.list(ASSETS_PATH);
+        String[] assetList = mContext.getAssets().list(ASSETS_PATH);
         if (assetList != null)
             Collections.addAll(compiledSet, assetList);
 
@@ -178,9 +208,7 @@ class FormatXmlFilesManager {
     @Nullable
     File getFileFromExternalStorage(String filename) {
         // See if we can find the directory...
-        File userFilesDirectory = getUserFilesDirectory();
-        if (userFilesDirectory == null)
-            return null;
+        File userFilesDirectory = getAppSpecificUserFilesDirectory();
 
         // Then see if we can find the file...
         File xmlFile = new File(userFilesDirectory, filename);
@@ -235,7 +263,7 @@ class FormatXmlFilesManager {
     }
 
     //******************************************************************************************
-    // Public methods
+    // Private methods
     //******************************************************************************************
 
     private boolean isExternalStorageReadable() {
@@ -243,17 +271,13 @@ class FormatXmlFilesManager {
         return Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
     }
 
-    private boolean isExternalStorageWriteable() {
-        String state = Environment.getExternalStorageState();
-        return Environment.MEDIA_MOUNTED.equals(state);
-    }
-
     /**
+     * Legacy user files directory. Deprecated from Android 10 (API level 29).
      * @return the user files directory if it exists, or <code>null</code> if it does not exist
      * or is not a directory.  If this method returns something non-null, you can assume it is
      * a directory.
      */
-    private File getUserFilesDirectory() {
+    private File getLegacyUserFilesDirectory() {
         if (!isExternalStorageReadable())
             return null;
 
@@ -266,30 +290,22 @@ class FormatXmlFilesManager {
     }
 
     /**
-     * @return the user files directory, or <code>null</code> if it does not exist and could not
-     * be created or is not a directory.  If this method returns something non-null, you can assume
-     * it is a directory.
+     * App-specific user files directory.
+     * @return the user files directory if it exists, or <code>null</code> if it does not exist.
      */
-    private File getOrCreateUserFilesDirectory() {
+    private File getAppSpecificUserFilesDirectory() {
+        File root = mContext.getExternalFilesDir(null);
+        File directory = new File(root, XML_FORMATS_DIRECTORY_NAME);
 
-        // Can't do anything if we can't read external storage.
-        if (!isExternalStorageReadable())
-            return null;
-
-        File root = Environment.getExternalStorageDirectory();
-        File userFilesDirectory = new File(root, XML_FILE_ROOT_DIRECTORY_NAME);
-
-        // If it's already a directory, bingo!
-        if (userFilesDirectory.isDirectory()) return userFilesDirectory;
-
-        // If there's nothing where the directory is supposed to be, and we can write to external
-        // storage, attempt to create the directory.
-        if (!userFilesDirectory.exists() && isExternalStorageWriteable()) {
-            boolean result = userFilesDirectory.mkdirs();
-            if (result) return userFilesDirectory;
+        // Create if it doesn't exist
+        if (!directory.exists()) {
+            boolean result = directory.mkdirs();
+            if (!result) return null;
         }
 
-        return null;
+        if (!directory.isDirectory()) return null;
+
+        return directory;
     }
 
     /**
@@ -317,7 +333,7 @@ class FormatXmlFilesManager {
 
     private InputStream openFromAssets(String filename) throws IOException {
         File xmlFile = new File(ASSETS_PATH, filename);
-        return mAssets.open(xmlFile.getPath());
+        return mContext.getAssets().open(xmlFile.getPath());
     }
 
 }
