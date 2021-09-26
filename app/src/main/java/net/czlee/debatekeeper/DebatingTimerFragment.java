@@ -1741,6 +1741,7 @@ public class DebatingTimerFragment extends Fragment {
                 df = buildDebateFromXml(mFormatXmlFileName);
             } catch (FatalXmlError e) {
                 setDebateLoadError(e.getMessage());
+                mViewPager.getAdapter().notifyDataSetChanged();
                 return;
             }
 
