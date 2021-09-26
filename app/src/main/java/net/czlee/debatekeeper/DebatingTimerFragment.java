@@ -1100,8 +1100,8 @@ public class DebatingTimerFragment extends Fragment {
 
         mViewBinding.mainScreenToolbar.inflateMenu(R.menu.debating_activity_menu);
         mViewBinding.mainScreenToolbar.setOnMenuItemClickListener(new DebatingTimerMenuItemClickListener());
+        mViewBinding.mainScreenPlayBellButton.setOnClickListener(new PlayBellButtonOnClickListener());
 
-        //
         // ViewPager
         mViewPager = mViewBinding.mainScreenDebateTimerViewPager;
         mViewPager.setAdapter(new DebateTimerDisplayPagerAdapter());
@@ -1109,39 +1109,14 @@ public class DebatingTimerFragment extends Fragment {
         mViewPager.setPageMargin(1);
         mViewPager.setPageMarginDrawable(R.drawable.divider);
 
-        //
-        // OnClickListeners
-        mViewBinding.mainScreenPlayBellButton.setOnClickListener(new PlayBellButtonOnClickListener());
-
         mLastStateBundle = savedInstanceState; // This could be null
 
-        //
-        // TODO Deprecate Android Beam and make sure Nearby Beam works
         // Configure NFC
         Activity activity = requireActivity();
         if (activity.getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)) {
             NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(activity);
             if (nfcAdapter != null)
                 nfcAdapter.setBeamPushUrisCallback(new BeamFileUriCallback(), activity);
-        }
-
-        // If there's an incoming style, and it wasn't handled before a screen rotation, ask the
-        // user whether they want to import it.
-        if (savedInstanceState != null) {
-            mImportIntentHandled = savedInstanceState.getBoolean(BUNDLE_KEY_IMPORT_INTENT_HANDLED, false);
-            Log.d(TAG, "onViewCreated: import intent handled is " + mImportIntentHandled);
-        }
-        if (Intent.ACTION_VIEW.equals(activity.getIntent().getAction()) && !mImportIntentHandled) {
-            showDialogToConfirmImport();
-        } else if (mFormatXmlFileName == null) {
-            // Otherwise, if there's no style loaded, direct the user to choose one
-            if (!mIsOpeningFormatChooser) {
-                Log.v(TAG, "no file loaded, redirecting to choose format");
-                navigateToFormatChooser(null);
-            } else {
-                Log.v(TAG, "no file loaded, but returned from format chooser, so staying put");
-                mIsOpeningFormatChooser = false;
-            }
         }
     }
 
@@ -1165,6 +1140,26 @@ public class DebatingTimerFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
+        // If there's an incoming style, and it wasn't handled before a screen rotation, ask the
+        // user whether they want to import it.
+        if (mLastStateBundle != null) {
+            mImportIntentHandled = mLastStateBundle.getBoolean(BUNDLE_KEY_IMPORT_INTENT_HANDLED, false);
+            Log.d(TAG, "onViewCreated: import intent handled is " + mImportIntentHandled);
+        }
+        if (Intent.ACTION_VIEW.equals(requireActivity().getIntent().getAction()) && !mImportIntentHandled) {
+            showDialogToConfirmImport();
+        } else if (mFormatXmlFileName == null) {
+            // Otherwise, if there's no style loaded, direct the user to choose one
+            if (!mIsOpeningFormatChooser) {
+                Log.v(TAG, "no file loaded, redirecting to choose format");
+                navigateToFormatChooser(null);
+            } else {
+                Log.v(TAG, "no file loaded, but returned from format chooser, so staying put");
+                mIsOpeningFormatChooser = false;
+            }
+        }
+
         restoreBinder();
         LocalBroadcastManager.getInstance(requireContext()).registerReceiver(mGuiUpdateBroadcastReceiver,
                 new IntentFilter(DebatingTimerService.UPDATE_GUI_BROADCAST_ACTION));
