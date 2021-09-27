@@ -491,9 +491,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
      * @param message the string
      */
     private void logXmlError(String message) {
-        String bullet = "• ";
-        String line   = bullet.concat(message);
-        mErrorLog.add(line);
+        mErrorLog.add(message);
         Log.e("logXmlError(2)", message);
     }
 

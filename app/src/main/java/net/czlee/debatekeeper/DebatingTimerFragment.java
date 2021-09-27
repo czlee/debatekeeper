@@ -328,43 +328,6 @@ public class DebatingTimerFragment extends Fragment {
         }
     }
 
-    public static class DialogErrorsWithXmlFileFragment extends QueueableDialogFragment {
-
-        static DialogErrorsWithXmlFileFragment newInstance(ArrayList<String> errorLog, String filename) {
-            DialogErrorsWithXmlFileFragment fragment = new DialogErrorsWithXmlFileFragment();
-            Bundle args = new Bundle();
-            args.putStringArrayList(DIALOG_ARGUMENT_XML_ERROR_LOG, errorLog);
-            args.putString(DIALOG_ARGUMENT_FILE_NAME, filename);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            StringBuilder errorMessage = new StringBuilder(getString(R.string.errorsinXmlFileDialog_message_prefix));
-            Bundle args = getArguments();
-            ArrayList<String> errorLog = args.getStringArrayList(DIALOG_ARGUMENT_XML_ERROR_LOG);
-
-            if (errorLog != null) {
-                for (String error : errorLog) {
-                    errorMessage.append("\n");
-                    errorMessage.append(error);
-                }
-            }
-
-            errorMessage.append(getString(R.string.dialogs_fileName_suffix, args.getString(DIALOG_ARGUMENT_FILE_NAME)));
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle(R.string.errorsinXmlFileDialog_title)
-                    .setMessage(errorMessage)
-                    .setPositiveButton(R.string.errorsinXmlFileDialog_button, null);
-
-            return builder.create();
-        }
-
-    }
-
     public static class DialogImportFileConfirmFragment extends QueueableDialogFragment {
 
         static DialogImportFileConfirmFragment newInstance(@NonNull String incomingFilename, @NonNull String incomingStyleName,
@@ -1285,8 +1248,17 @@ public class DebatingTimerFragment extends Fragment {
                     R.string.fatalXmlMessage_noSpeeches));
 
         if (dfbfx.hasErrors()) {
-            QueueableDialogFragment fragment = DialogErrorsWithXmlFileFragment.newInstance(dfbfx.getErrorLog(), filename);
-            queueDialog(fragment, DIALOG_TAG_ERRORS_WITH_XML + filename);
+
+            StringBuilder errorLogItems = new StringBuilder();
+            ArrayList<String> errorLog = dfbfx.getErrorLog();
+            if (errorLog != null) {
+                for (String error : errorLog) {
+                    errorLogItems.append("• ");
+                    errorLogItems.append(error);
+                    errorLogItems.append("<br />");
+                }
+            }
+            throw new FatalXmlError(getString(R.string.fatalXmlMessage_generalErrors, errorLogItems.toString()));
         }
 
         return df;

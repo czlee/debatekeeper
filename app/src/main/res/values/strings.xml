@@ -111,6 +111,9 @@
         Please convert this file to schema version 2.1.
         &lt;a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">Learn more.&lt;/a>
     </string>
+    <string name="fatalXmlMessage_generalErrors">&lt;p>There are a few problems with this debate format file:&lt;/p>
+        %1$s
+    </string>
     <string name="fatalXml_suffix">Please choose another style.</string>
 
     <!-- Dialogs -->
@@ -119,20 +122,10 @@
     <string name="fatalProblemWithXmlFileDialog_noSchemaVersion_suffix">"No schema version was specified; please ask the author of this XML file to specify one.\n"</string>
     <string name="fatalProblemWithXmlFileDialog_schemaTooNew_suffix">"This schema version (%1$s) isn't supported.  You might need to update this app.\n"</string>
 
-    <string name="errorsinXmlFileDialog_title">Warning</string>
-    <string name="errorsinXmlFileDialog_button">OK</string>
-    <string name="errorsinXmlFileDialog_message_prefix">"There are a few problems with this debate format file. I'll try to work with it, but it probably won't work properly. The problems are:\n"</string>
-
     <string name="schemaTooNewDialog_title">Update app?</string>
     <string name="schemaTooNewDialog_button_upgrade">Check for updates</string>
     <string name="schemaTooNewDialog_button_ignore">Ignore</string>
     <string name="schemaTooNewDialog_message">This debate format file uses a schema (%1$s) newer than supported (%2$s) by this app version (%3$s). Check for updates on Google Play?</string>
-
-    <string name="schemaOutdatedDialog_title">File no longer supported</string>
-    <string name="schemaOutdatedDialog_message">This debate format file uses schema version 1.0, which is no longer supported. Please convert this file to schema version 2.1.</string>
-    <string name="schemaOutdatedDialog_moreInfoUrl" translatable="false">https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file</string>
-    <string name="schemaOutdatedDialog_button_learnMore">Learn more</string>
-    <string name="schemaOutdatedDialog_button_ok">OK</string>
 
     <!-- POI timer -->
     <string name="poiTimer_moreInfoUrl" translatable="false">https://github.com/czlee/debatekeeper/wiki/Points-of-information</string>
