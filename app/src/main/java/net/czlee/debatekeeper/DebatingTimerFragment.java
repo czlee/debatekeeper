@@ -135,7 +135,7 @@ public class DebatingTimerFragment extends Fragment {
     private final ServiceConnection mServiceConnection = new DebatingTimerServiceConnection();
 
     private DebateManager    mDebateManager;
-    private boolean          mDebateLoadError = false;
+    private Spanned mDebateLoadError = null;
     private Bundle           mLastStateBundle;
     private boolean          mIsEditingTime = false;
     private boolean          mIsOpeningFormatChooser = false;
@@ -671,8 +671,6 @@ public class DebatingTimerFragment extends Fragment {
 
         @Override
         public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-            Log.i(TAG, "hi, I am setPrimaryItem");
-
             ViewBinding original = mDebateTimerDisplay;
 
             // Note: There is no guarantee that mDebateTimerDisplay will in fact be a debate
@@ -973,6 +971,7 @@ public class DebatingTimerFragment extends Fragment {
         mViewBinding.mainScreenNoDebateLoaded.noDebateLoadedChooseStyleButton.setOnClickListener(
                 (v) -> navigateToFormatChooser(null)
         );
+        mViewBinding.mainScreenDebateLoadError.debateLoadErrorMessage.setMovementMethod(LinkMovementMethod.getInstance());
 
         // ViewPager
         mViewPager = mViewBinding.mainScreenViewPager;
@@ -1265,11 +1264,7 @@ public class DebatingTimerFragment extends Fragment {
     }
 
     private void clearDebateLoadError() {
-        DebateLoadErrorBinding binding = mViewBinding.mainScreenDebateLoadError;
-        binding.debateLoadErrorTitle.setText(R.string.debateLoadErrorScreen_noErrorTitle);
-        binding.debateLoadErrorMessage.setText(R.string.debateLoadErrorScreen_noErrorMessage);
-        binding.debateLoadErrorFileName.setText(getString(R.string.debateLoadErrorScreen_filename, mFormatXmlFileName));
-        mDebateLoadError = false;
+        mDebateLoadError = null;
         updateGui();
     }
 
@@ -1810,13 +1805,7 @@ public class DebatingTimerFragment extends Fragment {
     }
 
     private void setDebateLoadError(String message) {
-        DebateLoadErrorBinding binding = mViewBinding.mainScreenDebateLoadError;
-        binding.debateLoadErrorTitle.setText(R.string.debateLoadErrorScreen_title);
-        binding.debateLoadErrorMessage.setMovementMethod(LinkMovementMethod.getInstance());
-        Spanned messageHtml = Html.fromHtml(message);
-        binding.debateLoadErrorMessage.setText(messageHtml);
-        binding.debateLoadErrorFileName.setText(getString(R.string.debateLoadErrorScreen_filename, mFormatXmlFileName));
-        mDebateLoadError = true;
+        mDebateLoadError = Html.fromHtml(message);
         updateGui();
     }
 
@@ -2035,15 +2024,26 @@ public class DebatingTimerFragment extends Fragment {
     }
 
     /**
+     * Populates the fields in the debate load error display.
+     */
+    private void updateDebateLoadErrorDisplay() {
+        DebateLoadErrorBinding binding = mViewBinding.mainScreenDebateLoadError;
+        binding.debateLoadErrorTitle.setText(R.string.debateLoadErrorScreen_title);
+        binding.debateLoadErrorMessage.setText(mDebateLoadError);
+        binding.debateLoadErrorFileName.setText(getString(R.string.debateLoadErrorScreen_filename, mFormatXmlFileName));
+    }
+
+    /**
      * Updates the debate timer display with the current active debate phase information.
      */
     private void updateMainDisplay() {
 
-        if (mDebateManager == null && mDebateLoadError) {
+        if (mDebateManager == null && mDebateLoadError != null) {
             Log.w(TAG, "no debate manager, setting error view");
             mViewPager.setVisibility(View.GONE);
             mViewBinding.mainScreenNoDebateLoaded.getRoot().setVisibility(View.GONE);
             mViewBinding.mainScreenDebateLoadError.getRoot().setVisibility(View.VISIBLE);
+            updateDebateLoadErrorDisplay();
 
         } else if (mDebateManager == null) {
             Log.w(TAG, "no debate manager, setting no-debate view");
@@ -2086,8 +2086,6 @@ public class DebatingTimerFragment extends Fragment {
      */
     private void updateDebateTimerDisplay(@NonNull DebateTimerDisplayBinding binding, DebatePhaseFormat dpf,
             PeriodInfo pi, String phaseName, long time, Long nextOvertimeBellTime) {
-
-        Log.i(TAG, "hello, I am updateDebateTimerDisplay");
 
         // If it passed all those checks, populate the timer display
         TextView periodDescriptionText = binding.debateTimerPeriodDescriptionText;

@@ -119,9 +119,6 @@
     <!-- Dialogs -->
     <string name="dialogs_fileName_suffix">\n\n[File: %1$s]</string>
 
-    <string name="fatalProblemWithXmlFileDialog_noSchemaVersion_suffix">"No schema version was specified; please ask the author of this XML file to specify one.\n"</string>
-    <string name="fatalProblemWithXmlFileDialog_schemaTooNew_suffix">"This schema version (%1$s) isn't supported.  You might need to update this app.\n"</string>
-
     <string name="schemaTooNewDialog_title">Update app?</string>
     <string name="schemaTooNewDialog_button_upgrade">Check for updates</string>
     <string name="schemaTooNewDialog_button_ignore">Ignore</string>
