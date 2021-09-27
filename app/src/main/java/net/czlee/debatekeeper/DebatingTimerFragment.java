@@ -48,8 +48,10 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.text.Html;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -68,7 +70,6 @@ import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
@@ -178,9 +179,7 @@ public class DebatingTimerFragment extends Fragment {
     // Dialog tags that are attached to particular files must end in "/", as the name of the file
     // they relate to is appended to the tag.
     private static final String DIALOG_TAG_SCHEMA_TOO_NEW               = "toonew/";
-    private static final String DIALOG_TAG_SCHEMA_OUTDATED              = "outdated/";
     private static final String DIALOG_TAG_ERRORS_WITH_XML              = "errors/";
-    private static final String DIALOG_TAG_FATAL_PROBLEM                = "fatal/";
     private static final String DIALOG_TAG_CHANGELOG                    = "changelog";
     private static final String DIALOG_TAG_IMPORT_CONFIRM               = "import";
     private static final String DIALOG_TAG_IMPORT_SUGGEST_REPLACEMENT   = "replace";
@@ -366,40 +365,6 @@ public class DebatingTimerFragment extends Fragment {
 
     }
 
-    public static class DialogFatalProblemWithXmlFileFragment extends QueueableDialogFragment {
-
-        static DialogFatalProblemWithXmlFileFragment newInstance(String message, String filename) {
-            DialogFatalProblemWithXmlFileFragment fragment = new DialogFatalProblemWithXmlFileFragment();
-            Bundle args = new Bundle();
-            args.putString(DIALOG_ARGUMENT_FATAL_MESSAGE, message);
-            args.putString(DIALOG_ARGUMENT_FILE_NAME, filename);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final Activity activity = getActivity();
-            Bundle args = getArguments();
-
-            StringBuilder errorMessage = new StringBuilder(args.getString(DIALOG_ARGUMENT_FATAL_MESSAGE));
-            errorMessage.append(getString(R.string.fatalProblemWithXmlFileDialog_message_suffix));
-            errorMessage.append(getString(R.string.dialogs_fileName_suffix, args.getString(DIALOG_ARGUMENT_FILE_NAME)));
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-            builder.setTitle(R.string.fatalProblemWithXmlFileDialog_title)
-                    .setMessage(errorMessage)
-                    .setPositiveButton(R.string.fatalProblemWithXmlFileDialog_button, (dialog, which) -> {
-                        dialog.dismiss();
-                        ((DebatingTimerFragment) getParentFragment()).navigateToFormatChooser(null);
-                    });
-
-            return builder.create();
-        }
-
-    }
-
     public static class DialogImportFileConfirmFragment extends QueueableDialogFragment {
 
         static DialogImportFileConfirmFragment newInstance(@NonNull String incomingFilename, @NonNull String incomingStyleName,
@@ -538,42 +503,6 @@ public class DebatingTimerFragment extends Fragment {
                         startActivity(intent);
                     })
                     .setNegativeButton(R.string.schemaTooNewDialog_button_ignore, null);
-
-            AlertDialog dialog = builder.create();
-            dialog.setCanceledOnTouchOutside(false);
-            return dialog;
-        }
-    }
-
-    public static class DialogSchemaTooOldFragment extends QueueableDialogFragment {
-
-        static DialogSchemaTooOldFragment newInstance(String filename) {
-            DialogSchemaTooOldFragment fragment = new DialogSchemaTooOldFragment();
-            Bundle args = new Bundle();
-            args.putString(DIALOG_ARGUMENT_FILE_NAME, filename);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final DebatingActivity activity = (DebatingActivity) getActivity();
-            Bundle args = getArguments();
-            StringBuilder message = new StringBuilder(getString(R.string.schemaOutdatedDialog_message));
-            message.append(getString(R.string.dialogs_fileName_suffix, args.getString(DIALOG_ARGUMENT_FILE_NAME)));
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-            builder.setTitle(R.string.schemaOutdatedDialog_title)
-                    .setMessage(message)
-                    .setNegativeButton(R.string.schemaOutdatedDialog_button_learnMore, (dialog, which) -> {
-                        // Open web browser with page about schema versions
-                        Uri uri = Uri.parse(getString(R.string.schemaOutdatedDialog_moreInfoUrl));
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(uri);
-                        startActivity(intent);
-                    })
-                    .setPositiveButton(R.string.schemaOutdatedDialog_button_ok, null);
 
             AlertDialog dialog = builder.create();
             dialog.setCanceledOnTouchOutside(false);
@@ -1308,7 +1237,7 @@ public class DebatingTimerFragment extends Fragment {
         try {
             is = filesManager.open(filename);
         } catch (IOException e) {
-            throw new FatalXmlError(getString(R.string.fatalProblemWithXmlFileDialog_message_cannotFind), e);
+            throw new FatalXmlError(getString(R.string.fatalXmlMessage_cannotFind), e);
         }
 
         dfbfx = new DebateFormatBuilderFromXmlForSchema2(context);
@@ -1317,11 +1246,11 @@ public class DebatingTimerFragment extends Fragment {
         try {
             df = dfbfx.buildDebateFromXml(is);
         } catch (IOException e) {
-            throw new FatalXmlError(getString(R.string.fatalProblemWithXmlFileDialog_message_cannotRead), e);
+            throw new FatalXmlError(getString(R.string.fatalXmlMessage_cannotRead), e);
         } catch (SAXException e) {
             Log.e(TAG, "bad xml");
             throw new FatalXmlError(getString(
-                    R.string.fatalProblemWithXmlFileDialog_message_badXml, e.getMessage()), e);
+                    R.string.fatalXmlMessage_badXml, e.getMessage()), e);
         }
 
         // If the schema wasn't supported, check if it looks like it might be a schema 1.0 file.
@@ -1332,19 +1261,17 @@ public class DebatingTimerFragment extends Fragment {
                 is.close();
                 is = filesManager.open(filename);
             } catch (IOException e) {
-                throw new FatalXmlError(getString(R.string.fatalProblemWithXmlFileDialog_message_cannotFind), e);
+                throw new FatalXmlError(getString(R.string.fatalXmlMessage_cannotFind), e);
             }
 
             try {
-                if (SchemaVersion1Checker.checkIfVersion1(context, is)) {
-                    QueueableDialogFragment fragment = DialogSchemaTooOldFragment.newInstance(filename);
-                    queueDialog(fragment, DIALOG_TAG_SCHEMA_OUTDATED + filename);
-                }
+                if (SchemaVersion1Checker.checkIfVersion1(context, is))
+                    throw new FatalXmlError(getString(R.string.fatalXmlMessage_schemaOutdated));
             } catch (SAXException e) {
                 throw new FatalXmlError(getString(
-                        R.string.fatalProblemWithXmlFileDialog_message_badXml, e.getMessage()), e);
+                        R.string.fatalXmlMessage_badXml, e.getMessage()), e);
             } catch (IOException e) {
-                throw new FatalXmlError(getString(R.string.fatalProblemWithXmlFileDialog_message_cannotRead), e);
+                throw new FatalXmlError(getString(R.string.fatalXmlMessage_cannotRead), e);
             }
         }
 
@@ -1355,7 +1282,7 @@ public class DebatingTimerFragment extends Fragment {
 
         if (df.numberOfSpeeches() == 0)
             throw new FatalXmlError(getString(
-                    R.string.fatalProblemWithXmlFileDialog_message_noSpeeches));
+                    R.string.fatalXmlMessage_noSpeeches));
 
         if (dfbfx.hasErrors()) {
             QueueableDialogFragment fragment = DialogErrorsWithXmlFileFragment.newInstance(dfbfx.getErrorLog(), filename);
@@ -1913,7 +1840,9 @@ public class DebatingTimerFragment extends Fragment {
     private void setDebateLoadError(String message) {
         DebateLoadErrorBinding binding = mViewBinding.mainScreenDebateLoadError;
         binding.debateLoadErrorTitle.setText(R.string.debateLoadErrorScreen_title);
-        binding.debateLoadErrorMessage.setText(message);
+        binding.debateLoadErrorMessage.setMovementMethod(LinkMovementMethod.getInstance());
+        Spanned messageHtml = Html.fromHtml(message);
+        binding.debateLoadErrorMessage.setText(messageHtml);
         binding.debateLoadErrorFileName.setText(getString(R.string.debateLoadErrorScreen_filename, mFormatXmlFileName));
         mDebateLoadError = true;
         updateGui();

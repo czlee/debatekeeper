@@ -98,17 +98,24 @@
     <string name="debateLoadErrorScreen_noErrorMessage" translatable="false">"There isn't actually an error, and this screen shouldn't be showing."</string>
     <string name="debateLoadErrorScreen_title">Error loading debate</string>
     <string name="debateLoadErrorScreen_filename">"Couldn't load file: %1$s"</string>
+    <string name="debateLoadErrorScreen_button_chooseStyle">Choose style</string>
+
+    <string name="fatalXmlMessage_noSpeeches">There are no speeches in this debate style file.
+        This might be because the file isn\'t supported or isn\'t well-formed.
+        &lt;a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">Learn more.&lt;/a>
+    </string>
+    <string name="fatalXmlMessage_cannotRead">"There was a problem opening this debate style file. If this is a custom format, it might be because the file is deleted or because storage permissions are disabled."</string>
+    <string name="fatalXmlMessage_cannotFind">"There was a problem opening this debate style file. If this is a custom format, it might be because the file is deleted or because storage permissions are disabled."</string>
+    <string name="fatalXmlMessage_badXml">"There's a problem with the XML in this debate style file. The error was:\n\n%1$s\n"</string>
+    <string name="fatalXmlMessage_schemaOutdated">This debate format file uses schema version 1.0, which is no longer supported.
+        Please convert this file to schema version 2.1.
+        &lt;a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">Learn more.&lt;/a>
+    </string>
+    <string name="fatalXml_suffix">Please choose another style.</string>
 
     <!-- Dialogs -->
     <string name="dialogs_fileName_suffix">\n\n[File: %1$s]</string>
 
-    <string name="fatalProblemWithXmlFileDialog_title">Oh no!</string>
-    <string name="fatalProblemWithXmlFileDialog_button">Choose style</string>
-    <string name="fatalProblemWithXmlFileDialog_message_noSpeeches">"There are no speeches in this debate style file. (This might be because the file isn't supported or isn't well-formed.)"</string>
-    <string name="fatalProblemWithXmlFileDialog_message_cannotRead">"I've hit a problem opening this debate style file. If this is a custom format, it might be because the file is deleted or because storage permissions are disabled."</string>
-    <string name="fatalProblemWithXmlFileDialog_message_cannotFind">"I've hit a problem opening this debate style file. If this is a custom format, it might be because the file is deleted or because storage permissions are disabled."</string>
-    <string name="fatalProblemWithXmlFileDialog_message_badXml">"There's a problem with the XML in this debate style file. The error was:\n\n%1$s\n"</string>
-    <string name="fatalProblemWithXmlFileDialog_message_suffix">"\nPlease choose another style."</string>
     <string name="fatalProblemWithXmlFileDialog_noSchemaVersion_suffix">"No schema version was specified; please ask the author of this XML file to specify one.\n"</string>
     <string name="fatalProblemWithXmlFileDialog_schemaTooNew_suffix">"This schema version (%1$s) isn't supported.  You might need to update this app.\n"</string>
 

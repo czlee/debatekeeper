@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
@@ -10,9 +11,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="@+id/debateLoadError_message"
+        app:layout_constraintEnd_toEndOf="@id/debateLoadError_message"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/debateLoadError_message"
+        app:layout_constraintStart_toStartOf="@id/debateLoadError_message"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -21,9 +22,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="@+id/debateLoadError_message"
-        app:layout_constraintStart_toStartOf="@+id/debateLoadError_message"
-        app:layout_constraintTop_toBottomOf="@+id/debateLoadError_title" />
+        app:layout_constraintEnd_toEndOf="@id/debateLoadError_message"
+        app:layout_constraintStart_toStartOf="@id/debateLoadError_message"
+        app:layout_constraintTop_toBottomOf="@id/debateLoadError_title" />
 
     <TextView
         android:id="@+id/debateLoadError_message"
@@ -34,23 +35,35 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
         android:layout_marginRight="24dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="16dp"
         android:scrollbars="vertical"
         android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/debateLoadError_chooseStyleButton"
+        android:text="@string/fatalXmlMessage_schemaOutdated"
+        app:layout_constraintBottom_toTopOf="@id/debateLoadError_chooseAnother"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/debateLoadError_fileName" />
+        app:layout_constraintTop_toBottomOf="@id/debateLoadError_fileName" />
 
     <Button
         android:id="@+id/debateLoadError_chooseStyleButton"
         android:layout_width="0dp"
         android:layout_height="@dimen/debateTimer_controlButtons_height"
         android:layout_marginBottom="32dp"
-        android:text="@string/mainScreen_controlButton_chooseStyle_text"
-        app:layout_constraintWidth_percent="0.5"
+        android:text="@string/debateLoadErrorScreen_button_chooseStyle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.5" />
+
+    <TextView
+        android:id="@+id/debateLoadError_chooseAnother"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="@string/fatalXml_suffix"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@id/debateLoadError_chooseStyleButton"
+        app:layout_constraintEnd_toEndOf="@id/debateLoadError_message"
+        app:layout_constraintStart_toStartOf="@id/debateLoadError_message" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
