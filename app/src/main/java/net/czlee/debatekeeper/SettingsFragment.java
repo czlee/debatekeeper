@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-import net.czlee.debatekeeper.databinding.ActivitySettingsBinding;
+import net.czlee.debatekeeper.databinding.FragmentSettingsBinding;
 
 /**
  * This fragment just hosts {@link SettingsSubFragment} by wrapping it with a layout that
@@ -24,12 +24,12 @@ import net.czlee.debatekeeper.databinding.ActivitySettingsBinding;
  */
 public class SettingsFragment extends Fragment {
 
-    ActivitySettingsBinding mViewBinding;
+    FragmentSettingsBinding mViewBinding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mViewBinding = ActivitySettingsBinding.inflate(inflater, container, false);
+        mViewBinding = FragmentSettingsBinding.inflate(inflater, container, false);
         return mViewBinding.getRoot();
     }
 

@@ -85,7 +85,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.snackbar.Snackbar;
 
 import net.czlee.debatekeeper.AlertManager.FlashScreenMode;
-import net.czlee.debatekeeper.databinding.ActivityDebateBinding;
+import net.czlee.debatekeeper.databinding.FragmentDebateBinding;
 import net.czlee.debatekeeper.databinding.DebateLoadErrorBinding;
 import net.czlee.debatekeeper.databinding.DebateTimerDisplayBinding;
 import net.czlee.debatekeeper.databinding.DialogWithDontShowBinding;
@@ -144,7 +144,7 @@ public class DebatingTimerFragment extends Fragment {
     private EnableableViewPager       mViewPager;
     private boolean                   mIsChangingPages;
 
-    private ActivityDebateBinding mViewBinding;
+    private FragmentDebateBinding mViewBinding;
 
     private String               mFormatXmlFileName      = null;
     private CountDirection       mCountDirection         = CountDirection.COUNT_UP;
@@ -944,7 +944,7 @@ public class DebatingTimerFragment extends Fragment {
     @Override
     @Nullable
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mViewBinding = ActivityDebateBinding.inflate(inflater, container, false);
+        mViewBinding = FragmentDebateBinding.inflate(inflater, container, false);
         return mViewBinding.getRoot();
     }
 

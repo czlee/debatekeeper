@@ -52,7 +52,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
-import net.czlee.debatekeeper.databinding.ActivityFormatChooserBinding;
+import net.czlee.debatekeeper.databinding.FragmentFormatChooserBinding;
 import net.czlee.debatekeeper.databinding.ViewFormatFileInfoBinding;
 import net.czlee.debatekeeper.databinding.ViewFormatFullBinding;
 import net.czlee.debatekeeper.databinding.ViewFormatShortBinding;
@@ -84,7 +84,7 @@ public class FormatChooserFragment extends Fragment {
     private static final String TAG = "FormatChooserActivity";
     public static final String FILES_AUTHORITY = "net.czlee.debatekeeper.fileprovider";
 
-    private ActivityFormatChooserBinding mViewBinding;
+    private FragmentFormatChooserBinding mViewBinding;
     private FormatXmlFilesManager mFilesManager;
     private ListView mStylesListView;
 
@@ -385,7 +385,7 @@ public class FormatChooserFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mViewBinding = ActivityFormatChooserBinding.inflate(inflater, container, false);
+        mViewBinding = FragmentFormatChooserBinding.inflate(inflater, container, false);
         return mViewBinding.getRoot();
     }
 

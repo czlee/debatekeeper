@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2013 Chuan-Zheng Lee
+ *
+ * This file is part of the Debatekeeper app, which is licensed under the
+ * GNU General Public Licence version 3 (GPLv3).  You can redistribute
+ * and/or modify it under the terms of the GPLv3, and you must not use
+ * this file except in compliance with the GPLv3.
+ *
+ * This app is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public Licence for more details.
+ *
+ * You should have received a copy of the GNU General Public Licence
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/prepTimeBellsEditor_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:layout_alignParentTop="true"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:title="@string/fragmentName_PrepTimeBellsEdit"
+        />
+
+    <LinearLayout
+        android:id="@+id/prepTimeBellsEditor_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/prepTimeBellsEditor_toolbar">
+
+        <Button
+            android:id="@+id/prepTimeBellsEditor_addBellButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/prepTimeBellsEditor_addBell_buttonText"
+            style="?android:attr/buttonBarButtonStyle" />
+
+        <Button
+            android:id="@+id/prepTimeBellsEditor_clearAllButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/prepTimeBellsEditor_clearAll_buttonText"
+            style="?android:attr/buttonBarButtonStyle" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/prepTimeBellsEditor_bellsList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/prepTimeBellsEditor_buttons" >
+    </ListView>
+
+</RelativeLayout>

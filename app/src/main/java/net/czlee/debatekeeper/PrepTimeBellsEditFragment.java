@@ -52,7 +52,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-import net.czlee.debatekeeper.databinding.ActivityPrepTimeBellsEditBinding;
+import net.czlee.debatekeeper.databinding.FragmentPrepTimeBellsEditBinding;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
@@ -71,7 +71,7 @@ import java.util.Locale;
  */
 public class PrepTimeBellsEditFragment extends Fragment {
 
-    private ActivityPrepTimeBellsEditBinding mViewBinding;
+    private FragmentPrepTimeBellsEditBinding mViewBinding;
 
     private PrepTimeBellsManager mPtbm;
 
@@ -306,7 +306,7 @@ public class PrepTimeBellsEditFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mViewBinding = ActivityPrepTimeBellsEditBinding.inflate(inflater, container, false);
+        mViewBinding = FragmentPrepTimeBellsEditBinding.inflate(inflater, container, false);
         return mViewBinding.getRoot();
     }
 
