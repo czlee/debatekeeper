@@ -17,18 +17,13 @@
 
 package net.czlee.debatekeeper;
 
-import static com.google.android.material.snackbar.Snackbar.LENGTH_SHORT;
-
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -49,16 +44,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
 import net.czlee.debatekeeper.databinding.ActivityFormatChooserBinding;
+import net.czlee.debatekeeper.databinding.ViewFormatFileInfoBinding;
+import net.czlee.debatekeeper.databinding.ViewFormatFullBinding;
+import net.czlee.debatekeeper.databinding.ViewFormatShortBinding;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfo;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfoForSchema1;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfoForSchema2;
@@ -164,8 +161,8 @@ public class FormatChooserFragment extends Fragment {
             return mStylesListView.getCheckedItemPosition();
         }
 
-        void populateBasicInfo(View view, String filename) throws IOException, SAXException {
-            FormatChooserFragment.this.populateBasicInfo(view, filename);
+        void populateBasicInfo(ViewFormatShortBinding vb, String filename) throws IOException, SAXException {
+            FormatChooserFragment.this.populateBasicInfo(vb, filename);
         }
 
     }
@@ -176,7 +173,7 @@ public class FormatChooserFragment extends Fragment {
      * @author Chuan-Zheng Lee
      *
      */
-    public class ListIOErrorDialogFragment extends DialogFragment {
+    public static class ListIOErrorDialogFragment extends DialogFragment {
 
         @NonNull
         @Override
@@ -242,7 +239,10 @@ public class FormatChooserFragment extends Fragment {
             Activity activity = requireActivity();
             FormatChooserFragment parent = (FormatChooserFragment) getParentFragment();
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-            View view = View.inflate(activity, R.layout.view_format_full, null);
+
+            ViewFormatFullBinding binding = ViewFormatFullBinding.inflate(LayoutInflater.from(activity));
+
+//            View view = View.inflate(activity, R.layout.view_format_full, null);
 
             DebateFormatInfo dfi;
             try {
@@ -254,35 +254,35 @@ public class FormatChooserFragment extends Fragment {
             }
 
             String schemaVersion = dfi.getSchemaVersion();
-            populateFileInfo(view, filename, schemaVersion);
+            populateFileInfo(binding.viewFormatFileInfo, filename, schemaVersion);
 
-            FormatChooserFragment.populateBasicInfo(view, dfi);
-            populatePrepTimeInfo(view, dfi);
-            populateTwoColumnTable(view, R.id.viewFormat_table_speechTypes, R.layout.speech_type_row,
+            FormatChooserFragment.populateBasicInfo(binding.viewFormatInfo, dfi);
+            populatePrepTimeInfo(binding, dfi);
+            populateTwoColumnTable(binding.viewFormatTableSpeechTypes, R.layout.speech_type_row,
                     dfi.getSpeechFormatDescriptions());
-            populateTwoColumnTable(view, R.id.viewFormat_table_speeches, R.layout.speech_row,
+            populateTwoColumnTable(binding.viewFormatTableSpeeches, R.layout.speech_row,
                     dfi.getSpeeches());
             builder.setTitle(dfi.getName());
             builder.setCancelable(true);
 
             AlertDialog dialog = builder.create();
-            dialog.setView(view, 0, 10, 10, 15);
+            dialog.setView(binding.getRoot(), 0, 10, 10, 15);
             return dialog;
 
         }
 
         /**
          * Populates a View with information about a given file
-         * @param view the View to populate
+         * @param vb the {@link ViewFormatFileInfoBinding} to populate
          * @param filename the file name
          */
-        private void populateFileInfo(View view, String filename, String schemaVersion) {
+        private void populateFileInfo(ViewFormatFileInfoBinding vb, String filename, String schemaVersion) {
 
             FormatChooserFragment parent = (FormatChooserFragment) getParentFragment();
 
             // Display its location if it's not a built-in file
             if (parent.mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE) {
-                TextView fileLocationText = (TextView) view.findViewById(R.id.viewFormat_fileLocationValue);
+                TextView fileLocationText = vb.viewFormatFileLocationValue;
                 fileLocationText.setText(getString(R.string.viewFormat_fileLocationValue_userDefined));
                 fileLocationText.setVisibility(View.VISIBLE);
             }
@@ -303,27 +303,24 @@ public class FormatChooserFragment extends Fragment {
                         schemaVersionTextValue = getString(R.string.viewFormat_outdatedSchemaVersion, schemaVersion);
                 }
                 if (schemaVersionTextValue != null) {
-                    TextView schemaVersionText = (TextView) view.findViewById(R.id.viewFormat_schemaVersionValue);
+                    TextView schemaVersionText = vb.viewFormatSchemaVersionValue;
                     schemaVersionText.setText(schemaVersionTextValue);
                     schemaVersionText.setVisibility(View.VISIBLE);
                 }
             }
 
-            ((TextView) view.findViewById(R.id.viewFormat_fileNameValue)).setText(filename);
+            vb.viewFormatFileNameValue.setText(filename);
         }
 
         /**
          * Populates a table from an ArrayList of String arrays.
-         * @param view the view in which to find the resources
-         * @param tableResId A resource ID pointing to a <code>TableLayout</code>
+         * @param table A <code>TableLayout</code>
          * @param rowResId A resource ID pointing to a <code>TableRow</code> <b>layout file</b>.
          * (Not the <code>TableRow</code> itself.)
          * TableRow must have at least two TextView elements, which must have IDs "text1" and "text2".
          * @param list the list of String arrays.  Each array must have two elements.
          */
-        private void populateTwoColumnTable(View view, int tableResId, int rowResId, ArrayList<String[]> list) {
-            TableLayout table = (TableLayout) view.findViewById(tableResId);
-
+        private void populateTwoColumnTable(TableLayout table, int rowResId, ArrayList<String[]> list) {
             for (String[] rowText : list) {
                 TableRow row = (TableRow) View.inflate(getActivity(), rowResId, null);
                 ((TextView) row.findViewById(R.id.text1)).setText(rowText[0].concat(" "));
@@ -333,17 +330,15 @@ public class FormatChooserFragment extends Fragment {
 
         }
 
-        private static void populatePrepTimeInfo(View view, DebateFormatInfo dfi) {
+        private static void populatePrepTimeInfo(ViewFormatFullBinding vb, DebateFormatInfo dfi) {
             String prepTimeDescription = dfi.getPrepTimeDescription();
 
             // If there is prep time, populate the view.
             if (prepTimeDescription != null)
-                ((TextView) view.findViewById(R.id.viewFormat_prepTimeValue)).setText(
-                        prepTimeDescription);
+                vb.viewFormatPrepTimeValue.setText(prepTimeDescription);
 
             // Otherwise, hide the whole row.
-            else
-                view.findViewById(R.id.viewFormat_prepTimeRow).setVisibility(View.GONE);
+            else vb.viewFormatPrepTimeRow.setVisibility(View.GONE);
         }
     }
 
@@ -553,14 +548,14 @@ public class FormatChooserFragment extends Fragment {
     }
 
     /**
-     * @param view the <code>View</code> to be populated
+     * @param vb the {@link ViewFormatShortBinding} to be populated
      * @param filename the filename of the XML file from which data is to be taken
      * @throws IOException if there was an IO problem with the XML file
      * @throws SAXException if thrown by the XML parser
      */
-    private void populateBasicInfo(View view, String filename) throws IOException, SAXException {
+    private void populateBasicInfo(ViewFormatShortBinding vb, String filename) throws IOException, SAXException {
         DebateFormatInfo dfi = getDebateFormatInfo(filename);
-        populateBasicInfo(view, dfi);
+        populateBasicInfo(vb, dfi);
     }
 
     /**
@@ -664,7 +659,7 @@ public class FormatChooserFragment extends Fragment {
 
         // Check for error conditions
         if (filename == null) {
-            showSnackbar(LENGTH_SHORT, R.string.formatChooser_share_error_noFileSelected);
+            showSnackbar(R.string.formatChooser_share_error_noFileSelected);
             return;
         }
 
@@ -673,19 +668,19 @@ public class FormatChooserFragment extends Fragment {
             case FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE:
                 break;
             case FormatXmlFilesManager.LOCATION_ASSETS:
-                showSnackbar(LENGTH_SHORT, R.string.formatChooser_share_error_builtInFile);
+                showSnackbar(R.string.formatChooser_share_error_builtInFile);
                 return;
             case FormatXmlFilesManager.LOCATION_NOT_FOUND:
             default:
                 Log.e(TAG, String.format("shareSelection: getLocation returned result code %d", location));
-                showSnackbar(LENGTH_SHORT, R.string.formatChooser_share_error_notFound, filename);
+                showSnackbar(R.string.formatChooser_share_error_notFound, filename);
                 return;
         }
 
         File file = mFilesManager.getFileFromExternalStorage(filename);
         if (file == null) {
             Log.e(TAG, String.format("shareSelection: getFileFromExternalStorage returned null on file %s", filename));
-            showSnackbar(LENGTH_SHORT, R.string.formatChooser_share_error_generic);
+            showSnackbar(R.string.formatChooser_share_error_generic);
             return;
         }
 
@@ -695,7 +690,7 @@ public class FormatChooserFragment extends Fragment {
         } catch (IllegalArgumentException e) {
             Log.e(TAG, "shareSelection: tried to get file from outside allowable paths");
             Log.e(TAG, "path was: " + file.getAbsolutePath());
-            showSnackbar(LENGTH_SHORT, R.string.formatChooser_share_error_generic);
+            showSnackbar(R.string.formatChooser_share_error_generic);
             return;
         }
 
@@ -716,12 +711,12 @@ public class FormatChooserFragment extends Fragment {
         startActivity(chooserIntent);
     }
 
-    private void showSnackbar(int duration, int stringResId, Object... formatArgs) {
+    private void showSnackbar(int stringResId, Object... formatArgs) {
         String string = getString(stringResId, formatArgs);
         View coordinator = mViewBinding.formatChooserCoordinator;
-        Snackbar snackbar = Snackbar.make(coordinator, string, duration);
+        Snackbar snackbar = Snackbar.make(coordinator, string, BaseTransientBottomBar.LENGTH_SHORT);
         View snackbarText = snackbar.getView();
-        TextView textView = (TextView) snackbarText.findViewById(com.google.android.material.R.id.snackbar_text);
+        TextView textView = snackbarText.findViewById(com.google.android.material.R.id.snackbar_text);
         if (textView != null) textView.setMaxLines(5);
         snackbar.show();
     }
@@ -758,17 +753,13 @@ public class FormatChooserFragment extends Fragment {
     }
 
     /**
-     * @param view the <code>View</code> to be populated
-     * @param dfi is an <code>InputStream> for the XML file from which data is to be taken
+     * @param vb the {@link ViewFormatShortBinding} to be populated
+     * @param dfi is an <code>InputStream</code> for the XML file from which data is to be taken
      */
-    private static void populateBasicInfo(View view, DebateFormatInfo dfi) {
-        ((TextView) view.findViewById(R.id.viewFormat_tableCell_regionValue)).setText(
-                concatenate(dfi.getRegions()));
-        ((TextView) view.findViewById(R.id.viewFormat_tableCell_levelValue)).setText(
-                concatenate(dfi.getLevels()));
-        ((TextView) view.findViewById(R.id.viewFormat_tableCell_usedAtValue)).setText(
-                concatenate(dfi.getUsedAts()));
-        ((TextView) view.findViewById(R.id.viewFormat_tableCell_descValue)).setText(
-                dfi.getDescription());
+    private static void populateBasicInfo(ViewFormatShortBinding vb, DebateFormatInfo dfi) {
+        vb.viewFormatTableCellRegionValue.setText(concatenate(dfi.getRegions()));
+        vb.viewFormatTableCellLevelValue.setText(concatenate(dfi.getLevels()));
+        vb.viewFormatTableCellUsedAtValue.setText(concatenate(dfi.getUsedAts()));
+        vb.viewFormatTableCellDescValue.setText(dfi.getDescription());
     }
 }

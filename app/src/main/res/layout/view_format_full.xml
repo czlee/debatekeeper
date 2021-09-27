@@ -27,19 +27,21 @@
 
         <!-- File info row -->
         <include
+			android:id="@+id/viewFormat_fileInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             layout="@layout/view_format_file_info" />
 
         <!-- Information from the <info> element -->
         <include
+			android:id="@+id/viewFormat_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             layout="@layout/view_format_short" />
 
         <!-- Prep time row -->
-		<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		    android:layout_width="match_parent"
+		<RelativeLayout
+			android:layout_width="match_parent"
 		    android:layout_height="wrap_content"
 		    android:paddingBottom="7dip"
 		    android:id="@+id/viewFormat_prepTimeRow" >
@@ -49,13 +51,13 @@
 		        style="@style/ViewFormat_TableLabel"
 		        android:text="@string/viewFormat_prepTimeLabel"
 				android:paddingRight="@dimen/formatChooser_tableCellPadding"
-		         />
+				android:paddingEnd="@dimen/formatChooser_tableCellPadding" />
 
 		    <TextView
 		        android:id="@+id/viewFormat_prepTimeValue"
 		        style="@style/ViewFormat_TableValue"
 		        android:layout_toRightOf="@id/viewFormat_prepTimeLabel"
-		         />
+				android:layout_toEndOf="@id/viewFormat_prepTimeLabel" />
 
 		</RelativeLayout>
 
@@ -66,14 +68,12 @@
             android:text="@string/viewFormat_speechesLabel" />
 
         <TableLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/viewFormat_table_speechTypes"
+			android:id="@+id/viewFormat_table_speechTypes"
             style="@style/ViewFormat_TableSpeeches"
             android:shrinkColumns="1" />
 
         <TableLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/viewFormat_table_speeches"
+			android:id="@+id/viewFormat_table_speeches"
             style="@style/ViewFormat_TableSpeeches"
             android:shrinkColumns="0" />
     </LinearLayout>
