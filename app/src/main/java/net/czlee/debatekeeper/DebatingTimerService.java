@@ -82,7 +82,7 @@ public class DebatingTimerService extends Service
         }
 
         public void releaseDebateManager() {
-            if(mDebateManager != null)
+            if (mDebateManager != null)
                 mDebateManager.release();
             mDebateManager = null;
         }

@@ -89,7 +89,6 @@ import net.czlee.debatekeeper.databinding.ActivityDebateBinding;
 import net.czlee.debatekeeper.databinding.DebateLoadErrorBinding;
 import net.czlee.debatekeeper.databinding.DebateTimerDisplayBinding;
 import net.czlee.debatekeeper.databinding.DialogWithDontShowBinding;
-import net.czlee.debatekeeper.databinding.NoDebateLoadedBinding;
 import net.czlee.debatekeeper.debateformat.BellInfo;
 import net.czlee.debatekeeper.debateformat.DebateFormat;
 import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml;
@@ -135,15 +134,15 @@ public class DebatingTimerFragment extends Fragment {
     private final ServiceConnection mServiceConnection = new DebatingTimerServiceConnection();
 
     private DebateManager    mDebateManager;
-    private Spanned mDebateLoadError = null;
+    private Spanned          mDebateLoadError = null;
     private Bundle           mLastStateBundle;
     private boolean          mIsEditingTime = false;
     private boolean          mIsOpeningFormatChooser = false;
     private final Semaphore  mFlashScreenSemaphore = new Semaphore(1, true);
 
-    private ViewBinding         mDebateTimerDisplay;  // normally but not always a DebateTimerDisplayBinding
-    private EnableableViewPager mViewPager;
-    private boolean             mChangingPages;
+    private DebateTimerDisplayBinding mDebateTimerDisplay;  // normally but not always a DebateTimerDisplayBinding
+    private EnableableViewPager       mViewPager;
+    private boolean                   mIsChangingPages;
 
     private ActivityDebateBinding mViewBinding;
 
@@ -535,17 +534,15 @@ public class DebatingTimerFragment extends Fragment {
 
         @Override
         public void onPageSelected(int position) {
-            // Log.d(TAG, "onPageSelected for position " + position);
-
             // Enable the lock that prevents updateGui() from running while pages are changing.
             // This is necessary to prevent updateGui() from updating the wrong view after this
             // method is run (and the active phase index changed) and before
             // DebateTimerDisplayPagerAdapter#setPrimaryItem() is called (and the view pointer
             // updated).
-            mChangingPages = true;
-
-            if (mDebateManager != null)
+            if (mDebateManager != null) {
+                mIsChangingPages = true;
                 mDebateManager.setActivePhaseIndex(position);
+            }
             updateControls();
         }
 
@@ -563,44 +560,48 @@ public class DebatingTimerFragment extends Fragment {
 
         private static final String TAG = "DebateTDPagerAdapter";
 
-        private final HashMap<DebateManager.DebatePhaseTag, ViewBinding> mDisplaysMap = new HashMap<>();
+        private final HashMap<DebateManager.DebatePhaseTag, DebateTimerDisplayBinding> mDisplaysMap = new HashMap<>();
         private static final String NO_DEBATE_LOADED = "no_debate_loaded";
 
         @Override
         public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
             DebateManager.DebatePhaseTag dpt = (DebateManager.DebatePhaseTag) object;
-            ViewBinding binding = mDisplaysMap.get(dpt);
-            if (binding == null) {
+            DebateTimerDisplayBinding binding = mDisplaysMap.get(dpt);
+            if (binding == null)
                 Log.e(TAG, "Nothing found to destroy at position " + position + " - " + object.toString());
-                return;
-            }
-            container.removeView(binding.getRoot());
+            else
+                container.removeView(binding.getRoot());
             mDisplaysMap.remove(dpt);
         }
 
         @Override
         public int getCount() {
-            if (mDebateManager == null) return 1;
+            if (mDebateManager == null) return 0;
             else return mDebateManager.getNumberOfPhases();
         }
 
         @Override
         public int getItemPosition(@NonNull Object object) {
 
-            // If it was the "no debate loaded" screen and there is now a debate loaded,
-            // then the View no longer exists.  Likewise if there is no debate loaded and
-            // there was anything but the "no debate loaded" screen.
             DebateManager.DebatePhaseTag tag = (DebateManager.DebatePhaseTag) object;
-            if ((mDebateManager == null) != (NO_DEBATE_LOADED.equals(tag.specialTag)))
+            if ((mDebateManager == null) != (NO_DEBATE_LOADED.equals(tag.specialTag))) {
+                // If it was the "no debate loaded" screen and there is now a debate loaded,
+                // then the View no longer exists.  Likewise if there is no debate loaded and
+                // there was anything but the "no debate loaded" screen.
+                Log.e(TAG, "getItemPosition: returning POSITION_NONE");
                 return POSITION_NONE;
 
-            // If it was "no debate loaded" and there is still no debate loaded, it's unchanged.
-            if (mDebateManager == null)
+
+            } else if (mDebateManager == null) {
+                // If it was "no debate loaded" and there is still no debate loaded, it's unchanged.
+                // This should never happen, but just in case.
+                Log.e(TAG, "getItemPosition: returning POSITION_UNCHANGED");
                 return POSITION_UNCHANGED;
+            }
 
             // If there's no messy debate format changing or loading, delegate this function to the
             // DebateManager.
-            return mDebateManager.getPhaseIndexForTag((DebateManager.DebatePhaseTag) object);
+            else return mDebateManager.getPhaseIndexForTag(tag);
         }
 
         @NonNull
@@ -610,13 +611,11 @@ public class DebatingTimerFragment extends Fragment {
             Context context = requireContext();
 
             if (mDebateManager == null) {
-                // Load the "no debate loaded" screen.
-                Log.i(TAG, "No debate loaded");
-                NoDebateLoadedBinding binding = NoDebateLoadedBinding.inflate(LayoutInflater.from(context));
-                container.addView(binding.getRoot());
+                // Return a blank view that should never be seen, since I think we have to add something.
+                Log.e(TAG, "Tried to instantiate ViewPager item with no debate loaded");
+                container.addView(new View(context));
                 DebateManager.DebatePhaseTag tag = new DebateManager.DebatePhaseTag();
                 tag.specialTag = NO_DEBATE_LOADED;
-                mDisplaysMap.put(tag, binding);
                 return tag;
             }
 
@@ -663,7 +662,7 @@ public class DebatingTimerFragment extends Fragment {
             DebateManager.DebatePhaseTag dpt = (DebateManager.DebatePhaseTag) object;
             if (!mDisplaysMap.containsKey(dpt))
                 return false;
-            ViewBinding binding = mDisplaysMap.get(dpt);
+            DebateTimerDisplayBinding binding = mDisplaysMap.get(dpt);
             if (binding == null)
                 return false;
             return binding.getRoot() == view;
@@ -671,18 +670,14 @@ public class DebatingTimerFragment extends Fragment {
 
         @Override
         public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-            ViewBinding original = mDebateTimerDisplay;
+            DebateTimerDisplayBinding original = mDebateTimerDisplay;
 
-            // Note: There is no guarantee that mDebateTimerDisplay will in fact be a debate
-            // timer display - it is just whatever view is currently being displayed.  Therefore,
-            // other methods should check that mDebateTimerDisplay is in fact a debate timer
-            // display (by comparing its ID to R.id.debateTimer_root) before working on it.
             DebateManager.DebatePhaseTag dpt = (DebateManager.DebatePhaseTag) object;
             mDebateTimerDisplay = mDisplaysMap.get(dpt);
 
             // Disable the lock that prevents updateGui() from running while the pages are
             // changing.
-            mChangingPages = false;
+            mIsChangingPages = false;
 
             // This method seems to be called multiple times on each update.
             // To save unnecessary work (i.e. for performance), only run (the relatively-intensive)
@@ -700,7 +695,7 @@ public class DebatingTimerFragment extends Fragment {
          */
         void refreshBackgroundColours() {
             if (mDebateManager == null) return;
-            for (Map.Entry<DebateManager.DebatePhaseTag, ViewBinding> entry : mDisplaysMap.entrySet()) {
+            for (Map.Entry<DebateManager.DebatePhaseTag, DebateTimerDisplayBinding> entry : mDisplaysMap.entrySet()) {
                 int phaseIndex = mDebateManager.getPhaseIndexForTag(entry.getKey());
                 DebatePhaseFormat dpf = mDebateManager.getPhaseFormat(phaseIndex);
                 long time = mDebateManager.getPhaseCurrentTime(phaseIndex);
@@ -1341,13 +1336,12 @@ public class DebatingTimerFragment extends Fragment {
      */
     private void editCurrentTimeFinish(boolean save) {
 
-        if (!(mDebateTimerDisplay instanceof DebateTimerDisplayBinding)) {
-            Log.e(TAG, "editCurrentTimeFinish: not a debate timer display");
+        if (mDebateTimerDisplay == null) {
+            Log.e(TAG, "editCurrentTimeFinish: no debate timer display");
             return;
         }
 
-        TimePicker currentTimePicker = ((DebateTimerDisplayBinding) mDebateTimerDisplay).debateTimerCurrentTimePicker;
-
+        TimePicker currentTimePicker = mDebateTimerDisplay.debateTimerCurrentTimePicker;
         currentTimePicker.clearFocus();
 
         // Hide the keyboard
@@ -1386,12 +1380,12 @@ public class DebatingTimerFragment extends Fragment {
         mIsEditingTime = true;
         mFinishEditingTimeBackPressedCallback.setEnabled(true);
 
-        if (!(mDebateTimerDisplay instanceof DebateTimerDisplayBinding)) {
-            Log.e(TAG, "editCurrentTimeStart: not a debate timer display");
+        if (mDebateTimerDisplay == null) {
+            Log.e(TAG, "editCurrentTimeStart: no debate timer display");
             return;
         }
 
-        TimePicker currentTimePicker = ((DebateTimerDisplayBinding) mDebateTimerDisplay).debateTimerCurrentTimePicker;
+        TimePicker currentTimePicker = mDebateTimerDisplay.debateTimerCurrentTimePicker;
 
         long currentTime = mDebateManager.getActivePhaseCurrentTime();
 
@@ -1806,6 +1800,9 @@ public class DebatingTimerFragment extends Fragment {
 
     private void setDebateLoadError(String message) {
         mDebateLoadError = Html.fromHtml(message);
+        if (mServiceBinder != null) mServiceBinder.releaseDebateManager();
+        mDebateManager = null;
+        mIsChangingPages = false;
         updateGui();
     }
 
@@ -1977,9 +1974,7 @@ public class DebatingTimerFragment extends Fragment {
      *  The [Bell] button always is on the right of any of the above three buttons.
      */
     private void updateControls() {
-        if (mDebateManager != null && mDebateTimerDisplay instanceof DebateTimerDisplayBinding) {
-
-            DebateTimerDisplayBinding displayBinding = (DebateTimerDisplayBinding) mDebateTimerDisplay;
+        if (mDebateManager != null && mDebateTimerDisplay != null) {
 
             // If it's the last speaker, don't show a "next speaker" button.
             // Show a "restart debate" button instead.
@@ -1998,11 +1993,11 @@ public class DebatingTimerFragment extends Fragment {
                 break;
             }
 
-            displayBinding.debateTimerCurrentTime.setVisibility((mIsEditingTime) ? View.GONE : View.VISIBLE);
-            displayBinding.debateTimerCurrentTimePicker.setVisibility((mIsEditingTime) ? View.VISIBLE : View.GONE);
+            mDebateTimerDisplay.debateTimerCurrentTime.setVisibility((mIsEditingTime) ? View.GONE : View.VISIBLE);
+            mDebateTimerDisplay.debateTimerCurrentTimePicker.setVisibility((mIsEditingTime) ? View.VISIBLE : View.GONE);
 
             setButtonsEnable(!mIsEditingTime);
-            displayBinding.debateTimerCurrentTime.setLongClickable(!mDebateManager.isRunning());
+            mDebateTimerDisplay.debateTimerCurrentTime.setLongClickable(!mDebateManager.isRunning());
             mViewPager.setPagingEnabled(!mIsEditingTime && !mDebateManager.isRunning());
 
         } else {
@@ -2057,9 +2052,9 @@ public class DebatingTimerFragment extends Fragment {
             mViewBinding.mainScreenNoDebateLoaded.getRoot().setVisibility(View.GONE);
             mViewBinding.mainScreenDebateLoadError.getRoot().setVisibility(View.GONE);
 
-            if (mDebateTimerDisplay != null && mDebateTimerDisplay instanceof DebateTimerDisplayBinding) {
+            if (mDebateTimerDisplay != null) {
                 Log.d(TAG, "updating debate timer display");
-                updateDebateTimerDisplay((DebateTimerDisplayBinding) mDebateTimerDisplay,
+                updateDebateTimerDisplay(mDebateTimerDisplay,
                         mDebateManager.getActivePhaseFormat(),
                         mDebateManager.getActivePhaseCurrentPeriodInfo(),
                         mDebateManager.getActivePhaseName(),
@@ -2220,7 +2215,7 @@ public class DebatingTimerFragment extends Fragment {
      * Updates the GUI (in the general case).
      */
     private void updateGui() {
-        if (mChangingPages) {
+        if (mIsChangingPages) {
             Log.d(TAG, "Changing pages, don't update GUI");
             return;
         }
