@@ -17,12 +17,10 @@
 
 package net.czlee.debatekeeper.debateformat;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-
-import android.util.Log;
 
 /**
  * DebateFormat is a passive data class that holds information about a debate format.
@@ -54,7 +52,7 @@ public class DebateFormat {
     /**
      * Thrown when a speech is added with a speech format that is not currently defined.
      */
-    public class NoSuchFormatException extends Exception {
+    public static class NoSuchFormatException extends Exception {
 
         private static final long serialVersionUID = 7705013466811555014L;
 
@@ -72,7 +70,7 @@ public class DebateFormat {
      * Collection of information relating to a speech.  For internal (private) use only; future
      * implementations may do away with this class.
      */
-    private class SpeechSpec {
+    private static class SpeechSpec {
         public final String name;
         public final String type;
 
@@ -92,14 +90,14 @@ public class DebateFormat {
      */
     public DebateFormat() {
         super();
-        mSpeechFormats  = new HashMap<String, SpeechFormat>();
-        mSpeechSpecs    = new ArrayList<SpeechSpec>();
+        mSpeechFormats  = new HashMap<>();
+        mSpeechSpecs    = new ArrayList<>();
         mPrepTimeFormat = null;
     }
 
     /**
      * Sets the prep format.
-     * @param pf the {@link PrepTimeFormat}
+     * @param ptf the {@link PrepTimeFormat}
      */
     public void setPrepFormat(PrepTimeFormat ptf) {
         mPrepTimeFormat = ptf;
@@ -147,7 +145,7 @@ public class DebateFormat {
 
     /**
      * Returns the prep format.
-     * @return
+     * @return the prep format
      */
     public PrepTimeFormat getPrepFormat() {
         return mPrepTimeFormat;

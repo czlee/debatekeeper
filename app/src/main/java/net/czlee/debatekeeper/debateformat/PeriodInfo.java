@@ -44,8 +44,6 @@ public class PeriodInfo {
     private Integer mBackgroundColor  = null; // Use Integer so that we can also use null.
     private boolean mPoisAllowed      = false; // There is no "null" option for this, it is always updated.
 
-    private boolean mSchemaVersion1   = false;
-
     // Bundle suffixes
     private final String BUNDLE_SUFFIX_DESC = ".d";
     private final String BUNDLE_SUFFIX_BGCOLOR = ".b";
@@ -63,11 +61,11 @@ public class PeriodInfo {
 
     /**
      * Standard constructor.
-     * @param reference
-     * @param name
-     * @param description
-     * @param backgroundColor
-     * @param poisAllowed
+     * @param reference reference
+     * @param name human-readable name
+     * @param description description to be displayed when active
+     * @param backgroundColor background colour (alpha is ignored and always replaced with (0xFF)
+     * @param poisAllowed whether POIs are allowed
      */
     public PeriodInfo(String reference, String name, String description, Integer backgroundColor, boolean poisAllowed) {
         mReference       = reference;
@@ -75,20 +73,6 @@ public class PeriodInfo {
         mDescription     = description;
         mBackgroundColor = backgroundColor;
         mPoisAllowed     = poisAllowed;
-    }
-
-    /**
-     * Constructor for schema 1.0/1.1 periods.
-     * @param description
-     * @param backgroundColor
-     * @param poisAllowed
-     * @param schemaVersion1 <code>true</code> if for schema 1.0 periods, <code>false</code> otherwise
-     */
-    public PeriodInfo(String description, Integer backgroundColor, boolean poisAllowed, boolean schemaVersion1) {
-        mDescription     = description;
-        mBackgroundColor = backgroundColor;
-        mPoisAllowed     = poisAllowed;
-        mSchemaVersion1  = schemaVersion1;
     }
 
     /**
@@ -120,12 +104,6 @@ public class PeriodInfo {
      * @return the background colour, with the alpha value always set to <code>0xff</code>.
      */
     public Integer getBackgroundColor() {
-
-        // Backwards compatibility measure.
-        // The alpha value override doesn't apply to PeriodInfos created from schema 1.0 files.
-        if (mSchemaVersion1)
-            return mBackgroundColor;
-
         // Always set the alpha value to 0xFF.
         if (mBackgroundColor != null)
             return mBackgroundColor | 0xff000000;
@@ -145,12 +123,7 @@ public class PeriodInfo {
      */
     public void update(PeriodInfo pi) {
         if (pi.mDescription != null)     mDescription     = pi.mDescription;
-
-        if (pi.mBackgroundColor != null) {
-            // Schema version 1.0 (currently) is tied one-to-one with background colour.
-            mBackgroundColor = pi.mBackgroundColor;
-            mSchemaVersion1  = pi.mSchemaVersion1;
-        }
+        if (pi.mBackgroundColor != null) mBackgroundColor = pi.mBackgroundColor;
 
         // There is no "do not change" option for POIs allowed
         mPoisAllowed = pi.mPoisAllowed;
@@ -164,12 +137,7 @@ public class PeriodInfo {
      */
     public void addInfo(PeriodInfo pi) {
         if (this.mDescription == null)     mDescription     = pi.mDescription;
-
-        if (this.mBackgroundColor == null) {
-            // Schema version 1.0 (currently) is tied one-to-one with background colour.
-            mBackgroundColor = pi.mBackgroundColor;
-            mSchemaVersion1  = pi.mSchemaVersion1;
-        }
+        if (this.mBackgroundColor == null) mBackgroundColor = pi.mBackgroundColor;
 
         // There is no "do not change" option for POIs allowed
         mPoisAllowed = pi.mPoisAllowed;

@@ -35,7 +35,7 @@ public abstract class ControlledDebatePhaseFormat extends GenericDebatePhaseForm
 
     protected final long          mLength;
     protected PeriodInfo          mFirstPeriodInfo = new PeriodInfo();
-    protected ArrayList<BellInfo> mBells = new ArrayList<BellInfo>();
+    protected ArrayList<BellInfo> mBells = new ArrayList<>();
 
     public ControlledDebatePhaseFormat(long length) {
         super();

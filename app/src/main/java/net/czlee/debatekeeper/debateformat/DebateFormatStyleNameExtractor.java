@@ -27,7 +27,7 @@ import java.io.InputStream;
 public class DebateFormatStyleNameExtractor {
 
     private final String DEBATING_TIMER_URI;
-    private Resources mResources;
+    private final Resources mResources;
     private String mCurrentStyleName;
 
     public DebateFormatStyleNameExtractor(Context context) {
@@ -58,7 +58,7 @@ public class DebateFormatStyleNameExtractor {
     // Private classes
     //******************************************************************************************
 
-    private class AllInformationFoundException extends SAXException {
+    private static class AllInformationFoundException extends SAXException {
         private static final long serialVersionUID = 3195935815375118010L;
     }
 
@@ -71,7 +71,7 @@ public class DebateFormatStyleNameExtractor {
         private StringBuilder mNameBuffer = null;
 
         @Override
-        public void characters(char[] ch, int start, int length) throws SAXException {
+        public void characters(char[] ch, int start, int length) {
             String str = new String(ch, start, length);
             if (mNameBuffer == null) return;
             mNameBuffer = mNameBuffer.append(str);
@@ -87,7 +87,7 @@ public class DebateFormatStyleNameExtractor {
         }
 
         @Override
-        public void startDocument() throws SAXException {
+        public void startDocument() {
             // initialise
             mCurrentStyleName = null;
         }

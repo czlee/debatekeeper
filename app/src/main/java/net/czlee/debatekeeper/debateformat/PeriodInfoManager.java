@@ -54,9 +54,9 @@ public class PeriodInfoManager {
     private static final String TAG = "PeriodInfoManager";
 
     private final Resources mResources;
-    private final ArrayList<String> mLastElementErrors = new ArrayList<String>();
-    private final HashMap<String, PeriodInfo> mBuiltInPeriodInfos = new HashMap<String, PeriodInfo>();
-    private final HashMap<String, PeriodInfo> mLocalPeriodInfos = new HashMap<String, PeriodInfo>();
+    private final ArrayList<String> mLastElementErrors = new ArrayList<>();
+    private final HashMap<String, PeriodInfo> mBuiltInPeriodInfos = new HashMap<>();
+    private final HashMap<String, PeriodInfo> mLocalPeriodInfos = new HashMap<>();
     private final XmlUtilities xu;
 
     private static final String BUILT_IN_PERIODS_FILE = "periods.xml";
@@ -272,10 +272,7 @@ public class PeriodInfoManager {
             addError(R.string.xml2Error_periodType_poisAllowed_invalid, e.getValue());
         }
 
-        PeriodInfo pi = new PeriodInfo(ref, name, description, defaultBackgroundColor, poisAllowed);
-
-        return pi;
-
+        return new PeriodInfo(ref, name, description, defaultBackgroundColor, poisAllowed);
     }
 
     private void addError(int resId, Object... formatArgs) {
