@@ -178,6 +178,7 @@ public class FormatChooserFragment extends Fragment {
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
+            assert getArguments() != null;
             String filename = getArguments().getString(DIALOG_ARGUMENT_FILE_NAME);
             return getMoreDetailsDialog(filename);
         }
@@ -209,6 +210,7 @@ public class FormatChooserFragment extends Fragment {
         private AlertDialog getMoreDetailsDialog(String filename) {
             Activity activity = requireActivity();
             FormatChooserFragment parent = (FormatChooserFragment) getParentFragment();
+            assert parent != null;
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
             ViewFormatFullBinding binding = ViewFormatFullBinding.inflate(LayoutInflater.from(activity));
@@ -248,6 +250,7 @@ public class FormatChooserFragment extends Fragment {
         private void populateFileInfo(ViewFormatFileInfoBinding vb, String filename, String schemaVersion) {
 
             FormatChooserFragment parent = (FormatChooserFragment) getParentFragment();
+            assert parent != null;
 
             // Display its location if it's not a built-in file
             if (parent.mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE) {

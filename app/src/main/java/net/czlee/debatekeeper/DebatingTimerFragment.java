@@ -295,6 +295,8 @@ public class DebatingTimerFragment extends Fragment {
             final Activity activity = requireActivity();
             final DebatingTimerFragment parent = (DebatingTimerFragment) getParentFragment();
             final DialogWithDontShowBinding binding = DialogWithDontShowBinding.inflate(LayoutInflater.from(activity));
+            assert parent != null;
+
             binding.message.setText(R.string.customFilesMovingDialog_message);
             binding.dontShowAgain.setChecked(false);
 
@@ -344,6 +346,8 @@ public class DebatingTimerFragment extends Fragment {
             final DebatingTimerFragment parent = (DebatingTimerFragment) getParentFragment();
             AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
             Bundle args = getArguments();
+            assert parent != null;
+            assert args != null;
 
             final String incomingFilename = args.getString(DIALOG_ARGUMENT_FILE_NAME);
             String incomingStyleName = args.getString(DIALOG_ARGUMENT_INCOMING_STYLE_NAME);
@@ -398,6 +402,8 @@ public class DebatingTimerFragment extends Fragment {
             final Context context = requireContext();
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             Bundle args = getArguments();
+            assert args != null;
+            assert parent != null;
 
             final String incomingFilename = args.getString(DIALOG_ARGUMENT_FILE_NAME);
             final String suggestedFilename = args.getString(DIALOG_ARGUMENT_SUGGESTED_FILE_NAME);
@@ -435,8 +441,9 @@ public class DebatingTimerFragment extends Fragment {
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final DebatingActivity activity = (DebatingActivity) getActivity();
+            final DebatingActivity activity = (DebatingActivity) requireActivity();
             Bundle args = getArguments();
+            assert args != null;
 
             String schemaUsed      = args.getString(DIALOG_ARGUMENT_SCHEMA_USED);
             String schemaSupported = args.getString(DIALOG_ARGUMENT_SCHEMA_SUPPORTED);
@@ -832,7 +839,7 @@ public class DebatingTimerFragment extends Fragment {
         public void onServiceDisconnected(ComponentName arg0) {
             Log.d(TAG, "service disconnected");
             mDebateManager = null;
-            mViewPager.getAdapter().notifyDataSetChanged();
+            notifyViewPagerDataSetChanged();
         }
     }
 
@@ -1107,7 +1114,8 @@ public class DebatingTimerFragment extends Fragment {
             if (oldBackgroundColourArea != mBackgroundColourArea) {
                 Log.v(TAG, "background colour preference changed - refreshing");
                 resetBackgroundColoursToTransparent();
-                ((DebateTimerDisplayPagerAdapter) mViewPager.getAdapter()).refreshBackgroundColours();
+                DebateTimerDisplayPagerAdapter adapter = (DebateTimerDisplayPagerAdapter) mViewPager.getAdapter();
+                if (adapter != null) adapter.refreshBackgroundColours();
             }
 
             // List preference: Flash screen mode
@@ -1127,7 +1135,7 @@ public class DebatingTimerFragment extends Fragment {
 
             // This is necessary if the debate structure has changed, i.e. if prep time has been
             // enabled or disabled.
-            if (mViewPager != null) mViewPager.getAdapter().notifyDataSetChanged();
+            notifyViewPagerDataSetChanged();
 
         } else {
             Log.v(TAG, "Couldn't restore overtime bells, mDebateManager doesn't yet exist");
@@ -1626,7 +1634,7 @@ public class DebatingTimerFragment extends Fragment {
                 df = buildDebateFromXml(mFormatXmlFileName);
             } catch (FatalXmlError e) {
                 setDebateLoadError(e.getMessage());
-                mViewPager.getAdapter().notifyDataSetChanged();
+                notifyViewPagerDataSetChanged();
                 return;
             }
 
@@ -1650,7 +1658,7 @@ public class DebatingTimerFragment extends Fragment {
         Log.d(TAG, "clearing error, notifying view pager");
         clearDebateLoadError();
         if (mViewPager != null) {  // sometimes this is called from the service, so mViewPager might not exist
-            mViewPager.getAdapter().notifyDataSetChanged();
+            notifyViewPagerDataSetChanged();
             mViewPager.setCurrentItem(mDebateManager.getActivePhaseIndex(), false);
         }
         applyPreferences();
@@ -1675,7 +1683,7 @@ public class DebatingTimerFragment extends Fragment {
     }
 
     /**
-     * Navigates to FormatChooserActivity.
+     * Navigates to {@link FormatChooserFragment}.
      */
     private void navigateToFormatChooser(@Nullable String xmlFileName) {
         DebatingTimerFragmentDirections.ActionChooseFormat action = DebatingTimerFragmentDirections.actionChooseFormat();
@@ -1683,6 +1691,17 @@ public class DebatingTimerFragment extends Fragment {
         if (xmlFileName != null)
             action.setXmlFileName(xmlFileName);
         NavHostFragment.findNavController(this).navigate(action);
+    }
+
+    /**
+     * Convenience function, basically runs <code>mViewPager.getAdapter().notifyDataSetChanged()</code>
+     * but also checks that things aren't <code>null</code> (and does nothing if anything is).
+     */
+    private void notifyViewPagerDataSetChanged() {
+        if (mViewPager == null) return;
+        PagerAdapter adapter = mViewPager.getAdapter();
+        if (adapter == null) return;
+        adapter.notifyDataSetChanged();
     }
 
     /**

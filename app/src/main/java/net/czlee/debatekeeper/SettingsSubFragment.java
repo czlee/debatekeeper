@@ -121,8 +121,9 @@ public class SettingsSubFragment extends PreferenceFragmentCompat {
         // Customise a few preferences
 
         // Set what the "Learn More" option in POIs timer category does
-        getPreferenceManager().findPreference(KEY_POI_TIMER_LEARN_MORE)
-            .setOnPreferenceClickListener(preference -> {
+        Preference learnMore = getPreferenceManager().findPreference(KEY_POI_TIMER_LEARN_MORE);
+        if (learnMore != null)
+            learnMore.setOnPreferenceClickListener(preference -> {
                 Uri uri = Uri.parse(getString(R.string.poiTimer_moreInfoUrl));
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
@@ -131,11 +132,12 @@ public class SettingsSubFragment extends PreferenceFragmentCompat {
 
         // Set what the "Prep timer bells" option does
         Preference prefPrepTimerBells = getPreferenceManager().findPreference(KEY_PREP_TIMER_BELLS);
-        prefPrepTimerBells.setOnPreferenceClickListener(preference -> {
-            @NonNull NavDirections action = SettingsFragmentDirections.actionEditPrepTimeBells();
-            NavHostFragment.findNavController(SettingsSubFragment.this).navigate(action);
-            return true;
-        });
+        if (prefPrepTimerBells != null)
+            prefPrepTimerBells.setOnPreferenceClickListener(preference -> {
+                @NonNull NavDirections action = SettingsFragmentDirections.actionEditPrepTimeBells();
+                NavHostFragment.findNavController(SettingsSubFragment.this).navigate(action);
+                return true;
+            });
 
     }
 
@@ -155,23 +157,33 @@ public class SettingsSubFragment extends PreferenceFragmentCompat {
     // Private methods
     //******************************************************************************************
     private void updateIntegerPreferenceSummary(String key) {
-        SharedPreferences prefs             = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        int               defaultValueResId = mPreferenceToDefaultResIdMap.get(key);
-        int               value             = prefs.getInt(key, this.getResources().getInteger(defaultValueResId));
-        Preference        pref              = findPreference(key);
-        int               summaryTextResId  = mPreferenceToSummaryResIdMap.get(key);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireActivity());
+        Integer defaultValueResId = mPreferenceToDefaultResIdMap.get(key);
+        assert defaultValueResId != null;
 
+        int value = prefs.getInt(key, this.getResources().getInteger(defaultValueResId));
+        Integer summaryTextResId = mPreferenceToSummaryResIdMap.get(key);
+        assert summaryTextResId != null;
+
+        Preference pref = findPreference(key);
+        assert pref != null;
         pref.setSummary(getString(summaryTextResId, value));
     }
 
     private void updateListPreferenceSummary(String key) {
-        SharedPreferences prefs              = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        int               defaultValueResId  = mPreferenceToDefaultResIdMap.get(key);
-        String            value              = prefs.getString(key, getString(defaultValueResId));
-        ListPreference    pref               = (ListPreference) findPreference(key);
-        int               index              = pref.findIndexOfValue(value);
-        int               summariesTextResId = mPreferenceToSummaryResIdMap.get(key);
-        String[]          summaries          = this.getResources().getStringArray(summariesTextResId);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireActivity());
+        Integer defaultValueResId = mPreferenceToDefaultResIdMap.get(key);
+        assert defaultValueResId != null;
+
+        String value = prefs.getString(key, getString(defaultValueResId));
+        ListPreference pref = findPreference(key);
+        assert pref != null;
+
+        int index = pref.findIndexOfValue(value);
+        Integer summariesTextResId = mPreferenceToSummaryResIdMap.get(key);
+        assert summariesTextResId != null;
+
+        String[] summaries = this.getResources().getStringArray(summariesTextResId);
 
         pref.setSummary(summaries[index]);
     }
