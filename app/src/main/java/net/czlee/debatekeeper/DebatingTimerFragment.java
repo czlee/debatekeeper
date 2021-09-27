@@ -165,8 +165,6 @@ public class DebatingTimerFragment extends Fragment {
     private static final String PREFERENCE_XML_FILE_NAME                = "xmlfn";
     private static final String LAST_CHANGELOG_VERSION_SHOWN            = "lastChangeLog";
     private static final String LEGACY_CUSTOM_FILES_DISMISSED           = "v1.3-custom-files-dismissed";
-    private static final String DIALOG_ARGUMENT_FATAL_MESSAGE           = "fm";
-    private static final String DIALOG_ARGUMENT_XML_ERROR_LOG           = "xel";
     private static final String DIALOG_ARGUMENT_SCHEMA_USED             = "used";
     private static final String DIALOG_ARGUMENT_SCHEMA_SUPPORTED        = "supp";
     private static final String DIALOG_ARGUMENT_FILE_NAME               = "fn";
@@ -178,7 +176,6 @@ public class DebatingTimerFragment extends Fragment {
     // Dialog tags that are attached to particular files must end in "/", as the name of the file
     // they relate to is appended to the tag.
     private static final String DIALOG_TAG_SCHEMA_TOO_NEW               = "toonew/";
-    private static final String DIALOG_TAG_ERRORS_WITH_XML              = "errors/";
     private static final String DIALOG_TAG_CHANGELOG                    = "changelog";
     private static final String DIALOG_TAG_IMPORT_CONFIRM               = "import";
     private static final String DIALOG_TAG_IMPORT_SUGGEST_REPLACEMENT   = "replace";
@@ -2047,13 +2044,11 @@ public class DebatingTimerFragment extends Fragment {
             mViewBinding.mainScreenDebateLoadError.getRoot().setVisibility(View.GONE);
 
         } else {
-            Log.i(TAG, "setting debate timer display");
             mViewPager.setVisibility(View.VISIBLE);
             mViewBinding.mainScreenNoDebateLoaded.getRoot().setVisibility(View.GONE);
             mViewBinding.mainScreenDebateLoadError.getRoot().setVisibility(View.GONE);
 
             if (mDebateTimerDisplay != null) {
-                Log.d(TAG, "updating debate timer display");
                 updateDebateTimerDisplay(mDebateTimerDisplay,
                         mDebateManager.getActivePhaseFormat(),
                         mDebateManager.getActivePhaseCurrentPeriodInfo(),
@@ -2089,7 +2084,6 @@ public class DebatingTimerFragment extends Fragment {
         TextView infoLineText = binding.debateTimerInformationLine;
 
         // The information at the top of the screen
-        Log.i(TAG, "speech name: " + phaseName);
         speechNameText.setText(phaseName);
         periodDescriptionText.setText(pi.getDescription());
 
@@ -2185,19 +2179,15 @@ public class DebatingTimerFragment extends Fragment {
      * @param timeTextColour the text colour to use for the current time
      * @param backgroundColour the colour to use for the background
      */
-    private void updateDebateTimerDisplayColours(ViewBinding binding, int timeTextColour, int backgroundColour) {
+    private void updateDebateTimerDisplayColours(DebateTimerDisplayBinding binding, int timeTextColour, int backgroundColour) {
 
         if (binding == null) return;
-        DebateTimerDisplayBinding displayBinding = (binding instanceof DebateTimerDisplayBinding) ?
-                (DebateTimerDisplayBinding) binding : null;
 
         switch (mBackgroundColourArea) {
         case TOP_BAR_ONLY:
-            if (displayBinding != null) {
-                // These would only be expected to exist if the view given is the debate timer display
-                displayBinding.debateTimerSpeechNameText.setBackgroundColor(backgroundColour);
-                displayBinding.debateTimerPeriodDescriptionText.setBackgroundColor(backgroundColour);
-            }
+            // These would only be expected to exist if the view given is the debate timer display
+            binding.debateTimerSpeechNameText.setBackgroundColor(backgroundColour);
+            binding.debateTimerPeriodDescriptionText.setBackgroundColor(backgroundColour);
             break;
         case WHOLE_SCREEN:
             binding.getRoot().setBackgroundColor(backgroundColour);
@@ -2207,8 +2197,7 @@ public class DebatingTimerFragment extends Fragment {
         }
 
         // This would only be expected to exist if the view given is the debate timer display
-        if (displayBinding != null)
-            displayBinding.debateTimerCurrentTime.setTextColor(timeTextColour);
+        binding.debateTimerCurrentTime.setTextColor(timeTextColour);
     }
 
     /**

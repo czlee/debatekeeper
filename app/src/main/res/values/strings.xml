@@ -100,6 +100,7 @@
     <string name="debateLoadErrorScreen_filename">"Couldn't load file: %1$s"</string>
     <string name="debateLoadErrorScreen_button_chooseStyle">Choose style</string>
 
+    <!-- These messages are loaded using Html.fromHtml(), so should be written as "fake HTML" (as in, with HTML tags escaped) -->
     <string name="fatalXmlMessage_noSpeeches">There are no speeches in this debate style file.
         This might be because the file isn\'t supported or isn\'t well-formed.
         &lt;a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">Learn more.&lt;/a>
@@ -134,6 +135,7 @@
     <string name="changelogDialog_message">
           • Moving custom formats to new Android location. Note: If you uninstall Debatekeeper,
             custom formats will be deleted, so be sure to have a backup somewhere else.
+        \n• Simplified handling of malformed debate style files
         \n• Other general updates to bring up to date with Android 10
     </string>
     <string name="changelogDialog_dontShow">Don\'t show this again</string>
