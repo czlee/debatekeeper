@@ -36,7 +36,7 @@ import org.w3c.dom.NodeList;
  */
 public class XmlUtilities {
 
-    private Resources mResources;
+    private final Resources mResources;
 
     XmlUtilities(Resources resources) {
         mResources = resources;
@@ -186,7 +186,7 @@ public class XmlUtilities {
      */
     static long timeStr2Secs(String s) throws NumberFormatException {
         long seconds = 0;
-        String parts[] = s.split(":", 2);
+        String[] parts = s.split(":", 2);
         switch (parts.length){
         case 2:
             long minutes = Long.parseLong(parts[0]);
@@ -211,7 +211,7 @@ public class XmlUtilities {
     public static int compareSchemaVersions(String a, String b) throws IllegalSchemaVersionException {
         int[] a_int = versionToIntArray(a);
         int[] b_int = versionToIntArray(b);
-        int min_length = (a_int.length > b_int.length) ? b_int.length : a_int.length;
+        int min_length = Math.min(a_int.length, b_int.length);
         for (int i = 0; i < min_length; i++) {
             if (a_int[i] > b_int[i]) return 1;
             if (a_int[i] < b_int[i]) return -1;

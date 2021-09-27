@@ -448,8 +448,8 @@ public class DebatingTimerFragment extends Fragment {
                 appVersion = "unknown";
             }
 
-            StringBuilder message = new StringBuilder(getString(R.string.schemaTooNewDialog_message, schemaUsed, schemaSupported, appVersion));
-            message.append(getString(R.string.dialogs_fileName_suffix, args.getString(DIALOG_ARGUMENT_FILE_NAME)));
+            String message = getString(R.string.schemaTooNewDialog_message,
+                    schemaUsed, schemaSupported, appVersion, args.getString(DIALOG_ARGUMENT_FILE_NAME));
 
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setTitle(R.string.schemaTooNewDialog_title)
@@ -1191,7 +1191,7 @@ public class DebatingTimerFragment extends Fragment {
         try {
             is = filesManager.open(filename);
         } catch (IOException e) {
-            throw new FatalXmlError(getString(R.string.fatalXmlMessage_cannotFind), e);
+            throw new FatalXmlError(getString(R.string.debateLoadError_cannotFind), e);
         }
 
         dfbfx = new DebateFormatBuilderFromXmlForSchema2(context);
@@ -1200,11 +1200,11 @@ public class DebatingTimerFragment extends Fragment {
         try {
             df = dfbfx.buildDebateFromXml(is);
         } catch (IOException e) {
-            throw new FatalXmlError(getString(R.string.fatalXmlMessage_cannotRead), e);
+            throw new FatalXmlError(getString(R.string.debateLoadError_cannotRead), e);
         } catch (SAXException e) {
             Log.e(TAG, "bad xml");
             throw new FatalXmlError(getString(
-                    R.string.fatalXmlMessage_badXml, e.getMessage()), e);
+                    R.string.debateLoadError_badXml, e.getMessage()), e);
         }
 
         // If the schema wasn't supported, check if it looks like it might be a schema 1.0 file.
@@ -1215,17 +1215,17 @@ public class DebatingTimerFragment extends Fragment {
                 is.close();
                 is = filesManager.open(filename);
             } catch (IOException e) {
-                throw new FatalXmlError(getString(R.string.fatalXmlMessage_cannotFind), e);
+                throw new FatalXmlError(getString(R.string.debateLoadError_cannotFind), e);
             }
 
             try {
                 if (SchemaVersion1Checker.checkIfVersion1(context, is))
-                    throw new FatalXmlError(getString(R.string.fatalXmlMessage_schemaOutdated));
+                    throw new FatalXmlError(getString(R.string.debateLoadError_schemaOutdated));
             } catch (SAXException e) {
                 throw new FatalXmlError(getString(
-                        R.string.fatalXmlMessage_badXml, e.getMessage()), e);
+                        R.string.debateLoadError_badXml, e.getMessage()), e);
             } catch (IOException e) {
-                throw new FatalXmlError(getString(R.string.fatalXmlMessage_cannotRead), e);
+                throw new FatalXmlError(getString(R.string.debateLoadError_cannotRead), e);
             }
         }
 
@@ -1236,7 +1236,7 @@ public class DebatingTimerFragment extends Fragment {
 
         if (df.numberOfSpeeches() == 0)
             throw new FatalXmlError(getString(
-                    R.string.fatalXmlMessage_noSpeeches));
+                    R.string.debateLoadError_noSpeeches));
 
         if (dfbfx.hasErrors()) {
 
@@ -1249,7 +1249,7 @@ public class DebatingTimerFragment extends Fragment {
                     errorLogItems.append("<br />");
                 }
             }
-            throw new FatalXmlError(getString(R.string.fatalXmlMessage_generalErrors, errorLogItems.toString()));
+            throw new FatalXmlError(getString(R.string.debateLoadError_generalErrors, errorLogItems.toString()));
         }
 
         return df;
@@ -2020,7 +2020,6 @@ public class DebatingTimerFragment extends Fragment {
      */
     private void updateDebateLoadErrorDisplay() {
         DebateLoadErrorBinding binding = mViewBinding.mainScreenDebateLoadError;
-        binding.debateLoadErrorTitle.setText(R.string.debateLoadErrorScreen_title);
         binding.debateLoadErrorMessage.setText(mDebateLoadError);
         binding.debateLoadErrorFileName.setText(getString(R.string.debateLoadErrorScreen_filename, mFormatXmlFileName));
     }
@@ -2120,8 +2119,8 @@ public class DebatingTimerFragment extends Fragment {
         else
             lengthStr = DateUtils.formatElapsedTime(length);
 
-        int finalTimeTextUnformattedResid = (dpf.isPrep()) ? R.string.mainScreen_prepTimeLength : R.string.mainScreen_speechLength;
-        infoLine.append(String.format(this.getString(finalTimeTextUnformattedResid),
+        int finalTimeTextUnformattedResId = (dpf.isPrep()) ? R.string.mainScreen_prepTimeLength : R.string.mainScreen_speechLength;
+        infoLine.append(String.format(this.getString(finalTimeTextUnformattedResId),
                 lengthStr));
 
         if (dpf.isPrep()) {

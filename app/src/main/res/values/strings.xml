@@ -94,36 +94,32 @@
     <string name="mainScreen_menuItem_ringBells">Ring bells</string>
 
     <!-- Debate load error screen -->
-    <string name="debateLoadErrorScreen_noErrorTitle" translatable="false">No actual error</string>
-    <string name="debateLoadErrorScreen_noErrorMessage" translatable="false">"There isn't actually an error, and this screen shouldn't be showing."</string>
     <string name="debateLoadErrorScreen_title">Error loading debate</string>
     <string name="debateLoadErrorScreen_filename">"Couldn't load file: %1$s"</string>
     <string name="debateLoadErrorScreen_button_chooseStyle">Choose style</string>
 
     <!-- These messages are loaded using Html.fromHtml(), so should be written as "fake HTML" (as in, with HTML tags escaped) -->
-    <string name="fatalXmlMessage_noSpeeches">There are no speeches in this debate style file.
+    <string name="debateLoadError_noSpeeches">There are no speeches in this debate style file.
         This might be because the file isn\'t supported or isn\'t well-formed.
         &lt;a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">Learn more.&lt;/a>
     </string>
-    <string name="fatalXmlMessage_cannotRead">"There was a problem opening this debate style file. If this is a custom format, it might be because the file is deleted or because storage permissions are disabled."</string>
-    <string name="fatalXmlMessage_cannotFind">"There was a problem opening this debate style file. If this is a custom format, it might be because the file is deleted or because storage permissions are disabled."</string>
-    <string name="fatalXmlMessage_badXml">"There's a problem with the XML in this debate style file. The error was:\n\n%1$s\n"</string>
-    <string name="fatalXmlMessage_schemaOutdated">This debate format file uses schema version 1.0, which is no longer supported.
+    <string name="debateLoadError_cannotRead">"There was a problem opening this debate style file. If this is a custom format, it might be because the file is deleted or because storage permissions are disabled."</string>
+    <string name="debateLoadError_cannotFind">"There was a problem opening this debate style file. If this is a custom format, it might be because the file is deleted or because storage permissions are disabled."</string>
+    <string name="debateLoadError_badXml">"There's a problem with the XML in this debate style file. The error was:\n\n%1$s\n"</string>
+    <string name="debateLoadError_schemaOutdated">This debate format file uses schema version 1.0, which is no longer supported.
         Please convert this file to schema version 2.1.
         &lt;a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">Learn more.&lt;/a>
     </string>
-    <string name="fatalXmlMessage_generalErrors">&lt;p>There are a few problems with this debate format file:&lt;/p>
+    <string name="debateLoadError_generalErrors">&lt;p>There are a few problems with this debate format file:&lt;/p>
         %1$s
     </string>
-    <string name="fatalXml_suffix">Please choose another style.</string>
+    <string name="debateLoadError_suffix">Please choose another style.</string>
 
     <!-- Dialogs -->
-    <string name="dialogs_fileName_suffix">\n\n[File: %1$s]</string>
-
     <string name="schemaTooNewDialog_title">Update app?</string>
     <string name="schemaTooNewDialog_button_upgrade">Check for updates</string>
     <string name="schemaTooNewDialog_button_ignore">Ignore</string>
-    <string name="schemaTooNewDialog_message">This debate format file uses a schema (%1$s) newer than supported (%2$s) by this app version (%3$s). Check for updates on Google Play?</string>
+    <string name="schemaTooNewDialog_message">This debate format file (%4$s) uses a schema (%1$s) newer than supported (%2$s) by this app version (%3$s). Check for updates on Google Play?</string>
 
     <!-- POI timer -->
     <string name="poiTimer_moreInfoUrl" translatable="false">https://github.com/czlee/debatekeeper/wiki/Points-of-information</string>
