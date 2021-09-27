@@ -95,14 +95,12 @@ public class FormatChooserFragment extends Fragment {
 
     private static final String DIALOG_ARGUMENT_FILE_NAME = "fn";
     private static final String DIALOG_TAG_MORE_DETAILS = "md";
-    private static final String DIALOG_TAG_LIST_IO_ERROR = "io";
 
     public static final String BUNDLE_KEY_RESULT         = "res";
     public static final String BUNDLE_KEY_XML_FILE_NAME  = "xmlfn";
     public static final String REQUEST_KEY_CHOOSE_FORMAT = "choose-format";
 
     public static final int RESULT_SUCCESS      = 0;
-    public static final int RESULT_ERROR        = 1;
     public static final int RESULT_UNCHANGED    = 2;
     public static final int RESULT_NO_SELECTION = 3;
 
@@ -167,33 +165,6 @@ public class FormatChooserFragment extends Fragment {
 
     }
 
-    /**
-     * An {@link AlertDialog} alerting the user to a fatal problem retrieving the styles list,
-     * which then exits this Activity upon dismissal.
-     * @author Chuan-Zheng Lee
-     *
-     */
-    public static class ListIOErrorDialogFragment extends DialogFragment {
-
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
-            builder.setTitle(R.string.ioErrorDialog_title)
-                   .setMessage(R.string.ioErrorDialog_message)
-                   .setCancelable(false)
-                   .setPositiveButton(R.string.ioErrorDialog_button, (dialog, which) -> {
-                       Bundle result = new Bundle();
-                       result.putInt(BUNDLE_KEY_RESULT, RESULT_ERROR);
-                       result.putString(BUNDLE_KEY_XML_FILE_NAME, null);
-                       getParentFragmentManager().setFragmentResult(REQUEST_KEY_CHOOSE_FORMAT, result);
-                       NavHostFragment.findNavController(this).navigateUp();
-                   });
-            return builder.create();
-        }
-
-    }
-
     public static class MoreDetailsDialogFragment extends DialogFragment {
 
         static MoreDetailsDialogFragment newInstance(String filename) {
@@ -241,8 +212,6 @@ public class FormatChooserFragment extends Fragment {
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
             ViewFormatFullBinding binding = ViewFormatFullBinding.inflate(LayoutInflater.from(activity));
-
-//            View view = View.inflate(activity, R.layout.view_format_full, null);
 
             DebateFormatInfo dfi;
             try {
@@ -569,11 +538,12 @@ public class FormatChooserFragment extends Fragment {
         DebateFormatStyleNameExtractor nameExtractor = new DebateFormatStyleNameExtractor(requireContext());
 
         try {
-             fileList = mFilesManager.list();
+            fileList = mFilesManager.list();
         } catch (IOException e) {
+            Log.e(TAG, "IO error loading formats list!");
             e.printStackTrace();
-            ListIOErrorDialogFragment fragment = new ListIOErrorDialogFragment();
-            fragment.show(getChildFragmentManager(), DIALOG_TAG_LIST_IO_ERROR);
+            mViewBinding.formatChooserError.setVisibility(View.VISIBLE);
+            mViewBinding.formatChooserStylesList.setVisibility(View.GONE);
             return;
         }
 

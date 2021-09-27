@@ -54,6 +54,15 @@
             <!-- Preview: listitem=@android:layout/simple_list_item_single_choice -->
         </ListView>
 
+        <TextView
+            android:id="@+id/formatChooser_error"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/formatChooser_ioError"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
