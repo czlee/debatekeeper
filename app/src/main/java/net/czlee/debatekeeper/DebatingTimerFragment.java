@@ -1649,8 +1649,10 @@ public class DebatingTimerFragment extends Fragment {
 
         Log.d(TAG, "clearing error, notifying view pager");
         clearDebateLoadError();
-        mViewPager.getAdapter().notifyDataSetChanged();
-        mViewPager.setCurrentItem(mDebateManager.getActivePhaseIndex(), false);
+        if (mViewPager != null) {  // sometimes this is called from the service, so mViewPager might not exist
+            mViewPager.getAdapter().notifyDataSetChanged();
+            mViewPager.setCurrentItem(mDebateManager.getActivePhaseIndex(), false);
+        }
         applyPreferences();
         updateToolbar();
     }
