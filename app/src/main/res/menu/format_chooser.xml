@@ -19,10 +19,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <item
-        android:id="@+id/formatChooser_actionBar_share"
-        android:icon="@drawable/ic_baseline_share_24"
+        android:id="@+id/formatChooser_actionBar_searchOnline"
+        android:icon="@drawable/ic_baseline_travel_explore_24"
         app:showAsAction="ifRoom"
-        android:title="@string/formatChooser_actionBar_share" />
+        android:title="@string/formatChooser_actionBar_searchOnline" />
 
     <item
         android:id="@+id/formatChooser_actionBar_ok"

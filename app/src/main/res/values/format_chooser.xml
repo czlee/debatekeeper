@@ -24,7 +24,8 @@
 
     <string name="formatChooser_actionBar_confirm">Confirm</string>
     <string name="formatChooser_actionBar_searchOnline">Search online</string>
-    <string name="formatChooser_actionBar_share">Share</string>
+    <string name="formatChooser_button_moreInfo">More info</string>
+    <string name="formatChooser_button_share">Share</string>
 
     <string name="formatChooser_lookForCustomCheckbox_text">Look for custom formats (<a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">Learn more</a>)</string>
     <string name="formatChooser_share_error_noFileSelected">No file selected.</string>

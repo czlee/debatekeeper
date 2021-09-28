@@ -22,18 +22,29 @@
     android:layout_height="wrap_content">
 
 
-    <Button
+    <ImageButton
         android:id="@+id/viewFormat_showDetails_button"
-        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:text="@string/viewFormat_showDetails_buttonText"
+        android:contentDescription="@string/formatChooser_button_moreInfo"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        />
+        app:srcCompat="@drawable/ic_baseline_more_horiz_24" />
 
+    <ImageButton
+        android:id="@+id/viewFormat_shareButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/formatChooser_button_share"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toStartOf="@+id/viewFormat_showDetails_button"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_share_24" />
 
     <TextView
         android:id="@+id/viewFormat_regionLabel"
@@ -78,7 +89,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/viewFormat_showDetails_button"
+        app:layout_constraintEnd_toStartOf="@+id/viewFormat_shareButton"
         app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -90,7 +101,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/viewFormat_showDetails_button"
+        app:layout_constraintEnd_toStartOf="@+id/viewFormat_shareButton"
         app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
         app:layout_constraintTop_toBottomOf="@id/viewFormat_regionValue" />
 
@@ -125,7 +136,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="viewFormat_levelValue,viewFormat_showDetails_button"
+        app:constraint_referenced_ids="viewFormat_levelValue,viewFormat_showDetails_button,viewFormat_shareButton"
         tools:layout_editor_absoluteX="141dp"
         tools:layout_editor_absoluteY="43dp" />
 

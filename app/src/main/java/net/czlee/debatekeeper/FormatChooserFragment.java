@@ -28,7 +28,6 @@ import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -166,6 +165,18 @@ public class FormatChooserFragment extends Fragment {
             vb.viewFormatDescValue.setText(dfi.getDescription());
         }
 
+        /**
+         * Returns whether or not this file can be shared (i.e., it resides on external storage).
+         * @param filename name of file
+         * @return <code>true</code> if file is shareable, <code>false</code> if not
+         */
+        boolean isShareable(String filename) {
+            return filename != null && mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE;
+        }
+
+        void shareFile(String filename) {
+            shareDebateFormatFile(filename);
+        }
     }
 
     public static class MoreDetailsDialogFragment extends DialogFragment {
@@ -351,9 +362,6 @@ public class FormatChooserFragment extends Fragment {
             if (itemId == R.id.formatChooser_actionBar_ok) {
                 confirmSelectionAndReturn();
                 return true;
-            } else if (itemId == R.id.formatChooser_actionBar_share) {
-                shareSelection();
-                return true;
             } else return false;
         }
     }
@@ -387,7 +395,6 @@ public class FormatChooserFragment extends Fragment {
         public void onItemClick(AdapterView<?> parent, View view, int position,
                 long id) {
             mStylesArrayAdapter.notifyDataSetChanged();
-            updateToolbar();
         }
     }
 
@@ -437,8 +444,6 @@ public class FormatChooserFragment extends Fragment {
         // Select and scroll to the incoming selection (if existent)
         String incomingFilename = FormatChooserFragmentArgs.fromBundle(getArguments()).getXmlFileName();
         setSelectionAndScroll(incomingFilename);
-
-        updateToolbar();
     }
 
     //******************************************************************************************
@@ -583,7 +588,6 @@ public class FormatChooserFragment extends Fragment {
         // Sort alphabetically by style name and tell observers
         mStylesArrayAdapter.sort(new StyleEntryComparatorByStyleName());
         mStylesArrayAdapter.notifyDataSetChanged();
-        updateToolbar();
     }
 
     /**
@@ -627,8 +631,7 @@ public class FormatChooserFragment extends Fragment {
      * Shares the current selection. If there is no current selection, it shows a {@link Snackbar}
      * with an error message.
      */
-    private void shareSelection() {
-        String filename = getSelectedFilename();
+    private void shareDebateFormatFile(String filename) {
 
         // Check for error conditions
         if (filename == null) {
@@ -713,16 +716,6 @@ public class FormatChooserFragment extends Fragment {
             str = str.concat(iterator.next());
         }
         return str;
-    }
-
-    private void updateToolbar() {
-        Menu menu = mViewBinding.formatChooserToolbar.getMenu();
-
-        // disable the share button if the current selection isn't shareable
-        MenuItem shareItem = menu.findItem(R.id.formatChooser_actionBar_share);
-        String filename = getSelectedFilename();
-        boolean selectionShareable = filename != null && mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE;
-        shareItem.setVisible(selectionShareable);
     }
 
 }

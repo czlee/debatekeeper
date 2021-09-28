@@ -959,7 +959,7 @@ public class DebatingTimerFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mViewBinding.mainScreenToolbar.inflateMenu(R.menu.debating_activity_menu);
+        mViewBinding.mainScreenToolbar.inflateMenu(R.menu.timer);
         mViewBinding.mainScreenToolbar.setOnMenuItemClickListener(new DebatingTimerMenuItemClickListener());
         mViewBinding.mainScreenPlayBellButton.setOnClickListener(
                 (v) -> mServiceBinder.getAlertManager().playSingleBell()

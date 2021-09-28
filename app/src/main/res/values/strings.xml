@@ -19,7 +19,7 @@
     <string name="app_name" translatable="false">Debatekeeper</string>
     <string name="fragmentName_Debating_withoutFormat" translatable="false">Debatekeeper</string>
     <string name="fragmentName_GlobalSettings">Settings</string>
-    <string name="fragmentName_FormatChooser">Choose style</string>
+    <string name="fragmentName_FormatChooser">Styles</string>
     <string name="fragmentName_PrepTimeBellsEdit">Prep timer bells</string>
     <string name="intentFilter_importStyle">Debatekeeper</string>
 

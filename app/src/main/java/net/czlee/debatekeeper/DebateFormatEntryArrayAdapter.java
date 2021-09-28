@@ -22,8 +22,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckedTextView;
+import android.widget.ImageButton;
 
 import net.czlee.debatekeeper.FormatChooserFragment.DebateFormatListEntry;
 import net.czlee.debatekeeper.FormatChooserFragment.FormatChooserFragmentBinder;
@@ -92,9 +92,17 @@ public class DebateFormatEntryArrayAdapter extends
             }
 
             // Set the OnClickListener of the "More" details button
-            Button showDetailsButton = binding.formatItemInfo.viewFormatShowDetailsButton;
+            ImageButton showDetailsButton = binding.formatItemInfo.viewFormatShowDetailsButton;
             showDetailsButton.setVisibility(View.VISIBLE);
             showDetailsButton.setOnClickListener(mBinder.getDetailsButtonOnClickListener(filename));
+
+            // Either set the OnClickListener of the "Share" button, or hide it
+            ImageButton shareButton = binding.formatItemInfo.viewFormatShareButton;
+            if (mBinder.isShareable(filename)) {
+                shareButton.setVisibility(View.VISIBLE);
+                shareButton.setOnClickListener((v) -> mBinder.shareFile(filename));
+            }
+            else shareButton.setVisibility(View.GONE);
 
             // Populate the style name and whether the radio button is checked
             titleView = binding.formatItemChoice.formatItemText;
