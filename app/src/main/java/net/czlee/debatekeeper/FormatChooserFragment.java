@@ -53,7 +53,6 @@ import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
 import net.czlee.debatekeeper.databinding.FragmentFormatChooserBinding;
-import net.czlee.debatekeeper.databinding.ViewFormatFileInfoBinding;
 import net.czlee.debatekeeper.databinding.ViewFormatFullBinding;
 import net.czlee.debatekeeper.databinding.ViewFormatShortBinding;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfo;
@@ -160,7 +159,11 @@ public class FormatChooserFragment extends Fragment {
         }
 
         void populateBasicInfo(ViewFormatShortBinding vb, String filename) throws IOException, SAXException {
-            FormatChooserFragment.this.populateBasicInfo(vb, filename);
+            DebateFormatInfo dfi = getDebateFormatInfo(filename);
+            vb.viewFormatRegionValue.setText(concatenate(dfi.getRegions()));
+            vb.viewFormatLevelValue.setText(concatenate(dfi.getLevels()));
+            vb.viewFormatUsedAtValue.setText(concatenate(dfi.getUsedAts()));
+            vb.viewFormatDescValue.setText(dfi.getDescription());
         }
 
     }
@@ -225,14 +228,11 @@ public class FormatChooserFragment extends Fragment {
             }
 
             String schemaVersion = dfi.getSchemaVersion();
-            populateFileInfo(binding.viewFormatFileInfo, filename, schemaVersion);
-
-            FormatChooserFragment.populateBasicInfo(binding.viewFormatInfo, dfi);
+            populateFileInfo(binding, filename, schemaVersion);
+            populateBasicInfo(binding, dfi);
             populatePrepTimeInfo(binding, dfi);
-            populateTwoColumnTable(binding.viewFormatTableSpeechTypes, R.layout.speech_type_row,
-                    dfi.getSpeechFormatDescriptions());
-            populateTwoColumnTable(binding.viewFormatTableSpeeches, R.layout.speech_row,
-                    dfi.getSpeeches());
+            populateTwoColumnTable(binding.viewFormatTableSpeechTypes, R.layout.speech_type_row, dfi.getSpeechFormatDescriptions());
+            populateTwoColumnTable(binding.viewFormatTableSpeeches, R.layout.speech_row, dfi.getSpeeches());
             builder.setTitle(dfi.getName());
             builder.setCancelable(true);
 
@@ -244,10 +244,10 @@ public class FormatChooserFragment extends Fragment {
 
         /**
          * Populates a View with information about a given file
-         * @param vb the {@link ViewFormatFileInfoBinding} to populate
+         * @param vb the {@link ViewFormatFullBinding} to populate
          * @param filename the file name
          */
-        private void populateFileInfo(ViewFormatFileInfoBinding vb, String filename, String schemaVersion) {
+        private void populateFileInfo(ViewFormatFullBinding vb, String filename, String schemaVersion) {
 
             FormatChooserFragment parent = (FormatChooserFragment) getParentFragment();
             assert parent != null;
@@ -284,6 +284,13 @@ public class FormatChooserFragment extends Fragment {
             vb.viewFormatFileNameValue.setText(filename);
         }
 
+        private void populateBasicInfo(ViewFormatFullBinding vb, DebateFormatInfo dfi) {
+            vb.viewFormatRegionValue.setText(concatenate(dfi.getRegions()));
+            vb.viewFormatLevelValue.setText(concatenate(dfi.getLevels()));
+            vb.viewFormatUsedAtValue.setText(concatenate(dfi.getUsedAts()));
+            vb.viewFormatDescValue.setText(dfi.getDescription());
+        }
+
         /**
          * Populates a table from an ArrayList of String arrays.
          * @param table A <code>TableLayout</code>
@@ -302,7 +309,7 @@ public class FormatChooserFragment extends Fragment {
 
         }
 
-        private static void populatePrepTimeInfo(ViewFormatFullBinding vb, DebateFormatInfo dfi) {
+        private void populatePrepTimeInfo(ViewFormatFullBinding vb, DebateFormatInfo dfi) {
             String prepTimeDescription = dfi.getPrepTimeDescription();
 
             // If there is prep time, populate the view.
@@ -310,7 +317,10 @@ public class FormatChooserFragment extends Fragment {
                 vb.viewFormatPrepTimeValue.setText(prepTimeDescription);
 
             // Otherwise, hide the whole row.
-            else vb.viewFormatPrepTimeRow.setVisibility(View.GONE);
+            else {
+                vb.viewFormatPrepTimeLabel.setVisibility(View.GONE);
+                vb.viewFormatPrepTimeValue.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -397,7 +407,7 @@ public class FormatChooserFragment extends Fragment {
 
         super.onViewCreated(view, savedInstanceState);
 
-        mViewBinding.formatChooserToolbar.inflateMenu(R.menu.format_chooser_action_bar);
+        mViewBinding.formatChooserToolbar.inflateMenu(R.menu.format_chooser);
         mViewBinding.formatChooserToolbar.setOnMenuItemClickListener(new FormatChooserMenuItemClickListener());
         mViewBinding.formatChooserToolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
         mViewBinding.formatChooserToolbar.setNavigationOnClickListener(
@@ -421,6 +431,7 @@ public class FormatChooserFragment extends Fragment {
         mStylesListView.setOnItemClickListener(new StylesListViewOnItemClickListener());
 
         // Populate the styles list
+        mStylesList.clear();  // sometimes it's populated from a previous instantiation
         populateStylesList();
 
         // Select and scroll to the incoming selection (if existent)
@@ -517,17 +528,6 @@ public class FormatChooserFragment extends Fragment {
         // If it isn't, keep pretending it was 2.0.
         return dfi2;
 
-    }
-
-    /**
-     * @param vb the {@link ViewFormatShortBinding} to be populated
-     * @param filename the filename of the XML file from which data is to be taken
-     * @throws IOException if there was an IO problem with the XML file
-     * @throws SAXException if thrown by the XML parser
-     */
-    private void populateBasicInfo(ViewFormatShortBinding vb, String filename) throws IOException, SAXException {
-        DebateFormatInfo dfi = getDebateFormatInfo(filename);
-        populateBasicInfo(vb, dfi);
     }
 
     /**
@@ -725,14 +725,4 @@ public class FormatChooserFragment extends Fragment {
         shareItem.setVisible(selectionShareable);
     }
 
-    /**
-     * @param vb the {@link ViewFormatShortBinding} to be populated
-     * @param dfi is an <code>InputStream</code> for the XML file from which data is to be taken
-     */
-    private static void populateBasicInfo(ViewFormatShortBinding vb, DebateFormatInfo dfi) {
-        vb.viewFormatTableCellRegionValue.setText(concatenate(dfi.getRegions()));
-        vb.viewFormatTableCellLevelValue.setText(concatenate(dfi.getLevels()));
-        vb.viewFormatTableCellUsedAtValue.setText(concatenate(dfi.getUsedAts()));
-        vb.viewFormatTableCellDescValue.setText(dfi.getDescription());
-    }
 }

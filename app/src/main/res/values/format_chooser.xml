@@ -23,6 +23,7 @@
     <string name="blankDetailsDialog_text">"There's a problem with this debate format's XML file (%1$s).\n\nIn more detail:\n%2$s"</string>
 
     <string name="formatChooser_actionBar_confirm">Confirm</string>
+    <string name="formatChooser_actionBar_searchOnline">Search online</string>
     <string name="formatChooser_actionBar_share">Share</string>
 
     <string name="formatChooser_lookForCustomCheckbox_text">Look for custom formats (<a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">Learn more</a>)</string>
@@ -59,16 +60,21 @@
         <item quantity="other">bells at %s</item>
     </plurals>
 
-    <style name="ViewFormat_TableLabel">
-        <item name="android:paddingLeft">7dip</item>
-        <item name="android:layout_width">100dip</item>
+    <style name="viewFormat_tableLabelStyle">
+        <item name="android:layout_marginLeft">7dip</item>
+        <item name="android:layout_marginStart">7dip</item>
+        <item name="android:paddingRight">20dip</item>
+        <item name="android:paddingEnd">20dip</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="ViewFormat_TableValue">
-        <item name="android:layout_width">match_parent</item>
+    <style name="viewFormat_tableValueStyle">
+        <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginRight">@dimen/viewFormat_endMargin</item>
+        <item name="android:layout_marginEnd">@dimen/viewFormat_endMargin</item>
         <item name="android:text">-</item>
     </style>
 
@@ -79,5 +85,6 @@
     </style>
 
     <dimen name="view_format_list_item_padding">3dip</dimen>
-
+    <dimen name="viewFormat_sectionGap">8dip</dimen>
+    <dimen name="viewFormat_endMargin">8dip</dimen>
 </resources>
