@@ -2335,7 +2335,7 @@ public class DebatingTimerFragment extends Fragment {
         // display the appropriate bells icon
         MenuItem ringBellsItem = menu.findItem(R.id.mainScreen_menuItem_ringBells);
         ringBellsItem.setChecked(mBellsEnabled);
-        ringBellsItem.setIcon((mBellsEnabled) ? R.drawable.ic_notifications_active_white_24dp : R.drawable.ic_notifications_off_white_24dp);
+        ringBellsItem.setIcon((mBellsEnabled) ? R.drawable.ic_baseline_notifications_active_24 : R.drawable.ic_baseline_notifications_off_24);
     }
 
     /**
