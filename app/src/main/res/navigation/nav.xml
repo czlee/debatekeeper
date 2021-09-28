@@ -7,7 +7,8 @@
     <fragment
         android:id="@+id/debatingTimerFragment"
         android:name="net.czlee.debatekeeper.DebatingTimerFragment"
-        android:label="DebatingTimerFragment" >
+        android:label="DebatingTimerFragment"
+        tools:layout="@layout/fragment_debate" >
         <action
             android:id="@+id/action_chooseFormat"
             app:destination="@id/formatChooserFragment" />
@@ -23,7 +24,8 @@
     <fragment
         android:id="@+id/formatChooserFragment"
         android:name="net.czlee.debatekeeper.FormatChooserFragment"
-        android:label="FormatChooserFragment" >
+        android:label="FormatChooserFragment"
+        tools:layout="@layout/fragment_format_chooser" >
         <argument
             android:name="xmlFileName"
             app:argType="string"
@@ -33,7 +35,8 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="net.czlee.debatekeeper.SettingsFragment"
-        android:label="settingsFragment" >
+        android:label="settingsFragment"
+        tools:layout="@layout/fragment_settings" >
         <action
             android:id="@+id/action_editPrepTimeBells"
             app:destination="@id/prepTimeBellsEditFragment" />
