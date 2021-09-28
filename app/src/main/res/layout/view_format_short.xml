@@ -46,11 +46,11 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_share_24" />
 
+    <!-- Labels -->
+
     <TextView
         android:id="@+id/viewFormat_regionLabel"
         style="@style/viewFormat_tableLabelStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="@string/viewFormat_regionLabel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -58,8 +58,6 @@
     <TextView
         android:id="@+id/viewFormat_levelLabel"
         style="@style/viewFormat_tableLabelStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="@string/viewFormat_levelLabel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/viewFormat_levelValue" />
@@ -67,8 +65,6 @@
     <TextView
         android:id="@+id/viewFormat_usedAtLabel"
         style="@style/viewFormat_tableLabelStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="@string/viewFormat_usedAtLabel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/viewFormat_buttonBarrier" />
@@ -76,60 +72,11 @@
     <TextView
         android:id="@+id/viewFormat_descLabel"
         style="@style/viewFormat_tableLabelStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="@string/viewFormat_descLabel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/viewFormat_descValue" />
 
-    <TextView
-        android:id="@+id/viewFormat_regionValue"
-        style="@style/viewFormat_tableValueStyle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/viewFormat_shareButton"
-        app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <TextView
-        android:id="@+id/viewFormat_levelValue"
-        style="@style/viewFormat_tableValueStyle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/viewFormat_shareButton"
-        app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
-        app:layout_constraintTop_toBottomOf="@id/viewFormat_regionValue" />
-
-
-    <TextView
-        android:id="@+id/viewFormat_usedAtValue"
-        style="@style/viewFormat_tableValueStyle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
-        app:layout_constraintTop_toTopOf="@id/viewFormat_buttonBarrier" />
-
-
-    <TextView
-        android:id="@+id/viewFormat_descValue"
-        style="@style/viewFormat_tableValueStyle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
-        app:layout_constraintTop_toBottomOf="@+id/viewFormat_usedAtValue" />
+    <!-- Barriers -->
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/viewFormat_buttonBarrier"
@@ -148,5 +95,37 @@
         app:constraint_referenced_ids="viewFormat_regionLabel,viewFormat_levelLabel,viewFormat_usedAtLabel,viewFormat_descLabel"
         tools:layout_editor_absoluteX="195dp"
         tools:layout_editor_absoluteY="28dp" />
+
+    <!-- Values -->
+
+    <TextView
+        android:id="@+id/viewFormat_regionValue"
+        style="@style/viewFormat_tableValueStyle"
+        app:layout_constraintEnd_toStartOf="@+id/viewFormat_shareButton"
+        app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/viewFormat_levelValue"
+        style="@style/viewFormat_tableValueStyle"
+        app:layout_constraintEnd_toStartOf="@+id/viewFormat_shareButton"
+        app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
+        app:layout_constraintTop_toBottomOf="@id/viewFormat_regionValue" />
+
+    <TextView
+        android:id="@+id/viewFormat_usedAtValue"
+        style="@style/viewFormat_tableValueStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
+        app:layout_constraintTop_toTopOf="@id/viewFormat_buttonBarrier" />
+
+    <TextView
+        android:id="@+id/viewFormat_descValue"
+        style="@style/viewFormat_tableValueStyle"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
+        app:layout_constraintTop_toBottomOf="@+id/viewFormat_usedAtValue" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

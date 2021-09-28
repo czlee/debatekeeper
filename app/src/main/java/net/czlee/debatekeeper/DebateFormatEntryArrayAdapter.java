@@ -51,7 +51,7 @@ public class DebateFormatEntryArrayAdapter extends
 
     public DebateFormatEntryArrayAdapter(Context context,
             List<DebateFormatListEntry> objects, FormatChooserFragmentBinder binder) {
-        super(context, android.R.layout.simple_list_item_single_choice, objects);
+        super(context, R.layout.simple_list_item_single_choice, objects);
         mBinder = binder;
     }
 

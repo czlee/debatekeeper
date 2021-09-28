@@ -31,6 +31,9 @@
             app:argType="string"
             app:nullable="true"
             android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_goToDownloads"
+            app:destination="@id/downloadFormatsFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -44,5 +47,11 @@
     <fragment
         android:id="@+id/prepTimeBellsEditFragment"
         android:name="net.czlee.debatekeeper.PrepTimeBellsEditFragment"
-        android:label="PrepTimeBellsEditFragment" />
+        android:label="PrepTimeBellsEditFragment"
+        tools:layout="@layout/fragment_prep_time_bells_edit" />
+    <fragment
+        android:id="@+id/downloadFormatsFragment"
+        android:name="net.czlee.debatekeeper.DownloadFormatsFragment"
+        android:label="fragment_download_formats_list"
+        tools:layout="@layout/fragment_download_formats_list" />
 </navigation>

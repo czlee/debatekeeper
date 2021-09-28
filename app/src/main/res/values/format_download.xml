@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="formatDownloader_button_download">Download</string>
+    <string name="formatDownloader_image_chevron">Expand</string>
+
+    <string name="formatDownloader_list_url" translatable="false">https://formats.debatekeeper.czlee.nz/formats.json</string>
+
+</resources>

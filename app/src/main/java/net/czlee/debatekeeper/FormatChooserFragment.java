@@ -46,6 +46,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
@@ -362,6 +363,10 @@ public class FormatChooserFragment extends Fragment {
             if (itemId == R.id.formatChooser_actionBar_ok) {
                 confirmSelectionAndReturn();
                 return true;
+            } else if (itemId == R.id.formatChooser_actionBar_searchOnline) {
+                @NonNull NavDirections action = FormatChooserFragmentDirections.actionGoToDownloads();
+                NavHostFragment.findNavController(FormatChooserFragment.this).navigate(action);
+                return true;
             } else return false;
         }
     }
@@ -414,10 +419,10 @@ public class FormatChooserFragment extends Fragment {
 
         super.onViewCreated(view, savedInstanceState);
 
-        mViewBinding.formatChooserToolbar.inflateMenu(R.menu.format_chooser);
-        mViewBinding.formatChooserToolbar.setOnMenuItemClickListener(new FormatChooserMenuItemClickListener());
-        mViewBinding.formatChooserToolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
-        mViewBinding.formatChooserToolbar.setNavigationOnClickListener(
+        mViewBinding.toolbar.inflateMenu(R.menu.format_chooser);
+        mViewBinding.toolbar.setOnMenuItemClickListener(new FormatChooserMenuItemClickListener());
+        mViewBinding.toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
+        mViewBinding.toolbar.setNavigationOnClickListener(
                 (v) -> NavHostFragment.findNavController(this).navigateUp());
 
         Context context = requireContext();
