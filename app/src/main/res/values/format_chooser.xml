@@ -27,7 +27,15 @@
     <string name="formatChooser_button_moreInfo">More info</string>
     <string name="formatChooser_button_share">Share</string>
     <string name="formatChooser_button_delete">Delete</string>
+
+    <string name="formatChooser_dialog_confirmDelete_message">Delete format file %1$s? This can\'t be undone.</string>
+    <string name="formatChooser_dialog_confirmDelete_yes">Delete</string>
+    <string name="formatChooser_dialog_confirmDelete_no">Cancel</string>
+    <string name="formatChooser_dialog_deleted_success">File %1$s deleted.</string>
+    <string name="formatChooser_dialog_deleted_failure">Could not delete file %1$s.</string>
+
     <string name="formatChooser_lookForCustomCheckbox_text">Look for custom formats (<a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">Learn more</a>)</string>
+
     <string name="formatChooser_share_error_noFileSelected">No file selected.</string>
     <string name="formatChooser_share_error_builtInFile">You can\'t share built-in formats.</string>
     <string name="formatChooser_share_error_notFound">File %1$s could not be found.</string>
@@ -48,6 +56,7 @@
     <string name="viewFormat_showDetails_buttonText">More</string>
 
     <string name="viewFormat_errorLabel">Error with file</string>
+    <string name="viewFormat_error_fileNotFound">File not found: %1$s</string>
 
     <string name="viewFormat_timeDescription_lengthInMinutesSeconds">%s long</string>
 

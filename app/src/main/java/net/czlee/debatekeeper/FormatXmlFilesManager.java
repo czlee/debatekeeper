@@ -36,35 +36,33 @@ import java.util.Collections;
 import java.util.HashSet;
 
 /**
- * FormatXmlFilesManager manages the multiple sources of debate format XML files.
- * All debate format XML files are accessed through this class.  You only need a file name to be
- * able to retrieve a file.
- *
+ * FormatXmlFilesManager manages the multiple sources of debate format XML files. All debate format
+ * XML files are accessed through this class.  You only need a file name to be able to retrieve a
+ * file.
+ * <p>
  * FormatXmlFilesManager also manages the "look for custom formats" preference.
- *
- * MIGRATION TO APP-SPECIFIC STORAGE
- * Debatekeeper version 1.3 will target Android 10 (API level 29). It needs to migrate its file
- * location to the "scoped storage" location before Android 11, so the current code does this:
- *  - The method migrateToScopedStorage() copies all files from the legacy location to the new
- *    scoped app-specific location.
- *  -
+ * <p>
+ * MIGRATION TO APP-SPECIFIC STORAGE Debatekeeper version 1.3 will target Android 10 (API level 29).
+ * It needs to migrate its file location to the "scoped storage" location before Android 11, so the
+ * current code does this: - The method migrateToScopedStorage() copies all files from the legacy
+ * location to the new scoped app-specific location. -
  *
  * @author Chuan-Zheng Lee
- * @since  2012-06-27
+ * @since 2012-06-27
  */
 class FormatXmlFilesManager {
 
     private final Context mContext;
     private final SharedPreferences mPrefs;
-    private static final String TAG                                = "FormatXmlFilesManager";
-    private static final String XML_FILE_ROOT_DIRECTORY_NAME       = "debatekeeper";
-    private static final String XML_FORMATS_DIRECTORY_NAME         = "formats";
-    private static final String ASSETS_PATH                        = "formats";
+    private static final String TAG = "FormatXmlFilesManager";
+    private static final String XML_FILE_ROOT_DIRECTORY_NAME = "debatekeeper";
+    private static final String XML_FORMATS_DIRECTORY_NAME = "formats";
+    private static final String ASSETS_PATH = "formats";
     private static final String PREFERENCE_LOOK_FOR_CUSTOM_FORMATS = "lookForCustom";
 
-    static final int LOCATION_ASSETS           = 0;
+    static final int LOCATION_ASSETS = 0;
     static final int LOCATION_EXTERNAL_STORAGE = 1;
-    static final int LOCATION_NOT_FOUND       = -1;
+    static final int LOCATION_NOT_FOUND = -1;
 
     private boolean mLookForUserFiles;
 
@@ -84,7 +82,8 @@ class FormatXmlFilesManager {
     /**
      * Copies all data from the given stream to a file in the user-defined XML files directory.
      * <p><b>Note that this overwrites the existing file if there is one.</b></p>
-     * @param in an {@link InputStream}
+     *
+     * @param in              an {@link InputStream}
      * @param destinationName the name of the destination file
      * @throws IOException if there was an error dealing with any of the files
      */
@@ -107,8 +106,8 @@ class FormatXmlFilesManager {
     }
 
     /**
-     * Copies a legacy file to the new app-specific destination.
-     * To be removed in a future version.
+     * Copies a legacy file to the new app-specific destination. To be removed in a future version.
+     *
      * @param filename the name of the file to be copied
      */
     public void copyLegacyFile(@NonNull String filename) throws IOException {
@@ -129,26 +128,41 @@ class FormatXmlFilesManager {
 
     /**
      * Opens the file given by 'filename' and returns an <code>InputStream</code> for the file.
+     *
      * @param filename the name of the file
      * @return the <code>InputStream</code> for the file
      * @throws IOException if the file can't be found or there is a problem with the file.
      */
     public InputStream open(String filename) throws IOException {
-        if(mLookForUserFiles) {
+        if (mLookForUserFiles) {
             InputStream is = openFromExternalStorage(filename);
             if (is != null)
                 return is;
         }
         return openFromAssets(filename);
     }
+
+    /**
+     * Deletes the file given by 'filename'.
+     *
+     * @param filename the name of the file
+     * @return <code>true</code> if and only if the file or directory is successfully deleted;
+     * <code>false</code> otherwise.
+     */
+    public boolean delete(String filename) {
+        File file = new File(getAppSpecificUserFilesDirectory(), filename);
+        return file.delete();
+    }
+
     /**
      * Returns a list of all user files in the app-specific external storage location.
+     *
      * @return an array of Strings, possibly empty, each being an existent file name in external
      * storage.
      * @throws IOException if there is a problem with some file
      */
     @NonNull
-    String[] legacyUserFileList() throws IOException {
+    public String[] legacyUserFileList() throws IOException {
         if (!mLookForUserFiles) return new String[0];
 
         File userFilesDirectory = getLegacyUserFilesDirectory();
@@ -162,12 +176,13 @@ class FormatXmlFilesManager {
 
     /**
      * Returns a list of all user files in the app-specific external storage location.
+     *
      * @return an array of Strings, possibly empty, each being an existent file name in external
      * storage.
      * @throws IOException if there is a problem with some file
      */
     @NonNull
-    String[] userFileList() throws IOException {
+    public String[] userFileList() throws IOException {
         if (!mLookForUserFiles) return new String[0];
 
         File userFilesDirectory = getAppSpecificUserFilesDirectory();
@@ -181,6 +196,7 @@ class FormatXmlFilesManager {
 
     /**
      * Returns a list of all files available in the relevant locations.
+     *
      * @return an array of Strings, each being an existent file name (but not necessarily a valid
      * XML file)
      * @throws IOException if there is a problem with some file
@@ -202,11 +218,12 @@ class FormatXmlFilesManager {
 
     /**
      * Returns a {@link File} object representing the file.
+     *
      * @param filename Name of file to find.
      * @return a {@link File} object, or <code>null</code> if it isn't a file.
      */
     @Nullable
-    File getFileFromExternalStorage(String filename) {
+    public File getFileFromExternalStorage(String filename) {
         // See if we can find the directory...
         File userFilesDirectory = getAppSpecificUserFilesDirectory();
 
@@ -220,10 +237,11 @@ class FormatXmlFilesManager {
 
     /**
      * Finds out in which location this file is.
+     *
      * @param filename the name of the file
      * @return a LOCATION_* integer representing the location of the file
      */
-    int getLocation(@NonNull String filename) {
+    public int getLocation(@NonNull String filename) {
         if (mLookForUserFiles) {
             InputStream userFileInputStream = openFromExternalStorage(filename);
             if (userFileInputStream != null)
@@ -246,16 +264,17 @@ class FormatXmlFilesManager {
     /**
      * @return whether this manager is set to look for user files.
      */
-    boolean isLookingForUserFiles() {
+    public boolean isLookingForUserFiles() {
         return mLookForUserFiles;
     }
 
     /**
-     * Sets whether the files manager will look for user files.
-     * This method also saves the setting to preferences.
+     * Sets whether the files manager will look for user files. This method also saves the setting
+     * to preferences.
+     *
      * @param lookForUserFiles whether to look for user files
      */
-    void setLookForUserFiles(boolean lookForUserFiles) {
+    public void setLookForUserFiles(boolean lookForUserFiles) {
         this.mLookForUserFiles = lookForUserFiles;
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(PREFERENCE_LOOK_FOR_CUSTOM_FORMATS, lookForUserFiles);
@@ -273,9 +292,10 @@ class FormatXmlFilesManager {
 
     /**
      * Legacy user files directory. Deprecated from Android 10 (API level 29).
-     * @return the user files directory if it exists, or <code>null</code> if it does not exist
-     * or is not a directory.  If this method returns something non-null, you can assume it is
-     * a directory.
+     *
+     * @return the user files directory if it exists, or <code>null</code> if it does not exist or
+     * is not a directory.  If this method returns something non-null, you can assume it is a
+     * directory.
      */
     private File getLegacyUserFilesDirectory() {
         if (!isExternalStorageReadable())
@@ -291,6 +311,7 @@ class FormatXmlFilesManager {
 
     /**
      * App-specific user files directory.
+     *
      * @return the user files directory if it exists, or <code>null</code> if it does not exist.
      */
     private File getAppSpecificUserFilesDirectory() {

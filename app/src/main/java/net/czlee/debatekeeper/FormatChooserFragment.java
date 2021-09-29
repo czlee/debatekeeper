@@ -66,6 +66,7 @@ import net.czlee.debatekeeper.debateformat.XmlUtilities.IllegalSchemaVersionExce
 import org.xml.sax.SAXException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -94,7 +95,8 @@ public class FormatChooserFragment extends Fragment {
     private final ArrayList<DebateFormatListEntry> mStylesList = new ArrayList<>();
 
     private static final String DIALOG_ARGUMENT_FILE_NAME = "fn";
-    private static final String DIALOG_TAG_MORE_DETAILS = "md";
+    private static final String DIALOG_TAG_MORE_DETAILS = "details/";
+    private static final String DIALOG_TAG_CONFIRM_DELETION = "delete/";
 
     public static final String BUNDLE_KEY_RESULT         = "res";
     public static final String BUNDLE_KEY_XML_FILE_NAME  = "xmlfn";
@@ -168,6 +170,40 @@ public class FormatChooserFragment extends Fragment {
         }
     }
 
+    //******************************************************************************************
+    // Private classes
+    //******************************************************************************************
+
+    public static class ConfirmDeleteDialogFragment extends DialogFragment {
+
+        static ConfirmDeleteDialogFragment newInstance(String filename) {
+            ConfirmDeleteDialogFragment fragment = new ConfirmDeleteDialogFragment();
+            Bundle args = new Bundle();
+            args.putString(DIALOG_ARGUMENT_FILE_NAME, filename);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+            assert getArguments() != null;
+            String filename = getArguments().getString(DIALOG_ARGUMENT_FILE_NAME);
+
+            Activity activity = requireActivity();
+            FormatChooserFragment parent = (FormatChooserFragment) getParentFragment();
+            assert parent != null;
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+            builder.setMessage(getString(R.string.formatChooser_dialog_confirmDelete_message, filename))
+                    .setPositiveButton(R.string.formatChooser_dialog_confirmDelete_yes,
+                            (dialog, which) -> parent.deleteFile(filename))
+                    .setNegativeButton(R.string.formatChooser_dialog_confirmDelete_no, null);
+
+            return builder.create();
+        }
+    }
+
     public static class MoreDetailsDialogFragment extends DialogFragment {
 
         static MoreDetailsDialogFragment newInstance(String filename) {
@@ -195,11 +231,15 @@ public class FormatChooserFragment extends Fragment {
             try {
                 dfi = parent.getDebateFormatInfo(filename);
             } catch (IOException|SAXException e) {
+                String message = (e instanceof FileNotFoundException)
+                        ? getString(R.string.viewFormat_error_fileNotFound, e.getMessage())
+                        : e.getMessage();
+
                 populateFileInfo(binding, filename, null);
                 binding.viewFormatDetailsGroup.setVisibility(View.GONE);
                 binding.viewFormatErrorLabel.setVisibility(View.VISIBLE);
                 binding.viewFormatErrorValue.setVisibility(View.VISIBLE);
-                binding.viewFormatErrorValue.setText(e.getMessage());
+                binding.viewFormatErrorValue.setText(message);
             }
 
             if (dfi != null) {
@@ -221,6 +261,11 @@ public class FormatChooserFragment extends Fragment {
                 shareButton.setOnClickListener((v) -> parent.shareDebateFormatFile(filename));
             }
             else shareButton.setVisibility(View.GONE);
+
+            binding.viewFormatDeleteButton.setOnClickListener((v) -> {
+                DialogFragment fragment = ConfirmDeleteDialogFragment.newInstance(filename);
+                fragment.show(getParentFragmentManager(), DIALOG_TAG_CONFIRM_DELETION + filename);
+            });
 
             AlertDialog dialog = builder.create();
             dialog.setView(binding.getRoot(), 0, 10, 10, 15);
@@ -318,7 +363,7 @@ public class FormatChooserFragment extends Fragment {
         @Override
         public void onClick(View v) {
             DialogFragment fragment = MoreDetailsDialogFragment.newInstance(filename);
-            fragment.show(getChildFragmentManager(), DIALOG_TAG_MORE_DETAILS);
+            fragment.show(getChildFragmentManager(), DIALOG_TAG_MORE_DETAILS + filename);
         }
 
     }
@@ -479,6 +524,36 @@ public class FormatChooserFragment extends Fragment {
             return null;
         return mStylesList.get(index).getFilename();
     }
+
+    /**
+     * Carry out the required work to delete the given file. Called after the user has confirmed
+     * the deletion in {@link ConfirmDeleteDialogFragment}.
+     * @param filename file to delete
+     */
+    private void deleteFile(String filename) {
+        // Dismiss the details fragment (whether or not this works, we'll need to show the Snackbar)
+        Fragment detailsFragment = getChildFragmentManager().findFragmentByTag(DIALOG_TAG_MORE_DETAILS + filename);
+        if (detailsFragment instanceof DialogFragment)
+            ((DialogFragment) detailsFragment).dismiss();
+        else
+            Log.e(TAG, "Couldn't find the details fragment");
+
+        boolean success = mFilesManager.delete(filename);
+
+        if (success) {
+            // Show a confirmation message
+            showSnackbar(R.string.formatChooser_dialog_deleted_success, filename);
+
+            // Remove the entry from the styles list
+            int index = convertFilenameToIndex(filename);
+            if (index >= 0) {
+                mStylesList.remove(index);
+                mStylesArrayAdapter.notifyDataSetChanged();
+            }
+        }
+        else showSnackbar(R.string.formatChooser_dialog_deleted_failure, filename);
+    }
+
 
     /**
      * Parses an XML file to get the {@link DebateFormatInfo} object
