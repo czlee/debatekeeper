@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="formatDownloader_actionBar_expand">Expand all</string>
+    <string name="formatDownloader_actionBar_collapse">Collapse all</string>
+
     <string name="formatDownloader_button_download">Download</string>
     <string name="formatDownloader_progress_description">Downloading…</string>
     <string name="formatDownloader_button_downloaded">Downloaded</string>

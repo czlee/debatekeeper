@@ -75,6 +75,7 @@ public class DebateFormatDownloadManager {
         public String[] levels;
         public String description;
         public DownloadState state = DownloadState.NOT_DOWNLOADED;
+        public boolean expanded = true;
 
         /**
          * Constructs a new <code>DownloadableFormatEntry</code> from a {@link JsonReader}.

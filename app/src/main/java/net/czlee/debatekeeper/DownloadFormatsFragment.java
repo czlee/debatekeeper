@@ -7,6 +7,8 @@ import android.net.NetworkCapabilities;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -103,6 +106,34 @@ public class DownloadFormatsFragment extends Fragment {
     }
 
     //******************************************************************************************
+    // Private classes
+    //******************************************************************************************
+
+    private class DownloadFormatsMenuItemClickListener implements Toolbar.OnMenuItemClickListener {
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            final int itemId = item.getItemId();
+
+            if (itemId == R.id.formatDownloader_actionBar_expand) {
+                for (DebateFormatDownloadManager.DownloadableFormatEntry entry : mDownloadManager.getEntries()) {
+                    entry.expanded = true;
+                }
+                mRecyclerAdapter.notifyItemRangeChanged(0, mDownloadManager.getEntries().size());
+                setExpandCollapseButton(false);
+                return true;
+            } else if (itemId == R.id.formatDownloader_actionBar_collapse) {
+                for (DebateFormatDownloadManager.DownloadableFormatEntry entry : mDownloadManager.getEntries()) {
+                    entry.expanded = false;
+                }
+                mRecyclerAdapter.notifyItemRangeChanged(0, mDownloadManager.getEntries().size());
+                setExpandCollapseButton(true);
+                return true;
+            } else return false;
+        }
+    }
+
+    //******************************************************************************************
     // Public methods
     //******************************************************************************************
 
@@ -119,7 +150,9 @@ public class DownloadFormatsFragment extends Fragment {
 
         mViewBinding = FragmentDownloadFormatsBinding.inflate(inflater, container, false);
 
-        // Configure up button
+        // Configure menu
+        mViewBinding.toolbar.inflateMenu(R.menu.download_formats);
+        mViewBinding.toolbar.setOnMenuItemClickListener(new DownloadFormatsMenuItemClickListener());
         mViewBinding.toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
         mViewBinding.toolbar.setNavigationOnClickListener(
                 (v) -> NavHostFragment.findNavController(this).navigateUp());
@@ -146,7 +179,20 @@ public class DownloadFormatsFragment extends Fragment {
         return mViewBinding.getRoot();
     }
 
-    public void setViewToLoading() {
+    //******************************************************************************************
+    // Private methods
+    //******************************************************************************************
+
+    private void setExpandCollapseButton(boolean expand) {
+        Menu menu = mViewBinding.toolbar.getMenu();
+        if (menu == null) return;
+        MenuItem expandItem = menu.findItem(R.id.formatDownloader_actionBar_expand);
+        if (expandItem != null) expandItem.setVisible(expand);
+        MenuItem collapseItem = menu.findItem(R.id.formatDownloader_actionBar_collapse);
+        if (collapseItem != null) collapseItem.setVisible(!expand);
+    }
+
+    private void setViewToLoading() {
         if (mViewBinding == null) return;
         mViewBinding.list.setVisibility(View.GONE);
         mViewBinding.loadingText.setVisibility(View.VISIBLE);
@@ -155,7 +201,7 @@ public class DownloadFormatsFragment extends Fragment {
         mViewBinding.retryButton.setVisibility(View.GONE);
     }
 
-    public void setViewToError() {
+    private void setViewToError() {
         if (mViewBinding == null) return;
         mViewBinding.list.setVisibility(View.GONE);
         mViewBinding.loadingText.setVisibility(View.VISIBLE);
@@ -163,7 +209,7 @@ public class DownloadFormatsFragment extends Fragment {
         mViewBinding.retryButton.setVisibility(View.VISIBLE);
     }
 
-    public void setViewToList() {
+    private void setViewToList() {
         if (mViewBinding == null) return;
         mViewBinding.list.setVisibility(View.VISIBLE);
         mViewBinding.loadingText.setVisibility(View.GONE);

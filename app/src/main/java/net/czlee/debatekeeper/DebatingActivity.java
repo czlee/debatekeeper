@@ -76,13 +76,17 @@ public class DebatingActivity extends AppCompatActivity {
 
         unbindService(mServiceConnection);
 
-        DebateManager debateManager = mServiceBinder.getDebateManager();
-        if (debateManager == null || !debateManager.isRunning()) {
-            Intent intent = new Intent(this, DebatingTimerService.class);
-            stopService(intent);
-            Log.i(TAG, "Stopped service because timer is stopped");
+        if (mServiceBinder != null) {
+            DebateManager debateManager = mServiceBinder.getDebateManager();
+            if (debateManager == null || !debateManager.isRunning()) {
+                Intent intent = new Intent(this, DebatingTimerService.class);
+                stopService(intent);
+                Log.i(TAG, "Stopped service because timer is stopped");
+            } else {
+                Log.i(TAG, "Keeping service alive because timer is running");
+            }
         } else {
-            Log.i(TAG, "Keeping service alive because timer is running");
+            Log.e(TAG, "Tried to stop service, but the service binder was null!");
         }
     }
 }

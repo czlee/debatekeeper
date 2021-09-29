@@ -18,6 +18,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingHorizontal="8dp"
@@ -57,6 +58,7 @@
         android:contentDescription="@string/formatDownloader_button_download"
         android:layout_marginEnd="4dp"
         android:layout_marginRight="4dp"
+        android:tooltipText="@string/formatDownloader_button_download"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/viewFormat_title"
         app:srcCompat="@drawable/ic_outline_file_download_24" />
@@ -180,5 +182,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
         app:layout_constraintTop_toBottomOf="@+id/viewFormat_usedAtValue" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/viewFormat_detailsGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="
+            viewFormat_fileNameLabel,
+            viewFormat_fileNameValue,
+            viewFormat_regionLabel,
+            viewFormat_regionValue,
+            viewFormat_levelLabel,
+            viewFormat_levelValue,
+            viewFormat_usedAtLabel,
+            viewFormat_usedAtValue,
+            viewFormat_descLabel,
+            viewFormat_descValue"
+        tools:layout_editor_absoluteX="135dp"
+        tools:layout_editor_absoluteY="59dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -39,30 +39,46 @@ public class DownloadableFormatRecyclerAdapter extends RecyclerView.Adapter<Down
             binding.viewFormatUsedAtValue.setText(TextUtils.join("\n", entry.usedAts));
             binding.viewFormatLevelValue.setText(TextUtils.join("\n", entry.levels));
             binding.viewFormatDescValue.setText(entry.description);
-            updateDownloadProgress();
+
+            View.OnClickListener expandListener = (v) -> {
+                this.entry.expanded = !this.entry.expanded;
+                updateExpandedState();
+            };
+            binding.viewFormatChevron.setOnClickListener(expandListener);
+            binding.viewFormatTitle.setOnClickListener(expandListener);
+
+            updateExpandedState();
         }
 
         void updateDownloadProgress() {
+            binding.viewFormatDownloadButton.setVisibility(View.GONE);
+            binding.viewFormatDownloadProgress.setVisibility(View.GONE);
+            binding.viewFormatDownloadDone.setVisibility(View.GONE);
             switch (entry.state) {
                 case NOT_DOWNLOADED:
                 case UPDATE_AVAILABLE:
                     binding.viewFormatDownloadButton.setOnClickListener(
                             (v) -> mDownloadManager.startDownloadFile(entry, this));
-                    binding.viewFormatDownloadButton.setVisibility(View.VISIBLE);
-                    binding.viewFormatDownloadProgress.setVisibility(View.GONE);
-                    binding.viewFormatDownloadDone.setVisibility(View.GONE);
+                    if (entry.expanded)
+                        binding.viewFormatDownloadButton.setVisibility(View.VISIBLE);
                     break;
                 case DOWNLOAD_IN_PROGRESS:
-                    binding.viewFormatDownloadButton.setVisibility(View.GONE);
-                    binding.viewFormatDownloadProgress.setVisibility(View.VISIBLE);
-                    binding.viewFormatDownloadDone.setVisibility(View.GONE);
+                    if (entry.expanded)
+                        binding.viewFormatDownloadProgress.setVisibility(View.VISIBLE);
                     break;
                 case DOWNLOADED:
-                    binding.viewFormatDownloadButton.setVisibility(View.GONE);
-                    binding.viewFormatDownloadProgress.setVisibility(View.GONE);
-                    binding.viewFormatDownloadDone.setVisibility(View.VISIBLE);
+                    if (entry.expanded)
+                        binding.viewFormatDownloadDone.setVisibility(View.VISIBLE);
                     break;
             }
+        }
+
+        void updateExpandedState() {
+            binding.viewFormatDetailsGroup.setVisibility((entry.expanded) ? View.VISIBLE : View.GONE);
+            updateDownloadProgress();
+            binding.viewFormatChevron.setImageResource((entry.expanded)
+                    ? R.drawable.ic_baseline_expand_more_24
+                    : R.drawable.ic_baseline_chevron_right_24);
         }
     }
 
