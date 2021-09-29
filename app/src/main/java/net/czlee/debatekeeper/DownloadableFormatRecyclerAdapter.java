@@ -1,5 +1,7 @@
 package net.czlee.debatekeeper;
 
+import static net.czlee.debatekeeper.DebateFormatDownloadManager.DownloadableFormatEntry.DownloadState.UPDATE_AVAILABLE;
+
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,31 +48,46 @@ public class DownloadableFormatRecyclerAdapter extends RecyclerView.Adapter<Down
             };
             binding.viewFormatChevron.setOnClickListener(expandListener);
             binding.viewFormatTitle.setOnClickListener(expandListener);
+            binding.viewFormatStatusIcon.setOnClickListener(expandListener);
 
             updateExpandedState();
         }
 
         void updateDownloadProgress() {
-            binding.viewFormatDownloadButton.setVisibility(View.GONE);
-            binding.viewFormatDownloadProgress.setVisibility(View.GONE);
-            binding.viewFormatDownloadDone.setVisibility(View.GONE);
+            int buttonVisibility = View.GONE;
+            int progressVisibility = View.GONE;
+            int doneVisibility = View.GONE;
+            int statusIconVisibility = View.GONE;
+            int updateTextVisibility = View.GONE;
+
             switch (entry.state) {
-                case NOT_DOWNLOADED:
                 case UPDATE_AVAILABLE:
+                    binding.viewFormatStatusIcon.setImageResource(R.drawable.ic_baseline_upgrade_24);
+                    statusIconVisibility = View.VISIBLE;
+                    if (entry.expanded) updateTextVisibility = View.VISIBLE;
+                case NOT_DOWNLOADED:
                     binding.viewFormatDownloadButton.setOnClickListener(
                             (v) -> mDownloadManager.startDownloadFile(entry, this));
-                    if (entry.expanded)
-                        binding.viewFormatDownloadButton.setVisibility(View.VISIBLE);
+                    if (entry.expanded) buttonVisibility = View.VISIBLE;
                     break;
                 case DOWNLOAD_IN_PROGRESS:
-                    if (entry.expanded)
-                        binding.viewFormatDownloadProgress.setVisibility(View.VISIBLE);
+                    if (entry.expanded) progressVisibility = View.VISIBLE;
                     break;
                 case DOWNLOADED:
-                    if (entry.expanded)
-                        binding.viewFormatDownloadDone.setVisibility(View.VISIBLE);
+                    binding.viewFormatStatusIcon.setImageResource(R.drawable.ic_outline_file_download_done_24);
+                    if (entry.expanded) {
+                        doneVisibility = View.VISIBLE;
+                        statusIconVisibility = View.GONE;
+                    }
+                    else statusIconVisibility = View.VISIBLE;  // show the status icon only when collapsed
                     break;
             }
+
+            binding.viewFormatDownloadButton.setVisibility(buttonVisibility);
+            binding.viewFormatDownloadProgress.setVisibility(progressVisibility);
+            binding.viewFormatDownloadDone.setVisibility(doneVisibility);
+            binding.viewFormatUpdateAvailableText.setVisibility(updateTextVisibility);
+            binding.viewFormatStatusIcon.setVisibility(statusIconVisibility);
         }
 
         void updateExpandedState() {

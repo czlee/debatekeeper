@@ -42,12 +42,23 @@
         android:id="@+id/viewFormat_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:gravity="center_vertical"
-        app:layout_constraintTop_toTopOf="parent"
+        android:padding="8dp"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+        app:layout_constraintEnd_toStartOf="@+id/viewFormat_statusIcon"
         app:layout_constraintStart_toEndOf="@id/viewFormat_chevron"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/viewFormat_statusIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/viewFormat_title"
         app:layout_constraintEnd_toEndOf="parent"
-        android:padding="8dp" />
+        app:layout_constraintTop_toTopOf="@+id/viewFormat_title"
+        app:srcCompat="@drawable/ic_baseline_upgrade_24" />
 
     <!-- Download indicators -->
 
@@ -90,11 +101,20 @@
     <!-- Labels -->
 
     <TextView
+        android:id="@+id/viewFormat_updateAvailableText"
+        style="@style/viewFormat_tableLabelStyle"
+        android:text="@string/formatDownloader_updateAvailable"
+        android:textColor="@color/debatekeeper_accent_dark"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewFormat_title" />
+
+    <TextView
         android:id="@+id/viewFormat_fileNameLabel"
         style="@style/viewFormat_tableLabelStyle"
         android:text="@string/viewFormat_fileNameLabel"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/viewFormat_title" />
+        app:layout_constraintTop_toTopOf="@id/viewFormat_fileNameValue" />
 
     <TextView
         android:id="@+id/viewFormat_regionLabel"
@@ -151,7 +171,7 @@
         style="@style/viewFormat_tableValueStyle"
         app:layout_constraintEnd_toStartOf="@+id/viewFormat_download_button"
         app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
-        app:layout_constraintTop_toBottomOf="@id/viewFormat_title" />
+        app:layout_constraintTop_toBottomOf="@id/viewFormat_updateAvailableText" />
 
     <TextView
         android:id="@+id/viewFormat_regionValue"

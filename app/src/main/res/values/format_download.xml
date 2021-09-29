@@ -9,6 +9,8 @@
     <string name="formatDownloader_button_downloaded">Downloaded</string>
     <string name="formatDownloader_image_chevron">Expand</string>
 
+    <string name="formatDownloader_updateAvailable">Update available</string>
+
     <string name="formatDownloader_list_url" translatable="false">https://formats.debatekeeper.czlee.nz/formats.json</string>
 
     <string name="formatDownloader_loadingText">Loading list of styles from server…</string>
