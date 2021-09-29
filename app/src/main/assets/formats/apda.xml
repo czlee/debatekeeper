@@ -2,6 +2,7 @@
 <debate-format schema-version="2.1">
   <name>American Parliamentary</name>
   <short-name>APDA</short-name>
+  <version>1</version>
   <info>
     <region>United States</region>
     <level>University</level>

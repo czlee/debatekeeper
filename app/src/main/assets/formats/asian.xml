@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <debate-format schema-version="2.1">
   <name>Asian Parliamentary</name>
+  <version>1</version>
   <info>
     <region>Asia</region>
     <level>University</level>
