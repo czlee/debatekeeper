@@ -204,12 +204,12 @@ public class DebateFormatDownloadManager {
             } catch (IOException e) {
                 e.printStackTrace();
                 String message = (e instanceof FileNotFoundException)
-                        ? mContext.getString(R.string.formatDownloader_notFoundError, e.getMessage())
-                        : e.getMessage();
+                        ? mContext.getString(R.string.formatDownloader_notFoundError, e.getLocalizedMessage())
+                        : e.getLocalizedMessage();
                 mMainThreadHandler.post(() -> mBinder.notifyListDownloadError(message));
             } catch (IllegalStateException | NumberFormatException e) {
                 e.printStackTrace();
-                mMainThreadHandler.post(() -> mBinder.notifyJsonParseError(e.getMessage()));
+                mMainThreadHandler.post(() -> mBinder.notifyJsonParseError(e.getLocalizedMessage()));
             }
         });
     }
@@ -237,8 +237,8 @@ public class DebateFormatDownloadManager {
             } catch (IOException e) {
                 e.printStackTrace();
                 String message = (e instanceof FileNotFoundException)
-                        ? mContext.getString(R.string.formatDownloader_notFoundError, e.getMessage())
-                        : e.getMessage();
+                        ? mContext.getString(R.string.formatDownloader_notFoundError, e.getLocalizedMessage())
+                        : e.getLocalizedMessage();
                 mMainThreadHandler.post(() -> {
                     entry.state = originalState;
                     holder.updateDownloadProgress();

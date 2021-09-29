@@ -232,8 +232,8 @@ public class FormatChooserFragment extends Fragment {
                 dfi = parent.getDebateFormatInfo(filename);
             } catch (IOException|SAXException e) {
                 String message = (e instanceof FileNotFoundException)
-                        ? getString(R.string.viewFormat_error_fileNotFound, e.getMessage())
-                        : e.getMessage();
+                        ? getString(R.string.viewFormat_error_fileNotFound, e.getLocalizedMessage())
+                        : e.getLocalizedMessage();
 
                 populateFileInfo(binding, filename, null);
                 binding.viewFormatDetailsGroup.setVisibility(View.GONE);

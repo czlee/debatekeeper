@@ -198,7 +198,7 @@ public class PeriodInfoManager {
                 pi = createPeriodInfoFromElement(periodType);
             } catch (PeriodInfoException e) {
                 // this should never happen
-                Log.e(TAG, e.getMessage());
+                Log.e(TAG, e.getLocalizedMessage());
                 continue;
             }
 

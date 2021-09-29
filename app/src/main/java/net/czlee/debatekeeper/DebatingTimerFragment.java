@@ -1212,7 +1212,7 @@ public class DebatingTimerFragment extends Fragment {
         } catch (SAXException e) {
             Log.e(TAG, "bad xml");
             throw new FatalXmlError(getString(
-                    R.string.debateLoadError_badXml, e.getMessage()), e);
+                    R.string.debateLoadError_badXml, e.getLocalizedMessage()), e);
         }
 
         // If the schema wasn't supported, check if it looks like it might be a schema 1.0 file.
@@ -1231,7 +1231,7 @@ public class DebatingTimerFragment extends Fragment {
                     throw new FatalXmlError(getString(R.string.debateLoadError_schemaOutdated));
             } catch (SAXException e) {
                 throw new FatalXmlError(getString(
-                        R.string.debateLoadError_badXml, e.getMessage()), e);
+                        R.string.debateLoadError_badXml, e.getLocalizedMessage()), e);
             } catch (IOException e) {
                 throw new FatalXmlError(getString(R.string.debateLoadError_cannotRead), e);
             }
@@ -1633,7 +1633,7 @@ public class DebatingTimerFragment extends Fragment {
             try {
                 df = buildDebateFromXml(mFormatXmlFileName);
             } catch (FatalXmlError e) {
-                setDebateLoadError(e.getMessage());
+                setDebateLoadError(e.getLocalizedMessage());
                 notifyViewPagerDataSetChanged();
                 return;
             }

@@ -499,7 +499,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
      * @param e the Exception
      */
     private void logXmlError(Exception e) {
-        logXmlError(e.getMessage());
+        logXmlError(e.getLocalizedMessage());
     }
 
     /**
