@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class DownloadableFormatEntryRecyclerAdapter extends RecyclerView.Adapter<DownloadableFormatEntryRecyclerAdapter.ViewHolder> {
 
-    private final List<DownloadableFormatEntry> mValues;
+    private final List<DownloadableFormatEntry> mEntries;
 
     //******************************************************************************************
     // Public classes
@@ -37,8 +37,8 @@ public class DownloadableFormatEntryRecyclerAdapter extends RecyclerView.Adapter
     // Public constructor
     //******************************************************************************************
 
-    public DownloadableFormatEntryRecyclerAdapter(List<DownloadableFormatEntry> items) {
-        mValues = items;
+    public DownloadableFormatEntryRecyclerAdapter(List<DownloadableFormatEntry> entries) {
+        mEntries = entries;
     }
 
     //******************************************************************************************
@@ -55,7 +55,7 @@ public class DownloadableFormatEntryRecyclerAdapter extends RecyclerView.Adapter
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        DownloadableFormatEntry entry = mValues.get(position);
+        DownloadableFormatEntry entry = mEntries.get(position);
         holder.item = entry;
         holder.binding.viewFormatTitle.setText(entry.styleName);
         holder.binding.viewFormatFileNameValue.setText(entry.filename);
@@ -67,7 +67,7 @@ public class DownloadableFormatEntryRecyclerAdapter extends RecyclerView.Adapter
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return mEntries.size();
     }
 
 }

@@ -29,10 +29,31 @@ public class DownloadFormatsFragment extends Fragment {
     //******************************************************************************************
 
     public class DownloadBinder {
-        public void notifyAdapterItemRangeInserted(int positionStart, int itemCount) {
-            requireActivity().runOnUiThread(
-                    () -> mRecyclerAdapter.notifyItemRangeInserted(positionStart, itemCount));
+        /**
+         * Convenience function, runs the notifications to replace the entire dataset.
+         * @param oldCount the original number of entries
+         * @param newCount the new number of entries
+         */
+        public void notifyAdapterItemsReplaced(int oldCount, int newCount) {
+            if (oldCount == newCount) {
+                mRecyclerAdapter.notifyItemRangeChanged(0, newCount);
+            } else if (oldCount < newCount) {
+                mRecyclerAdapter.notifyItemRangeChanged(0, oldCount);
+                mRecyclerAdapter.notifyItemRangeInserted(oldCount, newCount - oldCount);
+            } else {
+                mRecyclerAdapter.notifyItemRangeChanged(0, newCount);
+                mRecyclerAdapter.notifyItemRangeRemoved(newCount, oldCount - newCount);
+            }
         }
+
+        public void notifyListDownloadError() {
+
+        }
+
+        public void notifyJsonParseError() {
+
+        }
+
     }
 
     //******************************************************************************************
@@ -52,10 +73,12 @@ public class DownloadFormatsFragment extends Fragment {
 
         FragmentDownloadFormatsListBinding binding = FragmentDownloadFormatsListBinding.inflate(inflater, container, false);
 
+        // Configure up button
         binding.toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
         binding.toolbar.setNavigationOnClickListener(
                 (v) -> NavHostFragment.findNavController(this).navigateUp());
 
+        // Configure recycler view
         RecyclerView recyclerView = binding.list;
         Context context = requireContext();
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -64,12 +87,10 @@ public class DownloadFormatsFragment extends Fragment {
         DividerItemDecoration decoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
         recyclerView.addItemDecoration(decoration);
 
+        // Download the list
+        mDownloadManager.startDownloadList();
+
         return binding.getRoot();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        mDownloadManager.startDownloadList();
-    }
 }

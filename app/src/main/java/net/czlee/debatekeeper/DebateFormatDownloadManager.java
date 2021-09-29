@@ -1,15 +1,22 @@
 package net.czlee.debatekeeper;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.JsonReader;
 import android.util.Log;
+
+import androidx.core.os.HandlerCompat;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -32,7 +39,8 @@ public class DebateFormatDownloadManager {
     private final Context mContext;
     private final ArrayList<DownloadableFormatEntry> mEntries;
     private final DownloadFormatsFragment.DownloadBinder mBinder;
-    ExecutorService mExecutorService;
+    private ExecutorService mExecutorService;
+    private Handler mMainThreadHandler;
 
     //******************************************************************************************
     // Public class
@@ -119,23 +127,45 @@ public class DebateFormatDownloadManager {
     }
 
     public void startDownloadList() {
-        initialise();
+        initialiseThreads();
+        String url = mContext.getString(R.string.formatDownloader_list_url);
         mExecutorService.execute(() -> {
             try {
-                synchronousDownloadList();
+                List<DownloadableFormatEntry> newEntries = synchronousDownloadList(url);
+                mMainThreadHandler.post(() -> replaceEntriesAndNotify(newEntries));
             } catch (IOException e) {
                 e.printStackTrace();
-            } catch (IllegalStateException e) {
+                mMainThreadHandler.post(mBinder::notifyListDownloadError);
+            } catch (IllegalStateException|NumberFormatException e) {
                 e.printStackTrace();
+                mMainThreadHandler.post(mBinder::notifyJsonParseError);
             }
         });
     }
 
     /**
-     * Downloads the list of formats from the server.
+     * Replaces <code>mEntries</code> with <code>newEntries</code>, and notifies the binder that
+     * the data has changed. Must be run on the main thread.
+     * @param newEntries the new entries
      */
-    private void synchronousDownloadList() throws IOException, IllegalStateException {
-        URL url = new URL(mContext.getString(R.string.formatDownloader_list_url));
+    private void replaceEntriesAndNotify(List<DownloadableFormatEntry> newEntries) {
+        int originalSize = mEntries.size();
+        mEntries.clear();
+        mEntries.addAll(newEntries);
+        mBinder.notifyAdapterItemsReplaced(originalSize, newEntries.size());
+    }
+
+    /**
+     * Downloads the list of formats from the server. This accesses the network, so it must be run
+     * on a background thread. The list it returns is unmodifiable, to try to protect against
+     * accidental threading errors.
+     */
+    private List<DownloadableFormatEntry> synchronousDownloadList(String repositoryUrl) throws IOException, IllegalStateException {
+        Log.i(TAG, "Downloading list from server");
+
+        ArrayList<DownloadableFormatEntry> entries = new ArrayList<>();
+
+        URL url = new URL(repositoryUrl);
         Log.d(TAG, "url: " + url.toString());
         URLConnection connection = url.openConnection();
         InputStream in = connection.getInputStream();
@@ -146,19 +176,23 @@ public class DebateFormatDownloadManager {
             while (reader.hasNext()) {
                 DownloadableFormatEntry entry = DownloadableFormatEntry.fromJsonReader(reader);
                 Log.d(TAG, "added: " + entry.styleName + " (" + entry.filename + ")");
-                mEntries.add(entry);
+                entries.add(entry);
             }
             reader.endArray();
         }
 
-        mBinder.notifyAdapterItemRangeInserted(0, mEntries.size());
+        return Collections.unmodifiableList(entries);
     }
 
-    private void initialise() {
-        if (mExecutorService == null) {
+    /**
+     * Initialises thread management if it hasn't already been initialised. Must be called before
+     * any background thread is done. Does nothing if initialisation has already happened.
+     */
+    private void initialiseThreads() {
+        if (mExecutorService == null)
             mExecutorService = Executors.newSingleThreadExecutor();
-        }
+        if (mMainThreadHandler == null)
+            mMainThreadHandler = HandlerCompat.createAsync(Looper.getMainLooper());
     }
-
 
 }
