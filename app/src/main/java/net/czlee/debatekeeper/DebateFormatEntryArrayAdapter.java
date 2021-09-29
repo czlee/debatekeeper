@@ -41,6 +41,8 @@ import java.util.List;
  * selected, it expands to show information about the format. If not, it just
  * returns the standard android simple_list_item_single_choice.
  *
+ * It would be good to update this setup to use <code>RecyclerView</code> instead.
+ *
  * @author Chuan-Zheng Lee
  * @since  2012-06-20
  */

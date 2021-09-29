@@ -93,7 +93,7 @@ import net.czlee.debatekeeper.debateformat.BellInfo;
 import net.czlee.debatekeeper.debateformat.DebateFormat;
 import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXml;
 import net.czlee.debatekeeper.debateformat.DebateFormatBuilderFromXmlForSchema2;
-import net.czlee.debatekeeper.debateformat.DebateFormatStyleNameExtractor;
+import net.czlee.debatekeeper.debateformat.DebateFormatFieldExtractor;
 import net.czlee.debatekeeper.debateformat.DebatePhaseFormat;
 import net.czlee.debatekeeper.debateformat.PeriodInfo;
 import net.czlee.debatekeeper.debateformat.PrepTimeFormat;
@@ -1861,14 +1861,14 @@ public class DebatingTimerFragment extends Fragment {
 
         Context context = requireContext();
 
-        DebateFormatStyleNameExtractor nameExtractor = new DebateFormatStyleNameExtractor(context);
+        DebateFormatFieldExtractor nameExtractor = new DebateFormatFieldExtractor(context, R.string.xml2elemName_name);
         FormatXmlFilesManager filesManager = new FormatXmlFilesManager(context);
         int existingLocation = filesManager.getLocation(incomingFilename);
 
         String incomingStyleName, existingStyleName;
 
         try {
-            incomingStyleName = nameExtractor.getStyleName(is);
+            incomingStyleName = nameExtractor.getFieldValue(is);
             is.close();
         } catch (IOException | SAXException e) {
             showSnackbar(Snackbar.LENGTH_LONG, R.string.importDebateFormat_snackbar_error_generic);
@@ -1881,7 +1881,7 @@ public class DebatingTimerFragment extends Fragment {
             // give an option not to replace.
             try {
                 InputStream existingIs = filesManager.open(incomingFilename);
-                existingStyleName = nameExtractor.getStyleName(existingIs);
+                existingStyleName = nameExtractor.getFieldValue(existingIs);
                 existingIs.close();
             } catch (IOException | SAXException e) {
                 existingStyleName = getString(R.string.importDebateFormat_placeholder_unknownStyleName);
@@ -1905,7 +1905,7 @@ public class DebatingTimerFragment extends Fragment {
             for (String otherFilename : userFileList) {
                 try {
                     InputStream otherIs = filesManager.open(otherFilename);
-                    otherStyleName = nameExtractor.getStyleName(otherIs);
+                    otherStyleName = nameExtractor.getFieldValue(otherIs);
                     otherIs.close();
                 } catch (IOException | SAXException e) {
                     continue;

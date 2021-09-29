@@ -28,7 +28,7 @@ public class DownloadFormatsFragment extends Fragment {
 
     FragmentDownloadFormatsListBinding mViewBinding;
     DebateFormatDownloadManager mDownloadManager;
-    DownloadableFormatEntryRecyclerAdapter mRecyclerAdapter;
+    DownloadableFormatRecyclerAdapter mRecyclerAdapter;
 
     //******************************************************************************************
     // Public classes
@@ -122,7 +122,7 @@ public class DownloadFormatsFragment extends Fragment {
         RecyclerView recyclerView = mViewBinding.list;
         Context context = requireContext();
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        mRecyclerAdapter = new DownloadableFormatEntryRecyclerAdapter(mDownloadManager.getEntries());
+        mRecyclerAdapter = new DownloadableFormatRecyclerAdapter(mDownloadManager);
         recyclerView.setAdapter(mRecyclerAdapter);
         DividerItemDecoration decoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
         recyclerView.addItemDecoration(decoration);

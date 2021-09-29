@@ -8,13 +8,18 @@ import android.util.Log;
 
 import androidx.core.os.HandlerCompat;
 
+import net.czlee.debatekeeper.debateformat.DebateFormatFieldExtractor;
+
+import org.xml.sax.SAXException;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +31,7 @@ import java.util.concurrent.Executors;
  * This class:
  * <ul>
  *     <li>contacts the server to download a list of all format XML files available</li>
- *     <li>provides a class representing a downloadable format for {@link DownloadableFormatEntryRecyclerAdapter}</li>
+ *     <li>provides a class representing a downloadable format for {@link DownloadableFormatRecyclerAdapter}</li>
  *     <li>downloads requested format XML files and saves them to the user's device</li>
  * </ul>
  *
@@ -38,10 +43,12 @@ public class DebateFormatDownloadManager {
     private final String TAG = "DebateFormatDownload";
 
     private final Context mContext;
+    private final String mListUrl;
     private final ArrayList<DownloadableFormatEntry> mEntries;
     private final DownloadFormatsFragment.DownloadBinder mBinder;
     private ExecutorService mExecutorService;
     private Handler mMainThreadHandler;
+    private final FormatXmlFilesManager mFilesManager;
 
     //******************************************************************************************
     // Public class
@@ -49,7 +56,15 @@ public class DebateFormatDownloadManager {
 
     public static class DownloadableFormatEntry {
 
-        private static String TAG = "DownloadFormatEntry";
+        public enum DownloadState {
+            NOT_DOWNLOADED,
+            UPDATE_AVAILABLE,
+            DOWNLOAD_IN_PROGRESS,
+            DOWNLOADED
+        }
+
+        private static final String TAG = "DownloadFormatEntry";
+
         public int version;
         public String filename;
         public String url;
@@ -58,6 +73,7 @@ public class DebateFormatDownloadManager {
         public String[] usedAts;
         public String[] levels;
         public String description;
+        public DownloadState state = DownloadState.NOT_DOWNLOADED;
 
         static DownloadableFormatEntry fromJsonReader(JsonReader reader) throws IOException, IllegalStateException {
             DownloadableFormatEntry entry = new DownloadableFormatEntry();
@@ -107,6 +123,38 @@ public class DebateFormatDownloadManager {
             return strings.toArray(new String[0]);
         }
 
+        void checkForExistingFile(FormatXmlFilesManager filesManager, DebateFormatFieldExtractor versionExtractor) {
+            InputStream in;
+            String versionStr;
+
+            if (filesManager.getLocation(this.filename) == FormatXmlFilesManager.LOCATION_NOT_FOUND) {
+                this.state = DownloadState.NOT_DOWNLOADED;
+                return;
+            }
+
+            try {
+                in = filesManager.open(this.filename);
+                versionStr = versionExtractor.getFieldValue(in);
+            } catch (IOException | SAXException e) {
+                Log.e(TAG, "Couldn't get version from " + this.filename);
+                this.state = DownloadState.NOT_DOWNLOADED;
+                return;
+            }
+
+            int existingVersion;
+            try {
+                existingVersion = Integer.parseInt(versionStr);
+            } catch (NumberFormatException e) {
+                Log.e(TAG, "Invalid version in " + this.filename + ": " + versionStr);
+                this.state = DownloadState.UPDATE_AVAILABLE;
+                return;
+            }
+
+            if (this.version > existingVersion)
+                this.state = DownloadState.UPDATE_AVAILABLE;
+            else
+                this.state = DownloadState.DOWNLOADED;
+        }
     }
 
     //******************************************************************************************
@@ -115,8 +163,10 @@ public class DebateFormatDownloadManager {
 
     DebateFormatDownloadManager(Context context, DownloadFormatsFragment.DownloadBinder binder) {
         mContext = context;
+        mListUrl = context.getString(R.string.formatDownloader_list_url);
         mBinder = binder;
         mEntries = new ArrayList<>();
+        mFilesManager = new FormatXmlFilesManager(context);
     }
 
     //******************************************************************************************
@@ -129,10 +179,9 @@ public class DebateFormatDownloadManager {
 
     public void startDownloadList() {
         initialiseThreads();
-        String url = mContext.getString(R.string.formatDownloader_list_url);
         mExecutorService.execute(() -> {
             try {
-                List<DownloadableFormatEntry> newEntries = synchronousDownloadList(url);
+                List<DownloadableFormatEntry> newEntries = synchronousDownloadList();
                 mMainThreadHandler.post(() -> replaceEntriesAndNotify(newEntries));
             } catch (FileNotFoundException e) {
                 // prepend "Not found:" to be a little clearer
@@ -149,6 +198,43 @@ public class DebateFormatDownloadManager {
         });
     }
 
+    public void startDownloadFile(DownloadableFormatEntry entry, DownloadableFormatRecyclerAdapter.ViewHolder holder) {
+        initialiseThreads();
+        final DownloadableFormatEntry.DownloadState originalState = entry.state;
+        entry.state = DownloadableFormatEntry.DownloadState.DOWNLOAD_IN_PROGRESS;
+        holder.updateDownloadProgress();
+        mExecutorService.execute(() -> {
+            try {
+                synchronousDownloadFile(entry);
+                mMainThreadHandler.post(() -> {
+                    entry.state = DownloadableFormatEntry.DownloadState.DOWNLOADED;
+                    holder.updateDownloadProgress();
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+                mMainThreadHandler.post(() -> {
+                    entry.state = originalState;
+                    holder.updateDownloadProgress();
+                });
+            }
+        });
+    }
+
+    //******************************************************************************************
+    // Private methods
+    //******************************************************************************************
+
+    /**
+     * Initialises thread management if it hasn't already been initialised. Must be called before
+     * any background thread is done. Does nothing if initialisation has already happened.
+     */
+    private void initialiseThreads() {
+        if (mExecutorService == null)
+            mExecutorService = Executors.newSingleThreadExecutor();
+        if (mMainThreadHandler == null)
+            mMainThreadHandler = HandlerCompat.createAsync(Looper.getMainLooper());
+    }
+
     /**
      * Replaces <code>mEntries</code> with <code>newEntries</code>, and notifies the binder that
      * the data has changed. Must be run on the main thread.
@@ -161,17 +247,33 @@ public class DebateFormatDownloadManager {
         mBinder.notifyAdapterItemsReplaced(originalSize, newEntries.size());
     }
 
+    private void synchronousDownloadFile(DownloadableFormatEntry entry) throws IOException {
+        Log.i(TAG, "Downloading file from server: " + entry.filename);
+
+        URL url = new URL(entry.url);
+        Log.d(TAG, "url: " + url.toString());
+        if (!verifyHostMatch(url))
+            throw new MalformedURLException("Wrong host: " + url.toString());
+
+        URLConnection connection = url.openConnection();
+        InputStream in = connection.getInputStream();
+
+        mFilesManager.copy(in, entry.filename);
+    }
+
     /**
      * Downloads the list of formats from the server. This accesses the network, so it must be run
      * on a background thread. The list it returns is unmodifiable, to try to protect against
      * accidental threading errors.
      */
-    private List<DownloadableFormatEntry> synchronousDownloadList(String repositoryUrl) throws IOException, IllegalStateException {
+    private List<DownloadableFormatEntry> synchronousDownloadList()
+            throws IOException, IllegalStateException, NumberFormatException {
         Log.i(TAG, "Downloading list from server");
 
         ArrayList<DownloadableFormatEntry> entries = new ArrayList<>();
+        DebateFormatFieldExtractor versionExtractor = new DebateFormatFieldExtractor(mContext, R.string.xml2elemName_version);
 
-        URL url = new URL(repositoryUrl);
+        URL url = new URL(mListUrl);
         Log.d(TAG, "url: " + url.toString());
         URLConnection connection = url.openConnection();
         InputStream in = connection.getInputStream();
@@ -182,6 +284,7 @@ public class DebateFormatDownloadManager {
             while (reader.hasNext()) {
                 DownloadableFormatEntry entry = DownloadableFormatEntry.fromJsonReader(reader);
                 Log.d(TAG, "added: " + entry.styleName + " (" + entry.filename + ")");
+                entry.checkForExistingFile(mFilesManager, versionExtractor);
                 entries.add(entry);
             }
             reader.endArray();
@@ -190,15 +293,9 @@ public class DebateFormatDownloadManager {
         return Collections.unmodifiableList(entries);
     }
 
-    /**
-     * Initialises thread management if it hasn't already been initialised. Must be called before
-     * any background thread is done. Does nothing if initialisation has already happened.
-     */
-    private void initialiseThreads() {
-        if (mExecutorService == null)
-            mExecutorService = Executors.newSingleThreadExecutor();
-        if (mMainThreadHandler == null)
-            mMainThreadHandler = HandlerCompat.createAsync(Looper.getMainLooper());
+    private boolean verifyHostMatch(URL url) throws MalformedURLException {
+        URL listUrl = new URL(mListUrl);
+        return url.getHost().equals(listUrl.getHost());
     }
 
 }

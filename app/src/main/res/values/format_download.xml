@@ -2,6 +2,8 @@
 <resources>
 
     <string name="formatDownloader_button_download">Download</string>
+    <string name="formatDownloader_progress_description">Downloading…</string>
+    <string name="formatDownloader_button_downloaded">Downloaded</string>
     <string name="formatDownloader_image_chevron">Expand</string>
 
     <string name="formatDownloader_list_url" translatable="false">https://formats.debatekeeper.czlee.nz/formats.json</string>

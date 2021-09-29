@@ -14,41 +14,43 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * DebateFormatStyleNameExtractor provides a method to extract the style name (and only the style
- * name) from a given input stream. It must be tied to a context, so that it can access its
- * resources. It should be used when <strong>only</strong> the style name is desired. Callers that
- * wish to read other things in the file should use another class designed to do more with the
- * debate format file.
+ * DebateFormatFieldExtractor provides a method to extract a single field (and only one field) from
+ * a given input stream. It must be tied to a context, so that it can access its resources. It
+ * should be used when <strong>only</strong> one field is desired. Callers that wish to read other
+ * things in the file should use another class designed to do more with the debate format file.
  *
  * @author Chuan-Zheng Lee
  * @since 2016-09-25
  */
 
-public class DebateFormatStyleNameExtractor {
+public class DebateFormatFieldExtractor {
 
     private final String DEBATING_TIMER_URI;
     private final Resources mResources;
-    private String mCurrentStyleName;
+    private final String mFieldName;
+    private String mFieldValue;
 
-    public DebateFormatStyleNameExtractor(Context context) {
+    public DebateFormatFieldExtractor(Context context, int fieldNameResId) {
         mResources = context.getResources();
         DEBATING_TIMER_URI = mResources.getString(R.string.xml_uri);
+        mFieldName = mResources.getString(fieldNameResId);
     }
 
     /**
-     * Parses the XML file to retrieve the name of the style for the given input stream.
+     * Parses the XML file to retrieve the value held in the requested field for the given input
+     * stream.
+     *
      * @param is an {@link InputStream}
      * @return the name of the style, e.g. "British Parliamentary", or null if the file is not a
      * valid debate format XML file.
-     *
      */
-    public String getStyleName(InputStream is) throws IOException, SAXException {
-        mCurrentStyleName = null;
+    public String getFieldValue(InputStream is) throws IOException, SAXException {
+        mFieldValue = null;
 
         try {
             Xml.parse(is, Xml.Encoding.UTF_8, new GetDebateFormatNameXmlContentHandler());
         } catch (AllInformationFoundException e) {
-            return mCurrentStyleName;
+            return mFieldValue;
         }
 
         return null;
@@ -79,8 +81,8 @@ public class DebateFormatStyleNameExtractor {
 
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
-            if (localName.equals(mResources.getString(R.string.xml2elemName_name))) {
-                mCurrentStyleName = mNameBuffer.toString();
+            if (localName.equals(mFieldName)) {
+                mFieldValue = mNameBuffer.toString();
                 throw new AllInformationFoundException();
                 // We don't need to parse any more once we finish getting the style name
             }
@@ -89,7 +91,7 @@ public class DebateFormatStyleNameExtractor {
         @Override
         public void startDocument() {
             // initialise
-            mCurrentStyleName = null;
+            mFieldValue = null;
         }
 
         @Override
@@ -105,13 +107,12 @@ public class DebateFormatStyleNameExtractor {
             // that the <name> element is actually the right one.
 
             if (localName.equals(mResources.getString(R.string.xml1elemName_root))) {
-                mCurrentStyleName = atts.getValue(DEBATING_TIMER_URI,
-                        mResources.getString(R.string.xml1attrName_root_name));
+                mFieldValue = atts.getValue(DEBATING_TIMER_URI, mFieldName);
                 throw new AllInformationFoundException();
                 // We don't need to parse any more once we find the style name
             }
 
-            if (localName.equals(mResources.getString(R.string.xml2elemName_name)))
+            if (localName.equals(mFieldName))
                 mNameBuffer = new StringBuilder();
         }
     }

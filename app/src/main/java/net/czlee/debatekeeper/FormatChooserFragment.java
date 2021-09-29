@@ -55,10 +55,10 @@ import com.google.android.material.snackbar.Snackbar;
 import net.czlee.debatekeeper.databinding.FragmentFormatChooserBinding;
 import net.czlee.debatekeeper.databinding.ViewFormatFullBinding;
 import net.czlee.debatekeeper.databinding.ViewFormatShortBinding;
+import net.czlee.debatekeeper.debateformat.DebateFormatFieldExtractor;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfo;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfoForSchema1;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfoForSchema2;
-import net.czlee.debatekeeper.debateformat.DebateFormatStyleNameExtractor;
 import net.czlee.debatekeeper.debateformat.XmlUtilities;
 import net.czlee.debatekeeper.debateformat.XmlUtilities.IllegalSchemaVersionException;
 
@@ -548,7 +548,7 @@ public class FormatChooserFragment extends Fragment {
      */
     private void populateStylesList() {
         String[] fileList;
-        DebateFormatStyleNameExtractor nameExtractor = new DebateFormatStyleNameExtractor(requireContext());
+        DebateFormatFieldExtractor nameExtractor = new DebateFormatFieldExtractor(requireContext(), R.string.xml2elemName_name);
 
         try {
             fileList = mFilesManager.list();
@@ -574,8 +574,9 @@ public class FormatChooserFragment extends Fragment {
 
             String styleName;
             try {
-                styleName = nameExtractor.getStyleName(is);
+                styleName = nameExtractor.getFieldValue(is);
             } catch (SAXException|IOException e) {
+                Log.e(TAG, "populateStylesList: Couldn't get name from " + filename);
                 continue;
             }
 

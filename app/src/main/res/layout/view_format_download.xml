@@ -48,18 +48,42 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:padding="8dp" />
 
+    <!-- Download indicators -->
+
     <ImageButton
         android:id="@+id/viewFormat_download_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:contentDescription="@string/formatDownloader_button_download"
-        android:minWidth="48dp"
-        android:minHeight="48dp"
         android:layout_marginEnd="4dp"
         android:layout_marginRight="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/viewFormat_title"
-        app:srcCompat="@drawable/ic_baseline_download_24" />
+        app:srcCompat="@drawable/ic_outline_file_download_24" />
+
+    <ProgressBar
+        android:id="@+id/viewFormat_download_progress"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
+        android:contentDescription="@string/formatDownloader_progress_description"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewFormat_title" />
+
+    <ImageView
+        android:id="@+id/viewFormat_download_done"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
+        android:contentDescription="@string/formatDownloader_button_downloaded"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewFormat_title"
+        app:srcCompat="@drawable/ic_outline_file_download_done_24" />
 
     <!-- Labels -->
 
