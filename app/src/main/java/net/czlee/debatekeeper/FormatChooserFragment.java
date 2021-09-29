@@ -25,7 +25,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -34,7 +33,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TableLayout;
@@ -88,8 +86,6 @@ public class FormatChooserFragment extends Fragment {
     private FragmentFormatChooserBinding mViewBinding;
     private FormatXmlFilesManager mFilesManager;
     private ListView mStylesListView;
-
-    private boolean  mInitialLookForCustomFormats = false;
 
     private DebateFormatEntryArrayAdapter mStylesArrayAdapter;
     private final ArrayList<DebateFormatListEntry> mStylesList = new ArrayList<>();
@@ -383,16 +379,6 @@ public class FormatChooserFragment extends Fragment {
         }
     }
 
-    private class LookForCustomCheckboxOnClickListener implements OnClickListener {
-        @Override
-        public void onClick(View v) {
-            CheckBox checkbox = (CheckBox) v;
-            boolean checked = checkbox.isChecked();
-            mFilesManager.setLookForUserFiles(checked);
-            refreshStylesList();
-        }
-    }
-
     /**
      * A comparator for DebateFormatListEntries, which sorts the debate formats alphabetically
      * by style name.
@@ -442,13 +428,6 @@ public class FormatChooserFragment extends Fragment {
         mStylesArrayAdapter = new DebateFormatEntryArrayAdapter(context, mStylesList,
                 new FormatChooserFragmentBinder());
 
-        // Configure the checkbox
-        mInitialLookForCustomFormats = mFilesManager.isLookingForUserFiles();
-        CheckBox checkbox = mViewBinding.formatChooserLookForCustomCheckbox;
-        checkbox.setMovementMethod(LinkMovementMethod.getInstance());
-        checkbox.setOnClickListener(new LookForCustomCheckboxOnClickListener());
-        checkbox.setChecked(mInitialLookForCustomFormats);
-
         // Configure the ListView
         mStylesListView = mViewBinding.formatChooserStylesList;
         mStylesListView.setAdapter(mStylesArrayAdapter);
@@ -476,8 +455,7 @@ public class FormatChooserFragment extends Fragment {
 
         Bundle result = new Bundle();
 
-        if (selectedFilename != null && selectedFilename.equals(incomingFilename) &&
-                mInitialLookForCustomFormats == mFilesManager.isLookingForUserFiles()) {
+        if (selectedFilename != null && selectedFilename.equals(incomingFilename)) {
             result.putInt(BUNDLE_KEY_RESULT, RESULT_UNCHANGED);
             result.putString(BUNDLE_KEY_XML_FILE_NAME, null);
             Log.v(TAG, "Returning no file, selection wasn't changed");
@@ -645,20 +623,6 @@ public class FormatChooserFragment extends Fragment {
         // Sort alphabetically by style name and tell observers
         mStylesArrayAdapter.sort(new StyleEntryComparatorByStyleName());
         mStylesArrayAdapter.notifyDataSetChanged();
-    }
-
-    /**
-     * Refreshes the styles list, intelligently maintaining the current selection if there is one.
-     */
-    private void refreshStylesList() {
-        // Take note of current selection by file name
-        String selectedFilename = getSelectedFilename();
-
-        mStylesList.clear();
-        populateStylesList();
-
-        // Restore selection, which may have changed position
-        setSelectionAndScroll(selectedFilename);
     }
 
     /**

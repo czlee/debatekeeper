@@ -12,7 +12,6 @@ import net.czlee.debatekeeper.debateformat.DebateFormatFieldExtractor;
 
 import org.xml.sax.SAXException;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +19,6 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -277,7 +275,7 @@ public class DebateFormatDownloadManager {
     }
 
     /**
-     * Downlaods the file represented by a {@link DownloadableFormatEntry}. This accesses the network,
+     * Downloads the file represented by a {@link DownloadableFormatEntry}. This accesses the network,
      * so it must be run on a background thread. It also checks that the URL host matches that of
      * where the format came from.
      * @param entry a {@link DownloadableFormatEntry}

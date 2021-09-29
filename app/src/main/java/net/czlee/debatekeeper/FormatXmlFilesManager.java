@@ -18,9 +18,7 @@
 package net.czlee.debatekeeper;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -52,25 +50,17 @@ import java.io.OutputStream;
 class FormatXmlFilesManager {
 
     private final Context mContext;
-    private final SharedPreferences mPrefs;
     private static final String TAG = "FormatXmlFilesManager";
     private static final String XML_FILE_ROOT_DIRECTORY_NAME = "debatekeeper";
     private static final String XML_FORMATS_DIRECTORY_NAME = "formats";
     private static final String ASSETS_PATH = "formats";
-    private static final String PREFERENCE_LOOK_FOR_CUSTOM_FORMATS = "lookForCustom";
 
     static final int LOCATION_ASSETS = 0;
     static final int LOCATION_EXTERNAL_STORAGE = 1;
     static final int LOCATION_NOT_FOUND = -1;
 
-    private boolean mLookForUserFiles;
-
     FormatXmlFilesManager(Context context) {
         mContext = context;
-
-        // initialise with the user files preference
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-        mLookForUserFiles = mPrefs.getBoolean(PREFERENCE_LOOK_FOR_CUSTOM_FORMATS, false);
     }
 
 
@@ -139,8 +129,6 @@ class FormatXmlFilesManager {
      */
     @NonNull
     public String[] list() throws IOException {
-        if (!mLookForUserFiles) return new String[0];
-
         File userFilesDirectory = getAppSpecificUserFilesDirectory();
         if (userFilesDirectory == null) return new String[0];
 
@@ -209,17 +197,13 @@ class FormatXmlFilesManager {
      * @return a LOCATION_* integer representing the location of the file
      */
     public int getLocation(@NonNull String filename) {
-        if (mLookForUserFiles) {
-            try {
-                InputStream in = open(filename);
-                in.close();
-            } catch (IOException e) {
-                return LOCATION_NOT_FOUND;
-            }
-            return LOCATION_EXTERNAL_STORAGE;
+        try {
+            InputStream in = open(filename);
+            in.close();
+        } catch (IOException e) {
+            return LOCATION_NOT_FOUND;
         }
-
-        return LOCATION_NOT_FOUND;
+        return LOCATION_EXTERNAL_STORAGE;
     }
 
     /**
@@ -233,26 +217,6 @@ class FormatXmlFilesManager {
             InputStream in = mContext.getAssets().open(assetsFile.getPath());
             copy(in, filename);
         }
-    }
-
-    /**
-     * @return whether this manager is set to look for user files.
-     */
-    public boolean isLookingForUserFiles() {
-        return mLookForUserFiles;
-    }
-
-    /**
-     * Sets whether the files manager will look for user files. This method also saves the setting
-     * to preferences.
-     *
-     * @param lookForUserFiles whether to look for user files
-     */
-    public void setLookForUserFiles(boolean lookForUserFiles) {
-        this.mLookForUserFiles = lookForUserFiles;
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putBoolean(PREFERENCE_LOOK_FOR_CUSTOM_FORMATS, lookForUserFiles);
-        editor.apply();
     }
 
     //******************************************************************************************
@@ -279,8 +243,6 @@ class FormatXmlFilesManager {
      */
     @NonNull
     public String[] legacyUserFileList() throws IOException {
-        if (!mLookForUserFiles) return new String[0];
-
         File userFilesDirectory = getLegacyUserFilesDirectory();
         if (userFilesDirectory == null) return new String[0];
 

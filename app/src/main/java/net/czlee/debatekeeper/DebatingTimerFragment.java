@@ -1615,7 +1615,6 @@ public class DebatingTimerFragment extends Fragment {
         InputStream is = incoming.second;
 
         FormatXmlFilesManager filesManager = new FormatXmlFilesManager(requireContext());
-        filesManager.setLookForUserFiles(true);
 
         try {
             filesManager.copy(is, filename);
