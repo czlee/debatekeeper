@@ -1278,9 +1278,7 @@ public class DebatingTimerFragment extends Fragment {
     private void copyAssetsAndLegacy() {
         FormatXmlFilesManager manager = new FormatXmlFilesManager(requireContext());
         try {
-            if (!manager.isEmpty())
-                return; // skip everything if there are already files ready
-            manager.copyAssets();
+            if (!manager.isEmpty()) manager.copyAssets();
         } catch (IOException e) {
             showSnackbar(Snackbar.LENGTH_LONG, R.string.mainScreen_snackbar_copyAssetsError);
             return;
@@ -1309,6 +1307,13 @@ public class DebatingTimerFragment extends Fragment {
         if (legacyFiles.length == 0) {
             Log.i(TAG, "No legacy files found, no need to copy");
             return;
+        }
+
+        // Don't bother if there are any files in the new location other than initial files
+        try {
+            if (!manager.hasOnlyInitialFiles()) return;
+        } catch (IOException e){
+            return; // file silently
         }
 
         queueDialog(new DialogCustomFilesMovingFragment(), DIALOG_TAG_CUSTOM_FILES_MOVING);

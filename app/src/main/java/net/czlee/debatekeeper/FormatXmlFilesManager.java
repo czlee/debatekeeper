@@ -151,6 +151,30 @@ class FormatXmlFilesManager {
     }
 
     /**
+     *
+     * @return {@code true} if the app-specific directory has only the initial files, {@code false}
+     * otherwise
+     * @throws IOException if thrown by the file system
+     */
+    public boolean hasOnlyInitialFiles() throws IOException {
+        String[] assetList = mContext.getAssets().list(ASSETS_PATH);
+        String[] userList = list();
+        if (userList.length > assetList.length)
+            return false;
+        // we return true if there exists any user file name that is not an asset file name
+        for (String userName : userList) {
+            boolean isAsset = false;
+            for (String assetName : assetList)
+                if (userName.equals(assetName)) {
+                    isAsset = true;
+                    break;
+                }
+            if (!isAsset) return false;
+        }
+        return true;
+    }
+
+    /**
      * @return {@code true} if there are no files in the app-specific directory, {@code false}
      * otherwise
      * @throws IOException if thrown by the file system
