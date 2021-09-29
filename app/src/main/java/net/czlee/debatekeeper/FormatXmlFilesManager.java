@@ -51,7 +51,7 @@ class FormatXmlFilesManager {
 
     private final Context mContext;
     private static final String TAG = "FormatXmlFilesManager";
-    private static final String XML_FILE_ROOT_DIRECTORY_NAME = "debatekeeper";
+    private static final String LEGACY_DIRECTORY_NAME = "debatekeeper";
     private static final String XML_FORMATS_DIRECTORY_NAME = "formats";
     private static final String ASSETS_PATH = "formats";
 
@@ -263,7 +263,7 @@ class FormatXmlFilesManager {
             return null;
 
         File root = Environment.getExternalStorageDirectory();
-        File userFilesDirectory = new File(root, XML_FILE_ROOT_DIRECTORY_NAME);
+        File userFilesDirectory = new File(root, LEGACY_DIRECTORY_NAME);
         if (!userFilesDirectory.isDirectory())
             return null;
 

@@ -28,7 +28,7 @@
     <string name="formatChooser_button_share">Share</string>
     <string name="formatChooser_button_delete">Delete</string>
 
-    <string name="formatChooser_dialog_confirmDelete_message">Delete format file %1$s? This can\'t be undone.</string>
+    <string name="formatChooser_dialog_confirmDelete_message">Delete debate style file %1$s? This can\'t be undone, other than by importing or downloading another copy.</string>
     <string name="formatChooser_dialog_confirmDelete_yes">Delete</string>
     <string name="formatChooser_dialog_confirmDelete_no">Cancel</string>
     <string name="formatChooser_dialog_deleted_success">File %1$s deleted.</string>
