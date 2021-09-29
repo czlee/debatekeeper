@@ -27,6 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/formatChooser_button_moreInfo"
+        android:tooltipText="@string/formatChooser_button_moreInfo"
         android:minWidth="48dp"
         android:minHeight="48dp"
         android:layout_marginEnd="4dp"
@@ -34,17 +35,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_more_horiz_24" />
-
-    <ImageButton
-        android:id="@+id/viewFormat_shareButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/formatChooser_button_share"
-        android:minWidth="48dp"
-        android:minHeight="48dp"
-        app:layout_constraintEnd_toStartOf="@+id/viewFormat_showDetails_button"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_share_24" />
 
     <!-- Labels -->
 
@@ -83,7 +73,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="viewFormat_levelValue,viewFormat_showDetails_button,viewFormat_shareButton"
+        app:constraint_referenced_ids="viewFormat_levelValue,viewFormat_showDetails_button"
         tools:layout_editor_absoluteX="141dp"
         tools:layout_editor_absoluteY="43dp" />
 
@@ -101,14 +91,14 @@
     <TextView
         android:id="@+id/viewFormat_regionValue"
         style="@style/viewFormat_tableValueStyle"
-        app:layout_constraintEnd_toStartOf="@+id/viewFormat_shareButton"
+        app:layout_constraintEnd_toStartOf="@+id/viewFormat_showDetails_button"
         app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/viewFormat_levelValue"
         style="@style/viewFormat_tableValueStyle"
-        app:layout_constraintEnd_toStartOf="@+id/viewFormat_shareButton"
+        app:layout_constraintEnd_toStartOf="@+id/viewFormat_showDetails_button"
         app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
         app:layout_constraintTop_toBottomOf="@id/viewFormat_regionValue" />
 

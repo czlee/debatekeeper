@@ -35,6 +35,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -165,19 +166,6 @@ public class FormatChooserFragment extends Fragment {
             vb.viewFormatUsedAtValue.setText(concatenate(dfi.getUsedAts()));
             vb.viewFormatDescValue.setText(dfi.getDescription());
         }
-
-        /**
-         * Returns whether or not this file can be shared (i.e., it resides on external storage).
-         * @param filename name of file
-         * @return <code>true</code> if file is shareable, <code>false</code> if not
-         */
-        boolean isShareable(String filename) {
-            return filename != null && mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE;
-        }
-
-        void shareFile(String filename) {
-            shareDebateFormatFile(filename);
-        }
     }
 
     public static class MoreDetailsDialogFragment extends DialogFragment {
@@ -195,17 +183,7 @@ public class FormatChooserFragment extends Fragment {
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             assert getArguments() != null;
             String filename = getArguments().getString(DIALOG_ARGUMENT_FILE_NAME);
-            return getMoreDetailsDialog(filename);
-        }
 
-        /**
-         * Returns an {@link AlertDialog} with information about a debate format, populated from the
-         * debate format XML file.
-         * @param filename the file name of the debate format XML file to which this Dialog should
-         * relate
-         * @return the {@link AlertDialog}
-         */
-        private AlertDialog getMoreDetailsDialog(String filename) {
             Activity activity = requireActivity();
             FormatChooserFragment parent = (FormatChooserFragment) getParentFragment();
             assert parent != null;
@@ -231,9 +209,18 @@ public class FormatChooserFragment extends Fragment {
                 populatePrepTimeInfo(binding, dfi);
                 populateTwoColumnTable(binding.viewFormatTableSpeechTypes, R.layout.speech_type_row, dfi.getSpeechFormatDescriptions());
                 populateTwoColumnTable(binding.viewFormatTableSpeeches, R.layout.speech_row, dfi.getSpeeches());
-                builder.setTitle(dfi.getName());
+                binding.viewFormatTitle.setText(dfi.getName());
             }
             builder.setCancelable(true);
+
+            // Configure the buttons
+            // Either set the OnClickListener of the "Share" button, or hide it
+            ImageButton shareButton = binding.viewFormatShareButton;
+            if (parent.isShareable(filename)) {
+                shareButton.setVisibility(View.VISIBLE);
+                shareButton.setOnClickListener((v) -> parent.shareDebateFormatFile(filename));
+            }
+            else shareButton.setVisibility(View.GONE);
 
             AlertDialog dialog = builder.create();
             dialog.setView(binding.getRoot(), 0, 10, 10, 15);
@@ -250,13 +237,6 @@ public class FormatChooserFragment extends Fragment {
 
             FormatChooserFragment parent = (FormatChooserFragment) getParentFragment();
             assert parent != null;
-
-            // Display its location if it's not a built-in file
-            if (parent.mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE) {
-                TextView fileLocationText = vb.viewFormatFileLocationValue;
-                fileLocationText.setText(getString(R.string.viewFormat_fileLocationValue_userDefined));
-                fileLocationText.setVisibility(View.VISIBLE);
-            }
 
             // Display its schema version if it's not the current version
             if (schemaVersion != null) {
@@ -525,6 +505,15 @@ public class FormatChooserFragment extends Fragment {
         // If it isn't, keep pretending it was 2.0.
         return dfi2;
 
+    }
+
+    /**
+     * Returns whether or not this file can be shared (i.e., it resides on external storage).
+     * @param filename name of file
+     * @return <code>true</code> if file is shareable, <code>false</code> if not
+     */
+    boolean isShareable(String filename) {
+        return filename != null && mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE;
     }
 
     /**

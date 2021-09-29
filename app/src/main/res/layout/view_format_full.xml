@@ -20,52 +20,103 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:padding="8dp">
+	android:paddingLeft="12dp"
+	android:paddingStart="12dp"
+	android:paddingRight="6dp"
+	android:paddingEnd="6dp"
+	android:paddingVertical="4dp" >
 
 	<androidx.constraintlayout.widget.ConstraintLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content">
 
+		<TextView
+			android:id="@+id/viewFormat_title"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:textSize="20sp"
+			android:layout_marginRight="16dp"
+			android:layout_marginEnd="16dp"
+			android:minHeight="48dp"
+			android:textFontWeight="500"
+			android:gravity="center_vertical"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toStartOf="@id/viewFormat_shareButton" />
+
+		<!-- Buttons -->
+
+		<ImageButton
+			android:id="@+id/viewFormat_deleteButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:contentDescription="@string/formatChooser_button_delete"
+			android:tooltipText="@string/formatChooser_button_delete"
+			android:minWidth="48dp"
+			android:minHeight="48dp"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			app:srcCompat="@drawable/ic_baseline_delete_24" />
+
+		<ImageButton
+			android:id="@+id/viewFormat_shareButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:contentDescription="@string/formatChooser_button_share"
+			android:tooltipText="@string/formatChooser_button_share"
+			android:minWidth="48dp"
+			android:minHeight="48dp"
+			app:layout_constraintEnd_toStartOf="@id/viewFormat_deleteButton"
+			app:layout_constraintTop_toTopOf="parent"
+			app:srcCompat="@drawable/ic_baseline_share_24" />
+
+		<androidx.constraintlayout.widget.Barrier
+			android:id="@+id/viewFormat_titleBarrier"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:barrierDirection="bottom"
+			app:constraint_referenced_ids="viewFormat_title,viewFormat_shareButton,viewFormat_deleteButton" />
+
 		<!-- Labels -->
 
 		<TextView
 			android:id="@+id/viewFormat_fileNameLabel"
-			style="@style/viewFormat_tableLabelStyle"
+			style="@style/viewFormat_detailTableLabelStyle"
 			android:text="@string/viewFormat_fileNameLabel"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toTopOf="parent" />
+			app:layout_constraintTop_toTopOf="@id/viewFormat_fileNameValue" />
 
 		<TextView
 			android:id="@+id/viewFormat_regionLabel"
-			style="@style/viewFormat_tableLabelStyle"
+			style="@style/viewFormat_detailTableLabelStyle"
 			android:text="@string/viewFormat_regionLabel"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toTopOf="@id/viewFormat_regionValue" />
 
 		<TextView
 			android:id="@+id/viewFormat_levelLabel"
-			style="@style/viewFormat_tableLabelStyle"
+			style="@style/viewFormat_detailTableLabelStyle"
 			android:text="@string/viewFormat_levelLabel"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toTopOf="@id/viewFormat_levelValue" />
 
 		<TextView
 			android:id="@+id/viewFormat_usedAtLabel"
-			style="@style/viewFormat_tableLabelStyle"
+			style="@style/viewFormat_detailTableLabelStyle"
 			android:text="@string/viewFormat_usedAtLabel"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toTopOf="@+id/viewFormat_usedAtValue" />
 
 		<TextView
 			android:id="@+id/viewFormat_descLabel"
-			style="@style/viewFormat_tableLabelStyle"
+			style="@style/viewFormat_detailTableLabelStyle"
 			android:text="@string/viewFormat_descLabel"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toTopOf="@+id/viewFormat_descValue" />
 
 		<TextView
 			android:id="@+id/viewFormat_prepTimeLabel"
-			style="@style/viewFormat_tableLabelStyle"
+			style="@style/viewFormat_detailTableLabelStyle"
 			android:text="@string/viewFormat_prepTimeLabel"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toTopOf="@+id/viewFormat_prepTimeValue" />
@@ -83,33 +134,25 @@
 
 		<TextView
 			android:id="@+id/viewFormat_fileNameValue"
-			style="@style/viewFormat_tableValueStyle"
+			style="@style/viewFormat_detailTableValueStyle"
+			android:layout_marginTop="8dp"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
-			app:layout_constraintTop_toTopOf="parent" />
+			app:layout_constraintTop_toBottomOf="@id/viewFormat_titleBarrier" />
 
 		<TextView
-			android:id="@+id/viewFormat_fileLocationValue"
-			style="@style/viewFormat_tableValueStyle"
+			android:id="@+id/viewFormat_schemaVersionValue"
+			style="@style/viewFormat_detailTableValueStyle"
 			android:textStyle="italic"
+			android:textColor="@color/xmlFileWarningColour"
 			android:visibility="gone"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
 			app:layout_constraintTop_toBottomOf="@id/viewFormat_fileNameValue" />
 
 		<TextView
-			android:id="@+id/viewFormat_schemaVersionValue"
-			style="@style/viewFormat_tableValueStyle"
-			android:textStyle="italic"
-			android:textColor="@color/xmlFileWarningColour"
-			android:visibility="gone"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
-			app:layout_constraintTop_toBottomOf="@id/viewFormat_fileLocationValue" />
-
-		<TextView
 			android:id="@+id/viewFormat_regionValue"
-			style="@style/viewFormat_tableValueStyle"
+			style="@style/viewFormat_detailTableValueStyle"
 			android:layout_marginTop="8dp"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
@@ -117,28 +160,28 @@
 
 		<TextView
 			android:id="@+id/viewFormat_levelValue"
-			style="@style/viewFormat_tableValueStyle"
+			style="@style/viewFormat_detailTableValueStyle"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
 			app:layout_constraintTop_toBottomOf="@id/viewFormat_regionValue" />
 
 		<TextView
 			android:id="@+id/viewFormat_usedAtValue"
-			style="@style/viewFormat_tableValueStyle"
+			style="@style/viewFormat_detailTableValueStyle"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
 			app:layout_constraintTop_toBottomOf="@id/viewFormat_levelValue" />
 
 		<TextView
 			android:id="@+id/viewFormat_descValue"
-			style="@style/viewFormat_tableValueStyle"
+			style="@style/viewFormat_detailTableValueStyle"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
 			app:layout_constraintTop_toBottomOf="@+id/viewFormat_usedAtValue" />
 
 		<TextView
 			android:id="@+id/viewFormat_prepTimeValue"
-			style="@style/viewFormat_tableValueStyle"
+			style="@style/viewFormat_detailTableValueStyle"
 			app:layout_constraintEnd_toEndOf="parent"
 			android:layout_marginTop="8dp"
 			app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
@@ -147,7 +190,7 @@
 		<!-- Speeches table -->
 		<TextView
 			android:id="@+id/viewFormat_speechesLabel"
-			style="@style/viewFormat_tableLabelStyle"
+			style="@style/viewFormat_detailTableLabelStyle"
 			android:text="@string/viewFormat_speechesLabel"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
@@ -159,7 +202,7 @@
 
 		<TableLayout
 			android:id="@+id/viewFormat_table_speechTypes"
-			style="@style/ViewFormat_TableSpeeches"
+			style="@style/viewFormat_tableSpeeches"
 			android:shrinkColumns="1"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
@@ -170,7 +213,7 @@
 
 		<TableLayout
 			android:id="@+id/viewFormat_table_speeches"
-			style="@style/ViewFormat_TableSpeeches"
+			style="@style/viewFormat_tableSpeeches"
 			android:shrinkColumns="0"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
@@ -202,17 +245,17 @@
 		<!-- Error condition -->
 		<TextView
 			android:id="@+id/viewFormat_errorLabel"
-			style="@style/viewFormat_tableLabelStyle"
+			style="@style/viewFormat_detailTableLabelStyle"
 			android:text="@string/viewFormat_errorLabel"
 			android:textColor="@color/xmlFileWarningColour"
 			android:layout_marginTop="8dp"
 			android:visibility="gone"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/viewFormat_fileLocationValue" />
+			app:layout_constraintTop_toBottomOf="@id/viewFormat_fileNameValue" />
 
 		<TextView
 			android:id="@+id/viewFormat_errorValue"
-			style="@style/viewFormat_tableLabelStyle"
+			style="@style/viewFormat_detailTableLabelStyle"
 			android:textColor="@color/xmlFileWarningColour"
 			android:textStyle="normal"
 			android:visibility="gone"

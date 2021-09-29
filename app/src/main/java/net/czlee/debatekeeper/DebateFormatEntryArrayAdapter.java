@@ -98,14 +98,6 @@ public class DebateFormatEntryArrayAdapter extends
             showDetailsButton.setVisibility(View.VISIBLE);
             showDetailsButton.setOnClickListener(mBinder.getDetailsButtonOnClickListener(filename));
 
-            // Either set the OnClickListener of the "Share" button, or hide it
-            ImageButton shareButton = binding.formatItemInfo.viewFormatShareButton;
-            if (mBinder.isShareable(filename)) {
-                shareButton.setVisibility(View.VISIBLE);
-                shareButton.setOnClickListener((v) -> mBinder.shareFile(filename));
-            }
-            else shareButton.setVisibility(View.GONE);
-
             // Populate the style name and whether the radio button is checked
             titleView = binding.formatItemChoice.formatItemText;
 
