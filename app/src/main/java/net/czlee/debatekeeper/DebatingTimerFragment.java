@@ -1278,7 +1278,7 @@ public class DebatingTimerFragment extends Fragment {
     private void copyAssetsAndLegacy() {
         FormatXmlFilesManager manager = new FormatXmlFilesManager(requireContext());
         try {
-            if (!manager.isEmpty()) manager.copyAssets();
+            if (manager.isEmpty()) manager.copyAssets();
         } catch (IOException e) {
             showSnackbar(Snackbar.LENGTH_LONG, R.string.mainScreen_snackbar_copyAssetsError);
             return;
@@ -1348,6 +1348,8 @@ public class DebatingTimerFragment extends Fragment {
             showSnackbar(Snackbar.LENGTH_INDEFINITE, R.string.customFilesMovingErrorFiles_snackbar,
                     successes, errorFilenames.size(), TextUtils.join(", ", errorFilenames));
         }
+
+        if (mDebateLoadError != null) initialiseDebate(); // retry
     }
 
     /**
