@@ -101,7 +101,7 @@ public class FormatChooserFragment extends Fragment {
     public static final int RESULT_UNCHANGED    = 2;
     public static final int RESULT_NO_SELECTION = 3;
 
-    public static final String CURRENT_SCHEMA_VERSION = "2.1";
+    public static final String CURRENT_SCHEMA_VERSION = "2.2";
 
     //******************************************************************************************
     // Public classes
