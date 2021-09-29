@@ -721,7 +721,7 @@ public class DebatingTimerFragment extends Fragment {
 
             } else if (itemId == R.id.mainScreen_menuItem_resetDebate) {
                 if (mDebateManager == null) return true;
-                resetDebate();
+                resetDebate(false);
                 showSnackbar(SNACKBAR_DURATION_RESET_DEBATE, R.string.mainScreen_snackbar_resetDebate);
                 return true;
 
@@ -827,7 +827,7 @@ public class DebatingTimerFragment extends Fragment {
         public void onServiceConnected(ComponentName className, IBinder service) {
             Log.d(TAG, "service connected");
             mServiceBinder = (DebatingTimerService.DebatingTimerServiceBinder) service;
-            initialiseDebate();
+            initialiseDebate(true);
             restoreBinder();
         }
 
@@ -863,7 +863,7 @@ public class DebatingTimerFragment extends Fragment {
             } else if (filename != null) {
                 Log.v(TAG, "Got file name " + filename);
                 setXmlFileName(filename);
-                resetDebate();
+                resetDebate(true);
             } else {
                 Log.e(TAG, "File name returned was null");
                 setXmlFileName(null);
@@ -1038,7 +1038,7 @@ public class DebatingTimerFragment extends Fragment {
         if (mDebateLoadError != null)
             // May as well try again (sometimes the error is cleared, e.g., if the error was because
             // the file didn't exist, and the user just downloaded it.
-            initialiseDebate();
+            initialiseDebate(false);
     }
 
     @Override
@@ -1188,7 +1188,7 @@ public class DebatingTimerFragment extends Fragment {
      * </ul>
      * The message of the exception will be human-readable and can be displayed in a dialogue box.
      */
-    private DebateFormat buildDebateFromXml(String filename) throws FatalXmlError {
+    private DebateFormat buildDebateFromXml(String filename, boolean showDialogs) throws FatalXmlError {
 
         DebateFormatBuilderFromXml dfbfx;
         Context context = requireContext();
@@ -1238,7 +1238,7 @@ public class DebatingTimerFragment extends Fragment {
             }
         }
 
-        if (dfbfx.isSchemaTooNew()) {
+        if (showDialogs && dfbfx.isSchemaTooNew()) {
             QueueableDialogFragment fragment = DialogSchemaTooNewFragment.newInstance(dfbfx.getSchemaVersion(), dfbfx.getSupportedSchemaVersion(), filename);
             queueDialog(fragment, DIALOG_TAG_SCHEMA_TOO_NEW + filename);
         }
@@ -1344,7 +1344,7 @@ public class DebatingTimerFragment extends Fragment {
                     successes, errorFilenames.size(), TextUtils.join(", ", errorFilenames));
         }
 
-        if (mDebateLoadError != null) initialiseDebate(); // retry
+        if (mDebateLoadError != null) initialiseDebate(true); // retry
     }
 
     /**
@@ -1627,10 +1627,10 @@ public class DebatingTimerFragment extends Fragment {
         // Now, load the debate
         mImportIntentHandled = true;
         setXmlFileName(filename);
-        resetDebate();
+        resetDebate(true);
     }
 
-    private void initialiseDebate() {
+    private void initialiseDebate(boolean showDialogs) {
         if (mFormatXmlFileName == null) {
             Log.w(TAG, "Tried to initialise debate with null file");
             return;
@@ -1643,7 +1643,7 @@ public class DebatingTimerFragment extends Fragment {
 
             DebateFormat df;
             try {
-                df = buildDebateFromXml(mFormatXmlFileName);
+                df = buildDebateFromXml(mFormatXmlFileName, showDialogs);
             } catch (FatalXmlError e) {
                 boolean isFormerAsset = isFormerAssetsFile(mFormatXmlFileName);
                 String message = (isFormerAsset) ? getString(R.string.formerAssetsError_message)
@@ -1772,10 +1772,10 @@ public class DebatingTimerFragment extends Fragment {
         }
     }
 
-    private void resetDebate() {
+    private void resetDebate(boolean showDialogs) {
         if (mServiceBinder == null) return;
         mServiceBinder.releaseDebateManager();
-        initialiseDebate();
+        initialiseDebate(showDialogs);
     }
 
     private void restoreBinder() {
