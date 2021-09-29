@@ -6,4 +6,11 @@
 
     <string name="formatDownloader_list_url" translatable="false">https://formats.debatekeeper.czlee.nz/formats.json</string>
 
+    <string name="formatDownloader_loadingText">Loading list of styles from server…</string>
+    <string name="formatDownloader_noInternet">No internet connection.</string>
+    <string name="formatDownloader_notFoundError">Not found: %1$s</string>
+    <string name="formatDownloader_ioError">Error loading list of styles (I/O).</string>
+    <string name="formatDownloader_jsonError">Error loading list of styles (JSON).</string>
+    <string name="formatDownloader_button_retry">Retry</string>
+
 </resources>

@@ -8,6 +8,7 @@ import android.util.Log;
 
 import androidx.core.os.HandlerCompat;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -133,12 +134,17 @@ public class DebateFormatDownloadManager {
             try {
                 List<DownloadableFormatEntry> newEntries = synchronousDownloadList(url);
                 mMainThreadHandler.post(() -> replaceEntriesAndNotify(newEntries));
+            } catch (FileNotFoundException e) {
+                // prepend "Not found:" to be a little clearer
+                e.printStackTrace();
+                String message = mContext.getString(R.string.formatDownloader_notFoundError, e.getMessage());
+                mMainThreadHandler.post(() -> mBinder.notifyListDownloadError(message));
             } catch (IOException e) {
                 e.printStackTrace();
-                mMainThreadHandler.post(mBinder::notifyListDownloadError);
+                mMainThreadHandler.post(() -> mBinder.notifyListDownloadError(e.getMessage()));
             } catch (IllegalStateException|NumberFormatException e) {
                 e.printStackTrace();
-                mMainThreadHandler.post(mBinder::notifyJsonParseError);
+                mMainThreadHandler.post(() -> mBinder.notifyJsonParseError(e.getMessage()));
             }
         });
     }
