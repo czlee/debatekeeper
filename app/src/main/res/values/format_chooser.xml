@@ -26,7 +26,6 @@
     <string name="formatChooser_actionBar_searchOnline">Search online</string>
     <string name="formatChooser_button_moreInfo">More info</string>
     <string name="formatChooser_button_share">Share</string>
-
     <string name="formatChooser_lookForCustomCheckbox_text">Look for custom formats (<a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">Learn more</a>)</string>
     <string name="formatChooser_share_error_noFileSelected">No file selected.</string>
     <string name="formatChooser_share_error_builtInFile">You can\'t share built-in formats.</string>
@@ -46,6 +45,8 @@
     <string name="viewFormat_invalidSchemaVersion">Invalid schema version \"%1$s\"</string>
     <string name="viewFormat_prepTimeLabel">Prep time</string>
     <string name="viewFormat_showDetails_buttonText">More</string>
+
+    <string name="viewFormat_errorLabel">Error with file</string>
 
     <string name="viewFormat_timeDescription_lengthInMinutesSeconds">%s long</string>
 

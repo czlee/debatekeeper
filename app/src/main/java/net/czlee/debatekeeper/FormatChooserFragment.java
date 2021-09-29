@@ -199,23 +199,6 @@ public class FormatChooserFragment extends Fragment {
         }
 
         /**
-         * Returns an {@link AlertDialog} with an error message explaining why the "more details" Dialog
-         * for a given debate format couldn't be populated.
-         * @param filename the file name of the debate format XML file to which this Dialog should
-         * relate
-         * @param e the exception leading to this error
-         * @return the {@link AlertDialog}
-         */
-        private AlertDialog getBlankDetailsDialog(String filename, Exception e) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
-            builder.setTitle(R.string.blankDetailsDialog_title)
-                   .setCancelable(true)
-                   .setMessage(getString(R.string.blankDetailsDialog_text, filename, e.getMessage()))
-                   .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.cancel());
-            return builder.create();
-        }
-
-        /**
          * Returns an {@link AlertDialog} with information about a debate format, populated from the
          * debate format XML file.
          * @param filename the file name of the debate format XML file to which this Dialog should
@@ -230,22 +213,26 @@ public class FormatChooserFragment extends Fragment {
 
             ViewFormatFullBinding binding = ViewFormatFullBinding.inflate(LayoutInflater.from(activity));
 
-            DebateFormatInfo dfi;
+            DebateFormatInfo dfi = null;
             try {
                 dfi = parent.getDebateFormatInfo(filename);
-            } catch (IOException e) {
-                return getBlankDetailsDialog(filename, e);
-            } catch (SAXException e) {
-                return getBlankDetailsDialog(filename, e);
+            } catch (IOException|SAXException e) {
+                populateFileInfo(binding, filename, null);
+                binding.viewFormatDetailsGroup.setVisibility(View.GONE);
+                binding.viewFormatErrorLabel.setVisibility(View.VISIBLE);
+                binding.viewFormatErrorValue.setVisibility(View.VISIBLE);
+                binding.viewFormatErrorValue.setText(e.getMessage());
             }
 
-            String schemaVersion = dfi.getSchemaVersion();
-            populateFileInfo(binding, filename, schemaVersion);
-            populateBasicInfo(binding, dfi);
-            populatePrepTimeInfo(binding, dfi);
-            populateTwoColumnTable(binding.viewFormatTableSpeechTypes, R.layout.speech_type_row, dfi.getSpeechFormatDescriptions());
-            populateTwoColumnTable(binding.viewFormatTableSpeeches, R.layout.speech_row, dfi.getSpeeches());
-            builder.setTitle(dfi.getName());
+            if (dfi != null) {
+                String schemaVersion = dfi.getSchemaVersion();
+                populateFileInfo(binding, filename, schemaVersion);
+                populateBasicInfo(binding, dfi);
+                populatePrepTimeInfo(binding, dfi);
+                populateTwoColumnTable(binding.viewFormatTableSpeechTypes, R.layout.speech_type_row, dfi.getSpeechFormatDescriptions());
+                populateTwoColumnTable(binding.viewFormatTableSpeeches, R.layout.speech_row, dfi.getSpeeches());
+                builder.setTitle(dfi.getName());
+            }
             builder.setCancelable(true);
 
             AlertDialog dialog = builder.create();

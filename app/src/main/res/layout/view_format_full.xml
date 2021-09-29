@@ -101,7 +101,7 @@
 			android:id="@+id/viewFormat_schemaVersionValue"
 			style="@style/viewFormat_tableValueStyle"
 			android:textStyle="italic"
-			android:textColor="#ffffff77"
+			android:textColor="@color/xmlFileWarningColour"
 			android:visibility="gone"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
@@ -178,6 +178,46 @@
 			android:layout_marginEnd="@dimen/viewFormat_endMargin"
 			app:layout_constraintTop_toBottomOf="@id/viewFormat_table_speechTypes"
 			app:layout_constraintStart_toStartOf="parent" />
+
+		<androidx.constraintlayout.widget.Group
+			android:id="@+id/viewFormat_detailsGroup"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:constraint_referenced_ids="
+				viewFormat_regionLabel,
+				viewFormat_regionValue,
+				viewFormat_levelValue,
+				viewFormat_levelLabel,
+				viewFormat_usedAtValue,
+				viewFormat_usedAtLabel,
+				viewFormat_descValue,
+				viewFormat_descLabel,
+				viewFormat_prepTimeValue,
+				viewFormat_prepTimeLabel,
+				viewFormat_speechesLabel,
+				viewFormat_table_speeches,
+				viewFormat_table_speechTypes"
+			/>
+
+		<!-- Error condition -->
+		<TextView
+			android:id="@+id/viewFormat_errorLabel"
+			style="@style/viewFormat_tableLabelStyle"
+			android:text="@string/viewFormat_errorLabel"
+			android:textColor="@color/xmlFileWarningColour"
+			android:layout_marginTop="8dp"
+			android:visibility="gone"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/viewFormat_fileLocationValue" />
+
+		<TextView
+			android:id="@+id/viewFormat_errorValue"
+			style="@style/viewFormat_tableLabelStyle"
+			android:textColor="@color/xmlFileWarningColour"
+			android:textStyle="normal"
+			android:visibility="gone"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/viewFormat_errorLabel" />
 
 	</androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
