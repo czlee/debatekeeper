@@ -171,7 +171,7 @@ public class DebatingTimerFragment extends Fragment {
     private static final String DIALOG_ARGUMENT_FILE_NAME               = "fn";
     private static final String DIALOG_ARGUMENT_INCOMING_STYLE_NAME     = "isn";
     private static final String DIALOG_ARGUMENT_EXISTING_STYLE_NAME     = "esn";
-    private static final String DIALOG_ARGUMENT_EXISTING_FILE_LOCATION  = "efl";
+    private static final String DIALOG_ARGUMENT_EXISTS                  = "efl";
     private static final String DIALOG_ARGUMENT_SUGGESTED_FILE_NAME     = "sfn";
 
     // Dialog tags that are attached to particular files must end in "/", as the name of the file
@@ -330,12 +330,12 @@ public class DebatingTimerFragment extends Fragment {
     public static class DialogImportFileConfirmFragment extends QueueableDialogFragment {
 
         static DialogImportFileConfirmFragment newInstance(@NonNull String incomingFilename, @NonNull String incomingStyleName,
-                                                           int existingFileLocation, @Nullable String existingStyleName) {
+                                                           boolean exists, @Nullable String existingStyleName) {
             DialogImportFileConfirmFragment fragment = new DialogImportFileConfirmFragment();
             Bundle args = new Bundle();
             args.putString(DIALOG_ARGUMENT_FILE_NAME, incomingFilename);
             args.putString(DIALOG_ARGUMENT_INCOMING_STYLE_NAME, incomingStyleName);
-            args.putInt(DIALOG_ARGUMENT_EXISTING_FILE_LOCATION, existingFileLocation);
+            args.putBoolean(DIALOG_ARGUMENT_EXISTS, exists);
             args.putString(DIALOG_ARGUMENT_EXISTING_STYLE_NAME, existingStyleName);
             fragment.setArguments(args);
             return fragment;
@@ -356,17 +356,12 @@ public class DebatingTimerFragment extends Fragment {
             StringBuilder message = new StringBuilder(getString(R.string.importDebateFormat_dialog_message_question,
                     incomingFilename, incomingStyleName));
 
-            switch (args.getInt(DIALOG_ARGUMENT_EXISTING_FILE_LOCATION)) {
-                case FormatXmlFilesManager.LOCATION_ASSETS:
-                    message.append("\n\n");
-                    message.append(getString(R.string.importDebateFormat_dialog_addendum_overrideBuiltIn, existingStyleName));
-                    break;
-                case FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE:
-                    message.append("\n\n");
-                    if (incomingStyleName != null && incomingStyleName.equals(existingStyleName))
-                        message.append(getString(R.string.importDebateFormat_dialog_addendum_overwriteExistingSameName, existingStyleName));
-                    else
-                        message.append(getString(R.string.importDebateFormat_dialog_addendum_overwriteExistingDifferentName, existingStyleName));
+            if (args.getBoolean(DIALOG_ARGUMENT_EXISTS)) {
+                message.append("\n\n");
+                if (incomingStyleName != null && incomingStyleName.equals(existingStyleName))
+                    message.append(getString(R.string.importDebateFormat_dialog_addendum_overwriteExistingSameName, existingStyleName));
+                else
+                    message.append(getString(R.string.importDebateFormat_dialog_addendum_overwriteExistingDifferentName, existingStyleName));
             }
 
             builder.setTitle(R.string.importDebateFormat_dialog_title)
@@ -886,8 +881,8 @@ public class DebatingTimerFragment extends Fragment {
         @Override
         public Uri[] createBeamUris(NfcEvent event) {
             FormatXmlFilesManager filesManager = new FormatXmlFilesManager(requireActivity());
-            if (filesManager.getLocation(mFormatXmlFileName) != FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE) {
-                Log.e(TAG, "createBeamUris: Tried to share file not on external storage");
+            if (!filesManager.exists(mFormatXmlFileName)) {
+                Log.e(TAG, "createBeamUris: Tried to share non-existent file");
                 showSnackbar(Snackbar.LENGTH_LONG, R.string.mainScreen_snackbar_beamNonExternalFile);
                 return new Uri[0];
             }
@@ -1897,7 +1892,7 @@ public class DebatingTimerFragment extends Fragment {
 
         DebateFormatFieldExtractor nameExtractor = new DebateFormatFieldExtractor(context, R.string.xml2elemName_name);
         FormatXmlFilesManager filesManager = new FormatXmlFilesManager(context);
-        int existingLocation = filesManager.getLocation(incomingFilename);
+        boolean exists = filesManager.exists(incomingFilename);
 
         String incomingStyleName, existingStyleName;
 
@@ -1910,7 +1905,7 @@ public class DebatingTimerFragment extends Fragment {
         }
 
         existingStyleName = null;
-        if (existingLocation != FormatXmlFilesManager.LOCATION_NOT_FOUND) {
+        if (exists) {
             // If there's an existing file, grab its style name and prompt to replace. (We don't
             // give an option not to replace.
             try {
@@ -1956,7 +1951,7 @@ public class DebatingTimerFragment extends Fragment {
             }
         }
 
-        DialogImportFileConfirmFragment fragment = DialogImportFileConfirmFragment.newInstance(incomingFilename, incomingStyleName, existingLocation, existingStyleName);
+        DialogImportFileConfirmFragment fragment = DialogImportFileConfirmFragment.newInstance(incomingFilename, incomingStyleName, exists, existingStyleName);
         queueDialog(fragment, DIALOG_TAG_IMPORT_CONFIRM);
     }
 

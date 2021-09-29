@@ -55,10 +55,6 @@ class FormatXmlFilesManager {
     private static final String XML_FORMATS_DIRECTORY_NAME = "formats";
     private static final String ASSETS_PATH = "formats";
 
-    static final int LOCATION_ASSETS = 0;
-    static final int LOCATION_EXTERNAL_STORAGE = 1;
-    static final int LOCATION_NOT_FOUND = -1;
-
     FormatXmlFilesManager(Context context) {
         mContext = context;
     }
@@ -190,20 +186,14 @@ class FormatXmlFilesManager {
         return xmlFile;
     }
 
-    /**
-     * Finds out in which location this file is.
-     *
-     * @param filename the name of the file
-     * @return a LOCATION_* integer representing the location of the file
-     */
-    public int getLocation(@NonNull String filename) {
+    public boolean exists(@NonNull String filename) {
         try {
             InputStream in = open(filename);
             in.close();
         } catch (IOException e) {
-            return LOCATION_NOT_FOUND;
+            return false;
         }
-        return LOCATION_EXTERNAL_STORAGE;
+        return true;
     }
 
     /**

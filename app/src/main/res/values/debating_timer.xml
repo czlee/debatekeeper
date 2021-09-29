@@ -73,7 +73,6 @@
     <!-- Sharing debate formats -->
     <string name="importDebateFormat_dialog_title">Import debate style?</string>
     <string name="importDebateFormat_dialog_message_question">Do you want to import the debate format file &lt;b>%1$s&lt;/b>, which describes the style \"%2$s\"?</string>
-    <string name="importDebateFormat_dialog_addendum_overrideBuiltIn">This will override the existing built-in \"%1$s\" style.</string>
     <string name="importDebateFormat_dialog_addendum_overwriteExistingSameName">This will overwrite the existing \"%1$s\" style.</string>
     <string name="importDebateFormat_dialog_addendum_overwriteExistingDifferentName">
         This will overwrite the existing custom style \"%1$s\", because its file has the same name.

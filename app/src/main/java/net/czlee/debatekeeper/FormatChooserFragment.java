@@ -33,7 +33,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -250,14 +249,7 @@ public class FormatChooserFragment extends Fragment {
             builder.setCancelable(true);
 
             // Configure the buttons
-            // Either set the OnClickListener of the "Share" button, or hide it
-            ImageButton shareButton = binding.viewFormatShareButton;
-            if (parent.isShareable(filename)) {
-                shareButton.setVisibility(View.VISIBLE);
-                shareButton.setOnClickListener((v) -> parent.shareDebateFormatFile(filename));
-            }
-            else shareButton.setVisibility(View.GONE);
-
+            binding.viewFormatShareButton.setOnClickListener((v) -> parent.shareDebateFormatFile(filename));
             binding.viewFormatDeleteButton.setOnClickListener((v) -> {
                 DialogFragment fragment = ConfirmDeleteDialogFragment.newInstance(filename);
                 fragment.show(getParentFragmentManager(), DIALOG_TAG_CONFIRM_DELETION + filename);
@@ -561,15 +553,6 @@ public class FormatChooserFragment extends Fragment {
     }
 
     /**
-     * Returns whether or not this file can be shared (i.e., it resides on external storage).
-     * @param filename name of file
-     * @return <code>true</code> if file is shareable, <code>false</code> if not
-     */
-    boolean isShareable(String filename) {
-        return filename != null && mFilesManager.getLocation(filename) == FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE;
-    }
-
-    /**
      * Populates the master styles list, <code>mStylesList</code>.  Should be called when this
      * Activity is created, or whenever we want to refresh the styles list. If there is an error so
      * serious that it can't even get the list, we show a dialog to that effect, and leave the list
@@ -660,18 +643,10 @@ public class FormatChooserFragment extends Fragment {
             return;
         }
 
-        int location = mFilesManager.getLocation(filename);
-        switch (location) {
-            case FormatXmlFilesManager.LOCATION_EXTERNAL_STORAGE:
-                break;
-            case FormatXmlFilesManager.LOCATION_ASSETS:
-                showSnackbar(R.string.formatChooser_share_error_builtInFile);
-                return;
-            case FormatXmlFilesManager.LOCATION_NOT_FOUND:
-            default:
-                Log.e(TAG, String.format("shareSelection: getLocation returned result code %d", location));
-                showSnackbar(R.string.formatChooser_share_error_notFound, filename);
-                return;
+        if (!mFilesManager.exists(filename)) {
+            Log.e(TAG, "shareSelection: file does not exist");
+            showSnackbar(R.string.formatChooser_share_error_notFound, filename);
+            return;
         }
 
         File file = mFilesManager.getFileFromExternalStorage(filename);

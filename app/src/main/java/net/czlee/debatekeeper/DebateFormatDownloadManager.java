@@ -139,7 +139,7 @@ public class DebateFormatDownloadManager {
             InputStream in;
             String versionStr;
 
-            if (filesManager.getLocation(this.filename) == FormatXmlFilesManager.LOCATION_NOT_FOUND) {
+            if (!filesManager.exists(this.filename)) {
                 this.state = DownloadState.NOT_DOWNLOADED;
                 return;
             }

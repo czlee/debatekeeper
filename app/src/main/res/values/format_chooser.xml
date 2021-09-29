@@ -35,7 +35,6 @@
     <string name="formatChooser_dialog_deleted_failure">Could not delete file %1$s.</string>
 
     <string name="formatChooser_share_error_noFileSelected">No file selected.</string>
-    <string name="formatChooser_share_error_builtInFile">You can\'t share built-in formats.</string>
     <string name="formatChooser_share_error_notFound">File %1$s could not be found.</string>
     <string name="formatChooser_share_error_generic">There was an error sharing this file.</string>
     <string name="formatChooser_share_chooserTitle">Share debate format using…</string>
