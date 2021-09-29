@@ -20,6 +20,9 @@
         <action
             android:id="@+id/action_editSettings"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_straightToDownloads"
+            app:destination="@id/downloadFormatsFragment" />
     </fragment>
     <fragment
         android:id="@+id/formatChooserFragment"
@@ -53,5 +56,11 @@
         android:id="@+id/downloadFormatsFragment"
         android:name="net.czlee.debatekeeper.DownloadFormatsFragment"
         android:label="fragment_download_formats_list"
-        tools:layout="@layout/fragment_download_formats" />
+        tools:layout="@layout/fragment_download_formats" >
+        <argument
+            android:name="xmlFileName"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
 </navigation>

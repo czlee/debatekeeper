@@ -520,7 +520,7 @@ public class FormatChooserFragment extends Fragment {
      * @return filename, or null if the index was invalid.
      */
     private String convertIndexToFilename(int index) {
-        if (index < 0 || index > mStylesList.size())
+        if (index < 0 || index >= mStylesList.size())
             return null;
         return mStylesList.get(index).getFilename();
     }

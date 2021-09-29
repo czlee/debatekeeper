@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,8 +33,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Collections;
-import java.util.HashSet;
 
 /**
  * FormatXmlFilesManager manages the multiple sources of debate format XML files. All debate format
@@ -106,40 +105,17 @@ class FormatXmlFilesManager {
     }
 
     /**
-     * Copies a legacy file to the new app-specific destination. To be removed in a future version.
-     *
-     * @param filename the name of the file to be copied
-     */
-    public void copyLegacyFile(@NonNull String filename) throws IOException {
-        File source = new File(getLegacyUserFilesDirectory(), filename);
-        File destination = new File(getAppSpecificUserFilesDirectory(), filename);
-        InputStream in = new FileInputStream(source);
-        OutputStream out = new FileOutputStream(destination);
-
-        // Copy the file over
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) > 0)
-            out.write(buf, 0, len);
-        out.flush();
-        in.close();
-        out.close();
-    }
-
-    /**
      * Opens the file given by 'filename' and returns an <code>InputStream</code> for the file.
      *
      * @param filename the name of the file
      * @return the <code>InputStream</code> for the file
      * @throws IOException if the file can't be found or there is a problem with the file.
      */
+    @NonNull
     public InputStream open(String filename) throws IOException {
-        if (mLookForUserFiles) {
-            InputStream is = openFromExternalStorage(filename);
-            if (is != null)
-                return is;
-        }
-        return openFromAssets(filename);
+        File xmlFile = getFileFromExternalStorage(filename);
+        if (xmlFile == null) throw new FileNotFoundException(filename);
+        return new FileInputStream(xmlFile);
     }
 
     /**
@@ -162,27 +138,7 @@ class FormatXmlFilesManager {
      * @throws IOException if there is a problem with some file
      */
     @NonNull
-    public String[] legacyUserFileList() throws IOException {
-        if (!mLookForUserFiles) return new String[0];
-
-        File userFilesDirectory = getLegacyUserFilesDirectory();
-        if (userFilesDirectory == null) return new String[0];
-
-        String[] list = userFilesDirectory.list();
-        if (list == null) return new String[0];
-
-        return list;
-    }
-
-    /**
-     * Returns a list of all user files in the app-specific external storage location.
-     *
-     * @return an array of Strings, possibly empty, each being an existent file name in external
-     * storage.
-     * @throws IOException if there is a problem with some file
-     */
-    @NonNull
-    public String[] userFileList() throws IOException {
+    public String[] list() throws IOException {
         if (!mLookForUserFiles) return new String[0];
 
         File userFilesDirectory = getAppSpecificUserFilesDirectory();
@@ -195,25 +151,12 @@ class FormatXmlFilesManager {
     }
 
     /**
-     * Returns a list of all files available in the relevant locations.
-     *
-     * @return an array of Strings, each being an existent file name (but not necessarily a valid
-     * XML file)
-     * @throws IOException if there is a problem with some file
+     * @return {@code true} if there are no files in the app-specific directory, {@code false}
+     * otherwise
+     * @throws IOException if thrown by the file system
      */
-    public String[] list() throws IOException {
-        HashSet<String> compiledSet = new HashSet<>();
-
-        // First add files in the user files directory...
-        Collections.addAll(compiledSet, userFileList());
-
-        // Then add files in the assets...
-        String[] assetList = mContext.getAssets().list(ASSETS_PATH);
-        if (assetList != null)
-            Collections.addAll(compiledSet, assetList);
-
-        // Finally, return the combined list.
-        return compiledSet.toArray(new String[0]);
+    public boolean isEmpty() throws IOException {
+        return this.list().length == 0;
     }
 
     /**
@@ -243,22 +186,29 @@ class FormatXmlFilesManager {
      */
     public int getLocation(@NonNull String filename) {
         if (mLookForUserFiles) {
-            InputStream userFileInputStream = openFromExternalStorage(filename);
-            if (userFileInputStream != null)
-                return LOCATION_EXTERNAL_STORAGE;
+            try {
+                InputStream in = open(filename);
+                in.close();
+            } catch (IOException e) {
+                return LOCATION_NOT_FOUND;
+            }
+            return LOCATION_EXTERNAL_STORAGE;
         }
-
-        InputStream assetInputStream;
-        try {
-            assetInputStream = openFromAssets(filename);
-        } catch (IOException e) {
-            return LOCATION_NOT_FOUND;
-        }
-
-        if (assetInputStream != null)
-            return LOCATION_ASSETS;
 
         return LOCATION_NOT_FOUND;
+    }
+
+    /**
+     * Copies all of the assets to the app-specific directory.
+     */
+    public void copyAssets() throws IOException {
+        String[] assetList = mContext.getAssets().list(ASSETS_PATH);
+        for (String filename : assetList) {
+            Log.i(TAG, "Copying " + filename + " from assets to file system");
+            File assetsFile = new File(ASSETS_PATH, filename);
+            InputStream in = mContext.getAssets().open(assetsFile.getPath());
+            copy(in, filename);
+        }
     }
 
     /**
@@ -279,6 +229,41 @@ class FormatXmlFilesManager {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(PREFERENCE_LOOK_FOR_CUSTOM_FORMATS, lookForUserFiles);
         editor.apply();
+    }
+
+    //******************************************************************************************
+    // Legacy support
+    //******************************************************************************************
+
+    /**
+     * Copies a legacy file to the new app-specific destination. To be removed in a future version.
+     *
+     * @param filename the name of the file to be copied
+     */
+    public void copyLegacyFile(@NonNull String filename) throws IOException {
+        File source = new File(getLegacyUserFilesDirectory(), filename);
+        InputStream in = new FileInputStream(source);
+        copy(in, filename);
+    }
+
+    /**
+     * Returns a list of all user files in the app-specific external storage location.
+     *
+     * @return an array of Strings, possibly empty, each being an existent file name in external
+     * storage.
+     * @throws IOException if there is a problem with some file
+     */
+    @NonNull
+    public String[] legacyUserFileList() throws IOException {
+        if (!mLookForUserFiles) return new String[0];
+
+        File userFilesDirectory = getLegacyUserFilesDirectory();
+        if (userFilesDirectory == null) return new String[0];
+
+        String[] list = userFilesDirectory.list();
+        if (list == null) return new String[0];
+
+        return list;
     }
 
     //******************************************************************************************
@@ -327,34 +312,6 @@ class FormatXmlFilesManager {
         if (!directory.isDirectory()) return null;
 
         return directory;
-    }
-
-    /**
-     * @param filename the name of the file to open
-     * @return an InputStream if the file exists, or <code>null</code> if it does not.
-     */
-    @Nullable
-    private InputStream openFromExternalStorage(String filename) {
-
-        File xmlFile = getFileFromExternalStorage(filename);
-        if (xmlFile == null)
-            return null;
-
-        // Then see if we can open it...
-        FileInputStream fis;
-        try {
-            fis = new FileInputStream(xmlFile);
-        } catch (FileNotFoundException e) {
-            return null;
-        }
-
-        // And if we can, return the resulting input stream.
-        return fis;
-    }
-
-    private InputStream openFromAssets(String filename) throws IOException {
-        File xmlFile = new File(ASSETS_PATH, filename);
-        return mContext.getAssets().open(xmlFile.getPath());
     }
 
 }

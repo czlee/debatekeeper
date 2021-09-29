@@ -134,6 +134,7 @@ public class DebatingTimerFragment extends Fragment {
     private final ServiceConnection mServiceConnection = new DebatingTimerServiceConnection();
 
     private DebateManager    mDebateManager;
+    private boolean          mDebateLoadErrorIsFormerAsset = false;
     private Spanned          mDebateLoadError = null;
     private Bundle           mLastStateBundle;
     private boolean          mIsEditingTime = false;
@@ -1037,7 +1038,12 @@ public class DebatingTimerFragment extends Fragment {
 
         requestReadPermission();
         showChangelogDialog();
-        copyLegacyCustomFilesPrompt();
+        copyAssetsAndLegacy();
+
+        if (mDebateLoadError != null)
+            // May as well try again (sometimes the error is cleared, e.g., if the error was because
+            // the file didn't exist, and the user just downloaded it.
+            initialiseDebate();
     }
 
     @Override
@@ -1264,29 +1270,34 @@ public class DebatingTimerFragment extends Fragment {
     }
 
     private void clearDebateLoadError() {
+        mDebateLoadErrorIsFormerAsset = false;
         mDebateLoadError = null;
         updateGui();
     }
 
+    private void copyAssetsAndLegacy() {
+        FormatXmlFilesManager manager = new FormatXmlFilesManager(requireContext());
+        try {
+            if (!manager.isEmpty())
+                return; // skip everything if there are already files ready
+            manager.copyAssets();
+        } catch (IOException e) {
+            showSnackbar(Snackbar.LENGTH_LONG, R.string.mainScreen_snackbar_copyAssetsError);
+            return;
+        }
+
+        copyLegacyCustomFilesPrompt(manager);
+    }
+
     /**
      * Legacy support. If there are custom files in the legacy location, prompt the user to copy
-     * them over.
+     * them over. Note: does not check if the destination is empty - the caller should do this!
      */
-    private void copyLegacyCustomFilesPrompt() {
+    private void copyLegacyCustomFilesPrompt(FormatXmlFilesManager manager) {
         // Don't bother if the user has dismissed this prompt
         SharedPreferences prefs = requireActivity().getPreferences(MODE_PRIVATE);
         boolean customFilesCopied = prefs.getBoolean(LEGACY_CUSTOM_FILES_DISMISSED, false);
         if (customFilesCopied) return;
-
-        // Don't bother if the user files directory is not empty
-        FormatXmlFilesManager manager = new FormatXmlFilesManager(requireContext());
-        String[] userFiles;
-        try {
-            userFiles = manager.userFileList();
-        } catch (IOException e) {
-            return; // fail silently
-        }
-        if (userFiles.length > 0) return;
 
         // Don't bother if the legacy location is empty
         String[] legacyFiles;
@@ -1633,7 +1644,10 @@ public class DebatingTimerFragment extends Fragment {
             try {
                 df = buildDebateFromXml(mFormatXmlFileName);
             } catch (FatalXmlError e) {
-                setDebateLoadError(e.getLocalizedMessage());
+                boolean isFormerAsset = isFormerAssetsFile(mFormatXmlFileName);
+                String message = (isFormerAsset) ? getString(R.string.formerAssetsError_message)
+                        : e.getLocalizedMessage();
+                setDebateLoadError(message, isFormerAsset);
                 notifyViewPagerDataSetChanged();
                 return;
             }
@@ -1680,6 +1694,19 @@ public class DebatingTimerFragment extends Fragment {
 
         Log.v(TAG, String.format("isFirstInstall: %d vs %d", info.firstInstallTime, info.lastUpdateTime));
         return info.firstInstallTime == info.lastUpdateTime;
+    }
+
+    /**
+     * Legacy support - remove in future version.
+     * @param filename a file name
+     * @return {@code true} if the file used to be an assets file, {@code false} otherwise
+     */
+    private boolean isFormerAssetsFile(String filename) {
+        String[] oldAssets = getResources().getStringArray(R.array.filesFormerlyInAssets);
+        for (String oldAsset : oldAssets)
+            if (oldAsset.equals(filename))
+                return true;
+        return false;
     }
 
     /**
@@ -1816,7 +1843,8 @@ public class DebatingTimerFragment extends Fragment {
         mViewBinding.mainScreenRightControlButton.setEnabled(enable && !mDebateManager.isInLastPhase());
     }
 
-    private void setDebateLoadError(String message) {
+    private void setDebateLoadError(String message, boolean isFormerAsset) {
+        mDebateLoadErrorIsFormerAsset = isFormerAsset;
         mDebateLoadError = Html.fromHtml(message);
         if (mServiceBinder != null) mServiceBinder.releaseDebateManager();
         mDebateManager = null;
@@ -1898,7 +1926,7 @@ public class DebatingTimerFragment extends Fragment {
             String[] userFileList = new String[0];
             int numberOfDuplicatesFound = 0;
             try {
-                userFileList = filesManager.userFileList();
+                userFileList = filesManager.list();
             } catch (IOException e) {
                 Log.e(TAG, "showDialogToConfirmImport: I/O error checking other files");
             }
@@ -2042,7 +2070,30 @@ public class DebatingTimerFragment extends Fragment {
     private void updateDebateLoadErrorDisplay() {
         DebateLoadErrorBinding binding = mViewBinding.mainScreenDebateLoadError;
         binding.debateLoadErrorMessage.setText(mDebateLoadError);
-        binding.debateLoadErrorFileName.setText(getString(R.string.debateLoadErrorScreen_filename, mFormatXmlFileName));
+        if (mDebateLoadErrorIsFormerAsset) {
+            binding.debateLoadErrorTitle.setText(R.string.formerAssetsError_title);
+            binding.debateLoadErrorFileName.setText(getString(R.string.formerAssetsError_filename, mFormatXmlFileName));
+            binding.debateLoadErrorChooseAnother.setText(R.string.formerAssetsError_suffix);
+            binding.debateLoadErrorChooseStyleButton.setText(R.string.formerAssetsError_button);
+            binding.debateLoadErrorChooseStyleButton.setOnClickListener(
+                    (v) -> {
+                        DebatingTimerFragmentDirections.ActionStraightToDownloads action = DebatingTimerFragmentDirections.actionStraightToDownloads();
+                        mIsOpeningFormatChooser = true;
+                        if (mFormatXmlFileName != null)
+                            action.setXmlFileName(mFormatXmlFileName);
+                        NavHostFragment.findNavController(this).navigate(action);
+                    }
+            );
+
+        } else {
+            binding.debateLoadErrorTitle.setText(R.string.debateLoadErrorScreen_title);
+            binding.debateLoadErrorFileName.setText(getString(R.string.debateLoadErrorScreen_filename, mFormatXmlFileName));
+            binding.debateLoadErrorChooseAnother.setText(R.string.debateLoadError_suffix);
+            binding.debateLoadErrorChooseStyleButton.setText(R.string.debateLoadErrorScreen_button);
+            binding.debateLoadErrorChooseStyleButton.setOnClickListener(
+                    (v) -> navigateToFormatChooser(null)
+            );
+        }
     }
 
     /**

@@ -48,6 +48,20 @@ public class DownloadFormatsFragment extends Fragment {
          * @param newCount the new number of entries
          */
         public void notifyAdapterItemsReplaced(int oldCount, int newCount) {
+
+            // If a file name was given at the input,
+            String incomingFilename = DownloadFormatsFragmentArgs.fromBundle(getArguments()).getXmlFileName();
+            int incomingIndex = -1;
+            if (incomingFilename != null) {
+                int i = 0;
+                for (DebateFormatDownloadManager.DownloadableFormatEntry entry : mDownloadManager.getEntries()) {
+                    boolean found = entry.filename.equals(incomingFilename);
+                    entry.expanded = found;
+                    if (found) incomingIndex = i;
+                    i++;
+                }
+            }
+
             if (oldCount == newCount) {
                 mRecyclerAdapter.notifyItemRangeChanged(0, newCount);
             } else if (oldCount < newCount) {
@@ -59,6 +73,11 @@ public class DownloadFormatsFragment extends Fragment {
             }
 
             if (newCount > 0) setViewToList();
+
+            if (incomingFilename != null) {
+                if (incomingIndex >= 0) mViewBinding.list.scrollToPosition(incomingIndex);
+                setExpandCollapseButton(true);
+            }
         }
 
         @RequiresApi(api = Build.VERSION_CODES.M)

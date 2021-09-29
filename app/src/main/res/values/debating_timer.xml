@@ -64,6 +64,7 @@
 
     <string name="prepTime_title">Preparation time</string>
 
+    <string name="mainScreen_snackbar_copyAssetsError">Couldn\'t access the file system to copy initial formats.</string>
     <string name="mainScreen_snackbar_editTextDiscardChangesInfo_limitedBelow">To discard changes, press the back button. (You can\'t set the time to an overtime value.)</string>
     <string name="mainScreen_snackbar_editTextDiscardChangesInfo_limitedAbove">To discard changes, press the back button. (You can\'t set the time to greater than 23:59.)</string>
     <string name="mainScreen_snackbar_beamNonExternalFile">You can\'t use Android Beam to share built-in styles.</string>
@@ -97,7 +98,7 @@
     <!-- Debate load error screen -->
     <string name="debateLoadErrorScreen_title">Error loading debate</string>
     <string name="debateLoadErrorScreen_filename">"Couldn't load file: %1$s"</string>
-    <string name="debateLoadErrorScreen_button_chooseStyle">Choose style</string>
+    <string name="debateLoadErrorScreen_button">Choose style</string>
 
     <!-- These messages are loaded using Html.fromHtml(), so should be written as "fake HTML" (as in, with HTML tags escaped) -->
     <string name="debateLoadError_noSpeeches">There are no speeches in this debate style file.
@@ -115,6 +116,13 @@
         %1$s
     </string>
     <string name="debateLoadError_suffix">Please choose another style.</string>
+
+    <string name="formerAssetsError_title">Please download this format</string>
+    <string name="formerAssetsError_filename">File: %1$s</string>
+    <string name="formerAssetsError_message">Debatekeeper is changing! Debate formats are now provided for download,
+    rather than included with the app like they were previously.</string>
+    <string name="formerAssetsError_suffix">Please go to the downloads section to download this format.</string>
+    <string name="formerAssetsError_button">Go to downloads</string>
 
     <!-- Dialogs -->
     <string name="schemaTooNewDialog_title">Update app?</string>
@@ -153,4 +161,28 @@
     <string name="customFilesMovingErrorDirectory_snackbar">Error: Couldn\'t open the legacy custom formats directory to copy the files.</string>
     <string name="customFilesMovingErrorFiles_snackbar">%1$d legacy files copied, but errors copying %2$d files: %3$s</string>
     <string name="customFilesMovingSuccess_snackbar">%1$d legacy files copied and ready to use</string>
+
+    <!-- Files that use to be in the assets -->
+    <string-array name="filesFormerlyInAssets">
+        <item>apda.xml</item>
+        <item>asian.xml</item>
+        <item>aueasters.xml</item>
+        <item>australs.xml</item>
+        <item>bp.xml</item>
+        <item>bp5.xml</item>
+        <item>canadian-pmre-splitopp.xml</item>
+        <item>canadian-pmre.xml</item>
+        <item>canadian-splitopp.xml</item>
+        <item>canadian.xml</item>
+        <item>joyntscroll.xml</item>
+        <item>mspdp.xml</item>
+        <item>nzeasters.xml</item>
+        <item>opd.xml</item>
+        <item>parisv.xml</item>
+        <item>test1.xml</item>
+        <item>test2.xml</item>
+        <item>thropy.xml</item>
+        <item>thropybreak.xml</item>
+        <item>worldschools.xml</item>
+    </string-array>
 </resources>
