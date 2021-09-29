@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,14 +20,17 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import net.czlee.debatekeeper.databinding.FragmentDownloadFormatsListBinding;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
+
+import net.czlee.debatekeeper.databinding.FragmentDownloadFormatsBinding;
 
 /**
  * Fragment that downloads the online debate formats list and allows the user to download formats.
  */
 public class DownloadFormatsFragment extends Fragment {
 
-    FragmentDownloadFormatsListBinding mViewBinding;
+    FragmentDownloadFormatsBinding mViewBinding;
     DebateFormatDownloadManager mDownloadManager;
     DownloadableFormatRecyclerAdapter mRecyclerAdapter;
 
@@ -88,6 +92,14 @@ public class DownloadFormatsFragment extends Fragment {
             setViewToError();
         }
 
+        public void showSnackbarError(String filename, String detailMessage) {
+            String message = getString(R.string.formatDownloader_fileError, filename, detailMessage);
+            Snackbar snackbar = Snackbar.make(mViewBinding.getRoot(), message, BaseTransientBottomBar.LENGTH_LONG);
+            View snackbarText = snackbar.getView();
+            TextView textView = snackbarText.findViewById(com.google.android.material.R.id.snackbar_text);
+            if (textView != null) textView.setMaxLines(5);
+            snackbar.show();
+        }
     }
 
     //******************************************************************************************
@@ -105,7 +117,7 @@ public class DownloadFormatsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mViewBinding = FragmentDownloadFormatsListBinding.inflate(inflater, container, false);
+        mViewBinding = FragmentDownloadFormatsBinding.inflate(inflater, container, false);
 
         // Configure up button
         mViewBinding.toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);

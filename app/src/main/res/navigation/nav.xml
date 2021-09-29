@@ -53,5 +53,5 @@
         android:id="@+id/downloadFormatsFragment"
         android:name="net.czlee.debatekeeper.DownloadFormatsFragment"
         android:label="fragment_download_formats_list"
-        tools:layout="@layout/fragment_download_formats_list" />
+        tools:layout="@layout/fragment_download_formats" />
 </navigation>

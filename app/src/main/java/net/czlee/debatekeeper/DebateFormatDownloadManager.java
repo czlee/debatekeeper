@@ -12,6 +12,7 @@ import net.czlee.debatekeeper.debateformat.DebateFormatFieldExtractor;
 
 import org.xml.sax.SAXException;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +37,7 @@ import java.util.concurrent.Executors;
  * </ul>
  *
  * @author Chuan-Zheng Lee
- * @since  2021-09-28
+ * @since 2021-09-28
  */
 public class DebateFormatDownloadManager {
 
@@ -75,6 +76,9 @@ public class DebateFormatDownloadManager {
         public String description;
         public DownloadState state = DownloadState.NOT_DOWNLOADED;
 
+        /**
+         * Constructs a new <code>DownloadableFormatEntry</code> from a {@link JsonReader}.
+         */
         static DownloadableFormatEntry fromJsonReader(JsonReader reader) throws IOException, IllegalStateException {
             DownloadableFormatEntry entry = new DownloadableFormatEntry();
             reader.beginObject();
@@ -123,6 +127,15 @@ public class DebateFormatDownloadManager {
             return strings.toArray(new String[0]);
         }
 
+        /**
+         * Given a format XML files manager and version extractor, checks the version number in the
+         * existing file in the files manager (if any) and updates the <code>state</code> field
+         * accordingly.
+         *
+         * @param filesManager     a {@link FormatXmlFilesManager}
+         * @param versionExtractor a {@link DebateFormatFieldExtractor} that should be initialised
+         *                         with <code>fieldName</code> as the version field.
+         */
         void checkForExistingFile(FormatXmlFilesManager filesManager, DebateFormatFieldExtractor versionExtractor) {
             InputStream in;
             String versionStr;
@@ -177,27 +190,37 @@ public class DebateFormatDownloadManager {
         return mEntries;
     }
 
+    /**
+     * Starts downloading the list of downloadable entries from the server, and notifies the binder
+     * on the main thread when done. This should be safe to call from any thread.
+     */
     public void startDownloadList() {
         initialiseThreads();
         mExecutorService.execute(() -> {
             try {
                 List<DownloadableFormatEntry> newEntries = synchronousDownloadList();
                 mMainThreadHandler.post(() -> replaceEntriesAndNotify(newEntries));
-            } catch (FileNotFoundException e) {
-                // prepend "Not found:" to be a little clearer
-                e.printStackTrace();
-                String message = mContext.getString(R.string.formatDownloader_notFoundError, e.getMessage());
-                mMainThreadHandler.post(() -> mBinder.notifyListDownloadError(message));
             } catch (IOException e) {
                 e.printStackTrace();
-                mMainThreadHandler.post(() -> mBinder.notifyListDownloadError(e.getMessage()));
-            } catch (IllegalStateException|NumberFormatException e) {
+                String message = (e instanceof FileNotFoundException)
+                        ? mContext.getString(R.string.formatDownloader_notFoundError, e.getMessage())
+                        : e.getMessage();
+                mMainThreadHandler.post(() -> mBinder.notifyListDownloadError(message));
+            } catch (IllegalStateException | NumberFormatException e) {
                 e.printStackTrace();
                 mMainThreadHandler.post(() -> mBinder.notifyJsonParseError(e.getMessage()));
             }
         });
     }
 
+    /**
+     * Starts downloading the format file represented by the given {@link DownloadableFormatEntry},
+     * calling <code>holder.updateDownloadProgress()</code> on the main thread as it starts and
+     * completes. This must be called from the main thread.
+     *
+     * @param entry  a {@link DownloadableFormatEntry}
+     * @param holder a {@link DownloadableFormatRecyclerAdapter.ViewHolder}
+     */
     public void startDownloadFile(DownloadableFormatEntry entry, DownloadableFormatRecyclerAdapter.ViewHolder holder) {
         initialiseThreads();
         final DownloadableFormatEntry.DownloadState originalState = entry.state;
@@ -212,9 +235,13 @@ public class DebateFormatDownloadManager {
                 });
             } catch (IOException e) {
                 e.printStackTrace();
+                String message = (e instanceof FileNotFoundException)
+                        ? mContext.getString(R.string.formatDownloader_notFoundError, e.getMessage())
+                        : e.getMessage();
                 mMainThreadHandler.post(() -> {
                     entry.state = originalState;
                     holder.updateDownloadProgress();
+                    mBinder.showSnackbarError(entry.filename, message);
                 });
             }
         });
@@ -236,8 +263,9 @@ public class DebateFormatDownloadManager {
     }
 
     /**
-     * Replaces <code>mEntries</code> with <code>newEntries</code>, and notifies the binder that
-     * the data has changed. Must be run on the main thread.
+     * Replaces <code>mEntries</code> with <code>newEntries</code>, and notifies the binder that the
+     * data has changed. Must be run on the main thread.
+     *
      * @param newEntries the new entries
      */
     private void replaceEntriesAndNotify(List<DownloadableFormatEntry> newEntries) {
@@ -247,13 +275,21 @@ public class DebateFormatDownloadManager {
         mBinder.notifyAdapterItemsReplaced(originalSize, newEntries.size());
     }
 
+    /**
+     * Downlaods the file represented by a {@link DownloadableFormatEntry}. This accesses the network,
+     * so it must be run on a background thread. It also checks that the URL host matches that of
+     * where the format came from.
+     * @param entry a {@link DownloadableFormatEntry}
+     */
     private void synchronousDownloadFile(DownloadableFormatEntry entry) throws IOException {
         Log.i(TAG, "Downloading file from server: " + entry.filename);
 
         URL url = new URL(entry.url);
         Log.d(TAG, "url: " + url.toString());
-        if (!verifyHostMatch(url))
-            throw new MalformedURLException("Wrong host: " + url.toString());
+        if (!verifyHostMatch(url)) {
+            String message = mContext.getString(R.string.formatDownloader_wrongHostError, url.toString());
+            throw new MalformedURLException(message);
+        }
 
         URLConnection connection = url.openConnection();
         InputStream in = connection.getInputStream();
