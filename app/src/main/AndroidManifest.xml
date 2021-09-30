@@ -33,6 +33,7 @@
 
     <application
         android:allowBackup="true"
+        android:fullBackupOnly="true"
         android:requestLegacyExternalStorage="true"
         android:icon="@drawable/ic_debatekeeper"
         android:label="@string/app_name"
