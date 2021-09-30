@@ -3,6 +3,8 @@
 
     <string name="formatDownloader_actionBar_expand">Expand all</string>
     <string name="formatDownloader_actionBar_collapse">Collapse all</string>
+    <string name="formatDownloader_actionBar_learnMore">Learn more</string>
+    <string name="formatDownloader_actionBar_config">Advanced config</string>
 
     <string name="formatDownloader_button_download">Download</string>
     <string name="formatDownloader_progress_description">Downloading…</string>
@@ -11,7 +13,8 @@
 
     <string name="formatDownloader_updateAvailable">Update available</string>
 
-    <string name="formatDownloader_list_url" translatable="false">https://formats.debatekeeper.czlee.nz/formats.json</string>
+    <string name="formatDownloader_list_defaultUrl" translatable="false">https://formats.debatekeeper.czlee.nz/formats.json</string>
+    <string name="formatDownloader_learnMoreUrl" translatable="false">https://github.com/czlee/debatekeeper/wiki/Debate-format-files</string>
 
     <string name="formatDownloader_loadingText">Loading list of styles from server…</string>
     <string name="formatDownloader_noInternet">No internet connection.</string>

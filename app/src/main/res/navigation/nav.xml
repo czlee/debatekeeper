@@ -62,5 +62,13 @@
             app:argType="string"
             app:nullable="true"
             android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_config"
+            app:destination="@id/downloadConfigFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/downloadConfigFragment"
+        android:name="net.czlee.debatekeeper.DownloadConfigFragment"
+        android:label="fragment_download_config"
+        tools:layout="@layout/fragment_download_config" />
 </navigation>

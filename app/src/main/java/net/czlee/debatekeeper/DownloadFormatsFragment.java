@@ -1,9 +1,11 @@
 package net.czlee.debatekeeper;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,6 +39,8 @@ public class DownloadFormatsFragment extends Fragment {
     FragmentDownloadFormatsBinding mViewBinding;
     DebateFormatDownloadManager mDownloadManager;
     DownloadableFormatRecyclerAdapter mRecyclerAdapter;
+
+    public static final String PREFERENCE_DOWNLOAD_LIST_URL = "download-list-url";
 
     //******************************************************************************************
     // Public classes
@@ -147,6 +152,15 @@ public class DownloadFormatsFragment extends Fragment {
                 }
                 mRecyclerAdapter.notifyItemRangeChanged(0, mDownloadManager.getEntries().size());
                 setExpandCollapseButton(true);
+                return true;
+            } else if (itemId == R.id.formatDownloader_actionBar_learnMore) {
+                Uri uri = Uri.parse(getString(R.string.formatDownloader_learnMoreUrl));
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+                return true;
+            } else if (itemId == R.id.formatDownloader_actionBar_config) {
+                @NonNull NavDirections action = DownloadFormatsFragmentDirections.actionConfig();
+                NavHostFragment.findNavController(DownloadFormatsFragment.this).navigate(action);
                 return true;
             } else return false;
         }

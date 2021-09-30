@@ -1,12 +1,15 @@
 package net.czlee.debatekeeper;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.JsonReader;
 import android.util.Log;
+import android.util.MalformedJsonException;
 
 import androidx.core.os.HandlerCompat;
+import androidx.preference.PreferenceManager;
 
 import net.czlee.debatekeeper.debateformat.DebateFormatFieldExtractor;
 
@@ -24,6 +27,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Manager for downloading information and format XML files from the Debatekeeper formats server.
@@ -42,7 +47,6 @@ public class DebateFormatDownloadManager {
     private final String TAG = "DebateFormatDownload";
 
     private final Context mContext;
-    private final String mListUrl;
     private final ArrayList<DownloadableFormatEntry> mEntries;
     private final DownloadFormatsFragment.DownloadBinder mBinder;
     private ExecutorService mExecutorService;
@@ -175,7 +179,6 @@ public class DebateFormatDownloadManager {
 
     DebateFormatDownloadManager(Context context, DownloadFormatsFragment.DownloadBinder binder) {
         mContext = context;
-        mListUrl = context.getString(R.string.formatDownloader_list_url);
         mBinder = binder;
         mEntries = new ArrayList<>();
         mFilesManager = new FormatXmlFilesManager(context);
@@ -193,12 +196,27 @@ public class DebateFormatDownloadManager {
      * Starts downloading the list of downloadable entries from the server, and notifies the binder
      * on the main thread when done. This should be safe to call from any thread.
      */
-    public void startDownloadList() {
+    public void startDownloadList()  {
         initialiseThreads();
         mExecutorService.execute(() -> {
             try {
                 List<DownloadableFormatEntry> newEntries = synchronousDownloadList();
                 mMainThreadHandler.post(() -> replaceEntriesAndNotify(newEntries));
+            } catch (MalformedJsonException e) {
+                e.printStackTrace();
+                String originalMessage = e.getMessage();
+                String message = originalMessage;
+
+                // Since we're using a strict JsonReader, the error is normally "Use JsonReader.setLenient(true)...".
+                // If this is the case, try to extract the line and column number.
+                if (originalMessage != null && originalMessage.startsWith("Use JsonReader.setLenient")) {
+                    Matcher matcher = Pattern.compile("line \\d+ column \\d+").matcher(originalMessage);
+                    if (matcher.find())
+                        message = "Malformed JSON at " + matcher.group();
+                }
+
+                final String finalMessage = message;
+                mMainThreadHandler.post(() -> mBinder.notifyJsonParseError(finalMessage));
             } catch (IOException e) {
                 e.printStackTrace();
                 String message = (e instanceof FileNotFoundException)
@@ -308,8 +326,7 @@ public class DebateFormatDownloadManager {
         ArrayList<DownloadableFormatEntry> entries = new ArrayList<>();
         DebateFormatFieldExtractor versionExtractor = new DebateFormatFieldExtractor(mContext, R.string.xml2elemName_version);
 
-        URL url = new URL(mListUrl);
-        Log.d(TAG, "url: " + url.toString());
+        URL url = getListUrl();
         URLConnection connection = url.openConnection();
         InputStream in = connection.getInputStream();
         InputStreamReader isr = new InputStreamReader(in);
@@ -318,7 +335,7 @@ public class DebateFormatDownloadManager {
             reader.beginArray();
             while (reader.hasNext()) {
                 DownloadableFormatEntry entry = DownloadableFormatEntry.fromJsonReader(reader);
-                Log.d(TAG, "added: " + entry.styleName + " (" + entry.filename + ")");
+                // Log.d(TAG, "added: " + entry.styleName + " (" + entry.filename + ")");
                 entry.checkForExistingFile(mFilesManager, versionExtractor);
                 entries.add(entry);
             }
@@ -329,8 +346,21 @@ public class DebateFormatDownloadManager {
     }
 
     private boolean verifyHostMatch(URL url) throws MalformedURLException {
-        URL listUrl = new URL(mListUrl);
+        URL listUrl = getListUrl();
         return url.getHost().equals(listUrl.getHost());
+    }
+
+    private URL getListUrl() throws MalformedURLException {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        String userUrl = prefs.getString(DownloadFormatsFragment.PREFERENCE_DOWNLOAD_LIST_URL, null);
+        if (userUrl == null) {
+            String defaultUrl = mContext.getString(R.string.formatDownloader_list_defaultUrl);
+            Log.i(TAG, "using default URL: " + defaultUrl);
+            return new URL(defaultUrl);
+        } else {
+            Log.i(TAG, "using user-provided URL: " + userUrl);
+            return new URL(userUrl);
+        }
     }
 
 }

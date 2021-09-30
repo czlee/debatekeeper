@@ -17,4 +17,16 @@
         android:visible="false"
         tools:ignore="AlwaysShowAction" />
 
+    <item
+        android:id="@+id/formatDownloader_actionBar_learnMore"
+        android:title="@string/formatDownloader_actionBar_learnMore"
+        android:icon="@drawable/ic_baseline_help_24"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/formatDownloader_actionBar_config"
+        android:title="@string/formatDownloader_actionBar_config"
+        android:icon="@drawable/ic_baseline_settings_24"
+        app:showAsAction="never" />
+
 </menu>
