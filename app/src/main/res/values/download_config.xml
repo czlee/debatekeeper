@@ -1,9 +1,7 @@
 <resources>
-    <string name="downloadConfigTitle">Downloads config</string>
-    <string name="downloadServerUrlLabel">Debate style files server</string>
-    <string name="downloadServerUrlExplanation">This configures the server that Debatekeeper checks for
-        debate style files. If you leave this blank, Debatekeeper will search the official repository.
-        You should only change this if you know that someone is running a new debate style files
-        hosting location.
+    <string name="downloadConfigTitle">Downloads configuration</string>
+    <string name="formatsRepositoryUrlLabel">Debate style files repository</string>
+    <string name="formatsRepositoryUrlExplanation">This configures the online repository that Debatekeeper
+        checks for debate style files. If you leave this blank, Debatekeeper will search the official repository.
     </string>
 </resources>
