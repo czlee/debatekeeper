@@ -289,7 +289,7 @@ public class AlertManager
         }
 
         if (mFlashScreenMode != FlashScreenMode.OFF) {
-            flashScreen(bsi, BELL_FLASH_COLOUR);
+            flashScreen(bsi);
         }
     }
 
@@ -399,7 +399,7 @@ public class AlertManager
      * Flashes the screen according to the specifications of a bell.
      * @param bsi the {@link BellSoundInfo} for this bell
      */
-    private void flashScreen(BellSoundInfo bsi, final int colour) {
+    private void flashScreen(BellSoundInfo bsi) {
         Timer       repeatTimer  = new Timer();
         final long  repeatPeriod = bsi.getRepeatPeriod();
         final int   timesToPlay  = bsi.getTimesToPlay();
@@ -440,10 +440,10 @@ public class AlertManager
 
                 switch (mFlashScreenMode) {
                 case SOLID_FLASH:
-                    startSingleFlashScreen(flashTime, colour, lastFlash);
+                    startSingleFlashScreen(flashTime, BELL_FLASH_COLOUR, lastFlash);
                     break;
                 case STROBE_FLASH:
-                    startSingleStrobeFlashScreen(flashTime, colour, lastFlash);
+                    startSingleStrobeFlashScreen(flashTime, BELL_FLASH_COLOUR, lastFlash);
                     break;
                 case OFF:
                     // Do nothing
