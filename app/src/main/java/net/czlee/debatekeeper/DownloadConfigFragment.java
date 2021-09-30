@@ -61,7 +61,7 @@ public class DownloadConfigFragment extends Fragment {
         mViewBinding = FragmentDownloadConfigBinding.inflate(inflater, container, false);
 
         // Configure menu
-        mViewBinding.toolbar.setNavigationOnClickListener(
+        mViewBinding.toolbarDownloadConfig.setNavigationOnClickListener(
                 (v) -> NavHostFragment.findNavController(this).navigateUp());
 
         // Populate the field

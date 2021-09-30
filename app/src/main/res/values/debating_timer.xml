@@ -27,48 +27,48 @@
     <string name="app_marketUri" translatable="false">market://details?id=net.czlee.debatekeeper</string>
 
     <!-- Buttons -->
-    <string name="mainScreen_controlButton_startTimer_text">Start</string>
-    <string name="mainScreen_controlButton_stopTimer_text">Stop</string>
-    <string name="mainScreen_controlButton_resumeTimer_text">Resume</string>
-    <string name="mainScreen_controlButton_resetTimer_text">Reset</string>
-    <string name="mainScreen_controlButton_nextPhase_text">Next</string>
-    <string name="mainScreen_controlButton_chooseStyle_text">Choose style</string>
-    <string name="mainScreen_playBell_buttonText">Bell</string>
-    <string name="mainScreen_poiTimer_buttonText">POI</string>
+    <string name="timer_controlButton_startTimer_text">Start</string>
+    <string name="timer_controlButton_stopTimer_text">Stop</string>
+    <string name="timer_controlButton_resumeTimer_text">Resume</string>
+    <string name="timer_controlButton_resetTimer_text">Reset</string>
+    <string name="timer_controlButton_nextPhase_text">Next</string>
+    <string name="timer_controlButton_chooseStyle_text">Choose style</string>
+    <string name="timer_playBell_buttonText">Bell</string>
+    <string name="timer_poiTimer_buttonText">POI</string>
 
     <!-- Notices -->
     <string name="notification_title" translatable="false">Debatekeeper</string>
 
-    <string name="mainScreen_overtimeFormat">+%1$s</string>
+    <string name="timer_overtimeFormat">+%1$s</string>
 
-    <string name="mainScreen_bellsList_noBells">"; no bells"</string>
-    <plurals name="mainScreen_bellsList_normal">
+    <string name="timer_bellsList_noBells">"; no bells"</string>
+    <plurals name="timer_bellsList_normal">
         <item quantity="one">"; bell at %1$s"</item>
         <item quantity="other">"; bells at %1$s"</item>
     </plurals>
-    <string name="mainScreen_bellsList_nextOvertimeBell">"; next overtime bell at %1$s"</string>
-    <string name="mainScreen_bellsList_noOvertimeBells">"; no overtime bells"</string>
+    <string name="timer_bellsList_nextOvertimeBell">"; next overtime bell at %1$s"</string>
+    <string name="timer_bellsList_noOvertimeBells">"; no overtime bells"</string>
 
-    <plurals name="mainScreen_timeInMinutes">
+    <plurals name="timer_timeInMinutes">
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>
     </plurals>
-    <string name="mainScreen_speechLength">%s long</string>
-    <string name="mainScreen_prepTimeLength">%s allowed</string>
-    <string name="mainScreen_prepTimeControlledIndicator">", controlled"</string>
-    <string name="mainScreen_pauseOnBellIndicator">" (pause)"</string>
-    <string name="mainScreen_silentBellIndicator">" (silent)"</string>
+    <string name="timer_speechLength">%s long</string>
+    <string name="timer_prepTimeLength">%s allowed</string>
+    <string name="timer_prepTimeControlledIndicator">", controlled"</string>
+    <string name="timer_pauseOnBellIndicator">" (pause)"</string>
+    <string name="timer_silentBellIndicator">" (silent)"</string>
 
-    <string name="mainScreen_snackbar_resetDebate">All timers in debate reset</string>
-    <string name="mainScreen_noDebateLoaded_text">No debate loaded</string>
+    <string name="timer_snackbar_resetDebate">All timers in debate reset</string>
+    <string name="timer_noDebateLoaded_text">No debate loaded</string>
 
     <string name="prepTime_title">Preparation time</string>
 
-    <string name="mainScreen_snackbar_copyAssetsError">Couldn\'t access the file system to copy initial formats.</string>
-    <string name="mainScreen_snackbar_editTextDiscardChangesInfo_limitedBelow">To discard changes, press the back button. (You can\'t set the time to an overtime value.)</string>
-    <string name="mainScreen_snackbar_editTextDiscardChangesInfo_limitedAbove">To discard changes, press the back button. (You can\'t set the time to greater than 23:59.)</string>
-    <string name="mainScreen_snackbar_beamNonExternalFile">You can\'t use Android Beam to share built-in styles.</string>
-    <string name="mainScreen_snackbar_beam_error_generic">There was an error beaming this debate format file.</string>
+    <string name="timer_snackbar_copyAssetsError">Couldn\'t access the file system to copy initial formats.</string>
+    <string name="timer_snackbar_editTextDiscardChangesInfo_limitedBelow">To discard changes, press the back button. (You can\'t set the time to an overtime value.)</string>
+    <string name="timer_snackbar_editTextDiscardChangesInfo_limitedAbove">To discard changes, press the back button. (You can\'t set the time to greater than 23:59.)</string>
+    <string name="timer_snackbar_beamNonExternalFile">You can\'t use Android Beam to share built-in styles.</string>
+    <string name="timer_snackbar_beam_error_generic">There was an error beaming this debate format file.</string>
 
     <!-- Sharing debate formats -->
     <string name="importDebateFormat_dialog_title">Import debate style?</string>
@@ -89,10 +89,10 @@
     <string name="importDebateFormat_snackbar_success">Successfully imported file %1$s</string>
 
     <!-- Menu -->
-    <string name="mainScreen_menuItem_resetDebate">Reset debate</string>
-    <string name="mainScreen_menuItem_settings">Settings</string>
-    <string name="mainScreen_menuItem_chooseFormat">Debate styles</string>
-    <string name="mainScreen_menuItem_ringBells">Ring bells</string>
+    <string name="timer_menuItem_resetDebate">Reset debate</string>
+    <string name="timer_menuItem_settings">Settings</string>
+    <string name="timer_menuItem_chooseFormat">Debate styles</string>
+    <string name="timer_menuItem_ringBells">Ring bells</string>
 
     <!-- Debate load error screen -->
     <string name="debateLoadErrorScreen_title">Error loading debate</string>

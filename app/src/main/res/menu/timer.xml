@@ -19,29 +19,29 @@
       xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <item
-        android:id="@+id/mainScreen_menuItem_ringBells"
+        android:id="@+id/timer_menuItem_ringBells"
         android:orderInCategory="0"
-        android:title="@string/mainScreen_menuItem_ringBells"
+        android:title="@string/timer_menuItem_ringBells"
         android:icon="@drawable/ic_baseline_notifications_active_24"
         android:checkable="true"
         android:checked="false"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/mainScreen_menuItem_resetDebate"
+        android:id="@+id/timer_menuItem_resetDebate"
         android:orderInCategory="1"
-        android:title="@string/mainScreen_menuItem_resetDebate"
+        android:title="@string/timer_menuItem_resetDebate"
         android:icon="@drawable/ic_baseline_replay_24"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/mainScreen_menuItem_chooseFormat"
+        android:id="@+id/timer_menuItem_chooseFormat"
         android:orderInCategory="2"
-        android:title="@string/mainScreen_menuItem_chooseFormat"
+        android:title="@string/timer_menuItem_chooseFormat"
         android:icon="@drawable/ic_baseline_style_24"
         app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/mainScreen_menuItem_settings"
+        android:id="@+id/timer_menuItem_settings"
         android:orderInCategory="3"
-        android:title="@string/mainScreen_menuItem_settings"
+        android:title="@string/timer_menuItem_settings"
         android:icon="@drawable/ic_baseline_settings_24"
         app:showAsAction="ifRoom"/>
 

@@ -202,34 +202,34 @@ public class DebatingTimerFragment extends Fragment {
     };
 
     private final ControlButtonSpec CONTROL_BUTTON_START_TIMER = new ControlButtonSpec(
-            R.string.mainScreen_controlButton_startTimer_text,
+            R.string.timer_controlButton_startTimer_text,
             (view) -> {
                 mDebateManager.startTimer();
                 updateGui();
                 updateKeepScreenOn();
             });
     private final ControlButtonSpec CONTROL_BUTTON_STOP_TIMER = new ControlButtonSpec(
-            R.string.mainScreen_controlButton_stopTimer_text,
+            R.string.timer_controlButton_stopTimer_text,
             (view) -> {
                 mDebateManager.stopTimer();
                 updateGui();
                 updateKeepScreenOn();
             });
     private final ControlButtonSpec CONTROL_BUTTON_RESET_TIMER = new ControlButtonSpec(
-            R.string.mainScreen_controlButton_resetTimer_text,
+            R.string.timer_controlButton_resetTimer_text,
             (view) -> {
                 mDebateManager.resetActivePhase();
                 updateGui();
             });
     private final ControlButtonSpec CONTROL_BUTTON_RESUME_TIMER = new ControlButtonSpec(
-            R.string.mainScreen_controlButton_resumeTimer_text,
+            R.string.timer_controlButton_resumeTimer_text,
             (view) -> {
                 mDebateManager.startTimer();
                 updateGui();
                 updateKeepScreenOn();
             });
     private final ControlButtonSpec CONTROL_BUTTON_NEXT_PHASE = new ControlButtonSpec(
-            R.string.mainScreen_controlButton_nextPhase_text,
+            R.string.timer_controlButton_nextPhase_text,
             (view) -> {
                 goToNextSpeech();
                 updateGui();
@@ -715,23 +715,23 @@ public class DebatingTimerFragment extends Fragment {
         public boolean onMenuItemClick(MenuItem item) {
             editCurrentTimeFinish(false);
             int itemId = item.getItemId();
-            if (itemId == R.id.mainScreen_menuItem_chooseFormat) {
+            if (itemId == R.id.timer_menuItem_chooseFormat) {
                 navigateToFormatChooser(mFormatXmlFileName);
                 return true;
 
-            } else if (itemId == R.id.mainScreen_menuItem_resetDebate) {
+            } else if (itemId == R.id.timer_menuItem_resetDebate) {
                 if (mDebateManager == null) return true;
                 resetDebate(false);
-                showSnackbar(SNACKBAR_DURATION_RESET_DEBATE, R.string.mainScreen_snackbar_resetDebate);
+                showSnackbar(SNACKBAR_DURATION_RESET_DEBATE, R.string.timer_snackbar_resetDebate);
                 return true;
 
-            } else if (itemId == R.id.mainScreen_menuItem_settings) {
+            } else if (itemId == R.id.timer_menuItem_settings) {
                 Log.d(TAG, "opening settings");
                 @NonNull NavDirections action = DebatingTimerFragmentDirections.actionEditSettings();
                 NavHostFragment.findNavController(DebatingTimerFragment.this).navigate(action);
                 return true;
 
-            } else if (itemId == R.id.mainScreen_menuItem_ringBells) {
+            } else if (itemId == R.id.timer_menuItem_ringBells) {
                 // Edit the preference, then apply the changes.
                 // Don't fetch the current preference - if there is an inconsistency, we want the toggle
                 // to reflect what this activity thinks silent mode is.
@@ -787,7 +787,7 @@ public class DebatingTimerFragment extends Fragment {
                 updateDebateTimerDisplayColours(mDebateTimerDisplay, textColour, backgroundColour);
 
                 // Set the background colour of the root view to be black again.
-                mViewBinding.mainScreenRootView.setBackgroundColor(resources.getColor(android.R.color.black));
+                mViewBinding.timerRootView.setBackgroundColor(resources.getColor(android.R.color.black));
             });
         }
 
@@ -813,7 +813,7 @@ public class DebatingTimerFragment extends Fragment {
 
                 // Having completed preparations, set the background colour of the root view to
                 // flash the screen.
-                mViewBinding.mainScreenRootView.setBackgroundColor(colour);
+                mViewBinding.timerRootView.setBackgroundColor(colour);
             });
         }
     }
@@ -883,7 +883,7 @@ public class DebatingTimerFragment extends Fragment {
             FormatXmlFilesManager filesManager = new FormatXmlFilesManager(requireActivity());
             if (!filesManager.exists(mFormatXmlFileName)) {
                 Log.e(TAG, "createBeamUris: Tried to share non-existent file");
-                showSnackbar(Snackbar.LENGTH_LONG, R.string.mainScreen_snackbar_beamNonExternalFile);
+                showSnackbar(Snackbar.LENGTH_LONG, R.string.timer_snackbar_beamNonExternalFile);
                 return new Uri[0];
             }
             File file = filesManager.getFileFromExternalStorage(mFormatXmlFileName);
@@ -892,7 +892,7 @@ public class DebatingTimerFragment extends Fragment {
                 Log.i(TAG, "createBeamUris: Sharing URI " + fileUri.toString());
                 return new Uri[]{fileUri};
             } else {
-                showSnackbar(Snackbar.LENGTH_LONG, R.string.mainScreen_snackbar_beam_error_generic);
+                showSnackbar(Snackbar.LENGTH_LONG, R.string.timer_snackbar_beam_error_generic);
                 Log.e(TAG, "createBeamUris: file URI was null");
                 return new Uri[0];
             }
@@ -955,20 +955,20 @@ public class DebatingTimerFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mViewBinding.mainScreenToolbar.setOnMenuItemClickListener(new DebatingTimerMenuItemClickListener());
-        mViewBinding.mainScreenPlayBellButton.setOnClickListener(
+        mViewBinding.toolbarDebatingTimer.setOnMenuItemClickListener(new DebatingTimerMenuItemClickListener());
+        mViewBinding.timerPlayBellButton.setOnClickListener(
                 (v) -> mServiceBinder.getAlertManager().playSingleBell()
         );
-        mViewBinding.mainScreenDebateLoadError.debateLoadErrorChooseStyleButton.setOnClickListener(
+        mViewBinding.timerDebateLoadError.debateLoadErrorChooseStyleButton.setOnClickListener(
                 (v) -> navigateToFormatChooser(null)
         );
-        mViewBinding.mainScreenNoDebateLoaded.noDebateLoadedChooseStyleButton.setOnClickListener(
+        mViewBinding.timerNoDebateLoaded.noDebateLoadedChooseStyleButton.setOnClickListener(
                 (v) -> navigateToFormatChooser(null)
         );
-        mViewBinding.mainScreenDebateLoadError.debateLoadErrorMessage.setMovementMethod(LinkMovementMethod.getInstance());
+        mViewBinding.timerDebateLoadError.debateLoadErrorMessage.setMovementMethod(LinkMovementMethod.getInstance());
 
         // ViewPager
-        mViewPager = mViewBinding.mainScreenViewPager;
+        mViewPager = mViewBinding.timerViewPager;
         mViewPager.setAdapter(new DebateTimerDisplayPagerAdapter());
         mViewPager.addOnPageChangeListener(new DebateTimerDisplayOnPageChangeListener());
         mViewPager.setPageMargin(1);
@@ -1274,7 +1274,7 @@ public class DebatingTimerFragment extends Fragment {
         try {
             if (manager.isEmpty()) manager.copyAssets();
         } catch (IOException e) {
-            showSnackbar(Snackbar.LENGTH_LONG, R.string.mainScreen_snackbar_copyAssetsError);
+            showSnackbar(Snackbar.LENGTH_LONG, R.string.timer_snackbar_copyAssetsError);
             return;
         }
 
@@ -1412,10 +1412,10 @@ public class DebatingTimerFragment extends Fragment {
         // Limit to the allowable time range
         if (currentTime < 0) {
             currentTime = 0;
-            showSnackbar(Snackbar.LENGTH_LONG, R.string.mainScreen_snackbar_editTextDiscardChangesInfo_limitedBelow);
+            showSnackbar(Snackbar.LENGTH_LONG, R.string.timer_snackbar_editTextDiscardChangesInfo_limitedBelow);
         } else if (currentTime >= 24 * 60) {
             currentTime = 24 * 60 - 1;
-            showSnackbar(Snackbar.LENGTH_LONG, R.string.mainScreen_snackbar_editTextDiscardChangesInfo_limitedAbove);
+            showSnackbar(Snackbar.LENGTH_LONG, R.string.timer_snackbar_editTextDiscardChangesInfo_limitedAbove);
         }
 
         // We're using this in hours and minutes, not minutes and seconds
@@ -1816,17 +1816,17 @@ public class DebatingTimerFragment extends Fragment {
 
 
         if (left != null && centre == null && right != null) {
-            setButton(mViewBinding.mainScreenLeftCentreControlButton, left);
-            setButton(mViewBinding.mainScreenLeftControlButton, null);
-            setButton(mViewBinding.mainScreenCentreControlButton, null);
+            setButton(mViewBinding.timerLeftCentreControlButton, left);
+            setButton(mViewBinding.timerLeftControlButton, null);
+            setButton(mViewBinding.timerCentreControlButton, null);
 
         } else {
-            setButton(mViewBinding.mainScreenLeftCentreControlButton, null);
-            setButton(mViewBinding.mainScreenLeftControlButton, left);
-            setButton(mViewBinding.mainScreenCentreControlButton, centre);
+            setButton(mViewBinding.timerLeftCentreControlButton, null);
+            setButton(mViewBinding.timerLeftControlButton, left);
+            setButton(mViewBinding.timerCentreControlButton, centre);
         }
 
-        setButton(mViewBinding.mainScreenRightControlButton, right);
+        setButton(mViewBinding.timerRightControlButton, right);
     }
 
     /**
@@ -1836,11 +1836,11 @@ public class DebatingTimerFragment extends Fragment {
      */
     private void setButtonsEnable(boolean enable) {
         if (mDebateManager == null) return;
-        mViewBinding.mainScreenLeftControlButton.setEnabled(enable);
-        mViewBinding.mainScreenLeftCentreControlButton.setEnabled(enable);
-        mViewBinding.mainScreenCentreControlButton.setEnabled(enable);
+        mViewBinding.timerLeftControlButton.setEnabled(enable);
+        mViewBinding.timerLeftCentreControlButton.setEnabled(enable);
+        mViewBinding.timerCentreControlButton.setEnabled(enable);
         // Disable the [Next Speaker] button if there are no more speakers
-        mViewBinding.mainScreenRightControlButton.setEnabled(enable && !mDebateManager.isInLastPhase());
+        mViewBinding.timerRightControlButton.setEnabled(enable && !mDebateManager.isInLastPhase());
     }
 
     private void setDebateLoadError(String message, boolean isFormerAsset) {
@@ -1983,7 +1983,7 @@ public class DebatingTimerFragment extends Fragment {
 
     private void showSnackbar(int duration, int stringResId, Object... formatArgs) {
         String string = getString(stringResId, formatArgs);
-        View coordinator = mViewBinding.mainScreenCoordinator;
+        View coordinator = mViewBinding.timerCoordinator;
         Snackbar snackbar = Snackbar.make(coordinator, string, duration);
         View snackbarText = snackbar.getView();
         TextView textView = snackbarText.findViewById(com.google.android.material.R.id.snackbar_text);
@@ -2050,9 +2050,9 @@ public class DebatingTimerFragment extends Fragment {
             // If no debate is loaded, show only one control button, which leads the user to
             // choose a style. (Keep the play bell button enabled.)
             setButtons(null, null, null);
-            mViewBinding.mainScreenLeftControlButton.setEnabled(false);
-            mViewBinding.mainScreenCentreControlButton.setEnabled(false);
-            mViewBinding.mainScreenRightControlButton.setEnabled(false);
+            mViewBinding.timerLeftControlButton.setEnabled(false);
+            mViewBinding.timerCentreControlButton.setEnabled(false);
+            mViewBinding.timerRightControlButton.setEnabled(false);
 
             // This seems counter-intuitive, but we enable paging if there is no debate loaded,
             // as there is only one page anyway, and this way the "scrolled to the limit"
@@ -2068,7 +2068,7 @@ public class DebatingTimerFragment extends Fragment {
      * Populates the fields in the debate load error display.
      */
     private void updateDebateLoadErrorDisplay() {
-        DebateLoadErrorBinding binding = mViewBinding.mainScreenDebateLoadError;
+        DebateLoadErrorBinding binding = mViewBinding.timerDebateLoadError;
         binding.debateLoadErrorMessage.setText(mDebateLoadError);
         if (mDebateLoadErrorIsFormerAsset) {
             binding.debateLoadErrorTitle.setText(R.string.formerAssetsError_title);
@@ -2104,20 +2104,20 @@ public class DebatingTimerFragment extends Fragment {
         if (mDebateManager == null && mDebateLoadError != null) {
             Log.w(TAG, "no debate manager, setting error view");
             mViewPager.setVisibility(View.GONE);
-            mViewBinding.mainScreenNoDebateLoaded.getRoot().setVisibility(View.GONE);
-            mViewBinding.mainScreenDebateLoadError.getRoot().setVisibility(View.VISIBLE);
+            mViewBinding.timerNoDebateLoaded.getRoot().setVisibility(View.GONE);
+            mViewBinding.timerDebateLoadError.getRoot().setVisibility(View.VISIBLE);
             updateDebateLoadErrorDisplay();
 
         } else if (mDebateManager == null) {
             Log.w(TAG, "no debate manager, setting no-debate view");
             mViewPager.setVisibility(View.GONE);
-            mViewBinding.mainScreenNoDebateLoaded.getRoot().setVisibility(View.VISIBLE);
-            mViewBinding.mainScreenDebateLoadError.getRoot().setVisibility(View.GONE);
+            mViewBinding.timerNoDebateLoaded.getRoot().setVisibility(View.VISIBLE);
+            mViewBinding.timerDebateLoadError.getRoot().setVisibility(View.GONE);
 
         } else {
             mViewPager.setVisibility(View.VISIBLE);
-            mViewBinding.mainScreenNoDebateLoaded.getRoot().setVisibility(View.GONE);
-            mViewBinding.mainScreenDebateLoadError.getRoot().setVisibility(View.GONE);
+            mViewBinding.timerNoDebateLoaded.getRoot().setVisibility(View.GONE);
+            mViewBinding.timerDebateLoadError.getRoot().setVisibility(View.GONE);
 
             if (mDebateTimerDisplay != null) {
                 updateDebateTimerDisplay(mDebateTimerDisplay,
@@ -2187,18 +2187,18 @@ public class DebatingTimerFragment extends Fragment {
         long length = dpf.getLength();
         String lengthStr;
         if (length % 60 == 0)
-            lengthStr = getResources().getQuantityString(R.plurals.mainScreen_timeInMinutes, (int) (length / 60), length / 60);
+            lengthStr = getResources().getQuantityString(R.plurals.timer_timeInMinutes, (int) (length / 60), length / 60);
         else
             lengthStr = DateUtils.formatElapsedTime(length);
 
-        int finalTimeTextUnformattedResId = (dpf.isPrep()) ? R.string.mainScreen_prepTimeLength : R.string.mainScreen_speechLength;
+        int finalTimeTextUnformattedResId = (dpf.isPrep()) ? R.string.timer_prepTimeLength : R.string.timer_speechLength;
         infoLine.append(String.format(this.getString(finalTimeTextUnformattedResId),
                 lengthStr));
 
         if (dpf.isPrep()) {
             PrepTimeFormat ptf = (PrepTimeFormat) dpf;
             if (ptf.isControlled())
-                infoLine.append(getString(R.string.mainScreen_prepTimeControlledIndicator));
+                infoLine.append(getString(R.string.timer_prepTimeControlledIndicator));
         }
 
         // ...then, if applicable, bells
@@ -2208,10 +2208,10 @@ public class DebatingTimerFragment extends Fragment {
         if (overtime) {
             // show next overtime bell (don't bother with list of bells anymore)
             if (nextOvertimeBellTime == null)
-                infoLine.append(getString(R.string.mainScreen_bellsList_noOvertimeBells));
+                infoLine.append(getString(R.string.timer_bellsList_noOvertimeBells));
             else {
                 long timeToDisplay = subtractFromSpeechLengthIfCountingDown(nextOvertimeBellTime, dpf);
-                infoLine.append(getString(R.string.mainScreen_bellsList_nextOvertimeBell,
+                infoLine.append(getString(R.string.timer_bellsList_nextOvertimeBell,
                         secsToTextSigned(timeToDisplay)));
             }
 
@@ -2224,17 +2224,17 @@ public class DebatingTimerFragment extends Fragment {
                 long bellTime = subtractFromSpeechLengthIfCountingDown(bi.getBellTime(), dpf);
                 bellsStr.append(DateUtils.formatElapsedTime(bellTime));
                 if (bi.isPauseOnBell())
-                    bellsStr.append(getString(R.string.mainScreen_pauseOnBellIndicator));
+                    bellsStr.append(getString(R.string.timer_pauseOnBellIndicator));
                 if (bi.isSilent())
-                    bellsStr.append(getString(R.string.mainScreen_silentBellIndicator));
+                    bellsStr.append(getString(R.string.timer_silentBellIndicator));
                 if (currentSpeechBellsIter.hasNext())
                     bellsStr.append(", ");
             }
 
-            infoLine.append(getResources().getQuantityString(R.plurals.mainScreen_bellsList_normal, currentSpeechBells.size(), bellsStr));
+            infoLine.append(getResources().getQuantityString(R.plurals.timer_bellsList_normal, currentSpeechBells.size(), bellsStr));
 
         } else {
-            infoLine.append(getString(R.string.mainScreen_bellsList_noBells));
+            infoLine.append(getString(R.string.timer_bellsList_noBells));
         }
 
         infoLineText.setText(infoLine.toString());
@@ -2321,7 +2321,7 @@ public class DebatingTimerFragment extends Fragment {
 
     private void updatePlayBellButton() {
         if (mServiceBinder != null)
-            mViewBinding.mainScreenPlayBellButton.setVisibility((mServiceBinder.getAlertManager().isBellsEnabled()) ? View.VISIBLE : View.GONE);
+            mViewBinding.timerPlayBellButton.setVisibility((mServiceBinder.getAlertManager().isBellsEnabled()) ? View.VISIBLE : View.GONE);
     }
 
     /**
@@ -2342,14 +2342,14 @@ public class DebatingTimerFragment extends Fragment {
 
                 Long poiTime = mDebateManager.getCurrentPoiTime();
                 if (poiTime == null)
-                    poiButton.setText(R.string.mainScreen_poiTimer_buttonText);
+                    poiButton.setText(R.string.timer_poiTimer_buttonText);
                 else
                     //noinspection AndroidLintDefaultLocale
                     poiButton.setText(String.format("%d", poiTime));
 
             // Otherwise, disable it
             } else {
-                poiButton.setText(R.string.mainScreen_poiTimer_buttonText);
+                poiButton.setText(R.string.timer_poiTimer_buttonText);
                 poiButton.setEnabled(false);
             }
 
@@ -2365,7 +2365,7 @@ public class DebatingTimerFragment extends Fragment {
             return;
         }
 
-        Toolbar toolbar = mViewBinding.mainScreenToolbar;
+        Toolbar toolbar = mViewBinding.toolbarDebatingTimer;
 
         // update the title
         if (mDebateManager != null) {
@@ -2380,11 +2380,11 @@ public class DebatingTimerFragment extends Fragment {
         Menu menu = toolbar.getMenu();
 
         // show or hide the debate menu button
-        MenuItem resetDebateItem = menu.findItem(R.id.mainScreen_menuItem_resetDebate);
+        MenuItem resetDebateItem = menu.findItem(R.id.timer_menuItem_resetDebate);
         resetDebateItem.setVisible(mDebateManager != null);
 
         // display the appropriate bells icon
-        MenuItem ringBellsItem = menu.findItem(R.id.mainScreen_menuItem_ringBells);
+        MenuItem ringBellsItem = menu.findItem(R.id.timer_menuItem_ringBells);
         ringBellsItem.setChecked(mBellsEnabled);
         ringBellsItem.setIcon((mBellsEnabled) ? R.drawable.ic_baseline_notifications_active_24 : R.drawable.ic_baseline_notifications_off_24);
     }
@@ -2400,7 +2400,7 @@ public class DebatingTimerFragment extends Fragment {
         if (time >= 0)
             return DateUtils.formatElapsedTime(time);
         else
-            return getResources().getString(R.string.mainScreen_overtimeFormat, DateUtils.formatElapsedTime(-time));
+            return getResources().getString(R.string.timer_overtimeFormat, DateUtils.formatElapsedTime(-time));
     }
 
     /**

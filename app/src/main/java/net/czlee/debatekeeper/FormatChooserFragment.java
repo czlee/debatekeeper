@@ -414,8 +414,8 @@ public class FormatChooserFragment extends Fragment {
 
         super.onViewCreated(view, savedInstanceState);
 
-        mViewBinding.toolbar.setOnMenuItemClickListener(new FormatChooserMenuItemClickListener());
-        mViewBinding.toolbar.setNavigationOnClickListener(
+        mViewBinding.toolbarFormatChooser.setOnMenuItemClickListener(new FormatChooserMenuItemClickListener());
+        mViewBinding.toolbarFormatChooser.setNavigationOnClickListener(
                 (v) -> NavHostFragment.findNavController(this).navigateUp());
 
         Context context = requireContext();
@@ -695,7 +695,7 @@ public class FormatChooserFragment extends Fragment {
         if (!bannerDismissed) {
             mViewBinding.downloadBannerGroup.setVisibility(View.VISIBLE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                mViewBinding.toolbar.setElevation(0);
+                mViewBinding.toolbarFormatChooser.setElevation(0);
             mViewBinding.downloadBannerDismiss.setOnClickListener((v) -> {
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putBoolean(PREFERENCE_DOWNLOAD_BANNER_DISMISSED, true);
@@ -703,7 +703,7 @@ public class FormatChooserFragment extends Fragment {
                 mViewBinding.downloadBannerGroup.setVisibility(View.GONE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     final float scale = context.getResources().getDisplayMetrics().density;
-                    mViewBinding.toolbar.setElevation(4 * scale + 0.5f);
+                    mViewBinding.toolbarFormatChooser.setElevation(4 * scale + 0.5f);
                 }
             });
         }

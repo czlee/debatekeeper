@@ -22,5 +22,5 @@
     android:layout_alignParentBottom="true"
     android:layout_centerHorizontal="true"
     android:layout_marginBottom="@dimen/debateTimer_poiTimerButton_marginBottom"
-    android:text="@string/mainScreen_poiTimer_buttonText"
+    android:text="@string/timer_poiTimer_buttonText"
     android:textSize="@dimen/debateTimer_poiTimerButton_textSize" />

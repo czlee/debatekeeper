@@ -184,8 +184,8 @@ public class DownloadFormatsFragment extends Fragment {
         mViewBinding = FragmentDownloadFormatsBinding.inflate(inflater, container, false);
 
         // Configure menu
-        mViewBinding.toolbar.setOnMenuItemClickListener(new DownloadFormatsMenuItemClickListener());
-        mViewBinding.toolbar.setNavigationOnClickListener(
+        mViewBinding.toolbarDownloadFormats.setOnMenuItemClickListener(new DownloadFormatsMenuItemClickListener());
+        mViewBinding.toolbarDownloadFormats.setNavigationOnClickListener(
                 (v) -> NavHostFragment.findNavController(this).navigateUp());
 
         // Configure retry button
@@ -215,7 +215,7 @@ public class DownloadFormatsFragment extends Fragment {
     //******************************************************************************************
 
     private void setExpandCollapseButton(boolean expand) {
-        Menu menu = mViewBinding.toolbar.getMenu();
+        Menu menu = mViewBinding.toolbarDownloadFormats.getMenu();
         if (menu == null) return;
         MenuItem expandItem = menu.findItem(R.id.formatDownloader_actionBar_expand);
         if (expandItem != null) expandItem.setVisible(expand);
