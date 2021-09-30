@@ -7,14 +7,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:paddingHorizontal="8dp" >
 
         <TextView
             android:id="@+id/message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dip"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textSize="16sp" />
 
         <CheckBox
             android:id="@+id/dontShowAgain"

@@ -1006,6 +1006,9 @@ public class DebatingTimerFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        requestReadPermission();
+        copyAssetsIfEmpty();
+
         // If there's an incoming style, and it wasn't handled before a screen rotation, ask the
         // user whether they want to import it.
         if (mLastStateBundle != null) {
@@ -1019,6 +1022,7 @@ public class DebatingTimerFragment extends Fragment {
             if (!mIsOpeningFormatChooser) {
                 Log.v(TAG, "no file loaded, redirecting to choose format");
                 navigateToFormatChooser(null);
+                return;
             } else {
                 Log.v(TAG, "no file loaded, but returned from format chooser, so staying put");
                 mIsOpeningFormatChooser = false;
@@ -1030,9 +1034,8 @@ public class DebatingTimerFragment extends Fragment {
                 new IntentFilter(DebatingTimerService.UPDATE_GUI_BROADCAST_ACTION));
         updateGui();
 
-        requestReadPermission();
         showChangelogDialog();
-        copyAssetsAndLegacy();
+        copyLegacyCustomFilesPrompt();
 
         if (mDebateLoadError != null)
             // May as well try again (sometimes the error is cleared, e.g., if the error was because
@@ -1269,29 +1272,28 @@ public class DebatingTimerFragment extends Fragment {
         updateGui();
     }
 
-    private void copyAssetsAndLegacy() {
+    private void copyAssetsIfEmpty() {
         FormatXmlFilesManager manager = new FormatXmlFilesManager(requireContext());
         try {
             if (manager.isEmpty()) manager.copyAssets();
         } catch (IOException e) {
             showSnackbar(Snackbar.LENGTH_LONG, R.string.timer_snackbar_copyAssetsError);
-            return;
         }
-
-        copyLegacyCustomFilesPrompt(manager);
     }
 
     /**
      * Legacy support. If there are custom files in the legacy location, prompt the user to copy
      * them over. Note: does not check if the destination is empty - the caller should do this!
      */
-    private void copyLegacyCustomFilesPrompt(FormatXmlFilesManager manager) {
+    private void copyLegacyCustomFilesPrompt() {
+
         // Don't bother if the user has dismissed this prompt
         SharedPreferences prefs = requireActivity().getPreferences(MODE_PRIVATE);
         boolean customFilesCopied = prefs.getBoolean(LEGACY_CUSTOM_FILES_DISMISSED, false);
         if (customFilesCopied) return;
 
         // Don't bother if the legacy location is empty
+        FormatXmlFilesManager manager = new FormatXmlFilesManager(requireContext());
         String[] legacyFiles;
         try {
             legacyFiles = manager.legacyUserFileList();
@@ -1972,7 +1974,7 @@ public class DebatingTimerFragment extends Fragment {
 
         // Then, show the next one
         if (mDialogsInWaiting.size() > 0) {
-            if (!isStateSaved()) {
+            if (isResumed()) {
                 Pair<String, QueueableDialogFragment> pair = mDialogsInWaiting.remove(0);
                 pair.second.show(getChildFragmentManager(), pair.first);
             }
