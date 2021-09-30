@@ -23,7 +23,9 @@ import android.app.Dialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,6 +48,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -96,6 +99,8 @@ public class FormatChooserFragment extends Fragment {
     public static final String BUNDLE_KEY_RESULT         = "res";
     public static final String BUNDLE_KEY_XML_FILE_NAME  = "xmlfn";
     public static final String REQUEST_KEY_CHOOSE_FORMAT = "choose-format";
+
+    private static final String PREFERENCE_DOWNLOAD_BANNER_DISMISSED = "dlb-dismiss";
 
     public static final int RESULT_SUCCESS      = 0;
     public static final int RESULT_UNCHANGED    = 2;
@@ -429,6 +434,9 @@ public class FormatChooserFragment extends Fragment {
         mStylesList.clear();  // sometimes it's populated from a previous instantiation
         populateStylesList();
 
+        // Show the download banner if it hasn't been dismissed
+        showDownloadHelpBanner(context);
+
         // Select and scroll to the incoming selection (if existent)
         String incomingFilename = FormatChooserFragmentArgs.fromBundle(getArguments()).getXmlFileName();
         setSelectionAndScroll(incomingFilename);
@@ -681,6 +689,26 @@ public class FormatChooserFragment extends Fragment {
 
         Intent chooserIntent = Intent.createChooser(shareIntent, getString(R.string.formatChooser_share_chooserTitle));
         startActivity(chooserIntent);
+    }
+
+    private void showDownloadHelpBanner(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean bannerDismissed = prefs.getBoolean(PREFERENCE_DOWNLOAD_BANNER_DISMISSED, false);
+        if (!bannerDismissed) {
+            mViewBinding.downloadBannerGroup.setVisibility(View.VISIBLE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                mViewBinding.toolbar.setElevation(0);
+            mViewBinding.downloadBannerDismiss.setOnClickListener((v) -> {
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean(PREFERENCE_DOWNLOAD_BANNER_DISMISSED, true);
+                editor.apply();
+                mViewBinding.downloadBannerGroup.setVisibility(View.GONE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    final float scale = context.getResources().getDisplayMetrics().density;
+                    mViewBinding.toolbar.setElevation(4 * scale + 0.5f);
+                }
+            });
+        }
     }
 
     private void showSnackbar(int stringResId, Object... formatArgs) {

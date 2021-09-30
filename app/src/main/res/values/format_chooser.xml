@@ -28,6 +28,10 @@
     <string name="formatChooser_button_share">Share</string>
     <string name="formatChooser_button_delete">Delete</string>
 
+    <string name="formatChooser_downloadBanner">Look online for more debate styles by clicking the search button.</string>
+    <string name="formatChooser_downloadBanner_dismiss">Got it</string>
+    <string name="formatChoser_downloadBanner_pointerDescription">points to an item on the menu</string>
+
     <string name="formatChooser_dialog_confirmDelete_message">Delete debate style file %1$s? This can\'t be undone, other than by importing or downloading another copy.</string>
     <string name="formatChooser_dialog_confirmDelete_yes">Delete</string>
     <string name="formatChooser_dialog_confirmDelete_no">Cancel</string>
