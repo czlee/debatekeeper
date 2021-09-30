@@ -32,7 +32,6 @@
     <string name="pref_poiTimer_buzzerEnable_key" translatable="false">poiBuzzerEnable</string>
     <string name="pref_poiTimer_vibrateEnable_key" translatable="false">poiVibrateEnable</string>
     <string name="pref_poiTimer_flashScreenMode_key" translatable="false">poiFlashScreenMode</string>
-    <string name="pref_poiTimer_learnMore_key" translatable="false">poiLearnMore</string>
     <string name="pref_prepTimer_enable_key" translatable="false">prepTimerEnable</string>
     <string name="pref_prepTimer_countDirection_key" translatable="false">prepTimerCountDirection</string>
     <string name="pref_prepTimer_keepScreenOn_key" translatable="false">prepTimerKeepScreenOn</string>
@@ -180,8 +179,5 @@
     </string-array>
     <!-- For the entries and entry values, use the same ones as the main flash screen preference -->
     <string name="prefDefault_poiTimer_flashScreenMode" translatable="false">solidFlash</string>
-
-    <string name="pref_poiTimer_learnMore_title">Learn more</string>
-    <string name="pref_poiTimer_learnMore_summary">Learn more about the POIs timer (launches web browser)</string>
 
 </resources>

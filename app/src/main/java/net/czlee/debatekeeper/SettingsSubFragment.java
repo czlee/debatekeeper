@@ -17,10 +17,8 @@
 
 package net.czlee.debatekeeper;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -81,7 +79,6 @@ public class SettingsSubFragment extends PreferenceFragmentCompat {
         String KEY_BACKGROUND_COLOUR_AREA     = getString(R.string.pref_backgroundColourArea_key);
         String KEY_FLASH_SCREEN_MODE          = getString(R.string.pref_flashScreenMode_key);
         String KEY_POI_FLASH_SCREEN_MODE      = getString(R.string.pref_poiTimer_flashScreenMode_key);
-        String KEY_POI_TIMER_LEARN_MORE       = getString(R.string.pref_poiTimer_learnMore_key);
         String KEY_PREP_TIMER_COUNT_DIRECTION = getString(R.string.pref_prepTimer_countDirection_key);
         String KEY_PREP_TIMER_BELLS           = getString(R.string.pref_prepTimer_bells_key);
 
@@ -116,19 +113,6 @@ public class SettingsSubFragment extends PreferenceFragmentCompat {
         updateListPreferenceSummary(KEY_FLASH_SCREEN_MODE);
         updateListPreferenceSummary(KEY_POI_FLASH_SCREEN_MODE);
         updateListPreferenceSummary(KEY_PREP_TIMER_COUNT_DIRECTION);
-
-        // *************************************************************************************
-        // Customise a few preferences
-
-        // Set what the "Learn More" option in POIs timer category does
-        Preference learnMore = getPreferenceManager().findPreference(KEY_POI_TIMER_LEARN_MORE);
-        if (learnMore != null)
-            learnMore.setOnPreferenceClickListener(preference -> {
-                Uri uri = Uri.parse(getString(R.string.poiTimer_moreInfoUrl));
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(intent);
-                return true;
-            });
 
         // Set what the "Prep timer bells" option does
         Preference prefPrepTimerBells = getPreferenceManager().findPreference(KEY_PREP_TIMER_BELLS);
