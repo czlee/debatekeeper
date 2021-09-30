@@ -587,7 +587,7 @@ public class PrepTimeBellsManager {
                         Log.e(TAG, indexStr + ": Unrecognised type: " + type);
                         continue;
                 }
-                Log.v(TAG, indexStr + ": Found a " + type);
+                // Log.v(TAG, indexStr + ": Found a " + type);
             } catch (PrepTimeBellConstructorException e) {
                 Log.e(TAG, e.getLocalizedMessage());
                 continue;
