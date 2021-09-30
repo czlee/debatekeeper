@@ -38,7 +38,6 @@ public class SettingsFragment extends Fragment {
 
         super.onViewCreated(view, savedInstanceState);
 
-        mViewBinding.globalSettingsToolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
         mViewBinding.globalSettingsToolbar.setNavigationOnClickListener(
                 (v) -> NavHostFragment.findNavController(this).navigateUp());
     }

@@ -172,7 +172,6 @@ public class DownloadFormatsFragment extends Fragment {
         // Configure menu
         mViewBinding.toolbar.inflateMenu(R.menu.download_formats);
         mViewBinding.toolbar.setOnMenuItemClickListener(new DownloadFormatsMenuItemClickListener());
-        mViewBinding.toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
         mViewBinding.toolbar.setNavigationOnClickListener(
                 (v) -> NavHostFragment.findNavController(this).navigateUp());
 

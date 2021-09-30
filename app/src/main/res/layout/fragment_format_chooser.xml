@@ -35,6 +35,8 @@
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:navigationIcon="@drawable/ic_baseline_arrow_back_24"
+            app:navigationContentDescription="@string/nav_back"
             android:elevation="4dp"
             app:layout_constraintBottom_toTopOf="@+id/downloadBanner"
             app:layout_constraintEnd_toEndOf="parent"

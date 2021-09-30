@@ -337,7 +337,6 @@ public class PrepTimeBellsEditFragment extends Fragment {
                         R.string.prepTimeBellsEditor_contextMenu_tip, Toast.LENGTH_SHORT).show());
 
         // Set the action bar
-        mViewBinding.prepTimeBellsEditorToolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
         mViewBinding.prepTimeBellsEditorToolbar.setNavigationOnClickListener(
                 (v) -> NavHostFragment.findNavController(this).navigateUp());
     }

@@ -416,7 +416,6 @@ public class FormatChooserFragment extends Fragment {
 
         mViewBinding.toolbar.inflateMenu(R.menu.format_chooser);
         mViewBinding.toolbar.setOnMenuItemClickListener(new FormatChooserMenuItemClickListener());
-        mViewBinding.toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
         mViewBinding.toolbar.setNavigationOnClickListener(
                 (v) -> NavHostFragment.findNavController(this).navigateUp());
 

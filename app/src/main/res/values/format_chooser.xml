@@ -17,6 +17,8 @@
 -->
 <resources>
 
+    <string name="nav_back">Back</string>
+
     <string name="formatChooser_ioError">There was an error reading the debate style files.</string>
 
     <string name="blankDetailsDialog_title">"Sorry!"</string>
