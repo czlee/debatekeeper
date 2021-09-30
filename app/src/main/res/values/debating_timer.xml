@@ -150,7 +150,7 @@
     <!-- Copying legacy custom files -->
     <string name="customFilesMovingDialog_title">Custom formats are moving!</string>
     <string name="customFilesMovingDialog_message">You have some custom debate format files in the \"debatekeeper\" directory.
-        In this update, the location of custom formats is moving. Debatekeeper can copy this files
+        In this update, the location of custom formats is moving. Debatekeeper can copy these files
         to the new location for you, but you\'ll need to delete them from the old location
         yourself. (Be sure to have a backup!)\n\nCopy custom files?
     </string>
