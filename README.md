@@ -11,7 +11,8 @@ The app rings a bell, vibrates and/or flashes the screen white (or any
 combination of the three) at bell times.  It also rings overtime bells,
 which are configurable.
 
-The website for this app is at http://tryingtoreason.wordpress.com/debatekeeper.
+A small amount of documentation for this app is at
+https://github.com/czlee/debatekeeper/wiki/.
 
 You can install the app on the Google Play Store:
 
@@ -19,35 +20,23 @@ You can install the app on the Google Play Store:
 
 What is the status of this app?
 -------------------------------
-_19 September 2021:_
-I'm currently seeing if I can update Debatekeeper so that it at least uses a
-more up-to-date Android SDK (version 30). If it works out, I'll do this update,
-and maybe attend to some of the simpler issues. But I won't be adding any new
-features, so the open invitation below still stands.
+_1 October 2021:_
+After five years, an update is forthcoming. I've decided to create a new
+[online formats repository](https://github.com/czlee/debatekeeper-formats),
+which the app will query. All pull requests with new formats will be asked to
+resubmit their formats to the new repository.
 
-_7 February 2021:_ 
-It hasn't been updated since 2016. Since then, my debating software priorities
-have mostly been with [Tabbycat](https://github.com/TabbycatDebate/tabbycat),
-and since 2019, my life priorities have generally been outside debating.
+A lot of the motivation for this new online repository is to make it easier to
+make new debate formats available. They were previously distributed with app
+updates, I haven't released an update since 2016, and I don't imagine I'll be
+doing any more updates in the future.
 
-Since then, Android's moved through a few versions, so the next task will be
-to update the source code to support the latest versions and to follow current
-Android project conventions. That basic maintenance work will need to precede
-any of the currently pending (and future) pull requests, and because it's been
-so long, I think it's a bit of a project in its own right. I don't know when 
-I'll get to it, but I'm hoping I'll get a chance in the fourth quarter of
-2021.
-
-Consider this an open invitation for anyone else to pick this up and run with
-it, if you're interested. It's licensed under the GPLv3, so any prospective
-developer would be bound by those licensing terms. If you have any questions
-about updating it to work with the current Android SDK, I'll probably be just
-as lost as you, but you're still welcome to send me an email (find my email
-address in the commit logs of this repository). You can create your own
-Google Developer account and release it yourself, or if you've got the
-repository to build on the latest version of Android Studio, I'm happy to see
-if I can build it myself and push an APK under the official Google Play Store
-entry (_i.e._, my one).
+Consider this an open invitation for anyone else to pick up this project and run
+with it. It's licensed under the GPLv3, so any prospective developer would be
+bound by those licensing terms. You're welcome to contact me if you have any
+questions (find my email address in the commit logs of this repository). I'll
+probably encourage you to release it under a new Play Store listing that is
+controlled from your account.
 
 Licence
 -------
@@ -72,41 +61,33 @@ one I'm using.  In that case, contact me at the details below.
 
 Adding debate styles
 --------------------
-I've included all the parliamentary debate styles I can find, but I
-obviously don't know about all the different styles in the world.  If
-there's a style you'd like me to add, please do any of the following,
-in order of preference:
+New debate styles should be submitted to the online debate formats repository at
+https://github.com/czlee/debatekeeper-formats. Instructions are in that
+repository.
 
-1. Fork this repository, add your debate format XML file to the assets
-directory, and submit a pull request.  This is preferred because it's
-easiest for me and means your contribution is recorded in the
-repository commits.
+I've written a page on
+[how to write a debate format XML file](https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file).
+But it's probably easiest in the first instance to look in the **assets/formats**
+directory for the XML files there, and modify one of those.
 
-2. Send me your debate format XML file (contact details below), and
-I'll add it to the repository.
-
-3. Describe the debate style to me (speech times, bell times, names
-of positions, _etc._) at the contact details below and I'll write
-the XML file and add it to the repository.
-
-I've written a page on [how to write a debate format XML file](https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file).
-But it is probably easiest in the first instance to look in the **assets/formats**
-directory for the XML files there, and follow those.
-
-This app doesn't (yet) do the public forum, Lincoln-Douglas or policy
-debate styles.  There are other Android apps that do this.  The reason
-this app can't currently do this is because it doesn't currently support
-preparation time that can be used by teams between speeches at their
-election.  I may or may not add this in future.
+This app doesn't do the public forum, Lincoln-Douglas or policy debate styles.
+There are other Android apps that do this.  The reason this app can't currently
+do this is because it doesn't currently support preparation time that can be
+used by teams between speeches at their election.
 
 Contributions
 -------------
-If you want to contribute to this project (in other ways), I'm keen to
-hear from you.  Contact me at the details below, or just fork this
-repository and then submit a pull request.
+I don't intend to work on this app beyond version 1.3 (October 2021), so if
+you're interested in helping with development, I'd love for you to dive in and
+possibly take over the project. Contact me if you want to discuss anything, or
+feel free to just fork the repository and get going.
+
+You won't be able to release to the Play Store under the same listing, because
+you don't have access to my account. If you work on a significant update, you're
+welcome to release it under a separate Play Store listing.
 
 Contacting the author
 ---------------------
-You can find my e-mail address by checking out this repository and
-looking at the commit authors, or alternatively message me on
-Facebook (czlee) or Twitter (@czlee11).
+You can find my e-mail address by checking out this repository and looking at
+the commit authors, or alternatively message me on Facebook (czlee) or Twitter
+(@czlee11).
