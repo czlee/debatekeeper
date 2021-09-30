@@ -17,17 +17,21 @@
 
 package net.czlee.debatekeeper;
 
-import net.czlee.debatekeeper.debateformat.DebateFormat;
-import net.czlee.debatekeeper.debatemanager.DebateManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import net.czlee.debatekeeper.debateformat.DebateFormat;
+import net.czlee.debatekeeper.debatemanager.DebateManager;
 
 /**
  * DebatingTimerService class
@@ -45,9 +49,9 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
  * @author Chuan-Zheng Lee
  * @since  2012-03-30
  */
-public class DebatingTimerService extends Service
-{
+public class DebatingTimerService extends Service  {
 
+    public static final String CHANNEL_ID = "timer";
     private static final String TAG = "DebatingTimerService";
 
     public static final String UPDATE_GUI_BROADCAST_ACTION = "net.czlee.debatekeeper.update";
@@ -103,10 +107,12 @@ public class DebatingTimerService extends Service
     //******************************************************************************************
     // Public methods
     //******************************************************************************************
+
     @Override
     public void onCreate() {
         super.onCreate();
         mAlertManager = new AlertManager(this);
+        createNotificationChannel();
     }
 
     @Override
@@ -139,6 +145,20 @@ public class DebatingTimerService extends Service
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Log.i(TAG, "hello, I am createNotificationChannel");
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
+                    getString(R.string.app_name), NotificationManager.IMPORTANCE_LOW);
+            channel.setDescription(getString(R.string.channel_description));
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
 }

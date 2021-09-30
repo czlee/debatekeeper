@@ -38,6 +38,8 @@
 
     <!-- Notices -->
     <string name="notification_title" translatable="false">Debatekeeper</string>
+    <string name="channel_description">Shows when a Debatekeeper timer is running</string>
+    <string name="notification_text">Timer running: %1$s</string>
 
     <string name="timer_overtimeFormat">+%1$s</string>
 
