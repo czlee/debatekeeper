@@ -1006,7 +1006,6 @@ public class DebatingTimerFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        requestReadPermission();
         copyAssetsIfEmpty();
 
         // If there's an incoming style, and it wasn't handled before a screen rotation, ask the
@@ -2404,30 +2403,5 @@ public class DebatingTimerFragment extends Fragment {
         else
             return getResources().getString(R.string.timer_overtimeFormat, DateUtils.formatElapsedTime(-time));
     }
-
-    /**
-     * TODO remove before release
-     * (It's no longer necessary and is here just for testing purposes.
-     */
-    private void requestReadPermission() {
-
-        // READ_EXTERNAL_STORAGE started being enforced in API level 19 (KITKAT), so skip this check
-        // if we're before then, to avoid calling a constant that's only existed since API level 16
-        // (JELLY_BEAN)
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
-            return;
-
-        Activity activity = requireActivity();
-
-        boolean granted = ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED;
-
-        if (!granted) {
-            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    17);
-        }
-
-    }
-
 
 }
