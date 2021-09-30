@@ -23,7 +23,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/fragmentName_FormatDownloader" />
+        app:title="@string/fragmentName_FormatDownloader"
+        app:menu="@menu/download_formats" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
