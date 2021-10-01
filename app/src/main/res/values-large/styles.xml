@@ -17,19 +17,21 @@
 -->
 <resources>
 
-    <dimen name="debateTimer_currentTime_textSize">140dp</dimen>
-    <dimen name="debateTimer_speechNameText_textSize">30sp</dimen>
-    <dimen name="debateTimer_periodDescriptionText_textSize">20sp</dimen>
-    <dimen name="debateTimer_informationLine_textSize">20sp</dimen>
+    <dimen name="timer_currentTime_fallbackTextSize">140dp</dimen>
+    <dimen name="timer_currentTime_minTextSize">48sp</dimen>
+    <dimen name="timer_currentTime_maxTextSize">512sp</dimen>
+    <dimen name="timer_currentTime_margin">48dp</dimen>
 
-    <dimen name="debateTimer_poiTimerButton_textSize">45sp</dimen>
-    <!-- portrait -->
-    <dimen name="debateTimer_poiTimerButton_widthPort">240dp</dimen>
-    <dimen name="debateTimer_poiTimerButton_heightPort">128dp</dimen>
-    <dimen name="debateTimer_poiTimerButton_marginBottom">80dp</dimen>
-    <!-- landscape -->
-    <dimen name="debateTimer_poiTimerButton_widthLand">132dp</dimen>
-    <dimen name="debateTimer_poiTimerButton_heightLand">200dp</dimen>
-    <dimen name="debateTimer_poiTimerButton_marginRight">25dp</dimen>
+    <dimen name="timer_speechNameText_textSize">30sp</dimen>
+    <dimen name="timer_periodDescriptionText_textSize">20sp</dimen>
+    <dimen name="timer_informationLine_textSize">20sp</dimen>
+
+    <!-- set to speechNameText_textSize + informationLine_textSize -->
+    <!-- technically this overlaps, but in practice the text won't, because text isn't full height -->
+    <dimen name="timer_horizontalGuidelineLandscape">50sp</dimen>
+
+    <dimen name="timer_poiTimerButton_textSize">48sp</dimen>
+    <dimen name="timer_poiTimerButton_marginBottomPortrait">32dp</dimen>
+    <dimen name="timer_poiTimerButton_marginRightLandscape">25dp</dimen>
 
 </resources>

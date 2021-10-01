@@ -17,16 +17,8 @@
 -->
 <resources>
 
-    <dimen name="debateTimer_currentTime_textSize">88dp</dimen>
-    
-    <dimen name="debateTimer_poiTimerButton_textSize">30sp</dimen>
-    <!-- portrait -->
-    <dimen name="debateTimer_poiTimerButton_widthPort">150dp</dimen>
-    <dimen name="debateTimer_poiTimerButton_heightPort">80dp</dimen>
-    <dimen name="debateTimer_poiTimerButton_marginBottom">44dp</dimen>
-    <!-- landscape -->
-    <dimen name="debateTimer_poiTimerButton_widthLand">88dp</dimen>
-    <dimen name="debateTimer_poiTimerButton_heightLand">140dp</dimen>
-    <dimen name="debateTimer_poiTimerButton_marginRight">20dp</dimen>
+    <dimen name="timer_currentTime_fallbackTextSize">88dp</dimen>
+
+    <dimen name="timer_poiTimerButton_textSize">30sp</dimen>
 
 </resources>

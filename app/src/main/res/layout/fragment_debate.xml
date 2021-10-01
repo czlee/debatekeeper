@@ -53,7 +53,7 @@
         <LinearLayout
             android:id="@+id/timer_controlButtons"
             android:layout_width="fill_parent"
-            android:layout_height="@dimen/debateTimer_controlButtons_height"
+            android:layout_height="@dimen/timer_controlButtons_height"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal"
             android:gravity="end" >
@@ -79,7 +79,7 @@
 
             <ImageButton
                 android:id="@+id/timer_playBellButton"
-                android:layout_width="@dimen/debateTimer_controlButtons_height"
+                android:layout_width="@dimen/timer_controlButtons_height"
                 android:layout_gravity="center"
                 android:layout_height="fill_parent"
                 app:srcCompat="@drawable/ic_baseline_notifications_24"

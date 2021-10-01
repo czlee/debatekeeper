@@ -46,7 +46,7 @@
     <Button
         android:id="@+id/debateLoadError_chooseStyleButton"
         android:layout_width="0dp"
-        android:layout_height="@dimen/debateTimer_controlButtons_height"
+        android:layout_height="@dimen/timer_controlButtons_height"
         android:layout_marginBottom="32dp"
         android:text="@string/debateLoadErrorScreen_button"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -21,7 +21,7 @@
         <Button
         android:id="@+id/noDebateLoaded_chooseStyleButton"
         android:layout_width="0dp"
-        android:layout_height="@dimen/debateTimer_controlButtons_height"
+        android:layout_height="@dimen/timer_controlButtons_height"
         android:layout_marginBottom="32dp"
         android:text="@string/timer_controlButton_chooseStyle_text"
         app:layout_constraintWidth_percent="0.5"
