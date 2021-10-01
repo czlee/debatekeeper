@@ -37,10 +37,10 @@ public class BellInfo {
     private PeriodInfo mNextPeriodInfo  = new PeriodInfo();
     private final BellSoundInfo mSoundInfo = new BellSoundInfo();
 
-    public BellInfo(long seconds, int timesToPlay) {
+    public BellInfo(long seconds, int numberOfBells) {
         super();
         mBellTime = seconds;
-        mSoundInfo.setTimesToPlay(timesToPlay);
+        mSoundInfo.setNumberOfBells(numberOfBells);
     }
 
     public void setPauseOnBell(boolean pauseOnBell) {
@@ -68,7 +68,7 @@ public class BellInfo {
     }
 
     public boolean isSilent() {
-        return mSoundInfo.getTimesToPlay() == 0;
+        return mSoundInfo.getNumberOfBells() == 0;
     }
 
 }

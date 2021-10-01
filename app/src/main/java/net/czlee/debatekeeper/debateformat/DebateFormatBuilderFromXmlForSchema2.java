@@ -352,16 +352,16 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
         }
 
         // attribute 'number' - optional, defaults to 1
-        Integer timesToPlay;
+        Integer numberOfBells;
         try {
-            timesToPlay = xu.findAttributeAsInteger(element, R.string.xml2attrName_bell_number);
+            numberOfBells = xu.findAttributeAsInteger(element, R.string.xml2attrName_bell_number);
         } catch (XmlInvalidValueException e) {
             logXmlError(R.string.xml2error_bell_number_invalid, e.getValue(), location, timeStr);
-            timesToPlay = 1;
+            numberOfBells = 1;
         }
-        if (timesToPlay == null) timesToPlay = 1;
+        if (numberOfBells == null) numberOfBells = 1;
 
-        BellInfo bi = new BellInfo(time, timesToPlay);
+        BellInfo bi = new BellInfo(time, numberOfBells);
 
         // attribute 'next-period' - optional
         // If there is a next period specified, and it is not "#stay", set it accordingly

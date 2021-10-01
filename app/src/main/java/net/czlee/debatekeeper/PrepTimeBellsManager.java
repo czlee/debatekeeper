@@ -495,14 +495,14 @@ public class PrepTimeBellsManager {
             if (bell == null) continue;
 
             // If it's a finish bell, make it a double bell
-            if (spec.isAtFinish()) bell.getBellSoundInfo().setTimesToPlay(2);
+            if (spec.isAtFinish()) bell.getBellSoundInfo().setNumberOfBells(2);
 
             allBells.add(bell);
         }
 
         // Then, sort the bells in order of priority.
         // Currently, this sorts them in descending order of number of bells to play.
-        Collections.sort(allBells, (lhs, rhs) -> rhs.getBellSoundInfo().getTimesToPlay() - lhs.getBellSoundInfo().getTimesToPlay());
+        Collections.sort(allBells, (lhs, rhs) -> rhs.getBellSoundInfo().getNumberOfBells() - lhs.getBellSoundInfo().getNumberOfBells());
 
         // Then, run through the bells, adding only non-duplicates.
         Iterator<BellInfo> allBellsIterator = allBells.iterator();

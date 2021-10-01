@@ -400,10 +400,10 @@ public class AlertManager
      * @param bsi the {@link BellSoundInfo} for this bell
      */
     private void flashScreen(BellSoundInfo bsi) {
-        Timer       repeatTimer  = new Timer();
-        final long  repeatPeriod = bsi.getRepeatPeriod();
-        final int   timesToPlay  = bsi.getTimesToPlay();
-        if (timesToPlay == 0) return; // Do nothing if the number of bells is zero
+        Timer repeatTimer  = new Timer();
+        final long repeatPeriod = bsi.getRepeatPeriod();
+        final int numberOfBells  = bsi.getNumberOfBells();
+        if (numberOfBells == 0) return; // Do nothing if the number of bells is zero
 
         if (mFlashScreenListener == null) return;
 
@@ -412,7 +412,7 @@ public class AlertManager
         if (!mFlashScreenListener.begin())
             return;
 
-        wakeUpScreenForBell(repeatPeriod * timesToPlay);
+        wakeUpScreenForBell(repeatPeriod * numberOfBells);
 
         /* Note: To avoid race conditions, we do NOT have a single TimerTask to toggle the
          * screen flash at a fixed rate.  We have one timer to govern turning the screen on
@@ -432,7 +432,7 @@ public class AlertManager
                 if (flashTime > MAX_BELL_SCREEN_FLASH_TIME)
                     flashTime = MAX_BELL_SCREEN_FLASH_TIME;
 
-                final boolean lastFlash = ++timesSoFar >= timesToPlay;
+                final boolean lastFlash = ++timesSoFar >= numberOfBells;
                 if (lastFlash) {
                     flashTime = MAX_BELL_SCREEN_FLASH_TIME;
                     this.cancel();
@@ -533,10 +533,10 @@ public class AlertManager
      */
     private long[] getVibratePattern(BellSoundInfo bsi) {
         long repeatPeriod = bsi.getRepeatPeriod();
-        int  timesToPlay  = bsi.getTimesToPlay();
+        int numberOfBells = bsi.getNumberOfBells();
 
         // Don't vibrate on a bell that is rung zero times
-        if (timesToPlay == 0) return null;
+        if (numberOfBells == 0) return null;
 
         // Generally, we want the total period to be the same as the bell sound period,
         // and we want the gap between vibrations to be 100ms.  But if that would cause
@@ -545,8 +545,8 @@ public class AlertManager
         long vibrateOffTime = (repeatPeriod < 500) ? repeatPeriod / 5 : 100;
         long vibrateOnTime = repeatPeriod - vibrateOffTime;
 
-        // We guaranteed that timesToPlay is not zero at the beginning of this method.
-        long[] pattern = new long[timesToPlay * 2];
+        // We guaranteed that numberOfBells is not zero at the beginning of this method.
+        long[] pattern = new long[numberOfBells * 2];
 
         // The pattern is {0, ON, OFF, ON, OFF, ..., OFF, ON}
         pattern[0] = 0;

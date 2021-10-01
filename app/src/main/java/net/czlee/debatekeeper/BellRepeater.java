@@ -98,7 +98,7 @@ public class BellRepeater {
 
             // If it's not the last repetition, set the completion listener to change the state to
             // PREPARED, so that on the next run() we know to use start() rather than seekTo().
-            if (++mRepetitionsSoFar < mSoundInfo.getTimesToPlay()) {
+            if (++mRepetitionsSoFar < mSoundInfo.getTimesToRepeatMedia()) {
                 mMediaPlayer.setOnCompletionListener(mp -> {
                     mState = BellRepeaterState.PREPARED;
                     // Log.i("BellRepeater", "Media player completed");
@@ -144,10 +144,10 @@ public class BellRepeater {
 
     /**
      * Starts playing the repeated sound.
-     * Has no effect if the sound resid is 0 or the times to play is 0.
+     * Has no effect if the sound resource ID is 0 or the times to play is 0.
      */
     public void play() {
-        if (mSoundInfo.getSoundResid() == 0 || mSoundInfo.getTimesToPlay() == 0)
+        if (mSoundInfo.getSoundResId() == 0 || mSoundInfo.getTimesToRepeatMedia() == 0)
             return;
 
         if (mState == BellRepeaterState.INITIAL) {
@@ -155,13 +155,13 @@ public class BellRepeater {
             if (!tryAcquireSemaphore()) return;
 
             // Initialise the MediaPlayer
-            mMediaPlayer = MediaPlayer.create(mContext, mSoundInfo.getSoundResid());
+            mMediaPlayer = MediaPlayer.create(mContext, mSoundInfo.getSoundResId());
             // Set to maximum volume possible (it's really soft!)
             mMediaPlayer.setVolume(1, 1);
             // On Error, release it and shut it down and put it away.
             // But log a message so that we know...
             mMediaPlayer.setOnErrorListener((mp, what, extra) -> {
-                Log.e(TAG, "The media player went into an errored state! Releasing.");
+                Log.e(TAG, "The media player went into an error state! Releasing.");
                 // The MediaPlayer coming here should be the same one as mMediaPlayer in the BellRepeater class
                 if (mp != mMediaPlayer)
                     Log.e(TAG, "OnErrorListener mp wasn't the same as mMediaPlayer!");

@@ -1,7 +1,5 @@
 # Sound files
-res/raw/desk_bell.mp3
-res/raw/bell_small_001.mp3
-res/raw/bell_small_002.mp3
+app/src/main/res/raw/desk_bell*.mp3
 
 # Standard Android .gitignore
 # https://github.com/github/gitignore/blob/master/Android.gitignore

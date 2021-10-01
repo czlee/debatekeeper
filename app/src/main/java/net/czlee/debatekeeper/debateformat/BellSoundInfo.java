@@ -35,37 +35,71 @@ import net.czlee.debatekeeper.R;
  * @since  2012-05-30
  */
 public class BellSoundInfo {
-    protected int  mSoundResid   = R.raw.desk_bell; // default sound
-    protected int  mTimesToPlay  = 1;               // default times to play
+
+    protected int mNumberOfBells = 1;
     protected long mRepeatPeriod = 500;
+
+    /**
+     * Array of sound resource IDs. If more than one is provided, the second should be a double bell
+     * sound, the third should be a triple bell sound, etc.
+     */
+    protected int[] mSoundResIds = {R.raw.desk_bell, R.raw.desk_bell_double, R.raw.desk_bell_triple};
+
+    //******************************************************************************************
+    // Public constructors
+    //******************************************************************************************
 
     public BellSoundInfo() {}
 
-    public BellSoundInfo(int timesToPlay) {
+    public BellSoundInfo(int numberOfBells) {
         super();
-        mTimesToPlay = timesToPlay;
+        mNumberOfBells = numberOfBells;
     }
 
-    public void setTimesToPlay(int timesToPlay) {
-        mTimesToPlay = timesToPlay;
+    public void setNumberOfBells(int numberOfBells) {
+        mNumberOfBells = numberOfBells;
     }
 
-    public int getSoundResid() {
-        return mSoundResid;
+    //******************************************************************************************
+    // Public methods
+    //******************************************************************************************
+
+    /**
+     * Gets the resource ID of the sound file that should be played by the media player.
+     * @return resource ID
+     */
+    public int getSoundResId() {
+        if (mNumberOfBells > 0 && mNumberOfBells <= mSoundResIds.length)
+            return mSoundResIds[mNumberOfBells - 1];
+        else
+            return mSoundResIds[0];
     }
 
-    public int getTimesToPlay() {
-        return mTimesToPlay;
+    /**
+     * Returns the number of times this bell sound is configured to play. This may not be the same
+     * as the number of times the sound file should be played, if the sound file itself contains
+     * multiple bell, see {@link BellSoundInfo#getTimesToRepeatMedia()}.
+     * @return number of bells
+     */
+    public int getNumberOfBells() {
+        return mNumberOfBells;
+    }
+
+    /**
+     * Returns the number of times the sound file should be played. This may not be the same as the
+     * number of bells, if the sound file itself contains multiple bells, see
+     * {@link BellSoundInfo#getNumberOfBells()}.
+     * @return number of times to repeat the sound file
+     */
+    public int getTimesToRepeatMedia() {
+        if (mNumberOfBells > 0 && mNumberOfBells <= mSoundResIds.length)
+            return 1;
+        else
+            return mNumberOfBells;
     }
 
     public long getRepeatPeriod() {
         return mRepeatPeriod;
     }
 
-    /**
-     * @return true if this sound can be played, false if it is silent
-     */
-    public boolean isPlayable() {
-        return mSoundResid != 0 && mTimesToPlay != 0;
-    }
 }

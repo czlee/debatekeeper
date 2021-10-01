@@ -145,6 +145,7 @@
             formats, you\'ll be prompted to copy them over. Note: If you uninstall Debatekeeper,
             custom formats will be deleted, so be sure to have a backup somewhere else.
         \n• Timer text size now auto-adjusts in Android 8.0 and higher
+        \n• Made double and triple bells more evenly timed
         \n• Simplified handling of malformed debate style files
         \n• Fixed notification and service handling
         \n• Other general updates to bring up to date with Android 10
