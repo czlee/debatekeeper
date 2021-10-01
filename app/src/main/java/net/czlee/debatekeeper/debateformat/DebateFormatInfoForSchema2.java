@@ -58,7 +58,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
     private final Element mInfoElement; // keep <info> readily accessible for performance
 
     private static final String MINIMUM_SCHEMA_VERSION = "2.0";
-    private static final String MAXIMUM_SCHEMA_VERSION = "2.1";
+    private static final String MAXIMUM_SCHEMA_VERSION = "2.2";
 
     public DebateFormatInfoForSchema2(Context context, InputStream is) {
         mContext = context;
@@ -344,7 +344,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
                 pauseOnBell = false;
             }
             if (pauseOnBell)
-                bellsList.append(mContext.getString(R.string.mainScreen_pauseOnBellIndicator));
+                bellsList.append(mContext.getString(R.string.timer_pauseOnBellIndicator));
 
             // If there's one after this, add a comma
             if (i < list.getLength() - 1) bellsList.append(", ");

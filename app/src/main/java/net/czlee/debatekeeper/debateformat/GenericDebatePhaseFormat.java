@@ -19,7 +19,6 @@ package net.czlee.debatekeeper.debateformat;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 
 
@@ -104,12 +103,9 @@ abstract class GenericDebatePhaseFormat implements DebatePhaseFormat {
         // A shallow copy is fine, we just want to sort the bells, not edit them.
         ArrayList<BellInfo> bells = new ArrayList<>(getBells());
 
-        Collections.sort(bells, new Comparator<BellInfo>() {
-            @Override
-            public int compare(BellInfo lhs, BellInfo rhs) {
-                Long diff = lhs.getBellTime() - rhs.getBellTime();
-                return diff.intValue();
-            }
+        Collections.sort(bells, (lhs, rhs) -> {
+            long diff = lhs.getBellTime() - rhs.getBellTime();
+            return (int) diff;
         });
 
         return bells;

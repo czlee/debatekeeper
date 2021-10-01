@@ -72,7 +72,7 @@ public class PrepTimeSimpleFormat extends GenericDebatePhaseFormat implements Pr
     protected ArrayList<BellInfo> getBells() {
 
         if (mBellsManager == null) {
-            ArrayList<BellInfo> bells = new ArrayList<BellInfo>(1);
+            ArrayList<BellInfo> bells = new ArrayList<>(1);
             bells.add(getFinishBell());
             return bells;
 
@@ -83,8 +83,7 @@ public class PrepTimeSimpleFormat extends GenericDebatePhaseFormat implements Pr
     }
 
     private BellInfo getFinishBell() {
-        BellInfo bi = new BellInfo(getLength(), 2);
-        return bi;
+        return new BellInfo(getLength(), 2);
     }
 
 }

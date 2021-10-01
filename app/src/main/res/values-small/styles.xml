@@ -17,6 +17,6 @@
 -->
 <resources>
 
-    <dimen name="debateTimer_poiTimerButton_marginBottom">40dp</dimen>
+    <dimen name="timer_poiTimerButton_marginBottomPortrait">16dp</dimen>
 
 </resources>

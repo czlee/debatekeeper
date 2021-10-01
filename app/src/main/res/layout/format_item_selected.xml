@@ -22,9 +22,10 @@
     android:paddingTop="@dimen/view_format_list_item_padding"
     android:paddingBottom="@dimen/view_format_list_item_padding" >
     <include
+        android:id="@+id/formatItem_choice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        layout="@android:layout/simple_list_item_single_choice" />
+        layout="@layout/simple_list_item_single_choice" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -33,6 +34,7 @@
         android:paddingRight="10dp">
 
         <include
+            android:id="@+id/formatItem_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             layout="@layout/view_format_short" />

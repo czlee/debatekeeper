@@ -17,20 +17,30 @@
 -->
 <resources>
 
-    <string name="ioErrorDialog_title">Oh no!</string>
-    <string name="ioErrorDialog_message">I couldn\'t find the debate style files.</string>
-    <string name="ioErrorDialog_button">Go back</string>
+    <string name="nav_back">Back</string>
+
+    <string name="formatChooser_ioError">There was an error reading the debate style files.</string>
 
     <string name="blankDetailsDialog_title">"Sorry!"</string>
     <string name="blankDetailsDialog_text">"There's a problem with this debate format's XML file (%1$s).\n\nIn more detail:\n%2$s"</string>
 
     <string name="formatChooser_actionBar_confirm">Confirm</string>
-    <string name="formatChooser_actionBar_share">Share</string>
+    <string name="formatChooser_actionBar_searchOnline">Search online</string>
+    <string name="formatChooser_button_moreInfo">More info</string>
+    <string name="formatChooser_button_share">Share</string>
+    <string name="formatChooser_button_delete">Delete</string>
 
-    <string name="formatChooser_lookForCustomCheckbox_text">Look for custom formats (<a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">Learn more</a>)</string>
-    <string name="formatChooser_lookForCustom_errorNoReadPermission">You must allow Debatekeeper to read files on your device for custom formats to be read.</string>
+    <string name="formatChooser_downloadBanner">Look online for more debate styles by clicking the search button.</string>
+    <string name="formatChooser_downloadBanner_dismiss">Got it</string>
+    <string name="formatChoser_downloadBanner_pointerDescription">points to an item on the menu</string>
+
+    <string name="formatChooser_dialog_confirmDelete_message">Delete debate style file %1$s? This can\'t be undone, other than by importing or downloading another copy.</string>
+    <string name="formatChooser_dialog_confirmDelete_yes">Delete</string>
+    <string name="formatChooser_dialog_confirmDelete_no">Cancel</string>
+    <string name="formatChooser_dialog_deleted_success">File %1$s deleted.</string>
+    <string name="formatChooser_dialog_deleted_failure">Could not delete file %1$s.</string>
+
     <string name="formatChooser_share_error_noFileSelected">No file selected.</string>
-    <string name="formatChooser_share_error_builtInFile">You can\'t share built-in formats.</string>
     <string name="formatChooser_share_error_notFound">File %1$s could not be found.</string>
     <string name="formatChooser_share_error_generic">There was an error sharing this file.</string>
     <string name="formatChooser_share_chooserTitle">Share debate format using…</string>
@@ -48,6 +58,9 @@
     <string name="viewFormat_prepTimeLabel">Prep time</string>
     <string name="viewFormat_showDetails_buttonText">More</string>
 
+    <string name="viewFormat_errorLabel">Error with file</string>
+    <string name="viewFormat_error_fileNotFound">File not found: %1$s</string>
+
     <string name="viewFormat_timeDescription_lengthInMinutesSeconds">%s long</string>
 
     <plurals name="viewFormat_timeDescription_lengthInMinutesOnly">
@@ -62,25 +75,43 @@
         <item quantity="other">bells at %s</item>
     </plurals>
 
-    <style name="ViewFormat_TableLabel">
-        <item name="android:paddingLeft">7dip</item>
-        <item name="android:layout_width">100dip</item>
+    <style name="viewFormat_tableLabelStyle">
+        <item name="android:layout_marginLeft">7dp</item>
+        <item name="android:layout_marginStart">7dp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:paddingEnd">20dp</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="ViewFormat_TableValue">
-        <item name="android:layout_width">match_parent</item>
+    <style name="viewFormat_tableValueStyle">
+        <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginRight">@dimen/viewFormat_endMargin</item>
+        <item name="android:layout_marginEnd">@dimen/viewFormat_endMargin</item>
         <item name="android:text">-</item>
     </style>
 
-    <style name="ViewFormat_TableSpeeches">
-        <item name="android:layout_marginLeft">20dip</item>
+    <style name="viewFormat_detailTableLabelStyle" parent="viewFormat_tableLabelStyle">
+        <item name="android:layout_marginLeft">0dp</item>
+        <item name="android:layout_marginStart">0dp</item>
+        <item name="android:paddingRight">14dp</item>
+        <item name="android:paddingEnd">14dp</item>
+    </style>
+
+    <style name="viewFormat_detailTableValueStyle" parent="viewFormat_tableValueStyle">
+        <item name="android:layout_marginRight">0dp</item>
+        <item name="android:layout_marginEnd">0dp</item>
+    </style>
+
+    <style name="viewFormat_tableSpeeches">
+        <item name="android:layout_marginLeft">8dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <dimen name="view_format_list_item_padding">3dip</dimen>
-
+    <dimen name="view_format_list_item_padding">3dp</dimen>
+    <dimen name="viewFormat_sectionGap">8dp</dimen>
+    <dimen name="viewFormat_endMargin">8dp</dimen>
 </resources>

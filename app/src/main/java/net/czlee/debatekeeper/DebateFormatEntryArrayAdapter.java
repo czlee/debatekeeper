@@ -18,14 +18,17 @@
 package net.czlee.debatekeeper;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckedTextView;
+import android.widget.ImageButton;
 
-import net.czlee.debatekeeper.FormatChooserActivity.DebateFormatListEntry;
-import net.czlee.debatekeeper.FormatChooserActivity.FormatChooserActivityBinder;
+import net.czlee.debatekeeper.FormatChooserFragment.DebateFormatListEntry;
+import net.czlee.debatekeeper.FormatChooserFragment.FormatChooserFragmentBinder;
+import net.czlee.debatekeeper.databinding.FormatItemNotSelectedBinding;
+import net.czlee.debatekeeper.databinding.FormatItemSelectedBinding;
 
 import org.xml.sax.SAXException;
 
@@ -38,17 +41,19 @@ import java.util.List;
  * selected, it expands to show information about the format. If not, it just
  * returns the standard android simple_list_item_single_choice.
  *
+ * It would be good to update this setup to use <code>RecyclerView</code> instead.
+ *
  * @author Chuan-Zheng Lee
  * @since  2012-06-20
  */
 public class DebateFormatEntryArrayAdapter extends
-        ArrayAdapter<FormatChooserActivity.DebateFormatListEntry> {
+        ArrayAdapter<DebateFormatListEntry> {
 
-    private final FormatChooserActivityBinder mBinder;
+    private final FormatChooserFragmentBinder mBinder;
 
     public DebateFormatEntryArrayAdapter(Context context,
-            List<DebateFormatListEntry> objects, FormatChooserActivityBinder binder) {
-        super(context, android.R.layout.simple_list_item_single_choice, objects);
+            List<DebateFormatListEntry> objects, FormatChooserFragmentBinder binder) {
+        super(context, R.layout.simple_list_item_single_choice, objects);
         mBinder = binder;
     }
 
@@ -68,15 +73,17 @@ public class DebateFormatEntryArrayAdapter extends
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view;
+        CheckedTextView titleView;
         boolean selected = (position == mBinder.getSelectedPosition());
         if (selected) {
-            view = View.inflate(getContext(), R.layout.format_item_selected, null);
+            FormatItemSelectedBinding binding = FormatItemSelectedBinding.inflate(LayoutInflater.from(getContext()));
+            view = binding.getRoot();
 
             String filename = this.getItem(position).getFilename();
             try {
                 // Population information like the region, level, where used and short
                 // description of the style.
-                mBinder.populateBasicInfo(view, filename);
+                mBinder.populateBasicInfo(binding.formatItemInfo, filename);
 
             } catch (IOException | SAXException e) {
                 // Do nothing.
@@ -87,21 +94,22 @@ public class DebateFormatEntryArrayAdapter extends
             }
 
             // Set the OnClickListener of the "More" details button
-            Button showDetailsButton = (Button) view.findViewById(R.id.viewFormat_showDetails_button);
+            ImageButton showDetailsButton = binding.formatItemInfo.viewFormatShowDetailsButton;
             showDetailsButton.setVisibility(View.VISIBLE);
             showDetailsButton.setOnClickListener(mBinder.getDetailsButtonOnClickListener(filename));
+
+            // Populate the style name and whether the radio button is checked
+            titleView = binding.formatItemChoice.formatItemText;
 
         } else {
 
             // If not selected, this just shows the style name and a blank radio button
-            view = View.inflate(getContext(),
-                    R.layout.format_item_not_selected, null);
+            FormatItemNotSelectedBinding binding = FormatItemNotSelectedBinding.inflate(LayoutInflater.from(getContext()));
+            view = binding.getRoot();
+            titleView = binding.formatItemChoice.formatItemText;
         }
 
-        // Regardless of whether this item is selected, we need to populate the style name
-        // and set whether the radio button is checked.
-        CheckedTextView titleView = (CheckedTextView) view
-                .findViewById(android.R.id.text1);
+        // Regardless of whether this item is selected, populate the style name and set whether the radio button is checked.
         titleView.setText(this.getItem(position).getStyleName());
         titleView.setChecked(selected);
 

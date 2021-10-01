@@ -18,12 +18,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" 
+    android:orientation="vertical"
     android:paddingTop="@dimen/view_format_list_item_padding"
     android:paddingBottom="@dimen/view_format_list_item_padding" >
+
     <include
+        android:id="@+id/formatItem_choice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        layout="@android:layout/simple_list_item_single_choice" />
+        layout="@layout/simple_list_item_single_choice" />
 
 </LinearLayout>

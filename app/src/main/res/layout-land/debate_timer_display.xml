@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2014 Chuan-Zheng Lee
+ *
+ * This file is part of the Debatekeeper app, which is licensed under the
+ * GNU General Public Licence version 3 (GPLv3).  You can redistribute
+ * and/or modify it under the terms of the GPLv3, and you must not use
+ * this file except in compliance with the GPLv3.
+ *
+ * This app is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public Licence for more details.
+ *
+ * You should have received a copy of the GNU General Public Licence
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/timer_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/timer_speechNameText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:paddingTop="4dip"
+        android:textIsSelectable="true"
+        android:textSize="@dimen/timer_speechNameText_textSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Leader of the Opposition"
+         />
+
+    <TextView
+        android:id="@+id/timer_periodDescriptionText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textIsSelectable="true"
+        android:textSize="@dimen/timer_periodDescriptionText_textSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timer_speechNameText"
+        tools:text="Period description"/>
+
+    <TextView
+        android:id="@+id/timer_currentTime"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        app:autoSizeTextType="uniform"
+        app:autoSizeMinTextSize="@dimen/timer_currentTime_minTextSize"
+        app:autoSizeMaxTextSize="@dimen/timer_currentTime_maxTextSize"
+        android:maxLines="1"
+        android:textIsSelectable="false"
+        android:textSize="@dimen/timer_currentTime_fallbackTextSize"
+        app:layout_constraintTop_toTopOf="@id/timer_guidelineTop"
+        app:layout_constraintBottom_toBottomOf="@id/timer_guidelineBottom"
+        app:layout_constraintStart_toStartOf="@id/timer_guidelineStart"
+        app:layout_constraintEnd_toEndOf="@id/timer_guidelineEnd"
+        android:layout_marginHorizontal="@dimen/timer_currentTime_margin"
+        tools:text="00:00"
+        tools:ignore="SpUsage" />
+
+    <TextView
+        android:id="@+id/timer_informationLine"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:gravity="center_horizontal"
+        android:textIsSelectable="true"
+        android:textSize="@dimen/timer_informationLine_textSize"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="7 minutes long; bells at 01:00, 06:00, 07:00" />
+
+    <TimePicker
+        android:id="@+id/timer_currentTimePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:timePickerMode="spinner"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/timer_guidelineStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.2" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/timer_guidelineEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/timer_guidelineTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/timer_horizontalGuidelineLandscape" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/timer_guidelineBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/timer_horizontalGuidelineLandscape" />
+
+    <Button
+        android:id="@+id/timer_poiTimerButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/timer_guidelineEnd"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.75"
+        android:layout_marginEnd="@dimen/timer_poiTimerButton_marginRightLandscape"
+        android:layout_marginRight="@dimen/timer_poiTimerButton_marginRightLandscape"
+        android:text="@string/timer_poiTimer_buttonText"
+        android:textSize="@dimen/timer_poiTimerButton_textSize" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

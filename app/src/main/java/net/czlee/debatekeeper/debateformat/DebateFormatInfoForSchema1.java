@@ -59,7 +59,7 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
     private class DebateFormatInfoContentHandler extends DefaultHandler {
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+        public void startElement(String uri, String localName, String qName, Attributes atts) {
 
             if (!uri.equals(DEBATING_TIMER_URI))
                 return;

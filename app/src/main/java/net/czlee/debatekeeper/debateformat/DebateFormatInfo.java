@@ -30,43 +30,43 @@ public interface DebateFormatInfo {
     /**
      * @return the name of the format, or an empty string if there is none
      */
-    public abstract String getName();
+    String getName();
 
     /**
      * @return a description, or a String with a single hyphen if there is none
      */
-    public abstract String getDescription();
+    String getDescription();
 
     /**
      * @return a list of regions, or an empty list if there were none
      */
-    public abstract ArrayList<String> getRegions();
+    ArrayList<String> getRegions();
 
     /**
      * @return a list of levels, or an empty list if there were none
      */
-    public abstract ArrayList<String> getLevels();
+    ArrayList<String> getLevels();
 
     /**
      * @return a list of tournaments, or an empty list if there were none
      */
-    public abstract ArrayList<String> getUsedAts();
+    ArrayList<String> getUsedAts();
 
     /**
      * @return a description of prep time, or <code>null</code> if there is no prep time for this
      * format
      */
-    public abstract String getPrepTimeDescription();
+    String getPrepTimeDescription();
 
     /**
      * @return the schema version, or <code>null</code> if there is none
      */
-    public abstract String getSchemaVersion();
+    String getSchemaVersion();
 
     /**
      * @return <code>true</code> if the schema is supported by this class, <code>false</code> otherwise
      */
-    public abstract boolean isSchemaSupported();
+    boolean isSchemaSupported();
 
     /**
      * Returns a list of all the speech formats in this debate format, with descriptions.
@@ -78,7 +78,7 @@ public interface DebateFormatInfo {
      *         speech type isn't used, it isn't part of the returned
      *         <code>ArrayList</code>.
      */
-    public abstract ArrayList<String[]> getSpeechFormatDescriptions();
+    ArrayList<String[]> getSpeechFormatDescriptions();
 
     /**
      * Returns a list of speeches in this debate format.
@@ -87,6 +87,6 @@ public interface DebateFormatInfo {
      *         is the name of the speech, the second element is the reference
      *         for the format that speech uses.
      */
-    public abstract ArrayList<String[]> getSpeeches();
+    ArrayList<String[]> getSpeeches();
 
 }

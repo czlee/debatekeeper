@@ -112,10 +112,6 @@ actually plays the buzzer using a MediaPlayer (and the sound file itself).  I'm 
 this is worth implementing - adjudicators would have to stop the timer for speakers who stay
 under the POI time limit, i.e. most of the time - it's easier to have it quiet all the time and
 to be alerted without sound at the 15 second mark?
-
-
-
-
         -->
         <!-- <CheckBoxPreference android:key="@string/pref_poiTimer_buzzerEnable_key" android:summaryOff="@string/pref_poiTimer_buzzerEnable_offSummary" android:title="@string/pref_poiTimer_buzzerEnable_title" android:summaryOn="@string/pref_poiTimer_buzzerEnable_onSummary" android:dependency="@string/pref_poiTimer_enable_key" android:defaultValue="@bool/prefDefault_poiTimer_buzzerEnable" /> -->
         <CheckBoxPreference
@@ -135,10 +131,6 @@ to be alerted without sound at the 15 second mark?
             android:key="@string/pref_poiTimer_flashScreenMode_key"
             android:title="@string/pref_flashScreenMode_title" />
 
-        <Preference
-            android:key="@string/pref_poiTimer_learnMore_key"
-            android:summary="@string/pref_poiTimer_learnMore_summary"
-            android:title="@string/pref_poiTimer_learnMore_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

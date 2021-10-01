@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+ * Copyright (C) 2012 Phillip Cao, Chuan-Zheng Lee
+ *
+ * This file is part of the Debatekeeper app, which is licensed under the
+ * GNU General Public Licence version 3 (GPLv3).  You can redistribute
+ * and/or modify it under the terms of the GPLv3, and you must not use
+ * this file except in compliance with the GPLv3.
+ *
+ * This app is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public Licence for more details.
+ *
+ * You should have received a copy of the GNU General Public Licence
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<resources>
+
+    <string name="app_name" translatable="false">Debatekeeper</string>
+    <string name="fragmentName_Debating_withoutFormat" translatable="false">Debatekeeper</string>
+    <string name="fragmentName_GlobalSettings">Settings</string>
+    <string name="fragmentName_FormatChooser">Styles</string>
+    <string name="fragmentName_PrepTimeBellsEdit">Prep timer bells</string>
+    <string name="fragmentName_FormatDownloader">Downloads</string>
+    <string name="intentFilter_importStyle">Debatekeeper</string>
+
+    <string name="app_marketUri" translatable="false">market://details?id=net.czlee.debatekeeper</string>
+
+    <!-- Buttons -->
+    <string name="timer_controlButton_startTimer_text">Start</string>
+    <string name="timer_controlButton_stopTimer_text">Stop</string>
+    <string name="timer_controlButton_resumeTimer_text">Resume</string>
+    <string name="timer_controlButton_resetTimer_text">Reset</string>
+    <string name="timer_controlButton_nextPhase_text">Next</string>
+    <string name="timer_controlButton_chooseStyle_text">Choose style</string>
+    <string name="timer_playBell_buttonText">Bell</string>
+    <string name="timer_poiTimer_buttonText">POI</string>
+
+    <!-- Notices -->
+    <string name="notification_title" translatable="false">Debatekeeper</string>
+    <string name="channel_description">Shows when a Debatekeeper timer is running</string>
+    <string name="notification_text">Timer running: %1$s</string>
+
+    <string name="timer_overtimeFormat">+%1$s</string>
+
+    <string name="timer_bellsList_noBells">"; no bells"</string>
+    <plurals name="timer_bellsList_normal">
+        <item quantity="one">"; bell at %1$s"</item>
+        <item quantity="other">"; bells at %1$s"</item>
+    </plurals>
+    <string name="timer_bellsList_nextOvertimeBell">"; next overtime bell at %1$s"</string>
+    <string name="timer_bellsList_noOvertimeBells">"; no overtime bells"</string>
+
+    <plurals name="timer_timeInMinutes">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <string name="timer_speechLength">%s long</string>
+    <string name="timer_prepTimeLength">%s allowed</string>
+    <string name="timer_prepTimeControlledIndicator">", controlled"</string>
+    <string name="timer_pauseOnBellIndicator">" (pause)"</string>
+    <string name="timer_silentBellIndicator">" (silent)"</string>
+
+    <string name="timer_snackbar_resetDebate">All timers in debate reset</string>
+    <string name="timer_noDebateLoaded_text">No debate loaded</string>
+
+    <string name="prepTime_title">Preparation time</string>
+
+    <string name="timer_snackbar_copyAssetsError">Couldn\'t access the file system to copy initial formats.</string>
+    <string name="timer_snackbar_editTextDiscardChangesInfo_limitedBelow">To discard changes, press the back button. (You can\'t set the time to an overtime value.)</string>
+    <string name="timer_snackbar_editTextDiscardChangesInfo_limitedAbove">To discard changes, press the back button. (You can\'t set the time to greater than 23:59.)</string>
+    <string name="timer_snackbar_beamNonExternalFile">You can\'t use Android Beam to share built-in styles.</string>
+    <string name="timer_snackbar_beam_error_generic">There was an error beaming this debate format file.</string>
+
+    <!-- Sharing debate formats -->
+    <string name="importDebateFormat_dialog_title">Import debate style?</string>
+    <string name="importDebateFormat_dialog_message_question">Do you want to import the debate format file &lt;b>%1$s&lt;/b>, which describes the style \"%2$s\"?</string>
+    <string name="importDebateFormat_dialog_addendum_overwriteExistingSameName">This will overwrite the existing \"%1$s\" style.</string>
+    <string name="importDebateFormat_dialog_addendum_overwriteExistingDifferentName">
+        This will overwrite the existing custom style \"%1$s\", because its file has the same name.
+        If you don\'t want to lose %1$s, cancel and then import using a different file name.</string>
+    <string name="importDebateFormat_placeholder_unknownStyleName">(unknown)</string>
+    <string name="importDebateFormat_dialog_button_yes">Import</string>
+    <string name="importDebateFormat_dialog_button_no">Cancel</string>
+    <string name="replaceDebateFormat_dialog_title">Replace debate style?</string>
+    <string name="replaceDebateFormat_dialog_message">You already have a debate style called \"%1$s\". Do you want to &lt;b>replace it&lt;/b>, overwriting file %2$s, or &lt;b>add another&lt;/b> \"%1$s\" using the file name %3$s?</string>
+    <string name="replaceDebateFormat_dialog_button_replace">Replace</string>
+    <string name="replaceDebateFormat_dialog_button_addNew">Add another</string>
+    <string name="replaceDebateFormat_dialog_button_cancel">Cancel</string>
+    <string name="importDebateFormat_snackbar_error_generic">There was an error opening this file.</string>
+    <string name="importDebateFormat_snackbar_success">Successfully imported file %1$s</string>
+
+    <!-- Menu -->
+    <string name="timer_menuItem_resetDebate">Reset debate</string>
+    <string name="timer_menuItem_settings">Settings</string>
+    <string name="timer_menuItem_chooseFormat">Debate styles</string>
+    <string name="timer_menuItem_ringBells">Ring bells</string>
+
+    <!-- Debate load error screen -->
+    <string name="debateLoadErrorScreen_title">Error loading debate</string>
+    <string name="debateLoadErrorScreen_filename">"Couldn't load file: %1$s"</string>
+    <string name="debateLoadErrorScreen_button">Choose style</string>
+
+    <!-- These messages are loaded using Html.fromHtml(), so should be written as "fake HTML" (as in, with HTML tags escaped) -->
+    <string name="debateLoadError_noSpeeches">There are no speeches in this debate style file.
+        This might be because the file isn\'t supported or isn\'t well-formed.
+        &lt;a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">Learn more.&lt;/a>
+    </string>
+    <string name="debateLoadError_cannotRead">"There was a problem opening this debate style file. If this is a custom format, it might be because the file is deleted or because storage permissions are disabled."</string>
+    <string name="debateLoadError_cannotFind">"There was a problem opening this debate style file. If this is a custom format, it might be because the file is deleted or because storage permissions are disabled."</string>
+    <string name="debateLoadError_badXml">"There's a problem with the XML in this debate style file. The error was:\n\n%1$s\n"</string>
+    <string name="debateLoadError_schemaOutdated">This debate format file uses schema version 1.0, which is no longer supported.
+        Please convert this file to schema version 2.2.
+        &lt;a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">Learn more.&lt;/a>
+    </string>
+    <string name="debateLoadError_generalErrors">&lt;p>There are a few problems with this debate format file:&lt;/p>
+        %1$s
+    </string>
+    <string name="debateLoadError_suffix">Please choose another style.</string>
+
+    <string name="formerAssetsError_title">Please download this format</string>
+    <string name="formerAssetsError_filename">File: %1$s</string>
+    <string name="formerAssetsError_message">Debatekeeper is changing! Debate formats are now provided for download,
+    rather than included with the app like they were previously.</string>
+    <string name="formerAssetsError_suffix">Please go to the downloads section to download this format.</string>
+    <string name="formerAssetsError_button">Go to downloads</string>
+
+    <!-- Dialogs -->
+    <string name="schemaTooNewDialog_title">Update app?</string>
+    <string name="schemaTooNewDialog_button_upgrade">Check for updates</string>
+    <string name="schemaTooNewDialog_button_ignore">Ignore</string>
+    <string name="schemaTooNewDialog_message">This debate format file (%4$s) uses a schema (%1$s) newer than supported (%2$s) by this app version (%3$s). Check for updates on Google Play?</string>
+
+    <!-- POI timer -->
+    <string name="poiTimer_moreInfoUrl" translatable="false">https://github.com/czlee/debatekeeper/wiki/Points-of-information</string>
+
+    <!-- Changelog dialog -->
+    <!-- By convention, this should be changed to match the manifest versionCode when the changelog changes. -->
+    <integer name="changelogDialog_versionCode">24</integer>
+    <string name="changelogDialog_title">What\'s new in version %1$s</string>
+    <string name="changelogDialog_message">
+          • Debate style formats are now available for download, with only four included in the app.
+            You may need to download the formats you were previously using to continue.
+        \n• All formats are now stored in an app-specific Android location. If you have custom
+            formats, you\'ll be prompted to copy them over. Note: If you uninstall Debatekeeper,
+            custom formats will be deleted, so be sure to have a backup somewhere else.
+        \n• Timer text size now auto-adjusts in Android 8.0 and higher
+        \n• Simplified handling of malformed debate style files
+        \n• Fixed notification and service handling
+        \n• Other general updates to bring up to date with Android 10
+    </string>
+    <string name="changelogDialog_dontShow">Don\'t show this again</string>
+    <string name="changelogDialog_ok">Okay, roll on!</string>
+
+    <!-- Copying legacy custom files -->
+    <string name="customFilesMovingDialog_title">Custom formats are moving!</string>
+    <string name="customFilesMovingDialog_message">You have some custom debate format files in the \"debatekeeper\" directory.
+        In this update, the location of custom formats is moving. Debatekeeper can copy these files
+        to the new location for you. Once this is done, you can delete them from the old location
+        yourself. (Be sure to keep a backup!)\n\nCopy custom files?
+    </string>
+    <string name="customFilesMoving_moreInfoUrl" translatable="false">https://github.com/czlee/debatekeeper/wiki/Custom-format-changes-in-version-1.3</string>
+    <string name="customFilesMovingDialog_button_learnMore">Learn more</string>
+    <string name="customFilesMovingDialog_button_cancel">Don\'t copy</string>
+    <string name="customFilesMovingDialog_button_ok">Copy</string>
+
+    <string name="customFilesMovingErrorDirectory_snackbar">Error: Couldn\'t open the legacy custom formats directory to copy the files.</string>
+    <string name="customFilesMovingErrorFiles_snackbar">%1$d legacy files copied, but errors copying %2$d files: %3$s</string>
+    <string name="customFilesMovingSuccess_snackbar">%1$d legacy files copied and ready to use</string>
+
+    <!-- Files that use to be in the assets -->
+    <string-array name="filesFormerlyInAssets">
+        <item>apda.xml</item>
+        <item>asian.xml</item>
+        <item>aueasters.xml</item>
+        <item>australs.xml</item>
+        <item>bp.xml</item>
+        <item>bp5.xml</item>
+        <item>canadian-pmre-splitopp.xml</item>
+        <item>canadian-pmre.xml</item>
+        <item>canadian-splitopp.xml</item>
+        <item>canadian.xml</item>
+        <item>joyntscroll.xml</item>
+        <item>mspdp.xml</item>
+        <item>nzeasters.xml</item>
+        <item>opd.xml</item>
+        <item>parisv.xml</item>
+        <item>test1.xml</item>
+        <item>test2.xml</item>
+        <item>thropy.xml</item>
+        <item>thropybreak.xml</item>
+        <item>worldschools.xml</item>
+    </string-array>
+</resources>

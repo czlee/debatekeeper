@@ -1,0 +1,7 @@
+<resources>
+    <string name="downloadConfigTitle">Downloads configuration</string>
+    <string name="formatsRepositoryUrlLabel">Debate style files repository</string>
+    <string name="formatsRepositoryUrlExplanation">This configures the online repository that Debatekeeper
+        checks for debate style files. If you leave this blank, Debatekeeper will search the official repository.
+    </string>
+</resources>

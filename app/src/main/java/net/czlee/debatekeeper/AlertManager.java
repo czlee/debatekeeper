@@ -17,6 +17,7 @@
 
 package net.czlee.debatekeeper;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -24,9 +25,11 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.PowerManager;
 import android.os.Vibrator;
-import android.support.v7.app.NotificationCompat;
+
+import androidx.core.app.NotificationCompat;
 
 import net.czlee.debatekeeper.debateformat.BellSoundInfo;
 
@@ -74,7 +77,7 @@ public class AlertManager
     private       FlashScreenMode       mFlashScreenMode     = FlashScreenMode.OFF;
 
     // Preferences for POI bells
-    private       boolean               mPoiBuzzerEnabled;
+    private       boolean               mPoiBuzzerEnabled;  // for future use
     private       boolean               mPoiVibrateEnabled = true;
     private       FlashScreenMode       mPoiFlashScreenMode  = FlashScreenMode.SOLID_FLASH;
 
@@ -84,6 +87,7 @@ public class AlertManager
      * @param debatingTimerService The instance of {@link DebatingTimerService} to which this
      * AlertManager relates
      */
+    @SuppressLint("UnspecifiedImmutableFlag")
     AlertManager(Service debatingTimerService) {
 
         mService = debatingTimerService;
@@ -101,7 +105,11 @@ public class AlertManager
         // back won't make the user go through several instances of Debatekeeper on the back stack.
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-        mIntentForOngoingNotification = PendingIntent.getActivity(debatingTimerService, 0, intent, 0);
+        int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            flags |= PendingIntent.FLAG_IMMUTABLE;
+        mIntentForOngoingNotification = PendingIntent.getActivity(debatingTimerService, 0,
+                intent, flags);
 
         // Set up defaults
         Resources res = mService.getResources();
@@ -206,7 +214,7 @@ public class AlertManager
         // Note: Write this method so that it can be called multiple times with no bad effect.
         mActivityActive = true;
         if (mShowingNotification)
-            mWakeLock.acquire();
+            mWakeLock.acquire(15*60*1000L /*15 minutes*/);
     }
 
     boolean isBellsEnabled() {
@@ -221,19 +229,20 @@ public class AlertManager
 
         if(!mShowingNotification) {
 
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(mService);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(mService, DebatingTimerService.CHANNEL_ID);
             builder.setSmallIcon(R.drawable.ic_stat_debatekeeper)
-                   .setContentTitle(mService.getText(R.string.notification_title))
-                   .setContentText(speechName)
+                   .setContentTitle(mService.getString(R.string.notification_title))
+                   .setContentText(mService.getString(R.string.notification_text, speechName))
                    .setContentIntent(mIntentForOngoingNotification)
-                   .setCategory(NotificationCompat.CATEGORY_ALARM);
+                   .setCategory(NotificationCompat.CATEGORY_ALARM)
+                   .setPriority(NotificationCompat.PRIORITY_LOW);
 
             mNotification = builder.build();
             mService.startForeground(NOTIFICATION_ID, mNotification);
             mShowingNotification = true;
         }
 
-        mWakeLock.acquire();
+        mWakeLock.acquire(15*60*1000L /*15 minutes*/);
     }
 
     /**
@@ -280,7 +289,7 @@ public class AlertManager
         }
 
         if (mFlashScreenMode != FlashScreenMode.OFF) {
-            flashScreen(bsi, BELL_FLASH_COLOUR);
+            flashScreen(bsi);
         }
     }
 
@@ -305,6 +314,7 @@ public class AlertManager
         this.mVibrateMode = vibrateMode;
     }
 
+    // for future use
     void setPoiBuzzerEnabled(boolean poiBuzzerEnabled) {
         this.mPoiBuzzerEnabled = poiBuzzerEnabled;
     }
@@ -358,7 +368,7 @@ public class AlertManager
      */
     public void wakeUpScreenForPause() {
         int flags = PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.FULL_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE;
-        PowerManager.WakeLock temporaryWakeLock = mPowerManager.newWakeLock(flags, "Debatekeeper-pause");
+        PowerManager.WakeLock temporaryWakeLock = mPowerManager.newWakeLock(flags, "debatekeeper:pause");
         temporaryWakeLock.acquire(3000);
     }
 
@@ -378,7 +388,7 @@ public class AlertManager
             mWakeLock = null;
         }
 
-        mWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Debatekeeper");
+        mWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "debatekeeper:main");
 
         // Either we have the lock or we don't, we don't need to count how many times we locked
         // it.  Turning this off makes it okay to acquire or release multiple times.
@@ -389,7 +399,7 @@ public class AlertManager
      * Flashes the screen according to the specifications of a bell.
      * @param bsi the {@link BellSoundInfo} for this bell
      */
-    private void flashScreen(BellSoundInfo bsi, final int colour) {
+    private void flashScreen(BellSoundInfo bsi) {
         Timer       repeatTimer  = new Timer();
         final long  repeatPeriod = bsi.getRepeatPeriod();
         final int   timesToPlay  = bsi.getTimesToPlay();
@@ -430,10 +440,10 @@ public class AlertManager
 
                 switch (mFlashScreenMode) {
                 case SOLID_FLASH:
-                    startSingleFlashScreen(flashTime, colour, lastFlash);
+                    startSingleFlashScreen(flashTime, BELL_FLASH_COLOUR, lastFlash);
                     break;
                 case STROBE_FLASH:
-                    startSingleStrobeFlashScreen(flashTime, colour, lastFlash);
+                    startSingleStrobeFlashScreen(flashTime, BELL_FLASH_COLOUR, lastFlash);
                     break;
                 case OFF:
                     // Do nothing
@@ -466,10 +476,6 @@ public class AlertManager
         }, flashTime);
     }
 
-    /**
-     * Runs a strobe flash
-     * @param numberOfStrobes The number of strobes to do.
-     */
     /**
      * Starts a single strobe flash, i.e., one rapid period of flashing.  So in a double strobe
      * bell, there are two of these.
@@ -515,7 +521,7 @@ public class AlertManager
     private void wakeUpScreenForBell(long wakeTime) {
         if (mActivityActive) {
             int flags = PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.FULL_WAKE_LOCK;
-            PowerManager.WakeLock temporaryWakeLock = mPowerManager.newWakeLock(flags, "Debatekeeper-bell");
+            PowerManager.WakeLock temporaryWakeLock = mPowerManager.newWakeLock(flags, "debatekeeper:bell");
             temporaryWakeLock.acquire(wakeTime);
         }
     }

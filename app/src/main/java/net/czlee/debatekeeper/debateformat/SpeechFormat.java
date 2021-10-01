@@ -17,8 +17,6 @@
 
 package net.czlee.debatekeeper.debateformat;
 
-import java.util.Iterator;
-
 
 /**
  * SpeechFormat is a passive data class that holds information about a speech format.
@@ -41,11 +39,7 @@ import java.util.Iterator;
  */
 public class SpeechFormat extends ControlledDebatePhaseFormat {
 
-    private String mReference = null;
-
-    public SpeechFormat(long speechLength) {
-        super(speechLength);
-    }
+    private final String mReference;
 
     public SpeechFormat(String reference, long speechLength) {
         super(speechLength);
@@ -74,11 +68,8 @@ public class SpeechFormat extends ControlledDebatePhaseFormat {
     public boolean hasPoisAllowedSomewhere() {
         if (mFirstPeriodInfo.isPoisAllowed()) return true;
 
-        Iterator<BellInfo> bellIterator = mBells.iterator();
-
-        while (bellIterator.hasNext()) {
+        for (BellInfo thisBell : mBells) {
             // Return true as soon as we find one with POIs allowed
-            BellInfo thisBell = bellIterator.next();
             if (thisBell.getNextPeriodInfo().isPoisAllowed()) return true;
         }
 

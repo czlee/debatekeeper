@@ -20,8 +20,10 @@ package net.czlee.debatekeeper.debatemanager;
 import android.app.Service;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
 
 import net.czlee.debatekeeper.AlertManager;
 import net.czlee.debatekeeper.DebatingTimerService.GuiUpdateBroadcastSender;
@@ -49,7 +51,7 @@ import java.util.ArrayList;
  *  </ul>
  *
  * <p>DebateManager is <b>not</b> capable of handling the GUI, but it sends a message to the
- * DebatingActivity to update the GUI.</p>
+ * {@DebatingTimerFragment} to update the GUI.</p>
  *
  * <p>The internal mechanics of a single speech are handled by {@link DebatePhaseManager}.</p>
  *
@@ -150,6 +152,7 @@ public class DebateManager {
             this.key = key;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return key;

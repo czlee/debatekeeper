@@ -20,5 +20,7 @@
     <color name="overtimeTextColour">#ffff7878</color>
 
     <color name="prepTimeBackgroundColour">#ff3A1552</color>
-    
+
+    <color name="xmlFileWarningColour">#ffffff77</color>
+
 </resources>

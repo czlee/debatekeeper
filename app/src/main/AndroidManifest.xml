@@ -24,26 +24,31 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <uses-feature android:name="android.hardware.nfc" android:required="false" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_debatekeeper"
+        android:fullBackupOnly="true"
+        android:requestLegacyExternalStorage="true"
         android:label="@string/app_name"
         android:theme="@style/Debatekeeper.Dark">
         <activity
             android:name=".DebatingActivity"
             android:icon="@mipmap/ic_debatekeeper"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter android:label="@string/intentFilter_importStyle"
-                tools:ignore="GoogleAppIndexingWarning">
+                tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/xml" />
@@ -51,32 +56,8 @@
                 <data android:mimeType="text/plain" android:pathPattern=".*\\.xml" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".GlobalSettingsActivity"
-            android:label="@string/activityName_GlobalSettings"
-            android:parentActivityName=".DebatingActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".DebatingActivity" />
-        </activity>
-        <activity
-            android:name=".FormatChooserActivity"
-            android:label="@string/activityName_FormatChooser"
-            android:parentActivityName=".DebatingActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".DebatingActivity" />
-        </activity>
-        <activity
-            android:name=".PrepTimeBellsEditActivity"
-            android:label="@string/activityName_PrepTimeBellsEdit"
-            android:parentActivityName=".GlobalSettingsActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".GlobalSettingsActivity" />
-        </activity>
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="net.czlee.debatekeeper.fileprovider"
             android:grantUriPermissions="true"
             android:exported="false">

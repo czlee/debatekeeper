@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/formatDownloader_actionBar_collapse"
+        android:icon="@drawable/ic_baseline_unfold_less_24"
+        android:title="@string/formatDownloader_actionBar_collapse"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/formatDownloader_actionBar_expand"
+        android:icon="@drawable/ic_baseline_unfold_more_24"
+        android:title="@string/formatDownloader_actionBar_expand"
+        app:showAsAction="always"
+        android:visible="false"
+        tools:ignore="AlwaysShowAction" />
+
+    <item
+        android:id="@+id/formatDownloader_actionBar_learnMore"
+        android:title="@string/formatDownloader_actionBar_learnMore"
+        android:icon="@drawable/ic_baseline_help_24"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/formatDownloader_actionBar_config"
+        android:title="@string/formatDownloader_actionBar_config"
+        android:icon="@drawable/ic_baseline_settings_24"
+        app:showAsAction="never" />
+
+</menu>

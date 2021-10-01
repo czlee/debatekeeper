@@ -38,7 +38,7 @@ import java.io.InputStream;
 public class SchemaVersion1Checker {
 
     private final String DEBATING_TIMER_URI;
-    private Resources mResources;
+    private final Resources mResources;
     private boolean mIsVersion1;
 
     public SchemaVersion1Checker(Context context) {
@@ -80,7 +80,7 @@ public class SchemaVersion1Checker {
     // Private classes
     //******************************************************************************************
 
-    private class CheckForOutdatedSchemaDoneException extends SAXException {
+    private static class CheckForOutdatedSchemaDoneException extends SAXException {
     }
 
     /**

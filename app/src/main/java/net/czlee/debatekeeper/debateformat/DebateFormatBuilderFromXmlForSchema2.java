@@ -77,7 +77,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
 
     private String mSchemaVersion;
     private static final String MINIMUM_SCHEMA_VERSION = "2.0";
-    private static final String MAXIMUM_SCHEMA_VERSION = "2.1";
+    private static final String MAXIMUM_SCHEMA_VERSION = "2.2";
 
     /**
      * Constructor.
@@ -111,8 +111,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
             logXmlError(R.string.xmlError_rootNoSchemaVersion);
         else if (!XmlUtilities.isValidSchemaVersion(mSchemaVersion))
             logXmlError(R.string.xmlError_rootInvalidSchemaVersion, mSchemaVersion);
-        else if (!isSchemaSupported())
-            logXmlError(R.string.xmlError_rootNewSchemaVersion, mSchemaVersion, MAXIMUM_SCHEMA_VERSION);
+        // If the schema is too new, just keep going, the file might still work
 
         // 1. <name> - mandatory, <short-name> - optional
         String name = xu.findElementText(root, R.string.xml2elemName_name);
@@ -491,9 +490,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
      * @param message the string
      */
     private void logXmlError(String message) {
-        String bullet = "• ";
-        String line   = bullet.concat(message);
-        mErrorLog.add(line);
+        mErrorLog.add(message);
         Log.e("logXmlError(2)", message);
     }
 
@@ -502,7 +499,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
      * @param e the Exception
      */
     private void logXmlError(Exception e) {
-        logXmlError(e.getMessage());
+        logXmlError(e.getLocalizedMessage());
     }
 
     /**

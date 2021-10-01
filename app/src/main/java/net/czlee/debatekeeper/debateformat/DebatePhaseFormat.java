@@ -40,36 +40,36 @@ public interface DebatePhaseFormat {
      * Returns the length of the speech or prep format in seconds.
      * @return the length in seconds
      */
-    public abstract long getLength();
+    long getLength();
 
     /**
      * Returns the first {@link PeriodInfo} of the speech or prep format.
      * @return the PeriodInfo object
      */
-    public abstract PeriodInfo getFirstPeriodInfo();
+    PeriodInfo getFirstPeriodInfo();
 
     /**
      * Returns the bell for the specified time, or <code>null</code> if there is no such bell.
      * @param seconds the time in seconds
      * @return the {@link BellInfo} object representing that bell
      */
-    public abstract BellInfo getBellAtTime(long seconds);
+    BellInfo getBellAtTime(long seconds);
 
     /**
      * Returns the {@link PeriodInfo} appropriate for the given time.
      * @param seconds the time in seconds
      * @return the PeriodInfo object
      */
-    public abstract PeriodInfo getPeriodInfoForTime(long seconds);
+    PeriodInfo getPeriodInfoForTime(long seconds);
 
     /**
      * @return an {@link ArrayList} of {@link BellInfo} objects that are sorted by time.
      */
-    public abstract ArrayList<BellInfo> getBellsSorted();
+    ArrayList<BellInfo> getBellsSorted();
 
     /**
      * @return <code>true</code> if it is a prep time, <code>false</code> otherwise
      */
-    public abstract boolean isPrep();
+    boolean isPrep();
 
 }

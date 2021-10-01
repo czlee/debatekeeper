@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2012 Phillip Cao, Chuan-Zheng Lee
+ *
+ * This file is part of the Debatekeeper app, which is licensed under the
+ * GNU General Public Licence version 3 (GPLv3).  You can redistribute
+ * and/or modify it under the terms of the GPLv3, and you must not use
+ * this file except in compliance with the GPLv3.
+ *
+ * This app is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public Licence for more details.
+ *
+ * You should have received a copy of the GNU General Public Licence
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/timer_coordinator"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DebatingTimerFragment" >
+
+    <RelativeLayout
+        android:id="@+id/timer_rootView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@android:color/black" >
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_debatingTimer"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            android:layout_alignParentTop="true"
+            app:menu="@menu/timer"
+            />
+
+        <View
+            android:id="@+id/timer_toolbar_line"
+            android:layout_below="@id/toolbar_debatingTimer"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:elevation="4dp"
+            android:background="@color/debatekeeper_accent_dark" />
+
+        <LinearLayout
+            android:id="@+id/timer_controlButtons"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/timer_controlButtons_height"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:gravity="end" >
+
+            <Button
+                android:id="@+id/timer_leftControlButton"
+                style="@style/ControlButton" />
+
+            <Button
+                android:id="@+id/timer_centreControlButton"
+                style="@style/ControlButton" />
+
+            <Button
+                android:id="@+id/timer_leftCentreControlButton"
+                style="@style/ControlButton"
+                android:layout_weight="2"
+                android:layout_width="0dip"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/timer_rightControlButton"
+                style="@style/ControlButton" />
+
+            <ImageButton
+                android:id="@+id/timer_playBellButton"
+                android:layout_width="@dimen/timer_controlButtons_height"
+                android:layout_gravity="center"
+                android:layout_height="fill_parent"
+                app:srcCompat="@drawable/ic_baseline_notifications_24"
+                android:contentDescription="@string/timer_playBell_buttonText" />
+        </LinearLayout>
+
+        <net.czlee.debatekeeper.EnableableViewPager
+            android:id="@+id/timer_viewPager"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@id/timer_controlButtons"
+            android:layout_below="@id/timer_toolbar_line" />
+
+        <include
+            android:id="@+id/timer_noDebateLoaded"
+            layout="@layout/no_debate_loaded"
+            android:visibility="gone"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@id/timer_controlButtons"
+            android:layout_below="@id/timer_toolbar_line" />
+
+        <include
+            android:id="@+id/timer_debateLoadError"
+            layout="@layout/debate_load_error"
+            android:visibility="gone"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@id/timer_controlButtons"
+            android:layout_below="@id/timer_toolbar_line" />
+
+    </RelativeLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

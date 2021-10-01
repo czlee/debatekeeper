@@ -32,9 +32,9 @@ package net.czlee.debatekeeper.debateformat;
  */
 public class BellInfo {
 
-    private long          mBellTime        = 0;
-    private boolean       mPauseOnBell     = false;
-    private PeriodInfo    mNextPeriodInfo  = new PeriodInfo();
+    private final long mBellTime;
+    private boolean mPauseOnBell = false;
+    private PeriodInfo mNextPeriodInfo  = new PeriodInfo();
     private final BellSoundInfo mSoundInfo = new BellSoundInfo();
 
     public BellInfo(long seconds, int timesToPlay) {
@@ -53,10 +53,6 @@ public class BellInfo {
 
     public long getBellTime() {
         return mBellTime;
-    }
-
-    public void setBellTime(long seconds) {
-        mBellTime = seconds;
     }
 
     public PeriodInfo getNextPeriodInfo() {

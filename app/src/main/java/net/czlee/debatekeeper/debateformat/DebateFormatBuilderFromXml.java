@@ -36,41 +36,41 @@ public interface DebateFormatBuilderFromXml {
      * @throws SAXException if thrown by the XML parser
      * @throws IllegalStateException if there were no speeches in this format
      */
-    public abstract DebateFormat buildDebateFromXml(InputStream is)
+    DebateFormat buildDebateFromXml(InputStream is)
             throws IOException, SAXException;
 
     /**
      * @return true if there are errors in the error log
      */
-    public abstract boolean hasErrors();
+    boolean hasErrors();
 
     /**
      * @return <code>true</code> if the schema version is supported.
      * <code>false</code> if there is no schema version, this includes if this builder hasn't parsed
      * an XML file yet.
      */
-    public abstract boolean isSchemaSupported() throws IllegalArgumentException;
+    boolean isSchemaSupported() throws IllegalArgumentException;
 
     /**
      * @return <code>true</code> if the schema is too new for this class, <code>false</code> otherwise.
      * Returns <code>false</code> if the schema version is unknown or invalid.
      */
-    public abstract boolean isSchemaTooNew();
+    boolean isSchemaTooNew();
 
     /**
      * @return An <i>ArrayList</i> of <code>String</code>s, each item being an error found by
      * the XML parser
      */
-    public abstract ArrayList<String> getErrorLog();
+    ArrayList<String> getErrorLog();
 
     /**
      * @return the schema version of the processed file
      */
-    public abstract String getSchemaVersion();
+    String getSchemaVersion();
 
     /**
      * @return the highest schema version supported by this builder
      */
-    public abstract String getSupportedSchemaVersion();
+    String getSupportedSchemaVersion();
 
 }

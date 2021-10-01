@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2012 Chuan-Zheng Lee
+ *
+ * This file is part of the Debatekeeper app, which is licensed under the
+ * GNU General Public Licence version 3 (GPLv3).  You can redistribute
+ * and/or modify it under the terms of the GPLv3, and you must not use
+ * this file except in compliance with the GPLv3.
+ *
+ * This app is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public Licence for more details.
+ *
+ * You should have received a copy of the GNU General Public Licence
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="8dp"
+    android:paddingVertical="4dp" >
+
+    <!-- Title -->
+    <ImageView
+        android:id="@+id/viewFormat_chevron"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginLeft="6dp"
+        app:srcCompat="@drawable/ic_baseline_expand_more_24"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/viewFormat_title"
+        android:contentDescription="@string/formatDownloader_image_chevron"
+        />
+
+    <TextView
+        android:id="@+id/viewFormat_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:gravity="center_vertical"
+        android:padding="8dp"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+        app:layout_constraintEnd_toStartOf="@+id/viewFormat_statusIcon"
+        app:layout_constraintStart_toEndOf="@id/viewFormat_chevron"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/viewFormat_statusIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/viewFormat_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/viewFormat_title"
+        app:srcCompat="@drawable/ic_baseline_upgrade_24" />
+
+    <!-- Download indicators -->
+
+    <ImageButton
+        android:id="@+id/viewFormat_download_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:contentDescription="@string/formatDownloader_button_download"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
+        android:tooltipText="@string/formatDownloader_button_download"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewFormat_title"
+        app:srcCompat="@drawable/ic_outline_file_download_24" />
+
+    <ProgressBar
+        android:id="@+id/viewFormat_download_progress"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
+        android:contentDescription="@string/formatDownloader_progress_description"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewFormat_title" />
+
+    <ImageView
+        android:id="@+id/viewFormat_download_done"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
+        android:contentDescription="@string/formatDownloader_button_downloaded"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewFormat_title"
+        app:srcCompat="@drawable/ic_outline_file_download_done_24" />
+
+    <!-- Labels -->
+
+    <TextView
+        android:id="@+id/viewFormat_updateAvailableText"
+        style="@style/viewFormat_tableLabelStyle"
+        android:text="@string/formatDownloader_updateAvailable"
+        android:textColor="@color/debatekeeper_accent_dark"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewFormat_title" />
+
+    <TextView
+        android:id="@+id/viewFormat_fileNameLabel"
+        style="@style/viewFormat_tableLabelStyle"
+        android:text="@string/viewFormat_fileNameLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/viewFormat_fileNameValue" />
+
+    <TextView
+        android:id="@+id/viewFormat_regionLabel"
+        style="@style/viewFormat_tableLabelStyle"
+        android:text="@string/viewFormat_regionLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/viewFormat_regionValue" />
+
+    <TextView
+        android:id="@+id/viewFormat_levelLabel"
+        style="@style/viewFormat_tableLabelStyle"
+        android:text="@string/viewFormat_levelLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/viewFormat_levelValue" />
+
+    <TextView
+        android:id="@+id/viewFormat_usedAtLabel"
+        style="@style/viewFormat_tableLabelStyle"
+        android:text="@string/viewFormat_usedAtLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewFormat_buttonBarrier" />
+
+    <TextView
+        android:id="@+id/viewFormat_descLabel"
+        style="@style/viewFormat_tableLabelStyle"
+        android:text="@string/viewFormat_descLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/viewFormat_descValue" />
+
+    <!-- Barriers -->
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/viewFormat_buttonBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="viewFormat_levelValue,viewFormat_download_button"
+        tools:layout_editor_absoluteX="141dp"
+        tools:layout_editor_absoluteY="43dp" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/viewFormat_labelBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="right"
+        app:constraint_referenced_ids="viewFormat_regionLabel,viewFormat_levelLabel,viewFormat_usedAtLabel,viewFormat_descLabel"
+        tools:layout_editor_absoluteX="195dp"
+        tools:layout_editor_absoluteY="28dp" />
+
+    <!-- Values -->
+
+    <TextView
+        android:id="@+id/viewFormat_fileNameValue"
+        style="@style/viewFormat_tableValueStyle"
+        app:layout_constraintEnd_toStartOf="@+id/viewFormat_download_button"
+        app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
+        app:layout_constraintTop_toBottomOf="@id/viewFormat_updateAvailableText" />
+
+    <TextView
+        android:id="@+id/viewFormat_regionValue"
+        style="@style/viewFormat_tableValueStyle"
+        app:layout_constraintEnd_toStartOf="@+id/viewFormat_download_button"
+        app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
+        app:layout_constraintTop_toBottomOf="@id/viewFormat_fileNameValue" />
+
+    <TextView
+        android:id="@+id/viewFormat_levelValue"
+        style="@style/viewFormat_tableValueStyle"
+        app:layout_constraintEnd_toStartOf="@+id/viewFormat_download_button"
+        app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
+        app:layout_constraintTop_toBottomOf="@id/viewFormat_regionValue" />
+
+    <TextView
+        android:id="@+id/viewFormat_usedAtValue"
+        style="@style/viewFormat_tableValueStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
+        app:layout_constraintTop_toTopOf="@id/viewFormat_buttonBarrier" />
+
+    <TextView
+        android:id="@+id/viewFormat_descValue"
+        style="@style/viewFormat_tableValueStyle"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
+        app:layout_constraintTop_toBottomOf="@+id/viewFormat_usedAtValue" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/viewFormat_detailsGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="
+            viewFormat_fileNameLabel,
+            viewFormat_fileNameValue,
+            viewFormat_regionLabel,
+            viewFormat_regionValue,
+            viewFormat_levelLabel,
+            viewFormat_levelValue,
+            viewFormat_usedAtLabel,
+            viewFormat_usedAtValue,
+            viewFormat_descLabel,
+            viewFormat_descValue"
+        tools:layout_editor_absoluteX="135dp"
+        tools:layout_editor_absoluteY="59dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

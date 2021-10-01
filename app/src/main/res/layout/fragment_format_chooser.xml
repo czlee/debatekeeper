@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2012 Chuan-Zheng Lee
+ *
+ * This file is part of the Debatekeeper app, which is licensed under the
+ * GNU General Public Licence version 3 (GPLv3).  You can redistribute
+ * and/or modify it under the terms of the GPLv3, and you must not use
+ * this file except in compliance with the GPLv3.
+ *
+ * This app is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public Licence for more details.
+ *
+ * You should have received a copy of the GNU General Public Licence
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/formatChooser_coordinator"
+    android:name="net.czlee.debatekeeper.FragmentChooserFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FormatChooserFragment" >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_formatChooser"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:navigationIcon="@drawable/ic_baseline_arrow_back_24"
+            app:navigationContentDescription="@string/nav_back"
+            android:elevation="4dp"
+            app:layout_constraintBottom_toTopOf="@+id/downloadBanner"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="@string/fragmentName_FormatChooser"
+            app:menu="@menu/format_chooser" />
+
+        <!-- Download banner -->
+
+        <View
+            android:id="@+id/downloadBanner"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@android:color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_formatChooser"
+            app:layout_constraintBottom_toBottomOf="@id/downloadBannerBarrier" />
+
+        <TextView
+            android:id="@+id/downloadBannerText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="@string/formatChooser_downloadBanner"
+            android:textSize="16sp"
+            android:textColor="@android:color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_formatChooser"
+            app:layout_constraintBottom_toTopOf="@id/formatChooser_stylesList"
+            app:layout_constraintEnd_toStartOf="@id/downloadBannerDismiss"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <Button
+            android:id="@+id/downloadBannerDismiss"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/formatChooser_downloadBanner_dismiss"
+            android:padding="12dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"
+            android:background="#00000000"
+            android:textColor="#ffbda400"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_formatChooser"
+            app:layout_constraintBottom_toTopOf="@id/formatChooser_stylesList"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/downloadBannerPointer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_triangle_up"
+            app:layout_constraintBottom_toTopOf="@id/downloadBanner"
+            app:layout_constraintEnd_toEndOf="@id/toolbar_formatChooser"
+            android:layout_marginRight="60dp"
+            android:layout_marginEnd="60dp"
+            android:contentDescription="@string/formatChoser_downloadBanner_pointerDescription" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/downloadBannerBarrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="downloadBannerText,downloadBannerDismiss" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/downloadBannerGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="
+                downloadBannerText,
+                downloadBannerDismiss,
+                downloadBanner,
+                downloadBannerPointer" />
+
+        <!-- Styles list -->
+
+        <ListView
+            android:id="@+id/formatChooser_stylesList"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:choiceMode="singleChoice"
+            android:overScrollMode="ifContentScrolls"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/downloadBanner"
+            tools:listitem="@layout/simple_list_item_single_choice" />
+
+        <TextView
+            android:id="@+id/formatChooser_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/formatChooser_ioError"
+            android:textSize="16sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/downloadBannerText" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

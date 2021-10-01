@@ -15,97 +15,107 @@
  * You should have received a copy of the GNU General Public Licence
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingBottom="7dip" >
+    android:layout_height="wrap_content">
 
-    <RelativeLayout
+
+    <ImageButton
+        android:id="@+id/viewFormat_showDetails_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-
-        <Button
-            android:id="@+id/viewFormat_showDetails_button"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginRight="10dip"
-            android:text="@string/viewFormat_showDetails_buttonText"
-            android:visibility="gone" />
-
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@id/viewFormat_showDetails_button"
-            android:shrinkColumns="1" >
-
-            <TableRow
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
-
-                <TextView
-                    style="@style/ViewFormat_TableLabel"
-                    android:paddingRight="@dimen/formatChooser_tableCellPadding"
-                    android:text="@string/viewFormat_regionLabel" />
-
-                <TextView
-                    android:id="@+id/viewFormat_tableCell_regionValue"
-                    style="@style/ViewFormat_TableValue" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
-
-                <TextView
-                    style="@style/ViewFormat_TableLabel"
-                    android:paddingRight="@dimen/formatChooser_tableCellPadding"
-                    android:text="@string/viewFormat_levelLabel" />
-
-                <TextView
-                    android:id="@+id/viewFormat_tableCell_levelValue"
-                    style="@style/ViewFormat_TableValue" />
-            </TableRow>
-        </TableLayout>
-    </RelativeLayout>
-
-    <TableLayout
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:shrinkColumns="1" >
+        android:contentDescription="@string/formatChooser_button_moreInfo"
+        android:tooltipText="@string/formatChooser_button_moreInfo"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_more_horiz_24" />
 
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+    <!-- Labels -->
 
-            <TextView
-                style="@style/ViewFormat_TableLabel"
-                android:paddingRight="@dimen/formatChooser_tableCellPadding"
-                android:text="@string/viewFormat_usedAtLabel" />
+    <TextView
+        android:id="@+id/viewFormat_regionLabel"
+        style="@style/viewFormat_tableLabelStyle"
+        android:text="@string/viewFormat_regionLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/viewFormat_tableCell_usedAtValue"
-                style="@style/ViewFormat_TableValue" />
-        </TableRow>
+    <TextView
+        android:id="@+id/viewFormat_levelLabel"
+        style="@style/viewFormat_tableLabelStyle"
+        android:text="@string/viewFormat_levelLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/viewFormat_levelValue" />
 
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+    <TextView
+        android:id="@+id/viewFormat_usedAtLabel"
+        style="@style/viewFormat_tableLabelStyle"
+        android:text="@string/viewFormat_usedAtLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewFormat_buttonBarrier" />
 
-            <TextView
-                style="@style/ViewFormat_TableLabel"
-                android:paddingRight="@dimen/formatChooser_tableCellPadding"
-                android:text="@string/viewFormat_descLabel" />
+    <TextView
+        android:id="@+id/viewFormat_descLabel"
+        style="@style/viewFormat_tableLabelStyle"
+        android:text="@string/viewFormat_descLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/viewFormat_descValue" />
 
-            <TextView
-                android:id="@+id/viewFormat_tableCell_descValue"
-                style="@style/ViewFormat_TableValue" />
-        </TableRow>
-    </TableLayout>
+    <!-- Barriers -->
 
-</LinearLayout>
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/viewFormat_buttonBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="viewFormat_levelValue,viewFormat_showDetails_button"
+        tools:layout_editor_absoluteX="141dp"
+        tools:layout_editor_absoluteY="43dp" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/viewFormat_labelBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="right"
+        app:constraint_referenced_ids="viewFormat_regionLabel,viewFormat_levelLabel,viewFormat_usedAtLabel,viewFormat_descLabel"
+        tools:layout_editor_absoluteX="195dp"
+        tools:layout_editor_absoluteY="28dp" />
+
+    <!-- Values -->
+
+    <TextView
+        android:id="@+id/viewFormat_regionValue"
+        style="@style/viewFormat_tableValueStyle"
+        app:layout_constraintEnd_toStartOf="@+id/viewFormat_showDetails_button"
+        app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/viewFormat_levelValue"
+        style="@style/viewFormat_tableValueStyle"
+        app:layout_constraintEnd_toStartOf="@+id/viewFormat_showDetails_button"
+        app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
+        app:layout_constraintTop_toBottomOf="@id/viewFormat_regionValue" />
+
+    <TextView
+        android:id="@+id/viewFormat_usedAtValue"
+        style="@style/viewFormat_tableValueStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
+        app:layout_constraintTop_toTopOf="@id/viewFormat_buttonBarrier" />
+
+    <TextView
+        android:id="@+id/viewFormat_descValue"
+        style="@style/viewFormat_tableValueStyle"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
+        app:layout_constraintTop_toBottomOf="@+id/viewFormat_usedAtValue" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
