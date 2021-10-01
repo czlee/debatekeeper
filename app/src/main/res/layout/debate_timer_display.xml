@@ -63,7 +63,7 @@
         app:layout_constraintBottom_toBottomOf="@id/timer_guidelineBottom"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="0.85"
+        app:layout_constraintWidth_percent="0.8"
         android:layout_marginHorizontal="@dimen/timer_currentTime_margin"
         tools:text="00:00"
         tools:ignore="SpUsage" />
