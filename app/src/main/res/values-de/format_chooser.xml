@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ioErrorDialog_title">Oh nein!</string>
+    <string name="ioErrorDialog_message">Konnte Dateien mit Debattierformaten nicht finden.</string>
+    <string name="ioErrorDialog_button">Zurück</string>
+
+    <string name="blankDetailsDialog_title">"Sorry!"</string>
+    <string name="blankDetailsDialog_text">"Es gibt ein Problem mit der XML-Datei für dieses Debattierformat (%1$s).\n\nMehr Details:\n%2$s"</string>
+
+    <string name="formatChooser_actionBar_confirm">Bestätigen</string>
+    <string name="formatChooser_actionBar_share">Teilen</string>
+
+    <string name="formatChooser_lookForCustomCheckbox_text">Benutzerdefinierte Formate verwenden (<a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">Mehr erfahren</a>)</string>
+    <string name="formatChooser_lookForCustom_errorNoReadPermission">Damit benutzerdefinierte Formate eingelesen werden können braucht Debatekeeper die Berechtigung Dateien auf deinem Gerät zu lesen.</string>
+    <string name="formatChooser_share_error_noFileSelected">Keine Datei ausgewählt.</string>
+    <string name="formatChooser_share_error_builtInFile">Eingebaute Formate können nicht geteilt werden.</string>
+    <string name="formatChooser_share_error_notFound">Datei %1$s nicht gefunden.</string>
+    <string name="formatChooser_share_error_generic">Es gab ein Fehler beim Teilen dieses Formats.</string>
+    <string name="formatChooser_share_chooserTitle">Debattierformat teilen mit…</string>
+
+    <string name="viewFormat_regionLabel">Region</string>
+    <string name="viewFormat_levelLabel">Niveau</string>
+    <string name="viewFormat_usedAtLabel">Verwendung</string>
+    <string name="viewFormat_descLabel">Beschreibung</string>
+    <string name="viewFormat_speechesLabel">Reden</string>
+    <string name="viewFormat_fileNameLabel">Dateiname</string>
+    <string name="viewFormat_fileLocationValue_userDefined">Benutzerdefinierte Datei</string>
+    <string name="viewFormat_outdatedSchemaVersion">Verwendet veraltetes Schema (Version %1$s)</string>
+    <string name="viewFormat_futureSchemaVersion">Schema nicht unterstützt (Version %1$s)</string>
+    <string name="viewFormat_invalidSchemaVersion">Ungültige Schema-Version \"%1$s\"</string>
+    <string name="viewFormat_prepTimeLabel">Vorbereitungszeit</string>
+    <string name="viewFormat_showDetails_buttonText">Mehr</string>
+
+    <string name="viewFormat_timeDescription_lengthInMinutesSeconds">%s lang</string>
+
+    <plurals name="viewFormat_timeDescription_lengthInMinutesOnly">
+        <item quantity="one">%d Minute</item>
+        <item quantity="other">%d Minuten</item>
+    </plurals>
+
+    <string name="viewFormat_timeDescription_controlledPrepSuffix">", kontrolliert"</string>
+
+    <plurals name="viewFormat_timeDescription_bellsList">
+        <item quantity="one">Klingel bei %s</item>
+        <item quantity="other">Klingeln bei %s</item>
+    </plurals>
+
+    <style name="ViewFormat_TableLabel">
+        <item name="android:paddingLeft">7dip</item>
+        <item name="android:layout_width">130dip</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+</resources>

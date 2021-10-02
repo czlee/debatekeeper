@@ -114,7 +114,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
         // If the schema is too new, just keep going, the file might still work
 
         // 1. <name> - mandatory, <short-name> - optional
-        String name = xu.findElementText(root, R.string.xml2elemName_name);
+        String name = xu.findLocalElementText(root, R.string.xml2elemName_name);
 
         if (name == null) {
             logXmlError(R.string.xml2error_root_noName);
@@ -123,7 +123,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
 
         df.setName(name); // do this even if there was an error with the name
 
-        String shortName = xu.findElementText(root, R.string.xml2elemName_shortName);
+        String shortName = xu.findLocalElementText(root, R.string.xml2elemName_shortName);
         if (shortName != null) df.setShortName(shortName);
 
         // 2. If there are <period-type>s in this format, deal with them first.  We'll need to
@@ -184,7 +184,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
         for (int i = 0; i < speechElements.getLength(); i++) {
 
             Element speechElement = (Element) speechElements.item(i);
-            String speechName = xu.findElementText(speechElement, R.string.xml2elemName_speech_name);
+            String speechName = xu.findLocalElementText(speechElement, R.string.xml2elemName_speech_name);
             String formatRef = xu.findAttributeText(speechElement, R.string.xml2attrName_speech_format);
 
             if (speechName == null) {

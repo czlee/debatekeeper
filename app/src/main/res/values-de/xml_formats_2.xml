@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="xmlError_rootNoSchemaVersion">"Dieses Debattierformat hat keine Schema-Version, es ist deshalb unmöglich zu sagen ob ein Update zu Verwendung nötig ist!\n"</string>
+    <string name="xmlError_rootNewSchemaVersion">"Nur Schema-Versionen bis %2$s werden unterstützt (diese Datei nutzt Version %1$s); dass bedeutet dass du womöglich die App aktualisieren musst.\n"</string>
+    <string name="xmlError_rootInvalidSchemaVersion">"Ungültige Schema-Version: '%1$s'"</string>
+    <string name="xml2error_root_noName">"Für dieses Debattierformat wurde kein Name angegeben"</string>
+    <string name="xml2error_periodType_ref_null">"Kein 'ref' für eine period-type spezifiziert"</string>
+    <string name="xml2error_periodType_ref_blank">"Das 'ref' für period-types darf nicht leer sein"</string>
+    <string name="xml2error_periodType_name_null">"Für period-type '%1$s' "</string>
+    <string name="xml2error_periodType_name_blank">"Der 'name' für period-type '%1$s' darf nicht leer sein"</string>
+    <string name="xml2Error_periodType_defaultBgColor_invalid">"Ungültige default-bgcolor für period-type '%2$s' spezifiziert: '%1$s'"</string>
+    <string name="xml2Error_periodType_poisAllowed_invalid">"Ungültiges pois-allowed für period-type '%2$s' spezifiziert: '%1$s' (muss 'true' oder 'false' sein)"</string>
+    <string name="xml2error_prepTime_multiple">"Sowohl prep-time wie auch prep-time-controlled gefunden"</string>
+    <string name="xml2error_prepTimeSimple_length_null">"Die prep-time hat kein length"</string>
+    <string name="xml2error_prepTimeSimple_length_invalid">"Ungültige Zeit für length von prep-time: '%1$s'"</string>
+    <string name="xml2error_prepTimeControlled_length_null">"Die prep-time-controlled hat kein length"</string>
+    <string name="xml2error_prepTimeControlled_length_invalid">"Ungültige Zeit für length von prep-time-controlled: '%1$s'"</string>
+    <string name="xml2error_speechFormat_ref_null">"Kein 'ref' für speech-type spezifiziert"</string>
+    <string name="xml2error_speechFormat_ref_blank">"Das 'ref' für speech-types darf nicht leer sein"</string>
+    <string name="xml2error_speechFormat_length_null">"Kein length für speech-type '%1$s' spezifiziert"</string>
+    <string name="xml2error_speechFormat_length_invalid">"Ungültige Zeit für length von speech-type '%2$s': '%1$s'"</string>
+    <string name="xml2error_speech_name_null">"Ein speech hat kein name spezifiziert"</string>
+    <string name="xml2error_speech_format_null">"Kein type für speech '%1$s' spezifiziert"</string>
+    <string name="xml2error_bell_time_null">"Kein name für bell in %2$s spezifiziert."</string>
+    <string name="xml2error_bell_time_invalid">"Ungültige Zeit für ein bell in %2$s: '%1$s'"</string>
+    <string name="xml2error_bell_number_invalid">"Ungültige Anzahl an bells bei %3$s in %2$s: '%1$s'"</string>
+    <string name="xml2error_bell_pauseOnBell_invalid">"Ungültiger pause-on-bell-Wert für bell bei %3$s in %2$s: '%1$s'"</string>
+
+    <string name="dfb2error_periodInfo_builtInDuplicate">"Der period-type '%1$s' ist ein eingebauter period-type; du kannst ihn nicht verwenden"</string>
+    <string name="dfb2error_periodInfo_duplicate">"Der period-type '%1$s' wurde mehr als einmal spezifiziert"</string>
+    <string name="dfb2error_periodInfo_notFound">"Es gibt kein period-type mit ref '%1$s'"</string>
+    <string name="dfb2error_addSpeech_speechFormatNotFound">"Es gibt kein speech-type mit ref '%1$s' (%2$s)"</string>
+    <string name="dfb2error_speechFormat_duplicate">"Der speech-type '%1$s' wurde mehr als einmal spezifiziert"</string>
+    <string name="dfb2error_bell_afterFinishTime">"Das bell bei %1$s in %2$s ist hinter dem Ende"</string>
+</resources>

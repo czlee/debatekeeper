@@ -24,6 +24,9 @@ import net.czlee.debatekeeper.R;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  * Provides convenience functions for dealing with XML files.
  *
@@ -37,9 +40,11 @@ import org.w3c.dom.NodeList;
 public class XmlUtilities {
 
     private final Resources mResources;
+    private final LanguageChooser mLangChooser;
 
     XmlUtilities(Resources resources) {
         mResources = resources;
+        mLangChooser = new LanguageChooser();
     }
 
     //******************************************************************************************
@@ -98,6 +103,38 @@ public class XmlUtilities {
         element = findElement(element, tagNameResId);
         if (element == null) return null;
         else return element.getTextContent();
+    }
+
+    /**
+     * Convenience function.  Finds the text of the element of the name given by a resource ID.
+     * Supports multiple elements with the same name but different "lang" attributes and selects
+     * the most appropriate variant.
+     * @param element an {@link Element}
+     * @param tagNameResId a resource ID referring to a string
+     * @return the String if found, or <code>null</code> if no such element is found.
+     */
+    String findLocalElementText(Element element, int tagNameResId) {
+        String langAttrName = getString(R.string.xml2attrName_language);
+        HashMap<String, Element> langToCandidate = new HashMap<String, Element>();
+        NodeList candidates = element.getElementsByTagName(getString(tagNameResId));
+        if (candidates.getLength() == 0) return null;
+        ArrayList<String> allLang = new ArrayList<String>();
+        // Iterate over candidates
+        for (int i = 0; i < candidates.getLength(); i++) {
+            Element candidate = (Element)candidates.item(i);
+            // Store 'lang' attribute
+            String langAttr = candidate.getAttribute(langAttrName);
+            if (langAttr.isEmpty()) langAttr = "en-US"; // TODO?: Require attribute for schema 2.2?
+            if (langToCandidate.containsKey(langAttr)) continue;
+            langToCandidate.put(langAttr, candidate);
+            allLang.add(langAttr);
+        }
+        // Find first matching locale
+        String bestLang = mLangChooser.choose(allLang.toArray(new String[0]));
+        // Map back to the matching element
+        Element bestElement = langToCandidate.get(bestLang);
+
+        return bestElement.getTextContent();
     }
 
     /**
