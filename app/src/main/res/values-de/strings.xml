@@ -73,4 +73,5 @@
     <string name="changelogDialog_title">Was ist neu in version %1$s</string>
     <string name="changelogDialog_dontShow">Nicht noch einmal zeigen</string>
     <string name="changelogDialog_ok">Okay, weiter gehts!</string>
+    <string name="intentFilter_importStyle">Debatekeeper</string>
 </resources>

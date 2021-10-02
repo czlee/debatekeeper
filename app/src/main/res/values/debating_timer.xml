@@ -122,7 +122,7 @@
     <string name="formerAssetsError_filename">File: %1$s</string>
     <string name="formerAssetsError_message">Debatekeeper is changing! Debate formats are now provided for download,
     rather than included with the app like they were previously.</string>
-    <string name="formerAssetsError_suffix">Please go to the downloads section to download this format.</string>
+    <string name="formerAssetsError_suffix">Please go to the downloads section to download this style.</string>
     <string name="formerAssetsError_button">Go to downloads</string>
 
     <!-- Dialogs -->
