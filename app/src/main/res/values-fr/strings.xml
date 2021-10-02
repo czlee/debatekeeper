@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="activityName_GlobalSettings">Paramètres</string>
+    <string name="fragmentName_GlobalSettings">Paramètres</string>
     <string name="blankDetailsDialog_text">"Il y a une problème dans le fichier XML de ce format de débat (%1$s).\n\nPlus de détails :\n%2$s"</string>
     <string name="prefCategory_bells_title">Cloches</string>
     <string name="prefCategory_general_title">Général</string>
@@ -13,46 +13,45 @@
     <string name="pref_prepTimer_enable_onSummary">Utiliser le chronomètre de préparation</string>
     <string name="pref_prepTimer_enable_title">Activer le chronomètre de prép</string>
     <string name="pref_ringBells_title">Faire sonner les cloches</string>
-    <string name="activityName_PrepTimeBellsEdit">Cloches de la chronomètre de préparation</string>
-    <string name="activityName_FormatChooser">Choisir style</string>
-    <plurals name="mainScreen_bellsList_normal">
+    <string name="fragmentName_PrepTimeBellsEdit">Cloches de la chronomètre de préparation</string>
+    <string name="fragmentName_FormatChooser">Choisir style</string>
+    <plurals name="timer_bellsList_normal">
         <item quantity="one">"; cloche à %1$s"</item>
         <item quantity="other">"; cloches à %1$s"</item>
     </plurals>
-    <plurals name="mainScreen_timeInMinutes">
+    <plurals name="timer_timeInMinutes">
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>
     </plurals>
-    <string name="mainScreen_bellsList_nextOvertimeBell">"; prochaine cloche du temps excédantaire à %1$s"</string>
-    <string name="mainScreen_bellsList_noBells">"; pas de cloches"</string>
-    <string name="mainScreen_bellsList_noOvertimeBells">"; pas de cloches du temps excédantaire"</string>
-    <string name="mainScreen_controlButton_chooseStyle_text">Choisir style</string>
-    <string name="mainScreen_controlButton_nextPhase_text">Suivant</string>
-    <string name="mainScreen_controlButton_resetTimer_text">Réinit.</string>
-    <string name="mainScreen_controlButton_resumeTimer_text">Reprendre</string>
-    <string name="mainScreen_controlButton_startTimer_text">Démarrer</string>
-    <string name="mainScreen_controlButton_stopTimer_text">Arrêter</string>
-    <string name="mainScreen_menuItem_chooseFormat">Styles de débat</string>
-    <string name="mainScreen_menuItem_resetDebate">Réinitialiser le débat</string>
-    <string name="mainScreen_menuItem_settings">Paramètres</string>
-    <string name="mainScreen_noDebateLoaded_text">Aucun débat chargé</string>
-    <string name="mainScreen_playBell_buttonText">Cloche</string>
-    <string name="mainScreen_poiTimer_buttonText">POI</string>
-    <string name="mainScreen_snackbar_editTextDiscardChangesInfo_limitedAbove">Pour rejeter vos changements, appuyez le bouton de retour. (Vous ne pouvez pas régler la chronomètre pour un temps plus de 23:59.)</string>
-    <string name="mainScreen_snackbar_editTextDiscardChangesInfo_limitedBelow">Pour rejeter vos changements, appuyez le bouton de retour. (Vous ne pouvez pas régler la chronomètre pour un temps excédantaire.)</string>
-    <string name="mainScreen_snackbar_resetDebate">Toutes les chronomètres sont réinitialisées</string>
-    <string name="mainScreen_pauseOnBellIndicator">" (pause)"</string>
-    <string name="mainScreen_prepTimeLength">%s permis</string>
+    <string name="timer_bellsList_nextOvertimeBell">"; prochaine cloche du temps excédantaire à %1$s"</string>
+    <string name="timer_bellsList_noBells">"; pas de cloches"</string>
+    <string name="timer_bellsList_noOvertimeBells">"; pas de cloches du temps excédantaire"</string>
+    <string name="timer_controlButton_chooseStyle_text">Choisir style</string>
+    <string name="timer_controlButton_nextPhase_text">Suivant</string>
+    <string name="timer_controlButton_resetTimer_text">Réinit.</string>
+    <string name="timer_controlButton_resumeTimer_text">Reprendre</string>
+    <string name="timer_controlButton_startTimer_text">Démarrer</string>
+    <string name="timer_controlButton_stopTimer_text">Arrêter</string>
+    <string name="timer_menuItem_chooseFormat">Styles de débat</string>
+    <string name="timer_menuItem_resetDebate">Réinitialiser le débat</string>
+    <string name="timer_menuItem_settings">Paramètres</string>
+    <string name="timer_noDebateLoaded_text">Aucun débat chargé</string>
+    <string name="timer_playBell_buttonText">Cloche</string>
+    <string name="timer_poiTimer_buttonText">POI</string>
+    <string name="timer_snackbar_editTextDiscardChangesInfo_limitedAbove">Pour rejeter vos changements, appuyez le bouton de retour. (Vous ne pouvez pas régler la chronomètre pour un temps plus de 23:59.)</string>
+    <string name="timer_snackbar_editTextDiscardChangesInfo_limitedBelow">Pour rejeter vos changements, appuyez le bouton de retour. (Vous ne pouvez pas régler la chronomètre pour un temps excédantaire.)</string>
+    <string name="timer_snackbar_resetDebate">Toutes les chronomètres sont réinitialisées</string>
+    <string name="timer_pauseOnBellIndicator">" (pause)"</string>
+    <string name="timer_prepTimeLength">%s permis</string>
     <string name="prepTime_title">Temps de préparation</string>
-    <string name="mainScreen_prepTimeControlledIndicator">", dirigé"</string>
-    <string name="mainScreen_silentBellIndicator">" (silencieux)"</string>
-    <string name="mainScreen_speechLength">dure %s</string>
+    <string name="timer_prepTimeControlledIndicator">", dirigé"</string>
+    <string name="timer_silentBellIndicator">" (silencieux)"</string>
+    <string name="timer_speechLength">dure %s</string>
     <string name="blankDetailsDialog_title">"Désolé !"</string>
     <string name="changelogDialog_dontShow">Ne plus afficher ce message</string>
     <string name="changelogDialog_ok">D\'accord, continuons !</string>
     <string name="changelogDialog_title">De nouveau dans version %1$s</string>
-    <string name="ioErrorDialog_button">Retourner</string>
-    <string name="fatalProblemWithXmlFileDialog_button">Choisir style</string>
+    <string name="debateLoadErrorScreen_button">Choisir style</string>
     <string name="viewFormat_descLabel">Description</string>
     <string name="viewFormat_fileLocationValue_userDefined">Fichier d\'utilisateur</string>
     <string name="viewFormat_fileNameLabel">Nom de fichier</string>
@@ -66,8 +65,6 @@
     <string name="viewFormat_speechesLabel">Discours</string>
     <string name="viewFormat_timeDescription_controlledPrepSuffix">, dirigé</string>
     <string name="viewFormat_timeDescription_lengthInMinutesSeconds">dure %s</string>
-    <string name="formatChooser_lookForCustom_errorNoReadPermission">Pour que les formats d\'utilisateur puisse être lus, vous devez permettre Debatekeeper de lire les fichiers sur votre appareil.</string>
-    <string name="formatChooser_lookForCustomCheckbox_text">Rechercher des formats d\'utilisateur (<a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">En savoir plus</a>)</string>
     <plurals name="viewFormat_timeDescription_lengthInMinutesOnly">
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>
@@ -81,7 +78,7 @@
     <string name="schemaTooNewDialog_message"><![CDATA[Ce fichier de style de débat utilise un schema (%1$s) plus nouveau que ce que cette version de l\'application (%3$s) permet (%2$s). Rechercher les mises à jour sur Google Play ?]]></string>
     <string name="schemaTooNewDialog_button_upgrade">Rechercher les mises à jour</string>
     <string name="schemaTooNewDialog_button_ignore">Ignorer</string>
-    <string name="ioErrorDialog_message">Je ne peux pas trouver les fichiers des styles de débat.</string>
+    <string name="formatChooser_ioError">Une erreur s\'est produite lors de la lecture des fichiers des styles de débat.</string>
     <string name="pref_firstOvertimeBell_dialogMessage">Le temps après le fin, en secondes, de la première cloche du temps excédantaire:</string>
     <string name="pref_firstOvertimeBell_summary">Faire sonner la première cloche du temps excédantaire après %s secondes…</string>
     <string name="pref_firstOvertimeBell_title">Première cloche du temps excédentaire</string>
@@ -102,8 +99,6 @@
     <string name="pref_prepTimer_bells_title">Cloches de chronomètre de prép</string>
     <string name="pref_poiTimer_vibrateEnable_onSummary">Faire vibrer quand le temps d\'un POI expire</string>
     <string name="pref_poiTimer_vibrateEnable_offSummary">Ne pas faire vibrer pour les POIs</string>
-    <string name="pref_poiTimer_learnMore_title">En savoir plus</string>
-    <string name="pref_poiTimer_learnMore_summary">En apprendre davantage de la chronomètre des POIs (lancera navigateur web, en anglais)</string>
     <string name="pref_keepScreenOn_title">Désactivation de la mise en veille</string>
     <string name="pref_overtimeBellPeriod_dialogMessage"><![CDATA[Le temps entre les cloches du temps excédantaire (après la première) en seconds :]]></string>
     <string name="pref_overtimeBellPeriod_summary">…et puis toutes les %s secondes ensuite</string>
@@ -120,8 +115,6 @@
     <string name="pref_poiTimer_flashScreenMode_dialogTitle">Faire clignoter l\'écran pour les POIs</string>
     <string name="pref_prepTimer_keepScreenOn_onSummary">Désactivate la mise en veille de l\'écran pendant le temps de préparation</string>
     <string name="pref_countDirection_title">Direction à compter</string>
-    <string name="ioErrorDialog_title"><![CDATA[Oh non !]]></string>
-    <string name="fatalProblemWithXmlFileDialog_title"><![CDATA[Oh non !]]></string>
     <string name="prepTimeBellsEditor_addBellDialog_confirmButton">Ajouter</string>
     <string name="prepTimeBellsEditor_addBellDialog_title">Ajouter une cloche</string>
     <string name="prepTimeBellsEditor_addBell_buttonText">Ajouter</string>
@@ -142,17 +135,11 @@
     <string name="dfb2error_periodInfo_duplicate">Le type de période (period-type) \'%1$s\' est spécifié plus d\'une fois</string>
     <string name="dfb2error_periodInfo_notFound">Le fichier ne contient pas de type de période (period-type) de la référence \'%1$s\'</string>
     <string name="dfb2error_speechFormat_duplicate">Le type de discours (speech-type) \'%1$s\' est spécifié plus d\'une fois</string>
-    <string name="errorsinXmlFileDialog_title">Avertissement</string>
-    <string name="errorsinXmlFileDialog_message_prefix">"Ce fichier de format de débat pose des problèmes. J\'essayerai de le faire marcher, mais ça ne fonctionnera probablement pas. Les problèmes sont comme suit :\n"</string>
-    <string name="errorsinXmlFileDialog_button">OK</string>
-    <string name="fatalProblemWithXmlFileDialog_message_badXml">"Il y a un problème avec le XML dans ce fichier de format de débat. L\'erreur est comme suit :\n\n%1$s\n"</string>
-    <string name="fatalProblemWithXmlFileDialog_message_cannotFind">J\'ai rencontré une problème en ouvrant ce fichier de format de débat. Si c\'est un format d\'utilisateur, c\'est peut-être parce que l\'autorisation de stockage est désactivée.</string>
-    <string name="fatalProblemWithXmlFileDialog_message_cannotRead">J\'ai rencontré une problème en ouvrant ce fichier de format de débat. Si c\'est un format d\'utilisateur, c\'est peut-être parce que l\'autorisation de stockage est désactivée.</string>
-    <string name="fatalProblemWithXmlFileDialog_message_noSpeeches">Il n\'y a aucun discours dans ce fichier de format de débat. (C\'est peut-être parce que le fichier n\'est pas pris en charge ou n\'est pas bien formé.)</string>
-    <string name="fatalProblemWithXmlFileDialog_message_suffix">"\nVeuillez choisir un autre style."</string>
-    <string name="fatalProblemWithXmlFileDialog_noSchemaVersion_suffix">"Aucune version de schema est spécifiée; veuillez demander de l\'auteur de ce fichier XML à spécifier une.\n"</string>
-    <string name="fatalProblemWithXmlFileDialog_schemaTooNew_suffix">"Cette version de schema (%1$s) n'est pas prise en charge. Vous devrez peut-être metter à jour cette application.\n"</string>
-    <string name="dialogs_fileName_suffix">\n\n[Fichier : %1$s]</string>
+    <string name="debateLoadError_badXml">"Il y a un problème avec le XML dans ce fichier de format de débat. L\'erreur est comme suit :\n\n%1$s\n"</string>
+    <string name="debateLoadError_cannotFind">J\'ai rencontré une problème en ouvrant ce fichier de format de débat. Si c\'est un format d\'utilisateur, c\'est peut-être parce que l\'autorisation de stockage est désactivée.</string>
+    <string name="debateLoadError_cannotRead">J\'ai rencontré une problème en ouvrant ce fichier de format de débat. Si c\'est un format d\'utilisateur, c\'est peut-être parce que l\'autorisation de stockage est désactivée.</string>
+    <string name="debateLoadError_noSpeeches">Il n\'y a aucun discours dans ce fichier de format de débat. (C\'est peut-être parce que le fichier n\'est pas pris en charge ou n\'est pas bien formé.)</string>
+    <string name="debateLoadError_suffix">"\nVeuillez choisir un autre style."</string>
     <string name="xml2Error_periodType_defaultBgColor_invalid">L\'attribut « default-bgcolor » du type de période (period-type) « %2$s » est non valable : « %1$s »</string>
     <string name="xml2Error_periodType_poisAllowed_invalid">L\'attribut « pois-allowed » du type de période (period-type) « %2$s » est non valable : « %1$s » (ça doit être \'true\' ou \'false\')</string>
     <string name="xml2error_bell_number_invalid">Le nombre de cloches à %3$s dans %2$s est non valable : « %1$s »</string>
@@ -163,9 +150,9 @@
     <string name="xml2error_periodType_name_null">Aucun nom (name) n\'est spécifié pour le type de période (period-type) « %1$s »</string>
     <string name="xml2error_periodType_ref_blank">L\'attribut \'ref\' pour les types de période (period-type) ne doit pas être vide</string>
     <string name="xml2error_periodType_ref_null">Aucune référence (ref) n\'est spécifiée pour un type de période (period-type)</string>
-    <string name="xml2error_prepTimeControlled_length_invalid">Le durée (length) du temps dirigé de préparation (prep-time-controlled) est un temps non valable : \'%1$s\'</string>
+    <string name="xml2error_prepTimeControlled_length_invalid">La durée (length) du temps dirigé de préparation (prep-time-controlled) est un temps non valable : \'%1$s\'</string>
     <string name="xml2error_prepTimeControlled_length_null">Le temps dirigé de préparation (prep-time-controlled) n\'a pas de durée (length)</string>
-    <string name="xml2error_prepTimeSimple_length_invalid">Le durée (length) du temps de préparation (prep-time) est un temps non valable : « %1$s »</string>
+    <string name="xml2error_prepTimeSimple_length_invalid">La durée (length) du temps de préparation (prep-time) est un temps non valable : « %1$s »</string>
     <string name="xml2error_prepTimeSimple_length_null">Le temps de préparation (prep-time) n\'a pas de durée (length)</string>
     <string name="xml2error_prepTime_multiple">Un temps de préparation (prep-time) et un temps dirigé de préparation (prep-time-controlled) sont tous deux trouvés.</string>
     <string name="xml2error_root_noName">Aucun nom (name) n\'est spécifié pour ce format de débat</string>
@@ -178,37 +165,34 @@
     <string name="xmlError_rootInvalidSchemaVersion">La version du schema est non valable : « %1$s »</string>
     <string name="xmlError_rootNewSchemaVersion">"Seulement les versions du schema jusqu'à %2$s sont prises en charge (ce fichier utilise version %1$s); ça signifie peut-être que vous avez besoin de mettre à jour l'application."</string>
     <string name="xmlError_rootNoSchemaVersion">Ce format de débat n\'a pas de version de schema, donc il est impossible de savoir si vous avez besoin de mettre à jour pour que l\'application puisse prendre en charge ce fichier !</string>
-    <string name="mainScreen_overtimeFormat">+%1$s</string>
+    <string name="timer_overtimeFormat">+%1$s</string>
     <string name="prepTimeBellDescription_proportional">à %1$s%% du temp de prép</string>
-    <string name="mainScreen_menuItem_ringBells">Faire sonner les cloches</string>
+    <string name="timer_menuItem_ringBells">Faire sonner les cloches</string>
     <string name="changelogDialog_message">
           • Nouvelle icône (grâce à Zandi Speedy-Willis) et thème mise à jour
         \n• Partagez les formats de débat d\'utilisateur, y compris avec Android Beam (sur les appareils pris en charge)
         \n• Accès rapide pour activer ou désactiver les cloches
         \n• Autres améliorations à l\'interface utilisateur
     </string>
-    <string name="schemaOutdatedDialog_button_learnMore">En savoir plus</string>
-    <string name="schemaOutdatedDialog_button_ok">OK</string>
-    <string name="schemaOutdatedDialog_message">Ce fichier de format de débat utilise la version de schema 1.0, qui n\'est plus prise en charge. Veuillez convertir ce fichier en version de schema 2.1.</string>
-    <string name="schemaOutdatedDialog_title">Fichier n\'est plus pris en charge</string>
-    <string name="formatChooser_actionBar_share">Partager</string>
+    <string name="debateLoadError_schemaOutdated">Ce fichier de format de débat utilise la version de schema 1.0, qui n\'est plus prise en charge.
+        Veuillez convertir ce fichier en version de schema 2.2.
+        &lt;a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">En savoir plus.&lt;/a>
+    </string>
+    <string name="formatChooser_button_share">Partager</string>
     <string name="formatChooser_actionBar_confirm">Confirmer</string>
     <string name="formatChooser_share_chooserTitle">Partager ce format de débat avec…</string>
-    <string name="formatChooser_share_error_builtInFile">Vous ne pouvez pas partager les formats intégrés.</string>
     <string name="formatChooser_share_error_generic">Une erreur s\'est produite lors du partage de ce fichier.</string>
     <string name="formatChooser_share_error_noFileSelected">Aucun fichier selectionné.</string>
     <string name="formatChooser_share_error_notFound">Le fichier %1$s est introuvable.</string>
-    <string name="importDebateFormat_dialog_addendum_overrideBuiltIn">Cette action rédefinira la style intégrée et existante %1$s.</string>
     <string name="importDebateFormat_dialog_button_no">Annuler</string>
     <string name="importDebateFormat_dialog_button_yes">Importer</string>
     <string name="importDebateFormat_dialog_message_question">Voulez-vous importer le fichier de format de débat %1$s, qui décrit la style %2$s ?</string>
     <string name="importDebateFormat_dialog_title">Importer style de débat ?</string>
     <string name="importDebateFormat_snackbar_error_generic">Une erreur s\'est produite lors de l\'ouverture de ce fichier.</string>
-    <string name="importDebateFormat_snackbar_error_noWritePermission">Vous devez permettre Debatekeeper d\'écrire des fichiers sur votre appareil pour qu\'un format puisse être importé.</string>
     <string name="importDebateFormat_snackbar_success">Importé le fichier %1$s avec succès</string>
     <string name="intentFilter_importStyle">Debatekeeper</string>
-    <string name="mainScreen_snackbar_beamNonExternalFile">Vous ne pouvez pas utiliser Android Beam pour partager les styles intégrées.</string>
-    <string name="mainScreen_snackbar_beam_error_generic">Une erreur s\'est produite lors de l\'envoi de ce fichier de format de débat.</string>
+    <string name="timer_snackbar_beamNonExternalFile">Vous ne pouvez pas utiliser Android Beam pour partager les styles intégrées.</string>
+    <string name="timer_snackbar_beam_error_generic">Une erreur s\'est produite lors de l\'envoi de ce fichier de format de débat.</string>
     <string name="importDebateFormat_dialog_addendum_overwriteExistingDifferentName">Cette action écrasera la style existante d\'utilisateur « %1$s », parce que le fichier qui la décrit a le même nom. Si vous ne voulez pas perdre %1$s, annulez, et puis réimportez avec un nom différent.</string>
     <string name="importDebateFormat_dialog_addendum_overwriteExistingSameName">Cette action écrasera la style existant « %1$s ».</string>
     <string name="importDebateFormat_placeholder_unknownStyleName">(indéterminé)</string>

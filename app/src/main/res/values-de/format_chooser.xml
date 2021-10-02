@@ -1,19 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="ioErrorDialog_title">Oh nein!</string>
-    <string name="ioErrorDialog_message">Konnte Dateien mit Debattierformaten nicht finden.</string>
-    <string name="ioErrorDialog_button">Zurück</string>
+    <string name="formatChooser_ioError">Konnte Dateien mit Debattierformaten nicht finden.</string>
 
     <string name="blankDetailsDialog_title">"Sorry!"</string>
     <string name="blankDetailsDialog_text">"Es gibt ein Problem mit der XML-Datei für dieses Debattierformat (%1$s).\n\nMehr Details:\n%2$s"</string>
 
     <string name="formatChooser_actionBar_confirm">Bestätigen</string>
-    <string name="formatChooser_actionBar_share">Teilen</string>
+    <string name="formatChooser_button_share">Teilen</string>
 
-    <string name="formatChooser_lookForCustomCheckbox_text">Benutzerdefinierte Formate verwenden (<a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">Mehr erfahren</a>)</string>
-    <string name="formatChooser_lookForCustom_errorNoReadPermission">Damit benutzerdefinierte Formate eingelesen werden können braucht Debatekeeper die Berechtigung Dateien auf deinem Gerät zu lesen.</string>
     <string name="formatChooser_share_error_noFileSelected">Keine Datei ausgewählt.</string>
-    <string name="formatChooser_share_error_builtInFile">Eingebaute Formate können nicht geteilt werden.</string>
     <string name="formatChooser_share_error_notFound">Datei %1$s nicht gefunden.</string>
     <string name="formatChooser_share_error_generic">Es gab ein Fehler beim Teilen dieses Formats.</string>
     <string name="formatChooser_share_chooserTitle">Debattierformat teilen mit…</string>

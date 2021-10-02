@@ -81,6 +81,4 @@
         <item>Stroboskopleuchten wenn POI-Timer abläuft</item>
         <item>Kurz weiß aufleuchten wenn POI-Timer abläuft</item>
     </string-array>
-    <string name="pref_poiTimer_learnMore_title">Mehr erfahren</string>
-    <string name="pref_poiTimer_learnMore_summary">Mehr über POI-Timer erfahren (Öffnet Web-Browser)</string>
 </resources>
