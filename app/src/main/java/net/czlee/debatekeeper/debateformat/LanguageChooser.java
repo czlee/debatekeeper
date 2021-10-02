@@ -1,6 +1,6 @@
 package net.czlee.debatekeeper.debateformat;
 
-import android.support.v4.os.LocaleListCompat;
+import androidx.core.os.LocaleListCompat;
 
 import com.ibm.icu.util.LocaleMatcher;
 import com.ibm.icu.util.LocalePriorityList;

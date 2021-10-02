@@ -247,8 +247,9 @@ public class FormatChooserFragment extends Fragment {
                 populateFileInfo(binding, filename, schemaVersion);
                 populateBasicInfo(binding, dfi);
                 populatePrepTimeInfo(binding, dfi);
+                ArrayList<String[]> speechDescriptions = dfi.getSpeechFormatDescriptions();
                 populateTwoColumnTable(binding.viewFormatTableSpeechTypes, R.layout.speech_type_row, dfi.getSpeechFormatDescriptions());
-                populateTwoColumnTable(binding.viewFormatTableSpeeches, R.layout.speech_row, dfi.getSpeeches());
+                populateTwoColumnTable(binding.viewFormatTableSpeeches, R.layout.speech_row, dfi.getSpeeches(speechDescriptions));
                 binding.viewFormatTitle.setText(dfi.getName());
             }
             builder.setCancelable(true);

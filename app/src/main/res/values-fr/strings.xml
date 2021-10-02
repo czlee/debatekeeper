@@ -176,7 +176,7 @@
     <string name="xml2error_speech_format_null">Aucun type est spécifiée pour le discours (speech) « %1$s »</string>
     <string name="xml2error_speech_name_null">Pour un discours, aucun nom n\'est pas spécifié</string>
     <string name="xmlError_rootInvalidSchemaVersion">La version du schema est non valable : « %1$s »</string>
-    <string name="xmlError_rootNewSchemaVersion">Seulement les versions du schema jusqu'à %2$s sont prises en charge (ce fichier utilise version %1$s); ça signifie peut-être que vous avez besoin de mettre à jour l'application.</string>
+    <string name="xmlError_rootNewSchemaVersion">"Seulement les versions du schema jusqu'à %2$s sont prises en charge (ce fichier utilise version %1$s); ça signifie peut-être que vous avez besoin de mettre à jour l'application."</string>
     <string name="xmlError_rootNoSchemaVersion">Ce format de débat n\'a pas de version de schema, donc il est impossible de savoir si vous avez besoin de mettre à jour pour que l\'application puisse prendre en charge ce fichier !</string>
     <string name="mainScreen_overtimeFormat">+%1$s</string>
     <string name="prepTimeBellDescription_proportional">à %1$s%% du temp de prép</string>

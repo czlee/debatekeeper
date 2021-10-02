@@ -60,7 +60,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
     private final boolean mLangSupported;
 
     private static final String MINIMUM_SCHEMA_VERSION = "2.0";
-    private static final String LANG_SCHEMA_VERSION = "2.2";
+    private static final String LANG_SCHEMA_VERSION = "2.3";
     private static final String MAXIMUM_SCHEMA_VERSION = "2.2";
 
     public DebateFormatInfoForSchema2(Context context, InputStream is) {

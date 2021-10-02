@@ -68,22 +68,22 @@ public class DebateFormatFieldExtractor {
 
     /**
      * This class just looks for first &lt;name&gt; element and saves its contents to
-     * <code>mCurrentStyleName</code>.
+     * <code>mFieldValue</code>.
      */
     private class GetDebateFormatNameXmlContentHandler extends DefaultHandler {
 
-        private StringBuilder mNameBuffer = null;
+        private StringBuilder mFieldValueBuffer = null;
         private String mCurrentLang = null;
         private int mLevel = 0;
         private ArrayList<String> mLanguages;
         /// Names, keyed by language
-        private HashMap<String, String> mNames;
+        private HashMap<String, String> mCandidates;
 
         @Override
         public void characters(char[] ch, int start, int length) {
-            if (mNameBuffer == null) return;
+            if (mFieldValueBuffer == null) return;
             String str = new String(ch, start, length);
-            mNameBuffer = mNameBuffer.append(str);
+            mFieldValueBuffer = mFieldValueBuffer.append(str);
         }
 
         @Override
@@ -92,18 +92,18 @@ public class DebateFormatFieldExtractor {
             // Choose appropriate name language
             String bestLang = languageChooser.choose(mLanguages.toArray(new String[0]));
             // Map back to the matching name
-            mCurrentStyleName = mNames.get(bestLang);
+            mFieldValue = mCandidates.get(bestLang);
             throw new AllInformationFoundException();
         }
 
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
-            if (mNameBuffer != null) {
-                if(!mNames.containsKey(mCurrentLang)) {
+            if (mFieldValueBuffer != null) {
+                if(!mCandidates.containsKey(mCurrentLang)) {
                     mLanguages.add(mCurrentLang);
-                    mNames.put(mCurrentLang, mNameBuffer.toString());
+                    mCandidates.put(mCurrentLang, mFieldValueBuffer.toString());
                 }
-                mNameBuffer = null;
+                mFieldValueBuffer = null;
             }
             --mLevel;
             // TODO: Find a way to exit as soon as relevant information is found
@@ -118,7 +118,7 @@ public class DebateFormatFieldExtractor {
         public void startDocument() {
             // initialise
             mFieldValue = null;
-            mNames = new HashMap<String, String>();
+            mCandidates = new HashMap<String, String>();
             mLanguages = new ArrayList<String>();
         }
 
@@ -141,7 +141,7 @@ public class DebateFormatFieldExtractor {
 
             if ((mLevel == 1) // Look for <name> elements below root
                 && localName.equals(mFieldName)) {
-                mNameBuffer = new StringBuilder();
+                mFieldValueBuffer = new StringBuilder();
                 mCurrentLang = atts.getValue(mResources.getString(R.string.xml2attrName_language));
                 if ((mCurrentLang == null) || mCurrentLang.isEmpty()) mCurrentLang = "en-US";
             }
