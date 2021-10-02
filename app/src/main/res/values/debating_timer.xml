@@ -61,6 +61,8 @@
     <string name="timer_pauseOnBellIndicator">" (pause)"</string>
     <string name="timer_silentBellIndicator">" (silent)"</string>
 
+    <string name="timer_schemaTooNewNotice"><u>You may need to update the app for this debate style to work.</u></string>
+
     <string name="timer_snackbar_resetDebate">All timers in debate reset</string>
     <string name="timer_noDebateLoaded_text">No debate loaded</string>
 

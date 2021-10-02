@@ -68,6 +68,18 @@
         tools:ignore="SpUsage" />
 
     <TextView
+        android:id="@+id/timer_considerUpdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/timer_schemaTooNewNotice"
+        android:gravity="center_horizontal"
+        android:textColor="@color/debatekeeper_accent_dark"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@id/timer_informationLine"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
         android:id="@+id/timer_informationLine"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

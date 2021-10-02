@@ -136,6 +136,7 @@ public class DebatingTimerFragment extends Fragment {
     private boolean          mIsEditingTime = false;
     private boolean          mIsOpeningFormatChooser = false;
     private final Semaphore  mFlashScreenSemaphore = new Semaphore(1, true);
+    private boolean          mIsSchemaTooNew = false;
 
     private DebateTimerDisplayBinding mTimerDisplay;  // normally but not always a DebateTimerDisplayBinding
     private EnableableViewPager       mViewPager;
@@ -1235,7 +1236,8 @@ public class DebatingTimerFragment extends Fragment {
             }
         }
 
-        if (showDialogs && dfbfx.isSchemaTooNew()) {
+        mIsSchemaTooNew = dfbfx.isSchemaTooNew();
+        if (showDialogs && mIsSchemaTooNew) {
             QueueableDialogFragment fragment = DialogSchemaTooNewFragment.newInstance(dfbfx.getSchemaVersion(), dfbfx.getSupportedSchemaVersion(), filename);
             queueDialog(fragment, DIALOG_TAG_SCHEMA_TOO_NEW + filename);
         }
@@ -2154,6 +2156,9 @@ public class DebatingTimerFragment extends Fragment {
         // The information at the top of the screen
         speechNameText.setText(phaseName);
         periodDescriptionText.setText(pi.getDescription());
+
+        // Schema too new warning
+        binding.timerConsiderUpdate.setVisibility((mIsSchemaTooNew) ? View.VISIBLE : View.GONE);
 
         // Take count direction into account for display
         long timeToShow = subtractFromSpeechLengthIfCountingDown(time, dpf);
