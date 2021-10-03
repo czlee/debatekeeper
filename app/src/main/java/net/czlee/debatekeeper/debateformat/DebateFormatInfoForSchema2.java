@@ -27,13 +27,13 @@ import net.czlee.debatekeeper.debateformat.XmlUtilities.XmlInvalidValueException
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -167,7 +167,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
 
             description += mContext.getString(R.string.viewFormat_timeDescription_controlledPrepSuffix);
 
-            NodeList bells = xu.findAllElements(prepTimeControlled, R.string.xml2elemName_bell);
+            List<Element> bells = xu.findAllElements(prepTimeControlled, R.string.xml2elemName_bell);
             description += "\n" + buildBellsString(bells, length);
 
             return description;
@@ -197,11 +197,10 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
         if (mRootElement == null) return result;
         Element speechFormatsElement = xu.findElement(mRootElement, R.string.xml2elemName_speechFormats);
         if (speechFormatsElement == null) return result;
-        NodeList speechFormats = xu.findAllElements(speechFormatsElement, R.string.xml2elemName_speechFormat);
+        List<Element> speechFormats = xu.findAllElements(speechFormatsElement, R.string.xml2elemName_speechFormat);
 
-        for (int i = 0; i < speechFormats.getLength(); i++) {
+        for (Element element : speechFormats) {
             String reference, description;
-            Element element = (Element) speechFormats.item(i);
 
             reference = xu.findAttributeText(element, R.string.xml2attrName_common_ref);
             if (reference == null) continue;
@@ -218,7 +217,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             if (length == null) continue;
             else description = buildLengthString(length);
 
-            NodeList bells = xu.findAllElements(element, R.string.xml2elemName_bell);
+            List<Element> bells = xu.findAllElements(element, R.string.xml2elemName_bell);
             description += "\n" + buildBellsString(bells, length);
 
             String [] pair = {speechName, description, reference};
@@ -239,7 +238,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
         if (mRootElement == null) return result;
         Element speechesElement = xu.findElement(mRootElement, R.string.xml2elemName_speechesList);
         if (speechesElement == null) return result;
-        NodeList speechFormats = xu.findAllElements(speechesElement, R.string.xml2elemName_speech);
+        List<Element> speechFormats = xu.findAllElements(speechesElement, R.string.xml2elemName_speech);
 
         // Build a map from format string to description
         HashMap<String, String> refToDescr = new HashMap<>();
@@ -249,9 +248,8 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             refToDescr.put(ref, descr);
         }
 
-        for (int i = 0; i < speechFormats.getLength(); i++) {
+        for (Element element : speechFormats) {
             String name, format;
-            Element element = (Element) speechFormats.item(i);
 
             name = xu.findLocalElementText(element, R.string.xml2elemName_speech_name);
             if (name == null) continue;
@@ -309,11 +307,11 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
      * @param list a list of &lt;bell&gt; {@link Element}s
      * @return the completed string e.g. "bells at 01:00, 06:00, 07:00"
      */
-    private String buildBellsString(NodeList list, long finishTime) {
+    private String buildBellsString(List<Element> list, long finishTime) {
         StringBuilder bellsList = new StringBuilder();
 
-        for (int i = 0; i < list.getLength(); i++) {
-            Element element = (Element) list.item(i);
+        for (int i = 0; i < list.size(); i++) {
+            Element element = list.get(i);
             String timeStr = xu.findAttributeText(element, R.string.xml2attrName_bell_time);
             long time;
             if (timeStr == null) continue;
@@ -337,11 +335,11 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
                 bellsList.append(mContext.getString(R.string.timer_pauseOnBellIndicator));
 
             // If there's one after this, add a comma
-            if (i < list.getLength() - 1) bellsList.append(", ");
+            if (i < list.size() - 1) bellsList.append(", ");
         }
 
         return mContext.getResources().getQuantityString(
-                R.plurals.viewFormat_timeDescription_bellsList, list.getLength(), bellsList);
+                R.plurals.viewFormat_timeDescription_bellsList, list.size(), bellsList);
     }
 
     private String buildLengthString(long length) {
@@ -355,12 +353,9 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
     private ArrayList<String> getMultipleInfoValues(Element parent, int tagNameResId) {
         ArrayList<String> result = new ArrayList<>();
         if (parent == null) return result; // empty list
-        NodeList elements = xu.findAllElements(parent, tagNameResId);
-        for (int i = 0; i < elements.getLength(); i++) {
-            Element element = (Element) elements.item(i);
-            String text = element.getTextContent();
-            result.add(text);
-        }
+        List<Element> elements = xu.findAllElements(parent, tagNameResId);
+        for (Element element : elements)
+            result.add(element.getTextContent());
         return result;
     }
 }

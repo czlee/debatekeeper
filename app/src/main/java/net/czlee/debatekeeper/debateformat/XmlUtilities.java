@@ -22,9 +22,12 @@ import android.content.res.Resources;
 import net.czlee.debatekeeper.R;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Provides convenience functions for dealing with XML files.
@@ -87,8 +90,9 @@ public class XmlUtilities {
      */
     Element findElement(Element element, int tagNameResId) {
         String elemName = getString(tagNameResId);
-        NodeList candidates = element.getElementsByTagName(elemName);
-        return (Element) candidates.item(0);
+        List<Element> candidates = getChildElementsByTagName(element, elemName);
+        if (candidates.isEmpty()) return null;
+        return candidates.get(0);
     }
 
     /**
@@ -114,17 +118,13 @@ public class XmlUtilities {
      */
     Element findLocalElement(Element element, int tagNameResId) {
         String elemName = getString(tagNameResId);
-        NodeList candidates = element.getElementsByTagName(elemName);
-        if (candidates.getLength() == 0) return null;
+        List<Element> candidates = getChildElementsByTagName(element, elemName);
+        if (candidates.isEmpty()) return null;
 
         String langAttrName = getString(R.string.xml2attrName_language);
         HashMap<String, Element> langToCandidate = new HashMap<>();
-        for (int i = 0; i < candidates.getLength(); i++) {
-            Element candidate = (Element) candidates.item(i);
-            // Store 'xml:lang' attribute
-            String langAttr = candidate.getAttribute(langAttrName);
-            if (langAttr.isEmpty()) langAttr = "en-US"; // TODO?: Require attribute for schema 2.2?
-            if (langToCandidate.containsKey(langAttr)) continue;
+        for (Element candidate : candidates) {
+            String langAttr = candidate.getAttribute(langAttrName);  // 'xml:lang' attribute
             langToCandidate.put(langAttr, candidate);
         }
 
@@ -151,11 +151,11 @@ public class XmlUtilities {
      * Convenience function.  Finds all {@link Element}s of the name given by a resource ID.
      * @param element an {@link Element}
      * @param tagNameResId a resource ID referring to a string
-     * @return a {@link NodeList}
+     * @return a {@link List<Element>}
      */
-    NodeList findAllElements(Element element, int tagNameResId) {
+    List<Element> findAllElements(Element element, int tagNameResId) {
         String elemName = getString(tagNameResId);
-        return element.getElementsByTagName(elemName);
+        return getChildElementsByTagName(element, elemName);
     }
 
     /**
@@ -284,6 +284,26 @@ public class XmlUtilities {
     //******************************************************************************************
     private String getString(int resId, Object... formatArgs) {
         return mResources.getString(resId, formatArgs);
+    }
+
+    /**
+     * Sadly, {@link org.w3c.dom.Element#getElementsByTagName(String)} returns all descendants with
+     * the matching tag name, not just the immediate children. This function instead returns only
+     * the immediate children with the matching tag name, and is intended to be used instead of
+     * {@link org.w3c.dom.Element#getElementsByTagName(String)}.
+     * @param element an {@link org.w3c.dom.Element} to search
+     * @param name the child element name to look for
+     */
+    private List<Element> getChildElementsByTagName(Element element, String name) {
+        NodeList children = element.getChildNodes();
+        ArrayList<Element> result = new ArrayList<>();
+        for (int i = 0; i < children.getLength(); i++) {
+            Node child = children.item(i);
+            if (!(child instanceof Element)) continue;
+            if (child.getNodeName().equals(name))
+                result.add((Element) child);
+        }
+        return result;
     }
 
     /**

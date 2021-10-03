@@ -17,28 +17,28 @@
 
 package net.czlee.debatekeeper.debateformat;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import android.content.Context;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
+import android.util.Log;
 
 import net.czlee.debatekeeper.R;
 import net.czlee.debatekeeper.debateformat.XmlUtilities.XmlInvalidValueException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import android.content.Context;
-import android.content.res.AssetManager;
-import android.content.res.Resources;
-import android.util.Log;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * PeriodInfoManager retrieves {@link PeriodInfo} objects from appropriate locations.
@@ -187,11 +187,10 @@ public class PeriodInfoManager {
         Element root = doc.getDocumentElement();
 
         // Get all <period-type> elements
-        NodeList periodTypeElements = xu.findAllElements(root, R.string.xml2elemName_periodType);
+        List<Element> periodTypeElements = xu.findAllElements(root, R.string.xml2elemName_periodType);
 
         // For each such element, add a PeriodInfo to the repository
-        for (int i = 0; i < periodTypeElements.getLength(); i++) {
-            Element periodType = (Element) periodTypeElements.item(i);
+        for (Element periodType : periodTypeElements) {
             PeriodInfo pi;
 
             try {
