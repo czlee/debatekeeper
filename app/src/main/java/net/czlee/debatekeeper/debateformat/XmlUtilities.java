@@ -18,15 +18,12 @@
 package net.czlee.debatekeeper.debateformat;
 
 import android.content.res.Resources;
-import android.util.Log;
 
 import net.czlee.debatekeeper.R;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -40,8 +37,6 @@ import java.util.HashMap;
  * @since  2013-06-04
  */
 public class XmlUtilities {
-
-    private static final String TAG = "XmlUtilities";
 
     private final Resources mResources;
     private final LanguageChooser mLangChooser;

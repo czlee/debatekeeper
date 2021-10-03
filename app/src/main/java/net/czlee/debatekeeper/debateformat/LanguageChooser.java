@@ -11,10 +11,10 @@ import com.ibm.icu.util.ULocale;
  * Used for XML 'lang' attribute support.
  */
 class LanguageChooser {
-    private LocalePriorityList mLocaleList;
+    private final LocalePriorityList mLocaleList;
 
     public LanguageChooser() {
-        mLocaleList = BuildLocalePriorityList(LocaleListCompat.getAdjustedDefault());
+        mLocaleList = buildLocalePriorityList(LocaleListCompat.getAdjustedDefault());
     }
 
     /**
@@ -25,6 +25,9 @@ class LanguageChooser {
     public String choose (String[] languages) {
         // TODO: Should probably use Locale.lookupTag once we require minimum API level 26
 
+        if (languages.length == 0) return null;
+        if (mLocaleList == null) return languages[0];
+
         // Parse languages into ULocales
         ULocale[] localeObjs = new ULocale[languages.length];
         for (int i = 0; i < languages.length; i++) {
@@ -33,8 +36,7 @@ class LanguageChooser {
 
         // Build locale list from ULocales
         LocalePriorityList.Builder priorityListBuilder = null;
-        for (int i = 0; i < localeObjs.length; i++) {
-            ULocale locale = localeObjs[i];
+        for (ULocale locale : localeObjs) {
             if (priorityListBuilder == null)
                 priorityListBuilder = LocalePriorityList.add(locale);
             else
@@ -56,7 +58,9 @@ class LanguageChooser {
     }
 
     /// Build a LocalePriorityList from a LocaleListCompat
-    private LocalePriorityList BuildLocalePriorityList (LocaleListCompat locales) {
+    private LocalePriorityList buildLocalePriorityList(LocaleListCompat locales) {
+        if (locales.isEmpty()) return null;
+
         LocalePriorityList.Builder priorityListBuilder = null;
         for (int i = 0; i < locales.size(); i++) {
             ULocale locale = ULocale.forLocale(locales.get(i));
@@ -65,6 +69,7 @@ class LanguageChooser {
             else
                 priorityListBuilder = priorityListBuilder.add(locale);
         }
+        assert priorityListBuilder != null;
         return priorityListBuilder.build();
     }
 }
