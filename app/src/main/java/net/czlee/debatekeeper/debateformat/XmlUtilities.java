@@ -19,6 +19,8 @@ package net.czlee.debatekeeper.debateformat;
 
 import android.content.res.Resources;
 
+import androidx.annotation.Nullable;
+
 import net.czlee.debatekeeper.R;
 
 import org.w3c.dom.Element;
@@ -153,9 +155,25 @@ public class XmlUtilities {
      * @param tagNameResId a resource ID referring to a string
      * @return a {@link List<Element>}
      */
-    List<Element> findAllElements(Element element, int tagNameResId) {
+    List<Element> findAllElements(@Nullable Element element, int tagNameResId) {
         String elemName = getString(tagNameResId);
         return getChildElementsByTagName(element, elemName);
+    }
+
+    /**
+     * Convenience function.  Finds all {@link Element}s of the name given by a resource ID, and
+     * returns a list of the text content of each of those elements.
+     * @param element an {@link Element}
+     * @param tagNameResId a resource ID referring to a string
+     * @return a {@link List<String>} containing the text in each element found
+     */
+    ArrayList<String> findAllElementTexts(@Nullable Element element, int tagNameResId) {
+        ArrayList<String> result = new ArrayList<>();
+        if (element == null) return result; // empty list
+        List<Element> children = findAllElements(element, tagNameResId);
+        for (Element child : children)
+            result.add(child.getTextContent());
+        return result;
     }
 
     /**
@@ -294,9 +312,10 @@ public class XmlUtilities {
      * @param element an {@link org.w3c.dom.Element} to search
      * @param name the child element name to look for
      */
-    private List<Element> getChildElementsByTagName(Element element, String name) {
-        NodeList children = element.getChildNodes();
+    private List<Element> getChildElementsByTagName(@Nullable Element element, String name) {
         ArrayList<Element> result = new ArrayList<>();
+        if (element == null) return result;  // empty list
+        NodeList children = element.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
             if (!(child instanceof Element)) continue;

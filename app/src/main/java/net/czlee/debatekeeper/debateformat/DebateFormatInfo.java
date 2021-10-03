@@ -53,6 +53,11 @@ public interface DebateFormatInfo {
     ArrayList<String> getUsedAts();
 
     /**
+     * @return a list of languages supported, or an empty list if there were none
+     */
+    ArrayList<String> getLanguagesSupported();
+
+    /**
      * @return a description of prep time, or <code>null</code> if there is no prep time for this
      * format
      */

@@ -21,6 +21,8 @@ import android.content.Context;
 import android.text.format.DateUtils;
 import android.util.Log;
 
+import com.ibm.icu.util.ULocale;
+
 import net.czlee.debatekeeper.R;
 import net.czlee.debatekeeper.debateformat.XmlUtilities.IllegalSchemaVersionException;
 import net.czlee.debatekeeper.debateformat.XmlUtilities.XmlInvalidValueException;
@@ -115,7 +117,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
      */
     @Override
     public ArrayList<String> getRegions() {
-        return getMultipleInfoValues(mInfoElement, R.string.xml2elemName_info_region);
+        return xu.findAllElementTexts(mInfoElement, R.string.xml2elemName_info_region);
     }
 
     /* (non-Javadoc)
@@ -123,7 +125,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
      */
     @Override
     public ArrayList<String> getLevels() {
-        return getMultipleInfoValues(mInfoElement, R.string.xml2elemName_info_level);
+        return xu.findAllElementTexts(mInfoElement, R.string.xml2elemName_info_level);
     }
 
     /* (non-Javadoc)
@@ -131,7 +133,25 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
      */
     @Override
     public ArrayList<String> getUsedAts() {
-        return getMultipleInfoValues(mInfoElement, R.string.xml2elemName_info_usedAt);
+        return xu.findAllElementTexts(mInfoElement, R.string.xml2elemName_info_usedAt);
+    }
+
+    /* (non-Javadoc)
+     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getLanguagesSupported()
+     */
+    @Override
+    public ArrayList<String> getLanguagesSupported() {
+        if (mRootElement == null) return new ArrayList<>();
+        Element languagesRoot = xu.findElement(mRootElement, R.string.xml2elemName_languages);
+        if (languagesRoot == null) return new ArrayList<>();
+        ArrayList<String> languageCodes = xu.findAllElementTexts(languagesRoot, R.string.xml2elemName_languages_language);
+        ArrayList<String> languages = new ArrayList<>();
+        for (String code : languageCodes) {
+            ULocale locale = new ULocale(code);
+            String language = locale.getDisplayLanguage();
+            if (language != null) languages.add(language);
+        }
+        return languages;
     }
 
     /* (non-Javadoc)
@@ -350,13 +370,5 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             return mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, DateUtils.formatElapsedTime(length));
     }
 
-    private ArrayList<String> getMultipleInfoValues(Element parent, int tagNameResId) {
-        ArrayList<String> result = new ArrayList<>();
-        if (parent == null) return result; // empty list
-        List<Element> elements = xu.findAllElements(parent, tagNameResId);
-        for (Element element : elements)
-            result.add(element.getTextContent());
-        return result;
-    }
 }
 

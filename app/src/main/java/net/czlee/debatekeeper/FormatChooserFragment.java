@@ -237,6 +237,7 @@ public class FormatChooserFragment extends Fragment {
 
                 populateFileInfo(binding, filename, null);
                 binding.viewFormatDetailsGroup.setVisibility(View.GONE);
+                binding.viewFormatLanguagesGroup.setVisibility(View.GONE);
                 binding.viewFormatErrorLabel.setVisibility(View.VISIBLE);
                 binding.viewFormatErrorValue.setVisibility(View.VISIBLE);
                 binding.viewFormatErrorValue.setText(message);
@@ -307,6 +308,14 @@ public class FormatChooserFragment extends Fragment {
             vb.viewFormatLevelValue.setText(concatenate(dfi.getLevels()));
             vb.viewFormatUsedAtValue.setText(concatenate(dfi.getUsedAts()));
             vb.viewFormatDescValue.setText(dfi.getDescription());
+
+            ArrayList<String> languages = dfi.getLanguagesSupported();
+            if (languages.isEmpty()) {
+                vb.viewFormatLanguagesGroup.setVisibility(View.GONE);
+            } else {
+                vb.viewFormatLanguagesGroup.setVisibility(View.VISIBLE);
+                vb.viewFormatLanguagesValue.setText(concatenate(dfi.getLanguagesSupported()));
+            }
         }
 
         /**

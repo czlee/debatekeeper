@@ -84,6 +84,14 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
     }
 
     /* (non-Javadoc)
+     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getLanguagesSupported()
+     */
+    @Override
+    public ArrayList<String> getLanguagesSupported() {
+        return new ArrayList<>();
+    }
+
+    /* (non-Javadoc)
      * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getLevels()
      */
     @Override
