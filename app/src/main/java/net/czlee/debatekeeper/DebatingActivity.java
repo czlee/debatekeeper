@@ -64,7 +64,6 @@ public class DebatingActivity extends AppCompatActivity {
 
         // Start the timer service in the background
         // (DebateManager will push it to the foreground when the timer is started.)
-        // TODO push to foreground when timer is started in DebateManager
         Intent serviceIntent = new Intent(this, DebatingTimerService.class);
         startService(serviceIntent);
         bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
