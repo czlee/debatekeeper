@@ -57,10 +57,8 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
     private final XmlUtilities xu;
     private final Element mRootElement;
     private final Element mInfoElement; // keep <info> readily accessible for performance
-    private final boolean mLangSupported;
 
     private static final String MINIMUM_SCHEMA_VERSION = "2.0";
-    private static final String LANG_SCHEMA_VERSION = "2.3";
     private static final String MAXIMUM_SCHEMA_VERSION = "2.2";
 
     public DebateFormatInfoForSchema2(Context context, InputStream is) {
@@ -81,18 +79,9 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             mRootElement = null;
 
         if (mRootElement != null)
-            mInfoElement = xu.findElement(mRootElement, R.string.xml2elemName_info);
+            mInfoElement = xu.findLocalElement(mRootElement, R.string.xml2elemName_info);
         else
             mInfoElement = null;
-
-        String schemaVersion = getSchemaVersion();
-        boolean langSupported;
-        try {
-            langSupported = (schemaVersion != null) && (XmlUtilities.compareSchemaVersions(schemaVersion, LANG_SCHEMA_VERSION) >= 0);
-        } catch (IllegalSchemaVersionException e) {
-            langSupported = false;
-        }
-        mLangSupported = langSupported;
     }
 
     //******************************************************************************************
@@ -126,7 +115,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
      */
     @Override
     public ArrayList<String> getRegions() {
-        return getMultiValues(mInfoElement, R.string.xml2elemName_info_region);
+        return getMultipleInfoValues(mInfoElement, R.string.xml2elemName_info_region);
     }
 
     /* (non-Javadoc)
@@ -134,7 +123,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
      */
     @Override
     public ArrayList<String> getLevels() {
-        return getMultiValues(mInfoElement, R.string.xml2elemName_info_level);
+        return getMultipleInfoValues(mInfoElement, R.string.xml2elemName_info_level);
     }
 
     /* (non-Javadoc)
@@ -142,7 +131,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
      */
     @Override
     public ArrayList<String> getUsedAts() {
-        return getMultiValues(mInfoElement, R.string.xml2elemName_info_usedAt);
+        return getMultipleInfoValues(mInfoElement, R.string.xml2elemName_info_usedAt);
     }
 
     /* (non-Javadoc)
@@ -253,7 +242,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
         NodeList speechFormats = xu.findAllElements(speechesElement, R.string.xml2elemName_speech);
 
         // Build a map from format string to description
-        HashMap<String, String> refToDescr = new HashMap<String, String>();
+        HashMap<String, String> refToDescr = new HashMap<>();
         for (int i = 0; i < descriptions.size(); i++) {
             String descr = descriptions.get(i)[0];
             String ref = descriptions.get(i)[2];
@@ -363,19 +352,13 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             return mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, DateUtils.formatElapsedTime(length));
     }
 
-    private ArrayList<String> getMultiValues(Element parent, int tagNameResId) {
+    private ArrayList<String> getMultipleInfoValues(Element parent, int tagNameResId) {
         ArrayList<String> result = new ArrayList<>();
         if (parent == null) return result; // empty list
         NodeList elements = xu.findAllElements(parent, tagNameResId);
         for (int i = 0; i < elements.getLength(); i++) {
             Element element = (Element) elements.item(i);
-            String text;
-            if (mLangSupported) {
-                // TODO: Poorly handles missing <text> elements
-                text = xu.findLocalElementText(element, R.string.xml2attrName_textElement);
-            } else {
-                text = element.getTextContent();
-            }
+            String text = element.getTextContent();
             result.add(text);
         }
         return result;

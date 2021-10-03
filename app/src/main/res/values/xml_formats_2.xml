@@ -75,7 +75,7 @@
             <string name="xml2elemName_speech_name" translatable="false">name</string>
             <string name="xml2attrName_speech_format" translatable="false">type</string>
 
-    <string name="xml2attrName_language" translatable="false">lang</string>
+    <string name="xml2attrName_language" translatable="false">xml:lang</string>
     <string name="xml2attrName_textElement" translatable="false">text</string>
 
     <!-- Version 2 error messages -->
