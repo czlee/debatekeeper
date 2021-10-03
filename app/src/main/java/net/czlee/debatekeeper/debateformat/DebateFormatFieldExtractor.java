@@ -31,6 +31,8 @@ public class DebateFormatFieldExtractor {
     private final Resources mResources;
     private final String mFieldName;
     private String mFieldValue;
+    private ArrayList<String> mLanguages;
+    private HashMap<String, String> mCandidates;
 
     public DebateFormatFieldExtractor(Context context, int fieldNameResId) {
         mResources = context.getResources();
@@ -53,6 +55,13 @@ public class DebateFormatFieldExtractor {
             Xml.parse(is, Xml.Encoding.UTF_8, new GetDebateFormatNameXmlContentHandler());
         } catch (AllInformationFoundException e) {
             return mFieldValue;
+        } catch (AllLanguagesFoundException e) {
+            LanguageChooser languageChooser = new LanguageChooser();
+            // Choose appropriate name language
+            String bestLang = languageChooser.choose(mLanguages.toArray(new String[0]));
+            // Map back to the matching name
+            mFieldValue = mCandidates.get(bestLang);
+            return mFieldValue;
         }
 
         return null;
@@ -66,6 +75,8 @@ public class DebateFormatFieldExtractor {
         private static final long serialVersionUID = 3195935815375118010L;
     }
 
+    private static class AllLanguagesFoundException extends SAXException {}
+
     /**
      * This class just looks for first &lt;name&gt; element and saves its contents to
      * <code>mFieldValue</code>.
@@ -74,10 +85,6 @@ public class DebateFormatFieldExtractor {
 
         private StringBuilder mFieldValueBuffer = null;
         private String mCurrentLang = null;
-        private int mLevel = 0;
-        private ArrayList<String> mLanguages;
-        /// Names, keyed by language
-        private HashMap<String, String> mCandidates;
 
         @Override
         public void characters(char[] ch, int start, int length) {
@@ -88,16 +95,11 @@ public class DebateFormatFieldExtractor {
 
         @Override
         public void endDocument() throws SAXException {
-            LanguageChooser languageChooser = new LanguageChooser();
-            // Choose appropriate name language
-            String bestLang = languageChooser.choose(mLanguages.toArray(new String[0]));
-            // Map back to the matching name
-            mFieldValue = mCandidates.get(bestLang);
-            throw new AllInformationFoundException();
+            throw new AllLanguagesFoundException();
         }
 
         @Override
-        public void endElement(String uri, String localName, String qName) throws SAXException {
+        public void endElement(String uri, String localName, String qName) {
             if (mFieldValueBuffer != null) {
                 if(!mCandidates.containsKey(mCurrentLang)) {
                     mLanguages.add(mCurrentLang);
@@ -105,21 +107,14 @@ public class DebateFormatFieldExtractor {
                 }
                 mFieldValueBuffer = null;
             }
-            --mLevel;
-            // TODO: Find a way to exit as soon as relevant information is found
-//            if (localName.equals(mFieldName)) {
-//                mFieldValue = mNameBuffer.toString();
-//                throw new AllInformationFoundException();
-//                // We don't need to parse any more once we finish getting the style name
-//            }
         }
 
         @Override
         public void startDocument() {
             // initialise
             mFieldValue = null;
-            mCandidates = new HashMap<String, String>();
-            mLanguages = new ArrayList<String>();
+            mCandidates = new HashMap<>();
+            mLanguages = new ArrayList<>();
         }
 
         @Override
@@ -130,6 +125,7 @@ public class DebateFormatFieldExtractor {
                 return;
 
             // Schema 1: Use the attribute of the root element
+            // (in the only relevant use case to schema 1, the information is in the root element)
 
             if (localName.equals(mResources.getString(R.string.xml1elemName_root))) {
                 mFieldValue = atts.getValue(DEBATING_TIMER_URI, mFieldName);
@@ -137,16 +133,16 @@ public class DebateFormatFieldExtractor {
                 // We don't need to parse any more once we find the style name
             }
 
-            // Schema 2: Track all <name> elements of the root, stored by language
+            // Schema 2: Track all elements of the root, stored by language
 
-            if ((mLevel == 1) // Look for <name> elements below root
-                && localName.equals(mFieldName)) {
+            if (localName.equals(mFieldName)) {
                 mFieldValueBuffer = new StringBuilder();
                 mCurrentLang = atts.getValue(mResources.getString(R.string.xml2attrName_language));
-                if ((mCurrentLang == null) || mCurrentLang.isEmpty()) mCurrentLang = "en-US";
-            }
-
-            ++mLevel;
+                if (mCurrentLang == null) mCurrentLang = "";
+            } else if (!mCandidates.isEmpty())
+                // We expect all relevant fields to be next to each other, so once we hit a
+                // different element, we're done.
+                throw new AllLanguagesFoundException();
         }
     }
 
