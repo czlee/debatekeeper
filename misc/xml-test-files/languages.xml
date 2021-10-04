@@ -9,24 +9,25 @@
     <language>zh</language>
     <language>en</language>
     <language>fr</language>
+    <!-- es intentionally omitted -->
   </languages>
   <info xml:lang="en">
     <region>Nowhere</region>
     <level>None</level>
     <used-at>Nowhere</used-at>
-    <description>Demonstrates weird language edge cases</description>
+    <description>Demonstrates edge cases involving languages</description>
   </info>
   <info xml:lang="zh">
     <region>无处</region>
     <level>莫</level>
     <used-at>无处</used-at>
-    <description>展示奇怪的边缘情况</description>
+    <description>演示语言边缘情况</description>
   </info>
   <info xml:lang="fr">
     <region>Nulle part</region>
     <level>Aucun</level>
     <used-at>Nulle part</used-at>
-    <description>Démonstration des cas limites étranges</description>
+    <description>Démonstration des cas limites de langues</description>
   </info>
   <prep-time length="15:00"/>
   <speech-types>
@@ -66,12 +67,10 @@
       <name xml:lang="es">Miembro de Oposoción</name>
     </speech>
     <speech type="all">
-      <name xml:lang="en">Government Whip</name>
-      <name xml:lang="es">Látigo de Gobierno</name>
+      <name xml:lang="he">שוט ממשלתי</name>
     </speech>
     <speech type="all">
-      <name xml:lang="en">Opposition Whip</name>
-      <name xml:lang="es">Látigo de Oposoción</name>
+      <name xml:lang="ar">سوط الحكومة</name>
     </speech>
   </speeches>
 </debate-format>
