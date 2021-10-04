@@ -141,10 +141,8 @@ public class XmlUtilities {
             languagesSupported.add(langAttr);
         }
 
-        Log.d("XmlUtil", "for element: " + elemName);
         List<String> languagesOrdered = getLanguageOrder(languagesSupported);
         String bestLang = mLangChooser.choose(languagesOrdered);
-        Log.d("XmlUtil", "chosen: " + bestLang);
         return langToCandidate.get(bestLang);
     }
 
@@ -372,7 +370,6 @@ public class XmlUtilities {
      */
     private List<String> getLanguageOrder(List<String> languages) {
         if (mDeclaredLanguages == null) return languages;
-        Log.d("XmlUtil", "input: " + Arrays.toString(languages.toArray()));
         ArrayList<String> result = new ArrayList<>();
         for (String lang : mDeclaredLanguages) {
             if (languages.contains(lang)) {
@@ -381,8 +378,6 @@ public class XmlUtilities {
             }
         }
         result.addAll(languages);
-        Log.d("XmlUtil", "declared: " + Arrays.toString(mDeclaredLanguages.toArray()));
-        Log.d("XmlUtil", "output: " + Arrays.toString(result.toArray()));
         return result;
     }
 
