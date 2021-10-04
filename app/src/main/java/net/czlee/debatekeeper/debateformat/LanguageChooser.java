@@ -10,7 +10,7 @@ import com.ibm.icu.util.ULocale;
  * Helper class to choose the 'best' language from an unordered list.
  * Used for XML 'lang' attribute support.
  */
-class LanguageChooser {
+public class LanguageChooser {
     private final LocalePriorityList mLocaleList;
 
     public LanguageChooser() {

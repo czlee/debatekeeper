@@ -1,7 +1,5 @@
 package net.czlee.debatekeeper;
 
-import static net.czlee.debatekeeper.DebateFormatDownloadManager.DownloadableFormatEntry.DownloadState.UPDATE_AVAILABLE;
-
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +33,7 @@ public class DownloadableFormatRecyclerAdapter extends RecyclerView.Adapter<Down
 
         void bind(final DownloadableFormatEntry entry) {
             this.entry = entry;
-            binding.viewFormatTitle.setText(entry.styleName);
+            binding.viewFormatTitle.setText(entry.name);
             binding.viewFormatFileNameValue.setText(entry.filename);
             binding.viewFormatRegionValue.setText(TextUtils.join("\n", entry.regions));
             binding.viewFormatUsedAtValue.setText(TextUtils.join("\n", entry.usedAts));
