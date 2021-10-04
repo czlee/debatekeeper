@@ -14,9 +14,10 @@ which are configurable.
 A small amount of documentation for this app is at
 https://github.com/czlee/debatekeeper/wiki/.
 
-You can install the app on the Google Play Store:
-
-<a href='https://play.google.com/store/apps/details?id=net.czlee.debatekeeper&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' height='72px' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
+<a href="https://f-droid.org/packages/net.czlee.debatekeeper" target="_blank">
+<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="110"/></a>
+<a href="https://play.google.com/store/apps/details?id=net.czlee.debatekeeper&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1" target="_blank">
+<img alt='Get it on Google Play' height="110" src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
 
 What is the status of this app?
 -------------------------------
