@@ -73,14 +73,22 @@ public class DebateFormatDownloadManager {
         private static final String TAG = "DownloadFormatEntry";
 
         public int version = 0;
-        @NonNull public String filename = "";
-        @NonNull public String url = "";
-        @NonNull public String name = "";
-        @NonNull public String[] regions = new String[0];
-        @NonNull public String[] usedAts = new String[0];
-        @NonNull public String[] levels = new String[0];
-        @NonNull public String description = "";
-        @NonNull public DownloadState state = DownloadState.NOT_DOWNLOADED;
+        @NonNull
+        public String filename = "";
+        @NonNull
+        public String url = "";
+        @NonNull
+        public String name = "";
+        @NonNull
+        public String[] regions = new String[0];
+        @NonNull
+        public String[] usedAts = new String[0];
+        @NonNull
+        public String[] levels = new String[0];
+        @NonNull
+        public String description = "";
+        @NonNull
+        public DownloadState state = DownloadState.NOT_DOWNLOADED;
         public boolean expanded = true;
 
         /**
@@ -145,11 +153,16 @@ public class DebateFormatDownloadManager {
     private static class DownloadableFormatListBuilder {
 
         private static class FormatInfo {
-            @NonNull public String name = "";
-            @NonNull public String[] regions = new String[0];
-            @NonNull public String[] usedAts = new String[0];
-            @NonNull public String[] levels = new String[0];
-            @NonNull public String description = "";
+            @NonNull
+            public String name = "";
+            @NonNull
+            public String[] regions = new String[0];
+            @NonNull
+            public String[] usedAts = new String[0];
+            @NonNull
+            public String[] levels = new String[0];
+            @NonNull
+            public String description = "";
         }
 
         private final LanguageChooser mLangChooser;
@@ -159,9 +172,53 @@ public class DebateFormatDownloadManager {
         }
 
         /**
-         * Builds a {@link DownloadableFormatEntry} from a {@link JsonReader}.
+         * Entry function. Builds a list of {@link DownloadableFormatEntry} objects from the given
+         * {@link JsonReader}.
+         *
+         * See <a href="https://github.com/czlee/debatekeeper-formats/blob/main/v1/formats.json">
+         * formats.json in the official formats repository</a> for an example of a
+         * JSON file this expects to parse.
+         *
+         * @param reader a {@link JsonReader} pointing to the (start of a) JSON file
+         * @return list of {@link DownloadableFormatEntry} objects
+         * @throws IOException if there is an issue parsing the JSON
          */
-        DownloadableFormatEntry buildFromJson(JsonReader reader) throws IOException, IllegalStateException {
+        List<DownloadableFormatEntry> buildListFromJson(JsonReader reader) throws IOException {
+            ArrayList<DownloadableFormatEntry> entries = new ArrayList<>();
+
+            reader.beginObject();
+            while (reader.hasNext()) {
+                String key = reader.nextName();
+                if (key.equals("formats"))
+                    addFormatsFromJson(reader, entries);
+                else
+                    reader.skipValue();
+            }
+            reader.endObject();
+
+            return entries;
+        }
+
+        /**
+         * Adds entries to the given list from the given {@link JsonReader}. Expects to find an
+         * array containing entry objects in the JSON file.
+         */
+        void addFormatsFromJson(JsonReader reader, List<DownloadableFormatEntry> entries) throws IOException {
+            reader.beginArray();
+            while (reader.hasNext()) {
+                DownloadableFormatEntry entry = buildEntryFromJson(reader);
+                // Log.d(TAG, "added: " + entry.styleName + " (" + entry.filename + ")");
+                entries.add(entry);
+            }
+            reader.endArray();
+        }
+
+
+        /**
+         * Builds a {@link DownloadableFormatEntry} from a {@link JsonReader}. Expects to find an
+         * object representing an entry in the JSON file.
+         */
+        DownloadableFormatEntry buildEntryFromJson(JsonReader reader) throws IOException, IllegalStateException {
             DownloadableFormatEntry entry = new DownloadableFormatEntry();
             reader.beginObject();
             while (reader.hasNext()) {
@@ -408,26 +465,24 @@ public class DebateFormatDownloadManager {
             throws IOException, IllegalStateException, NumberFormatException {
         Log.i(TAG, "Downloading list from server");
 
-        ArrayList<DownloadableFormatEntry> entries = new ArrayList<>();
-        DebateFormatFieldExtractor versionExtractor = new DebateFormatFieldExtractor(mContext, R.string.xml2elemName_version);
-
         URL url = getListUrl();
         URLConnection connection = url.openConnection();
         InputStream in = connection.getInputStream();
         InputStreamReader isr = new InputStreamReader(in);
 
         DownloadableFormatListBuilder listBuilder = new DownloadableFormatListBuilder();
+        List<DownloadableFormatEntry> entries;
 
         try (JsonReader reader = new JsonReader(isr)) {
-            reader.beginArray();
-            while (reader.hasNext()) {
-                DownloadableFormatEntry entry = listBuilder.buildFromJson(reader);
-                // Log.d(TAG, "added: " + entry.styleName + " (" + entry.filename + ")");
-                entry.checkForExistingFile(mFilesManager, versionExtractor);
-                entries.add(entry);
-            }
-            reader.endArray();
+            entries = listBuilder.buildListFromJson(reader);
+        } catch (IOException e) {
+            return Collections.emptyList();
         }
+
+        // Check for available updates
+        DebateFormatFieldExtractor versionExtractor = new DebateFormatFieldExtractor(mContext, R.string.xml2elemName_version);
+        for (DownloadableFormatEntry entry : entries)
+            entry.checkForExistingFile(mFilesManager, versionExtractor);
 
         Collections.sort(entries);
         return Collections.unmodifiableList(entries);
