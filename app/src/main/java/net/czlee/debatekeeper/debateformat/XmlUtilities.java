@@ -131,6 +131,7 @@ public class XmlUtilities {
         String elemName = getString(tagNameResId);
         List<Element> candidates = getChildElementsByTagName(element, elemName);
         if (candidates.isEmpty()) return null;
+        if (candidates.size() == 1) return candidates.get(0);
 
         String langAttrName = getString(R.string.xml2attrName_language);
         HashMap<String, Element> langToCandidate = new HashMap<>();
