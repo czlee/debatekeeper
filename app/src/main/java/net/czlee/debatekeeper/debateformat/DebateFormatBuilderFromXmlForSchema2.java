@@ -28,12 +28,12 @@ import net.czlee.debatekeeper.debateformat.XmlUtilities.XmlInvalidValueException
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -86,9 +86,8 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
         super();
         mContext = context;
         mDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
-        mPeriodInfoManager = new PeriodInfoManager(context);
         xu = new XmlUtilities(context.getResources());
-
+        mPeriodInfoManager = new PeriodInfoManager(context, xu);
     }
 
     //******************************************************************************************
@@ -103,7 +102,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
         Document doc = getDocumentFromInputStream(is);
         assert doc != null;
         Element root = doc.getDocumentElement();
-
+        
         // 0. Schema version
         mSchemaVersion = xu.findAttributeText(root, R.string.xml2attrName_root_schemaVersion);
 
@@ -113,8 +112,15 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
             logXmlError(R.string.xmlError_rootInvalidSchemaVersion, mSchemaVersion);
         // If the schema is too new, just keep going, the file might still work
 
+        // 0.1. Set up declared languages from <languages>
+        Element languages = xu.findElement(root, R.string.xml2elemName_languages);
+        if (languages != null) {
+            ArrayList<String> declaredLanguages = xu.findAllElementTexts(languages, R.string.xml2elemName_languages_language);
+            xu.setDeclaredLanguages(declaredLanguages);
+        } 
+        
         // 1. <name> - mandatory, <short-name> - optional
-        String name = xu.findElementText(root, R.string.xml2elemName_name);
+        String name = xu.findLocalElementText(root, R.string.xml2elemName_name);
 
         if (name == null) {
             logXmlError(R.string.xml2error_root_noName);
@@ -123,16 +129,15 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
 
         df.setName(name); // do this even if there was an error with the name
 
-        String shortName = xu.findElementText(root, R.string.xml2elemName_shortName);
+        String shortName = xu.findLocalElementText(root, R.string.xml2elemName_shortName);
         if (shortName != null) df.setShortName(shortName);
 
         // 2. If there are <period-type>s in this format, deal with them first.  We'll need to
         // store them somewhere useful in the meantime.
         Element periodTypes = xu.findElement(root, R.string.xml2elemName_periodTypes);
         if (periodTypes != null) {
-            NodeList periodTypeElements = xu.findAllElements(periodTypes, R.string.xml2elemName_periodType);
-            for (int i = 0; i < periodTypeElements.getLength(); i++) {
-                Element periodType = (Element) periodTypeElements.item(i);
+            List<Element> periodTypeElements = xu.findAllElements(periodTypes, R.string.xml2elemName_periodType);
+            for (Element periodType : periodTypeElements) {
                 try {
                     mPeriodInfoManager.addPeriodInfoFromElement(periodType);
                 } catch (PeriodInfoException e) {
@@ -161,9 +166,8 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
         Element speechFormats = xu.findElement(root, R.string.xml2elemName_speechFormats);
         if (speechFormats == null) return df; // we can't do anything if there aren't any speech formats, so just return
 
-        NodeList speechFormatElements = xu.findAllElements(speechFormats, R.string.xml2elemName_speechFormat);
-        for (int i = 0; i < speechFormatElements.getLength(); i++) {
-            Element speechFormatElement = (Element) speechFormatElements.item(i);
+        List<Element> speechFormatElements = xu.findAllElements(speechFormats, R.string.xml2elemName_speechFormat);
+        for (Element speechFormatElement : speechFormatElements) {
             SpeechFormat sf = createSpeechFormatFromElement(speechFormatElement);
             if (sf == null) continue;
             String reference = sf.getReference();
@@ -180,11 +184,9 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
         Element speechesList = xu.findElement(root, R.string.xml2elemName_speechesList);
         if (speechesList == null) return df; // we can't do anything if there aren't any speeches, so just return
 
-        NodeList speechElements = xu.findAllElements(speechesList, R.string.xml2elemName_speech);
-        for (int i = 0; i < speechElements.getLength(); i++) {
-
-            Element speechElement = (Element) speechElements.item(i);
-            String speechName = xu.findElementText(speechElement, R.string.xml2elemName_speech_name);
+        List<Element> speechElements = xu.findAllElements(speechesList, R.string.xml2elemName_speech);
+        for (Element speechElement : speechElements) {
+            String speechName = xu.findLocalElementText(speechElement, R.string.xml2elemName_speech_name);
             String formatRef = xu.findAttributeText(speechElement, R.string.xml2attrName_speech_format);
 
             if (speechName == null) {
@@ -469,9 +471,8 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
         long length = cdpf.getLength();
 
         // Add all the bells
-        NodeList bellElements = xu.findAllElements(element, R.string.xml2elemName_bell);
-        for (int i = 0; i < bellElements.getLength(); i++) {
-            Element bellElement = (Element) bellElements.item(i);
+        List<Element> bellElements = xu.findAllElements(element, R.string.xml2elemName_bell);
+        for (Element bellElement : bellElements) {
             BellInfo bi = createBellInfoFromElement(bellElement, length, location);
             if (bi == null) continue;
             cdpf.addBellInfo(bi);

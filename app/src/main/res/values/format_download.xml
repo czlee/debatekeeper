@@ -16,7 +16,7 @@
     <string name="formatDownloader_list_defaultUrl" translatable="false">https://formats.debatekeeper.czlee.nz/v1/formats.json</string>
     <string name="formatDownloader_learnMoreUrl" translatable="false">https://github.com/czlee/debatekeeper/wiki/Debate-format-files</string>
 
-    <string name="formatDownloader_loadingText">Loading list of styles from server…</string>
+    <string name="formatDownloader_loadingText">Loading list of styles from online repository…</string>
     <string name="formatDownloader_noInternet">No internet connection.</string>
     <string name="formatDownloader_ioError">Error loading list of styles (I/O).</string>
     <string name="formatDownloader_jsonError">Error loading list of styles (JSON).</string>

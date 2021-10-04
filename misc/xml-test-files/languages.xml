@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<debate-format schema-version="2.2">
+  <name xml:lang="en">Weird languages</name>
+  <name xml:lang="es">Idiomas extraños</name>
+  <name xml:lang="fr">Langues étranges</name>
+  <name xml:lang="zh">奇怪的语言</name>
+  <version>1</version>
+  <languages>
+    <language>zh</language>
+    <language>en</language>
+    <language>fr</language>
+    <!-- es intentionally omitted -->
+  </languages>
+  <info xml:lang="en">
+    <region>Nowhere</region>
+    <level>None</level>
+    <used-at>Nowhere</used-at>
+    <description>Demonstrates edge cases involving languages</description>
+  </info>
+  <info xml:lang="zh">
+    <region>无处</region>
+    <level>莫</level>
+    <used-at>无处</used-at>
+    <description>演示语言边缘情况</description>
+  </info>
+  <info xml:lang="fr">
+    <region>Nulle part</region>
+    <level>Aucun</level>
+    <used-at>Nulle part</used-at>
+    <description>Démonstration des cas limites de langues</description>
+  </info>
+  <prep-time length="15:00"/>
+  <speech-types>
+    <speech-type ref="all" length="7:00" first-period="normal">
+      <bell time="1:00" number="1" next-period="pois-allowed"/>
+      <bell time="6:00" number="1" next-period="warning"/>
+      <bell time="finish" number="2" next-period="overtime"/>
+    </speech-type>
+  </speech-types>
+  <speeches>
+    <speech type="all">
+      <name xml:lang="de">Ministerpräsident</name>
+      <name xml:lang="mi">Pirimia</name>
+    </speech>
+    <speech type="all">
+      <name xml:lang="de">Anführer der Opposition</name>
+      <name xml:lang="mi">Kaiarahi i te Roopu Whakahee</name>
+      <name xml:lang="zh">反对党领袖</name>
+    </speech>
+    <speech type="all">
+      <name xml:lang="mi">Pirimia Tuarua</name>
+      <name xml:lang="de">Stellvertretender Ministerpräsident</name>
+      <name xml:lang="ro">Vice prim ministru</name>
+    </speech>
+    <speech type="all">
+      <name xml:lang="en">Deputy Leader of the Opposition</name>
+      <name xml:lang="es">Vicelíder de Oposoción</name>
+      <name xml:lang="ro">Șef Adjunct al Opoziției</name>
+    </speech>
+    <speech type="all">
+      <name xml:lang="en">Member for the Government</name>
+      <name xml:lang="es">Miembro de Gobierno</name>
+      <name xml:lang="fr">Membre du gouvernement</name>
+    </speech>
+    <speech type="all">
+      <name xml:lang="fr">Membre de l'opposition</name>
+      <name xml:lang="es">Miembro de Oposoción</name>
+    </speech>
+    <speech type="all">
+      <name xml:lang="he">שוט ממשלתי</name>
+    </speech>
+    <speech type="all">
+      <name xml:lang="ar">سوط الحكومة</name>
+    </speech>
+  </speeches>
+</debate-format>

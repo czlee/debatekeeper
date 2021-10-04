@@ -17,28 +17,28 @@
 
 package net.czlee.debatekeeper.debateformat;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import android.content.Context;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
+import android.util.Log;
 
 import net.czlee.debatekeeper.R;
 import net.czlee.debatekeeper.debateformat.XmlUtilities.XmlInvalidValueException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import android.content.Context;
-import android.content.res.AssetManager;
-import android.content.res.Resources;
-import android.util.Log;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * PeriodInfoManager retrieves {@link PeriodInfo} objects from appropriate locations.
@@ -61,9 +61,9 @@ public class PeriodInfoManager {
 
     private static final String BUILT_IN_PERIODS_FILE = "periods.xml";
 
-    public PeriodInfoManager(Context context) {
+    public PeriodInfoManager(Context context, XmlUtilities xu) {
         mResources = context.getResources();
-        xu = new XmlUtilities(mResources);
+        this.xu = xu;
         populateBuiltInPeriodInfos(context.getAssets());
     }
 
@@ -187,11 +187,10 @@ public class PeriodInfoManager {
         Element root = doc.getDocumentElement();
 
         // Get all <period-type> elements
-        NodeList periodTypeElements = xu.findAllElements(root, R.string.xml2elemName_periodType);
+        List<Element> periodTypeElements = xu.findAllElements(root, R.string.xml2elemName_periodType);
 
         // For each such element, add a PeriodInfo to the repository
-        for (int i = 0; i < periodTypeElements.getLength(); i++) {
-            Element periodType = (Element) periodTypeElements.item(i);
+        for (Element periodType : periodTypeElements) {
             PeriodInfo pi;
 
             try {
@@ -242,14 +241,14 @@ public class PeriodInfoManager {
             throw new PeriodInfoException(R.string.xml2error_periodType_ref_blank);
 
         // Extract the name and check for validity
-        name = xu.findElementText(element, R.string.xml2elemName_periodType_name);
+        name = xu.findLocalElementText(element, R.string.xml2elemName_periodType_name);
         if (name == null)
             throw new PeriodInfoException(R.string.xml2error_periodType_name_null, ref);
         if (name.length() == 0)
             throw new PeriodInfoException(R.string.xml2error_periodType_name_blank, ref);
 
         // Extract the description (there are no constraints on this field)
-        description = xu.findElementText(element, R.string.xml2elemName_periodType_display);
+        description = xu.findLocalElementText(element, R.string.xml2elemName_periodType_display);
 
         // Parse the default background colour, if there is one
         defaultBackgroundColorStr = xu.findElementText(element, R.string.xml2elemName_periodType_defaultBackgroundColor);

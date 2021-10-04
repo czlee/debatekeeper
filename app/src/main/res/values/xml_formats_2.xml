@@ -45,6 +45,9 @@
         <string name="xml2elemName_info_usedAt" translatable="false">used-at</string>
         <string name="xml2elemName_info_desc" translatable="false">description</string>
 
+    <string name="xml2elemName_languages" translatable="false">languages</string>
+        <string name="xml2elemName_languages_language" translatable="false">language</string>
+
     <string name="xml2elemName_periodTypes" translatable="false">period-types</string>
 	    <string name="xml2elemName_periodType" translatable="false">period-type</string>
 	        <string name="xml2attrName_periodType_poisAllowed" translatable="false">pois-allowed</string>
@@ -74,6 +77,9 @@
         <string name="xml2elemName_speech" translatable="false">speech</string>
             <string name="xml2elemName_speech_name" translatable="false">name</string>
             <string name="xml2attrName_speech_format" translatable="false">type</string>
+
+    <string name="xml2attrName_language" translatable="false">xml:lang</string>
+    <string name="xml2attrName_textElement" translatable="false">text</string>
 
     <!-- Version 2 error messages -->
 

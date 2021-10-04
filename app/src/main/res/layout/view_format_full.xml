@@ -116,6 +116,13 @@
 			app:layout_constraintTop_toTopOf="@+id/viewFormat_descValue" />
 
 		<TextView
+			android:id="@+id/viewFormat_languagesLabel"
+			style="@style/viewFormat_detailTableLabelStyle"
+			android:text="@string/viewFormat_languagesLabel"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="@+id/viewFormat_languagesValue" />
+
+		<TextView
 			android:id="@+id/viewFormat_prepTimeLabel"
 			style="@style/viewFormat_detailTableLabelStyle"
 			android:text="@string/viewFormat_prepTimeLabel"
@@ -181,12 +188,26 @@
 			app:layout_constraintTop_toBottomOf="@+id/viewFormat_usedAtValue" />
 
 		<TextView
+			android:id="@+id/viewFormat_languagesValue"
+			style="@style/viewFormat_detailTableValueStyle"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
+			app:layout_constraintTop_toBottomOf="@+id/viewFormat_descValue" />
+
+		<androidx.constraintlayout.widget.Barrier
+			android:id="@+id/viewFormat_languagesBarrier"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:constraint_referenced_ids="viewFormat_languagesLabel,viewFormat_languagesValue"
+			app:barrierDirection="bottom" />
+
+		<TextView
 			android:id="@+id/viewFormat_prepTimeValue"
 			style="@style/viewFormat_detailTableValueStyle"
 			app:layout_constraintEnd_toEndOf="parent"
 			android:layout_marginTop="8dp"
 			app:layout_constraintStart_toEndOf="@id/viewFormat_labelBarrier"
-			app:layout_constraintTop_toBottomOf="@id/viewFormat_descValue" />
+			app:layout_constraintTop_toBottomOf="@id/viewFormat_languagesBarrier" />
 
 		<!-- Speeches table -->
 		<TextView
@@ -242,6 +263,12 @@
 				viewFormat_table_speeches,
 				viewFormat_table_speechTypes"
 			/>
+
+		<androidx.constraintlayout.widget.Group
+			android:id="@+id/viewFormat_languagesGroup"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:constraint_referenced_ids="viewFormat_languagesValue,viewFormat_languagesLabel" />
 
 		<!-- Error condition -->
 		<TextView

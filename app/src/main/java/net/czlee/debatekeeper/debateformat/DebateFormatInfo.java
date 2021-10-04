@@ -53,6 +53,11 @@ public interface DebateFormatInfo {
     ArrayList<String> getUsedAts();
 
     /**
+     * @return a list of languages supported, or an empty list if there were none
+     */
+    ArrayList<String> getDisplayLanguages();
+
+    /**
      * @return a description of prep time, or <code>null</code> if there is no prep time for this
      * format
      */
@@ -82,11 +87,12 @@ public interface DebateFormatInfo {
 
     /**
      * Returns a list of speeches in this debate format.
+     * @param  descriptions Value returned by getSpeechFormatDescriptions()
      * @return An <code>ArrayList</code> of <code>String</code> arrays. Each
      *         <code>String</code> array has two elements.  The first element
      *         is the name of the speech, the second element is the reference
      *         for the format that speech uses.
      */
-    ArrayList<String[]> getSpeeches();
+    ArrayList<String[]> getSpeeches(ArrayList<String[]> descriptions);
 
 }

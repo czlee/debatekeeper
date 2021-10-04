@@ -8,10 +8,12 @@ import android.util.JsonReader;
 import android.util.Log;
 import android.util.MalformedJsonException;
 
+import androidx.annotation.NonNull;
 import androidx.core.os.HandlerCompat;
 import androidx.preference.PreferenceManager;
 
 import net.czlee.debatekeeper.debateformat.DebateFormatFieldExtractor;
+import net.czlee.debatekeeper.debateformat.LanguageChooser;
 
 import org.xml.sax.SAXException;
 
@@ -24,7 +26,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
@@ -57,7 +61,7 @@ public class DebateFormatDownloadManager {
     // Public class
     //******************************************************************************************
 
-    public static class DownloadableFormatEntry {
+    public static class DownloadableFormatEntry implements Comparable<DownloadableFormatEntry> {
 
         public enum DownloadState {
             NOT_DOWNLOADED,
@@ -68,67 +72,16 @@ public class DebateFormatDownloadManager {
 
         private static final String TAG = "DownloadFormatEntry";
 
-        public int version;
-        public String filename;
-        public String url;
-        public String styleName;
-        public String[] regions;
-        public String[] usedAts;
-        public String[] levels;
-        public String description;
-        public DownloadState state = DownloadState.NOT_DOWNLOADED;
+        public int version = 0;
+        @NonNull public String filename = "";
+        @NonNull public String url = "";
+        @NonNull public String name = "";
+        @NonNull public String[] regions = new String[0];
+        @NonNull public String[] usedAts = new String[0];
+        @NonNull public String[] levels = new String[0];
+        @NonNull public String description = "";
+        @NonNull public DownloadState state = DownloadState.NOT_DOWNLOADED;
         public boolean expanded = true;
-
-        /**
-         * Constructs a new <code>DownloadableFormatEntry</code> from a {@link JsonReader}.
-         */
-        static DownloadableFormatEntry fromJsonReader(JsonReader reader) throws IOException, IllegalStateException {
-            DownloadableFormatEntry entry = new DownloadableFormatEntry();
-            reader.beginObject();
-            while (reader.hasNext()) {
-                String key = reader.nextName();
-                switch (key) {
-                    case "filename":
-                        entry.filename = reader.nextString();
-                        break;
-                    case "name":
-                        entry.styleName = reader.nextString();
-                        break;
-                    case "regions":
-                        entry.regions = readStringList(reader);
-                        break;
-                    case "levels":
-                        entry.levels = readStringList(reader);
-                        break;
-                    case "used-ats":
-                        entry.usedAts = readStringList(reader);
-                        break;
-                    case "description":
-                        entry.description = reader.nextString();
-                        break;
-                    case "version":
-                        entry.version = reader.nextInt();
-                        break;
-                    case "url":
-                        entry.url = reader.nextString();
-                        break;
-                    default:
-                        reader.skipValue();
-                }
-            }
-            reader.endObject();
-            return entry;
-        }
-
-        static String[] readStringList(JsonReader reader) throws IOException, IllegalStateException {
-            ArrayList<String> strings = new ArrayList<>();
-            reader.beginArray();
-            while (reader.hasNext()) {
-                strings.add(reader.nextString());
-            }
-            reader.endArray();
-            return strings.toArray(new String[0]);
-        }
 
         /**
          * Given a format XML files manager and version extractor, checks the version number in the
@@ -171,6 +124,137 @@ public class DebateFormatDownloadManager {
             else
                 this.state = DownloadState.DOWNLOADED;
         }
+
+        @Override
+        public int compareTo(DownloadableFormatEntry o) {
+            // when sorting, sort by name
+            return this.name.compareTo(o.name);
+        }
+
+    }
+
+    //******************************************************************************************
+    // Private class
+    //******************************************************************************************
+
+    /**
+     * Helper class that builds a {@link DownloadableFormatEntry} using a {@link JsonReader}. This
+     * class mostly just helps to group these functions together, but it does maintain state in a
+     * {@link LanguageChooser}.
+     */
+    private static class DownloadableFormatListBuilder {
+
+        private static class FormatInfo {
+            @NonNull public String name = "";
+            @NonNull public String[] regions = new String[0];
+            @NonNull public String[] usedAts = new String[0];
+            @NonNull public String[] levels = new String[0];
+            @NonNull public String description = "";
+        }
+
+        private final LanguageChooser mLangChooser;
+
+        DownloadableFormatListBuilder() {
+            mLangChooser = new LanguageChooser();
+        }
+
+        /**
+         * Builds a {@link DownloadableFormatEntry} from a {@link JsonReader}.
+         */
+        DownloadableFormatEntry buildFromJson(JsonReader reader) throws IOException, IllegalStateException {
+            DownloadableFormatEntry entry = new DownloadableFormatEntry();
+            reader.beginObject();
+            while (reader.hasNext()) {
+                String key = reader.nextName();
+                switch (key) {
+                    case "filename":
+                        entry.filename = reader.nextString();
+                        break;
+                    case "info":
+                        Map<String, FormatInfo> infoObjects = readInfoObjects(reader);
+                        FormatInfo info = chooseInfo(infoObjects);
+                        if (info != null) {
+                            entry.name = info.name;
+                            entry.regions = info.regions;
+                            entry.levels = info.levels;
+                            entry.usedAts = info.usedAts;
+                            entry.description = info.description;
+                        }
+                        break;
+                    case "version":
+                        entry.version = reader.nextInt();
+                        break;
+                    case "url":
+                        entry.url = reader.nextString();
+                        break;
+                    default:
+                        reader.skipValue();
+                }
+            }
+            reader.endObject();
+            return entry;
+        }
+
+        /**
+         * Reads the "info" object for all languages.
+         *
+         * @param reader a {@link JsonReader}
+         * @return a {@link Map} mapping (possibly empty) language codes to {@link FormatInfo}
+         * objects for that language.
+         */
+        Map<String, FormatInfo> readInfoObjects(JsonReader reader) throws IOException {
+            HashMap<String, FormatInfo> infoObjects = new HashMap<>();
+            reader.beginObject();
+            while (reader.hasNext()) {
+                String lang = reader.nextName();
+                FormatInfo info = new FormatInfo();
+                reader.beginObject();
+                while (reader.hasNext()) {
+                    String key = reader.nextName();
+                    switch (key) {
+                        case "name":
+                            info.name = reader.nextString();
+                            break;
+                        case "regions":
+                            info.regions = readStringList(reader);
+                            break;
+                        case "levels":
+                            info.levels = readStringList(reader);
+                            break;
+                        case "used-ats":
+                            info.usedAts = readStringList(reader);
+                            break;
+                        case "description":
+                            info.description = reader.nextString();
+                            break;
+                        default:
+                            reader.skipValue();
+                    }
+                }
+                reader.endObject();
+                infoObjects.put(lang, info);
+            }
+            reader.endObject();
+            return infoObjects;
+        }
+
+        FormatInfo chooseInfo(Map<String, FormatInfo> infoObjects) {
+            List<String> languages = new ArrayList<>(infoObjects.keySet());
+            String chosen = mLangChooser.choose(languages);
+            if (chosen == null) return null;
+            else return infoObjects.get(chosen);
+        }
+
+        String[] readStringList(JsonReader reader) throws IOException, IllegalStateException {
+            ArrayList<String> strings = new ArrayList<>();
+            reader.beginArray();
+            while (reader.hasNext()) {
+                strings.add(reader.nextString());
+            }
+            reader.endArray();
+            return strings.toArray(new String[0]);
+        }
+
     }
 
     //******************************************************************************************
@@ -196,7 +280,7 @@ public class DebateFormatDownloadManager {
      * Starts downloading the list of downloadable entries from the server, and notifies the binder
      * on the main thread when done. This should be safe to call from any thread.
      */
-    public void startDownloadList()  {
+    public void startDownloadList() {
         initialiseThreads();
         mExecutorService.execute(() -> {
             try {
@@ -293,9 +377,10 @@ public class DebateFormatDownloadManager {
     }
 
     /**
-     * Downloads the file represented by a {@link DownloadableFormatEntry}. This accesses the network,
-     * so it must be run on a background thread. It also checks that the URL host matches that of
-     * where the format came from.
+     * Downloads the file represented by a {@link DownloadableFormatEntry}. This accesses the
+     * network, so it must be run on a background thread. It also checks that the URL host matches
+     * that of where the format came from.
+     *
      * @param entry a {@link DownloadableFormatEntry}
      */
     private void synchronousDownloadFile(DownloadableFormatEntry entry) throws IOException {
@@ -331,10 +416,12 @@ public class DebateFormatDownloadManager {
         InputStream in = connection.getInputStream();
         InputStreamReader isr = new InputStreamReader(in);
 
+        DownloadableFormatListBuilder listBuilder = new DownloadableFormatListBuilder();
+
         try (JsonReader reader = new JsonReader(isr)) {
             reader.beginArray();
             while (reader.hasNext()) {
-                DownloadableFormatEntry entry = DownloadableFormatEntry.fromJsonReader(reader);
+                DownloadableFormatEntry entry = listBuilder.buildFromJson(reader);
                 // Log.d(TAG, "added: " + entry.styleName + " (" + entry.filename + ")");
                 entry.checkForExistingFile(mFilesManager, versionExtractor);
                 entries.add(entry);
@@ -342,6 +429,7 @@ public class DebateFormatDownloadManager {
             reader.endArray();
         }
 
+        Collections.sort(entries);
         return Collections.unmodifiableList(entries);
     }
 

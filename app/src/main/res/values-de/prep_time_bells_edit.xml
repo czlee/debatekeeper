@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prepTimeBellsEditor_addBell_buttonText">Hinzufügen</string>
+    <string name="prepTimeBellsEditor_clearAll_buttonText">Alle Entfernen</string>
+    <string name="prepTimeBellDescription_atStart">zum Beginn</string>
+    <string name="prepTimeBellDescription_afterStart">%1$s nach Beginn</string>
+    <string name="prepTimeBellDescription_atFinish">am Ende</string>
+    <string name="prepTimeBellDescription_beforeFinish">%1$s vor Ende</string>
+    <string name="prepTimeBellDescription_proportional">%1$s%% durch Vorbereitungszeit</string>
+    <string name="prepTimeBellsEditor_addBellDialog_title">Klingel hinzufügen</string>
+    <string name="prepTimeBellsEditor_editBellDialog_title">Klingel %1$s bearbeiten</string>
+    <string-array name="prepTimeBellsEditor_editBellDialog_types">
+        <item>Zeit ab Beginn</item>
+        <item>Zeit vor Ende</item>
+        <item>Anteil der Vorbereitungszeit</item>
+    </string-array>
+    <string name="prepTimeBellsEditor_addBellDialog_confirmButton">Hinzufügen</string>
+    <string name="prepTimeBellsEditor_editBellDialog_confirmButton">Fertig</string>
+    <string name="prepTimeBellsEditor_clearAllDialog_title">Alle Klingeln entfernen</string>
+    <string name="prepTimeBellsEditor_clearAllDialog_message_noFinishBell">Alle Klingeln der Vorbereitungszeit entfernen?</string>
+    <string name="prepTimeBellsEditor_clearAllDialog_message_withFinishBell">Alle Klingeln der Vorbereitungszeit, außer der letzten, entfernen?</string>
+    <string name="prepTimeBellsEditor_clearAllDialog_confirmButton">Alle entfernen</string>
+    <string name="prepTimeBellsEditor_contextMenu_header">Klingel %1$s</string>
+    <string name="prepTimeBellsEditor_contextMenu_delete">Entfernen</string>
+    <string name="prepTimeBellsEditor_contextMenu_edit">Bearbeiten</string>
+    <string name="prepTimeBellsEditor_contextMenu_tip">Lang drücken zum Bearbeiten oder Entfernen</string>
+</resources>

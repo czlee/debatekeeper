@@ -21,18 +21,24 @@ import android.content.Context;
 import android.text.format.DateUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.ibm.icu.util.ULocale;
+
 import net.czlee.debatekeeper.R;
 import net.czlee.debatekeeper.debateformat.XmlUtilities.IllegalSchemaVersionException;
 import net.czlee.debatekeeper.debateformat.XmlUtilities.XmlInvalidValueException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -52,10 +58,11 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
 
     private static final String TAG = "DebateFormatInfoForSchema2";
 
-    private final Context mContext;
-    private final XmlUtilities xu;
-    private final Element mRootElement;
-    private final Element mInfoElement; // keep <info> readily accessible for performance
+    @NonNull private final Context mContext;
+    @NonNull private final XmlUtilities xu;
+    @Nullable private Element mRootElement = null;
+    @Nullable private Element mInfoElement = null; // keep <info> readily accessible for performance
+    @Nullable private ArrayList<String> mDeclaredLanguages = null;
 
     private static final String MINIMUM_SCHEMA_VERSION = "2.0";
     private static final String MAXIMUM_SCHEMA_VERSION = "2.2";
@@ -72,15 +79,17 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             doc = null;
         }
 
-        if (doc != null)
-            mRootElement = doc.getDocumentElement();
-        else
-            mRootElement = null;
+        if (doc != null) mRootElement = doc.getDocumentElement();
 
-        if (mRootElement != null)
-            mInfoElement = xu.findElement(mRootElement, R.string.xml2elemName_info);
-        else
-            mInfoElement = null;
+        if (mRootElement != null) {
+            Element languagesRoot = xu.findElement(mRootElement, R.string.xml2elemName_languages);
+            if (languagesRoot != null) {
+                mDeclaredLanguages = xu.findAllElementTexts(languagesRoot, R.string.xml2elemName_languages_language);
+                xu.setDeclaredLanguages(mDeclaredLanguages);
+            }
+
+            mInfoElement = xu.findLocalElement(mRootElement, R.string.xml2elemName_info);
+        }
 
     }
 
@@ -94,7 +103,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
     @Override
     public String getName() {
         if (mRootElement == null) return "";
-        String result = xu.findElementText(mRootElement, R.string.xml2elemName_name);
+        String result = xu.findLocalElementText(mRootElement, R.string.xml2elemName_name);
         if (result == null) return "";
         else return result;
     }
@@ -105,7 +114,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
     @Override
     public String getDescription() {
         if (mInfoElement == null) return "-";
-        String result = xu.findElementText(mInfoElement, R.string.xml2elemName_info_desc);
+        String result = xu.findLocalElementText(mInfoElement, R.string.xml2elemName_info_desc);
         if (result == null) return "-";
         else return result;
     }
@@ -115,15 +124,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
      */
     @Override
     public ArrayList<String> getRegions() {
-        ArrayList<String> result = new ArrayList<>();
-        if (mInfoElement == null) return result; // empty list
-        NodeList regionsList = xu.findAllElements(mInfoElement, R.string.xml2elemName_info_region);
-        for (int i = 0; i < regionsList.getLength(); i++) {
-            Element element = (Element) regionsList.item(i);
-            String text = element.getTextContent();
-            result.add(text);
-        }
-        return result;
+        return xu.findAllElementTexts(mInfoElement, R.string.xml2elemName_info_region);
     }
 
     /* (non-Javadoc)
@@ -131,15 +132,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
      */
     @Override
     public ArrayList<String> getLevels() {
-        ArrayList<String> result = new ArrayList<>();
-        if (mInfoElement == null) return result; // empty list
-        NodeList levelsList = xu.findAllElements(mInfoElement, R.string.xml2elemName_info_level);
-        for (int i = 0; i < levelsList.getLength(); i++) {
-            Element element = (Element) levelsList.item(i);
-            String text = element.getTextContent();
-            result.add(text);
-        }
-        return result;
+        return xu.findAllElementTexts(mInfoElement, R.string.xml2elemName_info_level);
     }
 
     /* (non-Javadoc)
@@ -147,15 +140,22 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
      */
     @Override
     public ArrayList<String> getUsedAts() {
-        ArrayList<String> result = new ArrayList<>();
-        if (mInfoElement == null) return result; // empty list
-        NodeList usedAtsList = xu.findAllElements(mInfoElement, R.string.xml2elemName_info_usedAt);
-        for (int i = 0; i < usedAtsList.getLength(); i++) {
-            Element element = (Element) usedAtsList.item(i);
-            String text = element.getTextContent();
-            result.add(text);
+        return xu.findAllElementTexts(mInfoElement, R.string.xml2elemName_info_usedAt);
+    }
+
+    /* (non-Javadoc)
+     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getDisplayLanguages()
+     */
+    @Override
+    public ArrayList<String> getDisplayLanguages() {
+        if (mDeclaredLanguages == null) return new ArrayList<>();
+        ArrayList<String> languages = new ArrayList<>();
+        for (String code : mDeclaredLanguages) {
+            ULocale locale = new ULocale(code);
+            String language = locale.getDisplayLanguage();
+            if (language != null) languages.add(language);
         }
-        return result;
+        return languages;
     }
 
     /* (non-Javadoc)
@@ -191,7 +191,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
 
             description += mContext.getString(R.string.viewFormat_timeDescription_controlledPrepSuffix);
 
-            NodeList bells = xu.findAllElements(prepTimeControlled, R.string.xml2elemName_bell);
+            List<Element> bells = xu.findAllElements(prepTimeControlled, R.string.xml2elemName_bell);
             description += "\n" + buildBellsString(bells, length);
 
             return description;
@@ -221,14 +221,16 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
         if (mRootElement == null) return result;
         Element speechFormatsElement = xu.findElement(mRootElement, R.string.xml2elemName_speechFormats);
         if (speechFormatsElement == null) return result;
-        NodeList speechFormats = xu.findAllElements(speechFormatsElement, R.string.xml2elemName_speechFormat);
+        List<Element> speechFormats = xu.findAllElements(speechFormatsElement, R.string.xml2elemName_speechFormat);
 
-        for (int i = 0; i < speechFormats.getLength(); i++) {
+        for (Element element : speechFormats) {
             String reference, description;
-            Element element = (Element) speechFormats.item(i);
 
             reference = xu.findAttributeText(element, R.string.xml2attrName_common_ref);
             if (reference == null) continue;
+
+            String speechName = xu.findLocalElementText(element, R.string.xml2elemName_name);
+            if (speechName == null) speechName = reference;
 
             Long length;
             try {
@@ -239,10 +241,10 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             if (length == null) continue;
             else description = buildLengthString(length);
 
-            NodeList bells = xu.findAllElements(element, R.string.xml2elemName_bell);
+            List<Element> bells = xu.findAllElements(element, R.string.xml2elemName_bell);
             description += "\n" + buildBellsString(bells, length);
 
-            String [] pair = {reference, description};
+            String [] pair = {speechName, description, reference};
             result.add(pair);
 
         }
@@ -254,25 +256,35 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
      * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getSpeeches()
      */
     @Override
-    public ArrayList<String[]> getSpeeches() {
+    public ArrayList<String[]> getSpeeches(ArrayList<String[]> descriptions) {
         ArrayList<String[]> result = new ArrayList<>();
 
         if (mRootElement == null) return result;
         Element speechesElement = xu.findElement(mRootElement, R.string.xml2elemName_speechesList);
         if (speechesElement == null) return result;
-        NodeList speechFormats = xu.findAllElements(speechesElement, R.string.xml2elemName_speech);
+        List<Element> speechFormats = xu.findAllElements(speechesElement, R.string.xml2elemName_speech);
 
-        for (int i = 0; i < speechFormats.getLength(); i++) {
+        // Build a map from format string to description
+        HashMap<String, String> refToDescr = new HashMap<>();
+        for (int i = 0; i < descriptions.size(); i++) {
+            String descr = descriptions.get(i)[0];
+            String ref = descriptions.get(i)[2];
+            refToDescr.put(ref, descr);
+        }
+
+        for (Element element : speechFormats) {
             String name, format;
-            Element element = (Element) speechFormats.item(i);
 
-            name = xu.findElementText(element, R.string.xml2elemName_speech_name);
+            name = xu.findLocalElementText(element, R.string.xml2elemName_speech_name);
             if (name == null) continue;
 
             format = xu.findAttributeText(element, R.string.xml2attrName_speech_format);
             if (format == null) continue;
 
-            String [] pair = {name, format};
+            String descr = refToDescr.get(format);
+            if (descr == null) descr = format;
+
+            String [] pair = {name, descr};
             result.add(pair);
 
         }
@@ -319,11 +331,11 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
      * @param list a list of &lt;bell&gt; {@link Element}s
      * @return the completed string e.g. "bells at 01:00, 06:00, 07:00"
      */
-    private String buildBellsString(NodeList list, long finishTime) {
+    private String buildBellsString(List<Element> list, long finishTime) {
         StringBuilder bellsList = new StringBuilder();
 
-        for (int i = 0; i < list.getLength(); i++) {
-            Element element = (Element) list.item(i);
+        for (int i = 0; i < list.size(); i++) {
+            Element element = list.get(i);
             String timeStr = xu.findAttributeText(element, R.string.xml2attrName_bell_time);
             long time;
             if (timeStr == null) continue;
@@ -347,11 +359,11 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
                 bellsList.append(mContext.getString(R.string.timer_pauseOnBellIndicator));
 
             // If there's one after this, add a comma
-            if (i < list.getLength() - 1) bellsList.append(", ");
+            if (i < list.size() - 1) bellsList.append(", ");
         }
 
         return mContext.getResources().getQuantityString(
-                R.plurals.viewFormat_timeDescription_bellsList, list.getLength(), bellsList);
+                R.plurals.viewFormat_timeDescription_bellsList, list.size(), bellsList);
     }
 
     private String buildLengthString(long length) {
@@ -361,5 +373,6 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
         } else
             return mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, DateUtils.formatElapsedTime(length));
     }
+
 }
 

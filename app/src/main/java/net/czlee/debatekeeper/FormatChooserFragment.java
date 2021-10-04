@@ -237,6 +237,7 @@ public class FormatChooserFragment extends Fragment {
 
                 populateFileInfo(binding, filename, null);
                 binding.viewFormatDetailsGroup.setVisibility(View.GONE);
+                binding.viewFormatLanguagesGroup.setVisibility(View.GONE);
                 binding.viewFormatErrorLabel.setVisibility(View.VISIBLE);
                 binding.viewFormatErrorValue.setVisibility(View.VISIBLE);
                 binding.viewFormatErrorValue.setText(message);
@@ -247,8 +248,9 @@ public class FormatChooserFragment extends Fragment {
                 populateFileInfo(binding, filename, schemaVersion);
                 populateBasicInfo(binding, dfi);
                 populatePrepTimeInfo(binding, dfi);
+                ArrayList<String[]> speechDescriptions = dfi.getSpeechFormatDescriptions();
                 populateTwoColumnTable(binding.viewFormatTableSpeechTypes, R.layout.speech_type_row, dfi.getSpeechFormatDescriptions());
-                populateTwoColumnTable(binding.viewFormatTableSpeeches, R.layout.speech_row, dfi.getSpeeches());
+                populateTwoColumnTable(binding.viewFormatTableSpeeches, R.layout.speech_row, dfi.getSpeeches(speechDescriptions));
                 binding.viewFormatTitle.setText(dfi.getName());
             }
             builder.setCancelable(true);
@@ -306,6 +308,14 @@ public class FormatChooserFragment extends Fragment {
             vb.viewFormatLevelValue.setText(concatenate(dfi.getLevels()));
             vb.viewFormatUsedAtValue.setText(concatenate(dfi.getUsedAts()));
             vb.viewFormatDescValue.setText(dfi.getDescription());
+
+            ArrayList<String> languages = dfi.getDisplayLanguages();
+            if (languages.isEmpty()) {
+                vb.viewFormatLanguagesGroup.setVisibility(View.GONE);
+            } else {
+                vb.viewFormatLanguagesGroup.setVisibility(View.VISIBLE);
+                vb.viewFormatLanguagesValue.setText(concatenate(dfi.getDisplayLanguages()));
+            }
         }
 
         /**
