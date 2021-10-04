@@ -58,7 +58,7 @@ public class DebateFormatFieldExtractor {
         } catch (AllLanguagesFoundException e) {
             LanguageChooser languageChooser = new LanguageChooser();
             // Choose appropriate name language
-            String bestLang = languageChooser.choose(mLanguages.toArray(new String[0]));
+            String bestLang = languageChooser.choose(mLanguages);
             // Map back to the matching name
             mFieldValue = mCandidates.get(bestLang);
             return mFieldValue;

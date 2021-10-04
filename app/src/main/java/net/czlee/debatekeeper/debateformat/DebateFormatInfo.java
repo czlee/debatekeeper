@@ -55,7 +55,7 @@ public interface DebateFormatInfo {
     /**
      * @return a list of languages supported, or an empty list if there were none
      */
-    ArrayList<String> getLanguagesSupported();
+    ArrayList<String> getDisplayLanguages();
 
     /**
      * @return a description of prep time, or <code>null</code> if there is no prep time for this

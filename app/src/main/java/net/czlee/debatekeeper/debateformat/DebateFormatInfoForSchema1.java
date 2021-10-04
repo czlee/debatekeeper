@@ -84,10 +84,10 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
     }
 
     /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getLanguagesSupported()
+     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getDisplayLanguages()
      */
     @Override
-    public ArrayList<String> getLanguagesSupported() {
+    public ArrayList<String> getDisplayLanguages() {
         return new ArrayList<>();
     }
 

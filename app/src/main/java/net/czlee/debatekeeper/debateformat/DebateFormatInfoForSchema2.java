@@ -21,6 +21,9 @@ import android.content.Context;
 import android.text.format.DateUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.ibm.icu.util.ULocale;
 
 import net.czlee.debatekeeper.R;
@@ -55,10 +58,11 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
 
     private static final String TAG = "DebateFormatInfoForSchema2";
 
-    private final Context mContext;
-    private final XmlUtilities xu;
-    private final Element mRootElement;
-    private final Element mInfoElement; // keep <info> readily accessible for performance
+    @NonNull private final Context mContext;
+    @NonNull private final XmlUtilities xu;
+    @Nullable private Element mRootElement = null;
+    @Nullable private Element mInfoElement = null; // keep <info> readily accessible for performance
+    @Nullable private ArrayList<String> mDeclaredLanguages = null;
 
     private static final String MINIMUM_SCHEMA_VERSION = "2.0";
     private static final String MAXIMUM_SCHEMA_VERSION = "2.2";
@@ -75,15 +79,18 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             doc = null;
         }
 
-        if (doc != null)
-            mRootElement = doc.getDocumentElement();
-        else
-            mRootElement = null;
+        if (doc != null) mRootElement = doc.getDocumentElement();
 
-        if (mRootElement != null)
+        if (mRootElement != null) {
+            Element languagesRoot = xu.findElement(mRootElement, R.string.xml2elemName_languages);
+            if (languagesRoot != null) {
+                mDeclaredLanguages = xu.findAllElementTexts(languagesRoot, R.string.xml2elemName_languages_language);
+                xu.setDeclaredLanguages(mDeclaredLanguages);
+            }
+
             mInfoElement = xu.findLocalElement(mRootElement, R.string.xml2elemName_info);
-        else
-            mInfoElement = null;
+        }
+
     }
 
     //******************************************************************************************
@@ -137,16 +144,13 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
     }
 
     /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getLanguagesSupported()
+     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getDisplayLanguages()
      */
     @Override
-    public ArrayList<String> getLanguagesSupported() {
-        if (mRootElement == null) return new ArrayList<>();
-        Element languagesRoot = xu.findElement(mRootElement, R.string.xml2elemName_languages);
-        if (languagesRoot == null) return new ArrayList<>();
-        ArrayList<String> languageCodes = xu.findAllElementTexts(languagesRoot, R.string.xml2elemName_languages_language);
+    public ArrayList<String> getDisplayLanguages() {
+        if (mDeclaredLanguages == null) return new ArrayList<>();
         ArrayList<String> languages = new ArrayList<>();
-        for (String code : languageCodes) {
+        for (String code : mDeclaredLanguages) {
             ULocale locale = new ULocale(code);
             String language = locale.getDisplayLanguage();
             if (language != null) languages.add(language);

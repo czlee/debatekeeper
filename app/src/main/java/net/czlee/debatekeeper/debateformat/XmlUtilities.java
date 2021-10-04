@@ -18,7 +18,9 @@
 package net.czlee.debatekeeper.debateformat;
 
 import android.content.res.Resources;
+import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import net.czlee.debatekeeper.R;
@@ -28,27 +30,31 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 /**
  * Provides convenience functions for dealing with XML files.
- *
- * If constructed, it takes a {@link Resources} which it uses to retrieve resources.  Methods
- * that require these resources must be called from an instance of this class.  Other methods
- * are static (and obviously don't require an instance).
+ * <p>
+ * If constructed, it takes a {@link Resources} which it uses to retrieve resources.  Methods that
+ * require these resources must be called from an instance of this class.  Other methods are static
+ * (and obviously don't require an instance).
  *
  * @author Chuan-Zheng Lee
- * @since  2013-06-04
+ * @since 2013-06-04
  */
 public class XmlUtilities {
 
+    @NonNull
     private final Resources mResources;
-    private final LanguageChooser mLangChooser;
+    @NonNull
+    private final LanguageChooser mLangChooser = new LanguageChooser();
+    @Nullable
+    private List<String> mDeclaredLanguages = null;
 
-    XmlUtilities(Resources resources) {
+    XmlUtilities(@NonNull Resources resources) {
         mResources = resources;
-        mLangChooser = new LanguageChooser();
     }
 
     //******************************************************************************************
@@ -86,7 +92,8 @@ public class XmlUtilities {
 
     /**
      * Convenience function.  Finds the {@link Element} of the name given by a resource ID.
-     * @param element an {@link Element}
+     *
+     * @param element      an {@link Element}
      * @param tagNameResId a resource ID referring to a string
      * @return the {@link Element} if found, or <code>null</code> if no such element is found
      */
@@ -99,7 +106,8 @@ public class XmlUtilities {
 
     /**
      * Convenience function.  Finds the text of the element of the name given by a resource ID.
-     * @param element an {@link Element}
+     *
+     * @param element      an {@link Element}
      * @param tagNameResId a resource ID referring to a string
      * @return the String if found, or <code>null</code> if no such element is found (if multiple
      * elements are found it just returns the text of the first)
@@ -113,8 +121,9 @@ public class XmlUtilities {
 
     /**
      * Convenience function.  Finds the {@link Element} of the name given by a source ID, whose
-     * {@code xml:lang} attribute is the language closests to the user.
-     * @param element an {@link Element}
+     * {@code xml:lang} attribute is the language closest to the user.
+     *
+     * @param element      an {@link Element}
      * @param tagNameResId a resource ID referring to a string
      * @return the {@link Element} if found, or <code>null</code> if no such element is found
      */
@@ -125,21 +134,26 @@ public class XmlUtilities {
 
         String langAttrName = getString(R.string.xml2attrName_language);
         HashMap<String, Element> langToCandidate = new HashMap<>();
+        ArrayList<String> languagesSupported = new ArrayList<>();  // retain order information
         for (Element candidate : candidates) {
             String langAttr = candidate.getAttribute(langAttrName);  // 'xml:lang' attribute
             langToCandidate.put(langAttr, candidate);
+            languagesSupported.add(langAttr);
         }
 
-        String[] languages = langToCandidate.keySet().toArray(new String[0]);
-        String bestLang = mLangChooser.choose(languages);
+        Log.d("XmlUtil", "for element: " + elemName);
+        List<String> languagesOrdered = getLanguageOrder(languagesSupported);
+        String bestLang = mLangChooser.choose(languagesOrdered);
+        Log.d("XmlUtil", "chosen: " + bestLang);
         return langToCandidate.get(bestLang);
     }
 
     /**
      * Convenience function.  Finds the text of the element of the name given by a resource ID.
-     * Supports multiple elements with the same name but different "lang" attributes and selects
-     * the most appropriate variant.
-     * @param element an {@link Element}
+     * Supports multiple elements with the same name but different "lang" attributes and selects the
+     * most appropriate variant.
+     *
+     * @param element      an {@link Element}
      * @param tagNameResId a resource ID referring to a string
      * @return the String if found, or <code>null</code> if no such element is found.
      */
@@ -151,7 +165,8 @@ public class XmlUtilities {
 
     /**
      * Convenience function.  Finds all {@link Element}s of the name given by a resource ID.
-     * @param element an {@link Element}
+     *
+     * @param element      an {@link Element}
      * @param tagNameResId a resource ID referring to a string
      * @return a {@link List<Element>}
      */
@@ -163,7 +178,8 @@ public class XmlUtilities {
     /**
      * Convenience function.  Finds all {@link Element}s of the name given by a resource ID, and
      * returns a list of the text content of each of those elements.
-     * @param element an {@link Element}
+     *
+     * @param element      an {@link Element}
      * @param tagNameResId a resource ID referring to a string
      * @return a {@link List<String>} containing the text in each element found
      */
@@ -178,7 +194,8 @@ public class XmlUtilities {
 
     /**
      * Convenience function.  Finds the text of the attribute of the name given by a resource ID.
-     * @param element an {@link Element}
+     *
+     * @param element       an {@link Element}
      * @param attrNameResId a resource ID referring to a string
      * @return a string, or <code>null</code> if the attribute does not have a specified value
      */
@@ -189,9 +206,10 @@ public class XmlUtilities {
     }
 
     /**
-     * Convenience function.  Finds the text of the attribute of the name given by a resource ID
-     * and converts the time string to a number of seconds.
-     * @param element an {@link Element}
+     * Convenience function.  Finds the text of the attribute of the name given by a resource ID and
+     * converts the time string to a number of seconds.
+     *
+     * @param element       an {@link Element}
      * @param attrNameResId a resource ID referring to a string
      * @return a Long, or the <code>null</code> if the attribute does not have a specified value
      * @throws XmlInvalidValueException if the attribute text cannot be interpreted as a time
@@ -209,9 +227,10 @@ public class XmlUtilities {
     }
 
     /**
-     * Convenience function.  Finds the text of the attribute of the name given by a resource ID
-     * and converts the time string to a number of seconds.
-     * @param element an {@link Element}
+     * Convenience function.  Finds the text of the attribute of the name given by a resource ID and
+     * converts the time string to a number of seconds.
+     *
+     * @param element       an {@link Element}
      * @param attrNameResId a resource ID referring to a string
      * @return a Long, or the <code>null</code> if the attribute does not have a specified value
      * @throws XmlInvalidValueException if the attribute text cannot be interpreted as an integer
@@ -229,11 +248,11 @@ public class XmlUtilities {
     /**
      * Convenience function.  Examines the attribute of the name given by a resource ID and
      * determines if it is "true" or "false".  Values are case-sensitive.
-     * @param element an {@link Element}
+     *
+     * @param element       an {@link Element}
      * @param attrNameResId a resource ID referring to a string
      * @return <code>true</code> if the attribute's value is "true", <code>false</code> if it is
      * "false" or isn't specified
-     *
      */
     boolean isAttributeTrue(Element element, int attrNameResId) throws XmlInvalidValueException {
         String text = findAttributeText(element, attrNameResId);
@@ -245,6 +264,7 @@ public class XmlUtilities {
 
     /**
      * Converts a String in the format 00:00 to a long, being the number of seconds
+     *
      * @param s the String
      * @return the total number of seconds (minutes + seconds * 60)
      * @throws NumberFormatException if the given value cannot be interpreted as a time
@@ -252,17 +272,17 @@ public class XmlUtilities {
     static long timeStr2Secs(String s) throws NumberFormatException {
         long seconds = 0;
         String[] parts = s.split(":", 2);
-        switch (parts.length){
-        case 2:
-            long minutes = Long.parseLong(parts[0]);
-            seconds += minutes * 60;
-            seconds += Long.parseLong(parts[1]);
-            break;
-        case 1:
-            seconds = Long.parseLong(parts[0]);
-            break;
-        default:
-            throw new NumberFormatException();
+        switch (parts.length) {
+            case 2:
+                long minutes = Long.parseLong(parts[0]);
+                seconds += minutes * 60;
+                seconds += Long.parseLong(parts[1]);
+                break;
+            case 1:
+                seconds = Long.parseLong(parts[0]);
+                break;
+            default:
+                throw new NumberFormatException();
         }
         return seconds;
     }
@@ -297,6 +317,19 @@ public class XmlUtilities {
         }
     }
 
+    /**
+     * Set the declared languages referenced by these utilities. The "declared languages" are the
+     * languages declared generally to be supported by the XML file that this object is parsing. The
+     * languages should be in order of preference (of the XML file). If this is set, then methods of
+     * this class that return localised elements will elevate these languages to the top of the
+     * preference order. If this is set to <code>null</code>, it is ignored.
+     *
+     * @param declaredLanguages an array of BCP 47 language codes
+     */
+    public void setDeclaredLanguages(@Nullable List<String> declaredLanguages) {
+        mDeclaredLanguages = declaredLanguages;
+    }
+
     //******************************************************************************************
     // Private methods
     //******************************************************************************************
@@ -309,8 +342,9 @@ public class XmlUtilities {
      * the matching tag name, not just the immediate children. This function instead returns only
      * the immediate children with the matching tag name, and is intended to be used instead of
      * {@link org.w3c.dom.Element#getElementsByTagName(String)}.
+     *
      * @param element an {@link org.w3c.dom.Element} to search
-     * @param name the child element name to look for
+     * @param name    the child element name to look for
      */
     private List<Element> getChildElementsByTagName(@Nullable Element element, String name) {
         ArrayList<Element> result = new ArrayList<>();
@@ -322,6 +356,33 @@ public class XmlUtilities {
             if (child.getNodeName().equals(name))
                 result.add((Element) child);
         }
+        return result;
+    }
+
+    /**
+     * Reconciles the languages available for some resource with the declared languages of the XML
+     * file, if present. If no declared languages are set, this just returns the input.
+     *
+     * The current implementation lists the languages in the declared languages first (in the same
+     * order, if in the input), and then lists any other languages in the input.
+     *
+     * @param languages a list of BCP 47 language codes supported by some given resource
+     * @return a compiled list of languages that can be passed to {@link LanguageChooser#choose},
+     * that has the same elements as the input list (but possibly in a different order).
+     */
+    private List<String> getLanguageOrder(List<String> languages) {
+        if (mDeclaredLanguages == null) return languages;
+        Log.d("XmlUtil", "input: " + Arrays.toString(languages.toArray()));
+        ArrayList<String> result = new ArrayList<>();
+        for (String lang : mDeclaredLanguages) {
+            if (languages.contains(lang)) {
+                result.add(lang);
+                languages.remove(lang);
+            }
+        }
+        result.addAll(languages);
+        Log.d("XmlUtil", "declared: " + Arrays.toString(mDeclaredLanguages.toArray()));
+        Log.d("XmlUtil", "output: " + Arrays.toString(result.toArray()));
         return result;
     }
 

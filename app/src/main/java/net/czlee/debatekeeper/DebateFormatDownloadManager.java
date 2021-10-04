@@ -239,7 +239,7 @@ public class DebateFormatDownloadManager {
         }
 
         FormatInfo chooseInfo(Map<String, FormatInfo> infoObjects) {
-            String[] languages = infoObjects.keySet().toArray(new String[0]);
+            List<String> languages = new ArrayList<>(infoObjects.keySet());
             String chosen = mLangChooser.choose(languages);
             if (chosen == null) return null;
             else return infoObjects.get(chosen);

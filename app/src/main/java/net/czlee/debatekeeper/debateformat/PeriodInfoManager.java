@@ -61,9 +61,9 @@ public class PeriodInfoManager {
 
     private static final String BUILT_IN_PERIODS_FILE = "periods.xml";
 
-    public PeriodInfoManager(Context context) {
+    public PeriodInfoManager(Context context, XmlUtilities xu) {
         mResources = context.getResources();
-        xu = new XmlUtilities(mResources);
+        this.xu = xu;
         populateBuiltInPeriodInfos(context.getAssets());
     }
 

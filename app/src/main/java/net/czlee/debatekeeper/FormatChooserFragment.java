@@ -309,12 +309,12 @@ public class FormatChooserFragment extends Fragment {
             vb.viewFormatUsedAtValue.setText(concatenate(dfi.getUsedAts()));
             vb.viewFormatDescValue.setText(dfi.getDescription());
 
-            ArrayList<String> languages = dfi.getLanguagesSupported();
+            ArrayList<String> languages = dfi.getDisplayLanguages();
             if (languages.isEmpty()) {
                 vb.viewFormatLanguagesGroup.setVisibility(View.GONE);
             } else {
                 vb.viewFormatLanguagesGroup.setVisibility(View.VISIBLE);
-                vb.viewFormatLanguagesValue.setText(concatenate(dfi.getLanguagesSupported()));
+                vb.viewFormatLanguagesValue.setText(concatenate(dfi.getDisplayLanguages()));
             }
         }
 

@@ -86,9 +86,8 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
         super();
         mContext = context;
         mDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
-        mPeriodInfoManager = new PeriodInfoManager(context);
         xu = new XmlUtilities(context.getResources());
-
+        mPeriodInfoManager = new PeriodInfoManager(context, xu);
     }
 
     //******************************************************************************************
@@ -103,7 +102,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
         Document doc = getDocumentFromInputStream(is);
         assert doc != null;
         Element root = doc.getDocumentElement();
-
+        
         // 0. Schema version
         mSchemaVersion = xu.findAttributeText(root, R.string.xml2attrName_root_schemaVersion);
 
@@ -113,6 +112,13 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
             logXmlError(R.string.xmlError_rootInvalidSchemaVersion, mSchemaVersion);
         // If the schema is too new, just keep going, the file might still work
 
+        // 0.1. Set up declared languages from <languages>
+        Element languages = xu.findElement(root, R.string.xml2elemName_languages);
+        if (languages != null) {
+            ArrayList<String> declaredLanguages = xu.findAllElementTexts(languages, R.string.xml2elemName_languages_language);
+            xu.setDeclaredLanguages(declaredLanguages);
+        } 
+        
         // 1. <name> - mandatory, <short-name> - optional
         String name = xu.findLocalElementText(root, R.string.xml2elemName_name);
 

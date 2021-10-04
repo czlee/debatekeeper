@@ -6,6 +6,8 @@ import com.ibm.icu.util.LocaleMatcher;
 import com.ibm.icu.util.LocalePriorityList;
 import com.ibm.icu.util.ULocale;
 
+import java.util.List;
+
 /**
  * Helper class to choose the 'best' language from an unordered list.
  * Used for XML 'lang' attribute support.
@@ -22,16 +24,16 @@ public class LanguageChooser {
      * @param languages Non-empty array with languages to choose from.
      * @return A language from @a languages.
      */
-    public String choose (String[] languages) {
+    public String choose (List<String> languages) {
         // TODO: Should probably use Locale.lookupTag once we require minimum API level 26
 
-        if (languages.length == 0) return null;
-        if (mLocaleList == null) return languages[0];
+        if (languages.isEmpty()) return null;
+        if (mLocaleList == null) return languages.get(0);
 
         // Parse languages into ULocales
-        ULocale[] localeObjs = new ULocale[languages.length];
-        for (int i = 0; i < languages.length; i++) {
-            localeObjs[i] = new ULocale(languages[i]);
+        ULocale[] localeObjs = new ULocale[languages.size()];
+        for (int i = 0; i < languages.size(); i++) {
+            localeObjs[i] = new ULocale(languages.get(i));
         }
 
         // Build locale list from ULocales
@@ -50,11 +52,11 @@ public class LanguageChooser {
 
         // Map back to original string
         for (int i = 0; i < localeObjs.length; i++) {
-            if (bestLang == localeObjs[i]) return languages[i];
+            if (bestLang == localeObjs[i]) return languages.get(i);
         }
 
         // Fallback just in case
-        return languages[0];
+        return languages.get(0);
     }
 
     /// Build a LocalePriorityList from a LocaleListCompat
