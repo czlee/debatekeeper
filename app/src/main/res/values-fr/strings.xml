@@ -59,7 +59,7 @@
     <string name="viewFormat_invalidSchemaVersion">Version de schema invalide « %1$s »</string>
     <string name="viewFormat_levelLabel">Niveau</string>
     <string name="viewFormat_outdatedSchemaVersion">Utilise un schema obsolète (version %1$s)</string>
-    <string name="viewFormat_prepTimeLabel">Temps de préparation</string>
+    <string name="viewFormat_prepTimeLabel">Temps de prépa</string>
     <string name="viewFormat_regionLabel">Région</string>
     <string name="viewFormat_showDetails_buttonText">Plus</string>
     <string name="viewFormat_speechesLabel">Discours</string>
