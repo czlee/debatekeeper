@@ -19,7 +19,7 @@ package net.czlee.debatekeeper.debateformat;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.xml.sax.SAXException;
 
@@ -61,7 +61,7 @@ public interface DebateFormatBuilderFromXml {
      * @return An <i>ArrayList</i> of <code>String</code>s, each item being an error found by
      * the XML parser
      */
-    ArrayList<String> getErrorLog();
+    List<String> getErrorLog();
 
     /**
      * @return the schema version of the processed file

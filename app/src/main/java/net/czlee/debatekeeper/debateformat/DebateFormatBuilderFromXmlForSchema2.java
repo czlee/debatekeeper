@@ -238,7 +238,7 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
     }
 
     @Override
-    public ArrayList<String> getErrorLog() {
+    public List<String> getErrorLog() {
         return mErrorLog;
     }
 

@@ -20,6 +20,7 @@ package net.czlee.debatekeeper.debateformat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -98,7 +99,7 @@ abstract class GenericDebatePhaseFormat implements DebatePhaseFormat {
         return workingPi;
     }
     @Override
-    public ArrayList<BellInfo> getBellsSorted() {
+    public List<BellInfo> getBellsSorted() {
 
         // A shallow copy is fine, we just want to sort the bells, not edit them.
         ArrayList<BellInfo> bells = new ArrayList<>(getBells());

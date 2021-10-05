@@ -72,6 +72,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * This Activity displays a list of formats for the user to choose from. It
@@ -248,7 +249,7 @@ public class FormatChooserFragment extends Fragment {
                 populateFileInfo(binding, filename, schemaVersion);
                 populateBasicInfo(binding, dfi);
                 populatePrepTimeInfo(binding, dfi);
-                ArrayList<String[]> speechDescriptions = dfi.getSpeechFormatDescriptions();
+                List<String[]> speechDescriptions = dfi.getSpeechFormatDescriptions();
                 populateTwoColumnTable(binding.viewFormatTableSpeechTypes, R.layout.speech_type_row, dfi.getSpeechFormatDescriptions());
                 populateTwoColumnTable(binding.viewFormatTableSpeeches, R.layout.speech_row, dfi.getSpeeches(speechDescriptions));
                 binding.viewFormatTitle.setText(dfi.getName());
@@ -309,12 +310,12 @@ public class FormatChooserFragment extends Fragment {
             vb.viewFormatUsedAtValue.setText(concatenate(dfi.getUsedAts()));
             vb.viewFormatDescValue.setText(dfi.getDescription());
 
-            ArrayList<String> languages = dfi.getDisplayLanguages();
+            List<String> languages = dfi.getDisplayLanguages();
             if (languages.isEmpty()) {
                 vb.viewFormatLanguagesGroup.setVisibility(View.GONE);
             } else {
                 vb.viewFormatLanguagesGroup.setVisibility(View.VISIBLE);
-                vb.viewFormatLanguagesValue.setText(concatenate(dfi.getDisplayLanguages()));
+                vb.viewFormatLanguagesValue.setText(concatenate(languages));
             }
         }
 
@@ -326,7 +327,7 @@ public class FormatChooserFragment extends Fragment {
          * TableRow must have at least two TextView elements, which must have IDs "text1" and "text2".
          * @param list the list of String arrays.  Each array must have two elements.
          */
-        private void populateTwoColumnTable(TableLayout table, int rowResId, ArrayList<String[]> list) {
+        private void populateTwoColumnTable(TableLayout table, int rowResId, List<String[]> list) {
             for (String[] rowText : list) {
                 TableRow row = (TableRow) View.inflate(getActivity(), rowResId, null);
                 ((TextView) row.findViewById(R.id.text1)).setText(rowText[0].concat(" "));
@@ -735,7 +736,7 @@ public class FormatChooserFragment extends Fragment {
      * @param list An <code>ArrayList</code> of <code>String</code>s.
      * @return the result, a single <code>String</code>
      */
-    private static String concatenate(ArrayList<String> list) {
+    private static String concatenate(List<String> list) {
         String str = "";
         Iterator<String> iterator = list.iterator();
 

@@ -75,7 +75,7 @@
     </plurals>
     <string name="viewFormat_usedAtLabel">Où utilisé</string>
     <string name="schemaTooNewDialog_title"><![CDATA[Mise à jour l\'application ?]]></string>
-    <string name="schemaTooNewDialog_message"><![CDATA[Ce fichier de style de débat utilise un schema (%1$s) plus nouveau que ce que cette version de l\'application (%3$s) permet (%2$s). Rechercher les mises à jour sur Google Play ?]]></string>
+    <string name="schemaTooNewDialog_message"><![CDATA[Ce fichier de style de débat (%4$s) utilise un schema (%1$s) plus nouveau que ce que cette version de l\'application (%3$s) permet (%2$s). Rechercher les mises à jour sur Google Play ?]]></string>
     <string name="schemaTooNewDialog_button_upgrade">Rechercher les mises à jour</string>
     <string name="schemaTooNewDialog_button_ignore">Ignorer</string>
     <string name="formatChooser_ioError">Une erreur s\'est produite lors de la lecture des fichiers des styles de débat.</string>

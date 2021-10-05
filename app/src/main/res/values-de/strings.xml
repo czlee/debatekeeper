@@ -65,7 +65,7 @@
     <string name="schemaTooNewDialog_title">App aktualisieren?</string>
     <string name="schemaTooNewDialog_button_upgrade">Nach Updates suchen</string>
     <string name="schemaTooNewDialog_button_ignore">Ignorieren</string>
-    <string name="schemaTooNewDialog_message">Diese Debattierformatdatei verwendet ein Schema (%1$s) welches zu neu ist. Diese App-Version (%3$s) unterstützt Schema %2$s. Auf Google Play nach Updates suchen?</string>
+    <string name="schemaTooNewDialog_message">Diese Debattierformatdatei (%4$s) verwendet ein Schema (%1$s) welches zu neu ist. Diese App-Version (%3$s) unterstützt Schema %2$s. Auf Google Play nach Updates suchen?</string>
     <string name="debateLoadError_schemaOutdated">Diese Debattierformatdatei verwendet Schema-Version 1.0 welches nicht mehr unterstützt wird.
         Bitte konvertieren Sie es zu Schema-Version 2.2.
         &lt;a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">Mehr erfahren.&lt;/a>

@@ -17,7 +17,7 @@
 
 package net.czlee.debatekeeper.debateformat;
 
-import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -63,9 +63,9 @@ public interface DebatePhaseFormat {
     PeriodInfo getPeriodInfoForTime(long seconds);
 
     /**
-     * @return an {@link ArrayList} of {@link BellInfo} objects that are sorted by time.
+     * @return an {@link List} of {@link BellInfo} objects that are sorted by time.
      */
-    ArrayList<BellInfo> getBellsSorted();
+    List<BellInfo> getBellsSorted();
 
     /**
      * @return <code>true</code> if it is a prep time, <code>false</code> otherwise

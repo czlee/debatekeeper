@@ -104,5 +104,5 @@
     <string name="schemaTooNewDialog_title">¿Actualizar aplicación?</string>
     <string name="schemaTooNewDialog_button_upgrade">Revisar actualizaciones</string>
     <string name="schemaTooNewDialog_button_ignore">Ignorar</string>
-    <string name="schemaTooNewDialog_message">El archivo del formato de este debate usa un esquema (%1$s) más nuevo que el soportado (%2$s) por esta verisón de la aplicación (%3$s). ¿Revisar si hay actualizaciones en Google Play?</string>
+    <string name="schemaTooNewDialog_message">El archivo del formato (%4$s) de este debate usa un esquema (%1$s) más nuevo que el soportado (%2$s) por esta verisón de la aplicación (%3$s). ¿Revisar si hay actualizaciones en Google Play?</string>
 </resources>

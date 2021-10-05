@@ -66,10 +66,6 @@ public class BellRepeater {
 
     private class BellRepeatTask extends TimerTask {
 
-        /* (non-Javadoc)
-         * @see java.util.TimerTask#run()
-         * This method runs at a fixed rate.
-         */
         @Override
         public void run() {
 

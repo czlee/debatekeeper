@@ -106,6 +106,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -1247,7 +1248,7 @@ public class DebatingTimerFragment extends Fragment {
         if (dfbfx.hasErrors()) {
 
             StringBuilder errorLogItems = new StringBuilder();
-            ArrayList<String> errorLog = dfbfx.getErrorLog();
+            List<String> errorLog = dfbfx.getErrorLog();
             if (errorLog != null) {
                 for (String error : errorLog) {
                     errorLogItems.append("• ");
@@ -2199,7 +2200,7 @@ public class DebatingTimerFragment extends Fragment {
         }
 
         // ...then, if applicable, bells
-        ArrayList<BellInfo> currentSpeechBells = dpf.getBellsSorted();
+        List<BellInfo> currentSpeechBells = dpf.getBellsSorted();
         Iterator<BellInfo> currentSpeechBellsIter = currentSpeechBells.iterator();
 
         if (overtime) {

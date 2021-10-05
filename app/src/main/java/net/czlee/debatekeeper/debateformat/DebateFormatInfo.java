@@ -17,7 +17,7 @@
 
 package net.czlee.debatekeeper.debateformat;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Interface for passive data classes holding information about a debate format that would
@@ -40,22 +40,22 @@ public interface DebateFormatInfo {
     /**
      * @return a list of regions, or an empty list if there were none
      */
-    ArrayList<String> getRegions();
+    List<String> getRegions();
 
     /**
      * @return a list of levels, or an empty list if there were none
      */
-    ArrayList<String> getLevels();
+    List<String> getLevels();
 
     /**
      * @return a list of tournaments, or an empty list if there were none
      */
-    ArrayList<String> getUsedAts();
+    List<String> getUsedAts();
 
     /**
      * @return a list of languages supported, or an empty list if there were none
      */
-    ArrayList<String> getDisplayLanguages();
+    List<String> getDisplayLanguages();
 
     /**
      * @return a description of prep time, or <code>null</code> if there is no prep time for this
@@ -83,7 +83,7 @@ public interface DebateFormatInfo {
      *         speech type isn't used, it isn't part of the returned
      *         <code>ArrayList</code>.
      */
-    ArrayList<String[]> getSpeechFormatDescriptions();
+    List<String[]> getSpeechFormatDescriptions();
 
     /**
      * Returns a list of speeches in this debate format.
@@ -93,6 +93,6 @@ public interface DebateFormatInfo {
      *         is the name of the speech, the second element is the reference
      *         for the format that speech uses.
      */
-    ArrayList<String[]> getSpeeches(ArrayList<String[]> descriptions);
+    List<String[]> getSpeeches(List<String[]> descriptions);
 
 }

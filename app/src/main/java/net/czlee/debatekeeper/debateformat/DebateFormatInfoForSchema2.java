@@ -97,9 +97,6 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
     // Public methods
     //******************************************************************************************
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getName()
-     */
     @Override
     public String getName() {
         if (mRootElement == null) return "";
@@ -108,9 +105,6 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
         else return result;
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getDescription()
-     */
     @Override
     public String getDescription() {
         if (mInfoElement == null) return "-";
@@ -119,35 +113,23 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
         else return result;
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getRegions()
-     */
     @Override
-    public ArrayList<String> getRegions() {
+    public List<String> getRegions() {
         return xu.findAllElementTexts(mInfoElement, R.string.xml2elemName_info_region);
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getLevels()
-     */
     @Override
-    public ArrayList<String> getLevels() {
+    public List<String> getLevels() {
         return xu.findAllElementTexts(mInfoElement, R.string.xml2elemName_info_level);
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getUsedAts()
-     */
     @Override
-    public ArrayList<String> getUsedAts() {
+    public List<String> getUsedAts() {
         return xu.findAllElementTexts(mInfoElement, R.string.xml2elemName_info_usedAt);
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getDisplayLanguages()
-     */
     @Override
-    public ArrayList<String> getDisplayLanguages() {
+    public List<String> getDisplayLanguages() {
         if (mDeclaredLanguages == null) return new ArrayList<>();
         ArrayList<String> languages = new ArrayList<>();
         for (String code : mDeclaredLanguages) {
@@ -158,9 +140,6 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
         return languages;
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getPrepTimeDescription()
-     */
     @Override
     public String getPrepTimeDescription() {
         if (mRootElement == null) return null;
@@ -202,20 +181,14 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
 
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getSchemaVersion()
-     */
     @Override
     public String getSchemaVersion() {
         if (mRootElement == null) return null;
         return xu.findAttributeText(mRootElement, R.string.xml2attrName_root_schemaVersion);
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getSpeechFormatDescriptions()
-     */
     @Override
-    public ArrayList<String[]> getSpeechFormatDescriptions() {
+    public List<String[]> getSpeechFormatDescriptions() {
         ArrayList<String[]> result = new ArrayList<>();
 
         if (mRootElement == null) return result;
@@ -252,11 +225,8 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
         return result;
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getSpeeches()
-     */
     @Override
-    public ArrayList<String[]> getSpeeches(ArrayList<String[]> descriptions) {
+    public List<String[]> getSpeeches(List<String[]> descriptions) {
         ArrayList<String[]> result = new ArrayList<>();
 
         if (mRootElement == null) return result;

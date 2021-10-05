@@ -29,7 +29,8 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Extracts and holds very basic information about schema 1.0 files. Retained with minimal
@@ -75,82 +76,54 @@ public class DebateFormatInfoForSchema1 implements DebateFormatInfo {
         }
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getDescription()
-     */
     @Override
     public String getDescription() {
         return "";
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getDisplayLanguages()
-     */
     @Override
-    public ArrayList<String> getDisplayLanguages() {
-        return new ArrayList<>();
+    public List<String> getDisplayLanguages() {
+        return Collections.emptyList();
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getLevels()
-     */
     @Override
-    public ArrayList<String> getLevels() {
-        return new ArrayList<>();
+    public List<String> getLevels() {
+        return Collections.emptyList();
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getName()
-     */
     @Override
     public String getName() {
         return mName;
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getPrepTimeDescription()
-     */
     @Override
     public String getPrepTimeDescription() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getRegions()
-     */
     @Override
-    public ArrayList<String> getRegions() {
-        return new ArrayList<>();
+    public List<String> getRegions() {
+        return Collections.emptyList();
     }
 
-    /**
-     * @return the schemaVersion
-     */
     @Override
     public String getSchemaVersion() {
         return mSchemaVersion;
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getSpeeches()
-     */
     @Override
-    public ArrayList<String[]> getSpeeches(ArrayList<String[]> descriptions) {
-        return new ArrayList<>();
+    public List<String[]> getSpeeches(List<String[]> descriptions) {
+        return Collections.emptyList();
     }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getSpeechFormatDescriptions()
-     */
     @Override
-    public ArrayList<String[]> getSpeechFormatDescriptions() { return new ArrayList<>(); }
+    public List<String[]> getSpeechFormatDescriptions() {
+        return Collections.emptyList();
+    }
 
-    /* (non-Javadoc)
-     * @see net.czlee.debatekeeper.debateformat.DebateFormatInfo#getUsedAts()
-     */
     @Override
-    public ArrayList<String> getUsedAts() {
-        return new ArrayList<>();
+    public List<String> getUsedAts() {
+        return Collections.emptyList();
     }
 
     @Override
