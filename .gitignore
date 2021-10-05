@@ -4,6 +4,7 @@ app/src/main/res/raw/desk_bell*.mp3
 # Standard Android .gitignore
 # https://github.com/github/gitignore/blob/master/Android.gitignore
 # Built application files
+*.aab
 *.apk
 *.ap_
 
