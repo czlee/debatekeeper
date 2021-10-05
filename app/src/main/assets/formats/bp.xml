@@ -24,6 +24,8 @@
   <prep-time length="15:00"/>
   <speech-types>
     <speech-type ref="all" length="7:00" first-period="normal">
+      <name xml:lang="en">all</name>
+      <name xml:lang="es">todos</name>
       <bell time="1:00" number="1" next-period="pois-allowed"/>
       <bell time="6:00" number="1" next-period="warning"/>
       <bell time="finish" number="2" next-period="overtime"/>
