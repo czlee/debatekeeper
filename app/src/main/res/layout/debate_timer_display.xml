@@ -72,14 +72,14 @@
         android:id="@+id/timer_informationLine"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="2dp"
         android:gravity="center_horizontal"
         android:textIsSelectable="true"
         android:textSize="@dimen/timer_informationLine_textSize"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:text="7 minutes long; bells at 01:00, 06:00, 07:00" />
+        tools:text="10 minutes long; bells at 01:00, 06:00, 07:00 (silent), 09:00 (silent), 10:00" />
 
     <TimePicker
         android:id="@+id/timer_currentTimePicker"
@@ -111,12 +111,14 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="@id/timer_guidelineBottom"
-        app:layout_constraintBottom_toBottomOf="@id/timer_informationLine"
+        app:layout_constraintBottom_toTopOf="@+id/timer_informationLine"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_percent="0.5"
-        android:layout_marginBottom="@dimen/timer_poiTimerButton_marginBottomPortrait"
+        android:layout_marginBottom="4dp"
         android:text="@string/timer_poiTimer_buttonText"
+        app:autoSizeTextType="uniform"
+        app:autoSizeMaxTextSize="@dimen/timer_poiTimerButton_textSize"
         android:textSize="@dimen/timer_poiTimerButton_textSize" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

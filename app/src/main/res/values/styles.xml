@@ -47,7 +47,6 @@
     <dimen name="timer_horizontalGuidelineLandscape">34sp</dimen>
 
     <dimen name="timer_poiTimerButton_textSize">24sp</dimen>
-    <dimen name="timer_poiTimerButton_marginBottomPortrait">24dp</dimen>
     <dimen name="timer_poiTimerButton_marginRightLandscape">24dp</dimen>
 
     <dimen name="timer_controlButtons_height">60dp</dimen>
