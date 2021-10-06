@@ -429,7 +429,12 @@ public class FormatChooserFragment extends Fragment {
             } else if (itemId == R.id.formatChooser_actionBar_importFile) {
                 mImportFileLauncher.launch(new String[]{"text/xml", "application/xml"});
                 return true;
-            } else return false;
+            } else if (itemId == R.id.formatChooser_actionBar_learnMore) {
+                Uri uri = Uri.parse(getString(R.string.formats_learnMoreUrl));
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+                return true;
+            } return false;
         }
     }
 

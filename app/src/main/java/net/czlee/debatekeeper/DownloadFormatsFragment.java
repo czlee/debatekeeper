@@ -176,7 +176,7 @@ public class DownloadFormatsFragment extends Fragment {
                 setExpandCollapseButton(true);
                 return true;
             } else if (itemId == R.id.formatDownloader_actionBar_learnMore) {
-                Uri uri = Uri.parse(getString(R.string.formatDownloader_learnMoreUrl));
+                Uri uri = Uri.parse(getString(R.string.formats_learnMoreUrl));
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
                 return true;

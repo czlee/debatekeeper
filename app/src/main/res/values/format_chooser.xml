@@ -22,6 +22,7 @@
     <string name="formatChooser_actionBar_confirm">Confirm</string>
     <string name="formatChooser_actionBar_searchOnline">Search online</string>
     <string name="formatChooser_actionBar_importFile">Import file</string>
+    <string name="formatChooser_actionBar_learnMore">Learn more</string>
     <string name="formatChooser_button_moreInfo">More info</string>
     <string name="formatChooser_button_share">Share</string>
     <string name="formatChooser_button_delete">Delete</string>

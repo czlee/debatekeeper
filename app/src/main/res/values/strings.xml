@@ -13,18 +13,24 @@
   You should have received a copy of the GNU General Public Licence along with this program.  If
   not, see <http://www.gnu.org/licenses/>.
 -->
+
+<!--
+This file only contains strings that are common to multiple fragments.
+Most strings are in fragment-specific files:
+    - debating_timer.xml
+    - format_chooser.xml
+    - format_download.xml
+    - preferences.xml
+    - prep_time_bells_edit.xml
+    - xml_formats_1.xml
+    - xml_formats_2.xml
+-->
+
 <resources>
-    <!--
-    This file only contains strings that are common to multiple fragments.
-    Most strings are in fragment-specific files:
-        - debating_timer.xml
-        - format_chooser.xml
-        - format_download.xml
-        - preferences.xml
-        - prep_time_bells_edit.xml
-        - xml_formats_1.xml
-        - xml_formats_2.xml
-    -->
+
     <string name="app_name">Debatekeeper</string>
     <string name="nav_back">Back</string>
+
+    <string name="formats_learnMoreUrl" translatable="false">https://github.com/czlee/debatekeeper/wiki/Debate-format-files</string>
+
 </resources>

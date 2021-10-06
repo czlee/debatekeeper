@@ -24,6 +24,12 @@
         android:title="@string/formatChooser_actionBar_importFile" />
 
     <item
+        android:id="@+id/formatChooser_actionBar_learnMore"
+        android:title="@string/formatChooser_actionBar_learnMore"
+        android:icon="@drawable/ic_baseline_help_24"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/formatChooser_actionBar_searchOnline"
         android:icon="@drawable/ic_baseline_travel_explore_24"
         app:showAsAction="always"
