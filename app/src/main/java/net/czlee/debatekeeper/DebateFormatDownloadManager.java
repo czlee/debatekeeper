@@ -491,8 +491,6 @@ public class DebateFormatDownloadManager {
 
         try (JsonReader reader = new JsonReader(isr)) {
             entries = listBuilder.buildListFromJson(reader);
-        } catch (IOException e) {
-            return Collections.emptyList();
         }
 
         // Check for available updates

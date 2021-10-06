@@ -93,7 +93,13 @@ public class DownloadFormatsFragment extends Fragment {
                 mRecyclerAdapter.notifyItemRangeRemoved(newCount, oldCount - newCount);
             }
 
-            if (newCount > 0) setViewToList();
+            if (newCount > 0) {
+                setViewToList();
+            } else {
+                mViewBinding.loadingText.setText(R.string.formatDownloader_emptyList);
+                setViewToError();
+                return;
+            }
 
             if (incomingFilename != null) {
                 if (incomingIndex >= 0) mViewBinding.list.scrollToPosition(incomingIndex);

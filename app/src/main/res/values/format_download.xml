@@ -36,6 +36,7 @@
     <string name="formatDownloader_noInternet">No internet connection.</string>
     <string name="formatDownloader_ioError">Error loading list of styles (I/O).</string>
     <string name="formatDownloader_jsonError">Error loading list of styles (JSON).</string>
+    <string name="formatDownloader_emptyList">List of styles from online repository is empty.</string>
     <string name="formatDownloader_button_retry">Retry</string>
 
     <string name="formatDownloader_notFoundError">Not found: %1$s</string>
