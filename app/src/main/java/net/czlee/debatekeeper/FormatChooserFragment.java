@@ -24,6 +24,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -868,7 +869,10 @@ public class FormatChooserFragment extends Fragment {
     private void showSnackbar(int stringResId, Object... formatArgs) {
         String string = getString(stringResId, formatArgs);
         View coordinator = mViewBinding.formatChooserCoordinator;
-        Snackbar snackbar = Snackbar.make(coordinator, string, BaseTransientBottomBar.LENGTH_SHORT);
+        Snackbar snackbar = Snackbar.make(coordinator, string, BaseTransientBottomBar.LENGTH_LONG);
+        Resources res = getResources();
+        snackbar.setBackgroundTint(res.getColor(R.color.snackbar_background));
+        snackbar.setTextColor(res.getColor(R.color.snackbar_text));
         View snackbarText = snackbar.getView();
         TextView textView = snackbarText.findViewById(com.google.android.material.R.id.snackbar_text);
         if (textView != null) textView.setMaxLines(5);

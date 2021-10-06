@@ -53,6 +53,7 @@
         android:id="@+id/viewFormat_statusIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/formatDownloader_updateAvailable"
         app:layout_constraintBottom_toBottomOf="@+id/viewFormat_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/viewFormat_title"
@@ -102,7 +103,7 @@
         android:id="@+id/viewFormat_updateAvailableText"
         style="@style/viewFormat_tableLabelStyle"
         android:text="@string/formatDownloader_updateAvailable"
-        android:textColor="@color/debatekeeper_accent_dark"
+        android:textColor="@color/debatekeeper_primary"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/viewFormat_title" />

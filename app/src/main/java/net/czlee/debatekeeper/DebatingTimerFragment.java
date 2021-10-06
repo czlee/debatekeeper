@@ -1911,6 +1911,9 @@ public class DebatingTimerFragment extends Fragment {
         String string = getString(stringResId, formatArgs);
         View coordinator = mViewBinding.timerCoordinator;
         Snackbar snackbar = Snackbar.make(coordinator, string, duration);
+        Resources res = getResources();
+        snackbar.setBackgroundTint(res.getColor(R.color.snackbar_background));
+        snackbar.setTextColor(res.getColor(R.color.snackbar_text));
         View snackbarText = snackbar.getView();
         TextView textView = snackbarText.findViewById(com.google.android.material.R.id.snackbar_text);
         if (textView != null) textView.setMaxLines(5);

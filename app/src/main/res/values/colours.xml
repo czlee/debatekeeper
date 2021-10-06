@@ -21,4 +21,8 @@
 
     <color name="xmlFileWarningColour">#ffffff77</color>
 
+    <color name="debatekeeper_primary">#ffd42a</color>
+
+    <color name="snackbar_background">@color/debatekeeper_primary</color>
+    <color name="snackbar_text">@android:color/black</color>
 </resources>

@@ -18,6 +18,7 @@ package net.czlee.debatekeeper;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -144,6 +145,9 @@ public class DownloadFormatsFragment extends Fragment {
         public void showSnackbarError(String filename, String detailMessage) {
             String message = getString(R.string.formatDownloader_fileError, filename, detailMessage);
             Snackbar snackbar = Snackbar.make(mViewBinding.getRoot(), message, BaseTransientBottomBar.LENGTH_LONG);
+            Resources res = getResources();
+            snackbar.setBackgroundTint(res.getColor(R.color.snackbar_background));
+            snackbar.setTextColor(res.getColor(R.color.snackbar_text));
             View snackbarText = snackbar.getView();
             TextView textView = snackbarText.findViewById(com.google.android.material.R.id.snackbar_text);
             if (textView != null) textView.setMaxLines(5);
