@@ -56,12 +56,12 @@
     <!-- Count direction -->
     <string name="pref_countDirection_title">Direction à compter</string>
     <string-array name="pref_countDirection_summaries">
-        <item>Compter vers le haut</item>
-        <item>Compter vers le bas</item>
+        <item>Compte croissant</item>
+        <item>Compte décroissant</item>
     </string-array>
     <string-array name="pref_countDirection_entries">
-        <item>Compter vers le haut</item>
-        <item>Compter vers le bas</item>
+        <item>Compte croissant</item>
+        <item>Compter décroissant</item>
     </string-array>
     <!-- In case you're wondering, the reason these are called alwaysUp and alwaysDown is because
     there used to be options called generallyUp and generallyDown. These options were obsoleted
@@ -84,21 +84,21 @@
     <string name="pref_keepScreenOn_onSummary">Désactivater la mise en veille de l\'écran lorsque la chronomètre fonctionne</string>
     <string name="pref_keepScreenOn_offSummary">Appliquer la mise en veille normale de l\'écran</string>
     <!-- *** Preparation time *** -->
-    <string name="pref_prepTimer_enable_title">Activer le chronomètre de prép</string>
+    <string name="pref_prepTimer_enable_title">Activer le chronomètre de préparation</string>
     <string name="pref_prepTimer_enable_onSummary">Utiliser le chronomètre de préparation</string>
     <string name="pref_prepTimer_enable_offSummary">"Ne pas utiliser le chronomètre de préparation"</string>
     <string-array name="pref_prepTimer_countDirection_summaries">
-        <item>Compter vers le haut dans la chronomètre de préparation</item>
-        <item>Compter vers le bas dans la chronomètre de préparation</item>
+        <item>Compte croissant dans le chronomètre de préparation</item>
+        <item>Compte décroissant dans le chronomètre de préparation</item>
     </string-array>
-    <string name="pref_prepTimer_keepScreenOn_onSummary">Désactivate la mise en veille de l\'écran pendant le temps de préparation</string>
-    <string name="pref_prepTimer_keepScreenOn_offSummary">Appliquer la mise en veille normale de l\'écran pendant le temps de préparation</string>
-    <string name="pref_prepTimer_bells_title">Sonnettes de chronomètre de prép</string>
+    <string name="pref_prepTimer_keepScreenOn_onSummary">Désactiver la mise en veille de l\'écran pendant que le chronomètre de préparation est en marche</string>
+    <string name="pref_prepTimer_keepScreenOn_offSummary">Appliquer la mise en veille normale de l\'écran pendant que le chronomètre de préparation est en marche</string>
+    <string name="pref_prepTimer_bells_title">Sonnettes de chronomètre de préparation</string>
     <string name="pref_prepTimer_bells_summary">Modifier les sonnettes utilisées pendant le temps de préparation</string>
     <!-- *** Points of information *** -->
-    <string name="pref_poiTimer_enable_title">Afficher la chronomètre de POI</string>
-    <string name="pref_poiTimer_enable_onSummary">Afficher la chronomètre de POI le cas échéant</string>
-    <string name="pref_poiTimer_enable_offSummary">Cacher la chronomètre de POI</string>
+    <string name="pref_poiTimer_enable_title">Afficher le chronomètre de POI</string>
+    <string name="pref_poiTimer_enable_onSummary">Afficher le chronomètre de POI le cas échéant</string>
+    <string name="pref_poiTimer_enable_offSummary">Cacher le chronomètre de POI</string>
     <string name="pref_poiTimer_vibrateEnable_title">Vibration</string>
     <string name="pref_poiTimer_vibrateEnable_onSummary">Faire vibrer quand le temps d\'un POI expire</string>
     <string name="pref_poiTimer_vibrateEnable_offSummary">Ne pas faire vibrer pour les POIs</string>
