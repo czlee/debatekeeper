@@ -58,7 +58,7 @@
     <string name="importDebateFormat_dialog_title">Importer style de débat ?</string>
     <string name="importDebateFormat_snackbar_error_generic">Une erreur s\'est produite lors de l\'ouverture de ce fichier.</string>
     <string name="importDebateFormat_snackbar_success">Importé le fichier %1$s avec succès</string>
-    <string name="timer_snackbar_beamNonExternalFile">Vous ne pouvez pas utiliser Android Beam pour partager les styles intégrées.</string>
+    <string name="timer_snackbar_beam_error_existence">Vous ne pouvez pas utiliser Android Beam pour partager les styles intégrées.</string>
     <string name="timer_snackbar_beam_error_generic">Une erreur s\'est produite lors de l\'envoi de ce fichier de format de débat.</string>
     <string name="importDebateFormat_dialog_addendum_overwriteExistingDifferentName">Cette action écrasera la style existante d\'utilisateur « %1$s », parce que le fichier qui la décrit a le même nom. Si vous ne voulez pas perdre %1$s, annulez, et puis réimportez avec un nom différent.</string>
     <string name="importDebateFormat_dialog_addendum_overwriteExistingSameName">Cette action écrasera la style existant « %1$s ».</string>

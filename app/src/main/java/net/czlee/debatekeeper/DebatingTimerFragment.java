@@ -879,7 +879,7 @@ public class DebatingTimerFragment extends Fragment {
             FormatXmlFilesManager filesManager = new FormatXmlFilesManager(requireActivity());
             if (!filesManager.exists(mFormatXmlFileName)) {
                 Log.e(TAG, "createBeamUris: Tried to share non-existent file");
-                showSnackbar(Snackbar.LENGTH_LONG, R.string.timer_snackbar_beamNonExternalFile);
+                showSnackbar(Snackbar.LENGTH_LONG, R.string.timer_snackbar_beam_error_existence);
                 return new Uri[0];
             }
             File file = filesManager.getFileFromExternalStorage(mFormatXmlFileName);

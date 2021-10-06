@@ -56,7 +56,7 @@
 
     <string name="timer_snackbar_editTextDiscardChangesInfo_limitedBelow">Para descartar los cambios, pulsa el botón de atrás. (No puedes establecer el tiempo límite.)</string>
     <string name="timer_snackbar_editTextDiscardChangesInfo_limitedAbove">Para descartar los cambios, pulsa el botón de atrás. (No puedes establecer un tiempo mayor que 23:59.)</string>
-    <string name="timer_snackbar_beamNonExternalFile">No puedes usar Android Beam para enviar estilos de serie.</string>
+    <string name="timer_snackbar_beam_error_existence">No puedes usar Android Beam para enviar estilos de serie.</string>
     <string name="timer_snackbar_beam_error_generic">Hubo un error leyendo el archivo del formato del debate.</string>
 
     <!-- Sharing debate formats -->

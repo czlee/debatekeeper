@@ -28,7 +28,7 @@
     <string name="prepTime_title">Vorbereitungszeit</string>
     <string name="timer_snackbar_editTextDiscardChangesInfo_limitedBelow">Um Änderungen zu verwerfen drücke auf Zurück. (Die Zeit kann nicht auf eine Überziehungszeit gesetzt werden.)</string>
     <string name="timer_snackbar_editTextDiscardChangesInfo_limitedAbove">Um Änderungen zu verwerfen drücke auf Zurück. (Die Zeit kann nicht größer als 23:59 gesetzt werden.)</string>
-    <string name="timer_snackbar_beamNonExternalFile">Android Beam kann nicht verwendet werden um eingebaute Formate zu teilen.</string>
+    <string name="timer_snackbar_beam_error_existence">Android Beam kann nicht verwendet werden um eingebaute Formate zu teilen.</string>
     <string name="timer_snackbar_beam_error_generic">Fehler beim Beamen der Debattierformatdatei.</string>
     <string name="importDebateFormat_dialog_title">Debattierformat importieren?</string>
     <string name="importDebateFormat_dialog_message_question">Möchten Sie die Debattierformatdatei <b>%1$s</b>, welche das Format %2$s beschreibt, importieren?</string>
