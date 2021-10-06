@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <debate-format schema-version="2.2">
-  <name xml:lang="en">Weird languages</name>
-  <name xml:lang="es">Idiomas extraños</name>
-  <name xml:lang="fr">Langues étranges</name>
-  <name xml:lang="zh">奇怪的语言</name>
+  <name xml:lang="en">Language edge cases</name>
+  <name xml:lang="es">Casos de borde de idiomas</name>
+  <name xml:lang="fr">Cas limites de langues</name>
+  <name xml:lang="zh">关于语言的极端情况</name>
   <version>1</version>
   <languages>
     <language>zh</language>
