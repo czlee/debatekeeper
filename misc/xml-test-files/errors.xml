@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<debate-format schema-version="3.0">
+  <name>Test errors</name>
+  <info>
+    <region>Nowhere</region>
+    <level>University</level>
+    <description>This format should kind of work, but give errors</description>
+  </info>
+  <period-types>
+    <period-type ref="normal">
+      <name>Easters: Choose moot</name>
+      <display>Choose moot</display>
+    </period-type>
+    <period-type ref="easters.side">
+      <display>Choose side</display>
+    </period-type>
+  </period-types>
+  <prep-time-controlled length="7:00" first-period="easters.moot">
+    <bell time="1:00" number="1" pause-on-bell="true" next-period="easters.side"/>
+    <bell time="7:30" number="1" pause-on-bell="true" next-period="normal"/>
+    <bell time="finish" number="2" next-period="overtime"/>
+  </prep-time-controlled>
+  <speech-types>
+    <speech-type ref="substantive" length="6:00" first-period="normal">
+      <bell time="4.03" number="1" next-period="warning"/>
+      <bell time="finish" number="2" next-period="overtime"/>
+    </speech-type>
+    <speech-type ref="reply" length="3:00" first-period="normal">
+      <bell time="120" number="1" next-period="warning"/>
+      <bell time="finsh" number="2" next-period="overtime"/>
+    </speech-type>
+  </speech-types>
+  <speeches>
+    <speech type="nothing">
+      <name>1st Affirmative</name>
+    </speech>
+    <speech type="substantive">
+      <name>1st Negative</name>
+    </speech>
+    <speech type="substantive">
+      <name>2nd Affirmative</name>
+    </speech>
+    <speech type="substantive">
+      <name></name>
+    </speech>
+    <speech type="reply">
+      <name>Negative Leader's Reply</name>
+    </speech>
+    <speech type="reply">
+      <name>Affirmative Leader's Reply</name>
+    </speech>
+  </speeches>
+</debate-format>
