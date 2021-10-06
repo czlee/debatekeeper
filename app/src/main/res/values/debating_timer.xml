@@ -127,7 +127,7 @@
 
     <!-- Changelog dialog -->
     <!-- By convention, this should be changed to match the manifest versionCode when the changelog changes. -->
-    <integer name="changelogDialog_versionCode">27</integer>
+    <integer name="changelogDialog_versionCode">28</integer>
     <string name="changelogDialog_title">What\'s new in version %1$s</string>
     <string name="changelogDialog_message">
           • Debate style formats are now available for download, with only four included in the app.
