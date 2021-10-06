@@ -1,75 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (C) 2012 Chuan-Zheng Lee
+
+  This file is part of the Debatekeeper app, which is licensed under the GNU General Public Licence
+  version 3 (GPLv3).  You can redistribute and/or modify it under the terms of the GPLv3, and you
+  must not use this file except in compliance with the GPLv3.
+
+  This app is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+  Public Licence for more details.
+
+  You should have received a copy of the GNU General Public Licence along with this program.  If
+  not, see <http://www.gnu.org/licenses/>.
+-->
 <resources>
     <string name="fragmentName_GlobalSettings">Paramètres</string>
-
-    <string name="prefCategory_bells_title">Sonnettes</string>
-    <string name="prefCategory_general_title">Général</string>
+    <!-- Keys -->
+    <!-- These strings must be unique. -->
+    <!-- Category titles -->
     <string name="prefCategory_overtimeBells_title">Sonnettes du temps excédantaire</string>
     <string name="prefCategory_pois_title">Points d\'information</string>
     <string name="prefCategory_prepTime_title">Chronomètre de préparation</string>
-    <string name="pref_backgroundColourArea_title">Aire du fond à colorier</string>
-    <string name="pref_poiTimer_vibrateEnable_title">Vibration</string>
-    <string name="pref_prepTimer_enable_offSummary">Ne pas utiliser le chronomètre de préparation</string>
-    <string name="pref_prepTimer_enable_onSummary">Utiliser le chronomètre de préparation</string>
-    <string name="pref_prepTimer_enable_title">Activer le chronomètre de prép</string>
+    <string name="prefCategory_bells_title">Sonnettes</string>
+    <string name="prefCategory_general_title">Général</string>
+    <!-- Silent mode -->
     <string name="pref_ringBells_title">Faire sonner les sonnettes</string>
-    <string name="pref_firstOvertimeBell_dialogMessage">Le temps après le fin, en secondes, de la première sonnette du temps excédantaire:</string>
-    <string name="pref_firstOvertimeBell_summary">Faire sonner la première sonnette du temps excédantaire après %s secondes…</string>
-    <string name="pref_firstOvertimeBell_title">Première sonnette du temps excédentaire</string>
-    <string name="pref_flashScreenMode_title">Faire clignoter l\'écran</string>
-    <string name="pref_keepScreenOn_offSummary">Appliquer la mise en veille normale de l\'écran</string>
-    <string name="pref_keepScreenOn_onSummary">Désactivater la mise en veille de l\'écran lorsque la chronomètre fonctionne</string>
     <string name="pref_ringBells_onSummary">Sonnettes sonneront\n(Tout le monde sauf le chronométreur devrait désactiver cette option)</string>
     <string name="pref_ringBells_offSummary">Sonnettes ne sonneront pas\n(Cette option ne touchera pas les autres sons de votre appareil)</string>
-    <string name="pref_vibrateMode_offSummary">Ne pas faire vibrer</string>
-    <string name="pref_vibrateMode_onSummary">Faire vibrer aux temps de sonnettes</string>
+    <!-- Vibrate mode -->
     <string name="pref_vibrateMode_title">Vibration</string>
-    <string name="pref_prepTimer_keepScreenOn_offSummary">Appliquer la mise en veille normale de l\'écran pendant le temps de préparation</string>
-    <string name="pref_prepTimer_bells_summary">Modifier les sonnettes utilisées pendant le temps de préparation</string>
-    <string name="pref_prepTimer_bells_title">Sonnettes de chronomètre de prép</string>
-    <string name="pref_poiTimer_vibrateEnable_onSummary">Faire vibrer quand le temps d\'un POI expire</string>
-    <string name="pref_poiTimer_vibrateEnable_offSummary">Ne pas faire vibrer pour les POIs</string>
-    <string name="pref_keepScreenOn_title">Désactivation de la mise en veille</string>
-    <string name="pref_overtimeBellPeriod_dialogMessage"><![CDATA[Le temps entre les sonnettes du temps excédantaire (après la première) en seconds :]]></string>
-    <string name="pref_overtimeBellPeriod_summary">…et puis toutes les %s secondes ensuite</string>
-    <string name="pref_overtimeBellPeriod_title">Période des sonnettes du temps excédantaire</string>
-    <string name="pref_overtimeBellsEnable_offSummary">Ne faire sonner aucune sonnette du temps excédantaire</string>
-    <string name="pref_overtimeBellsEnable_onSummary">Faire sonner les sonnettes du temps excédantaire comme indiqué ci-dessous</string>
-    <string name="pref_overtimeBellsEnable_title">Activer les sonnettes du temps excédantaire</string>
-    <string name="pref_poiTimer_enable_offSummary">Cacher la chronomètre de POI</string>
-    <string name="pref_poiTimer_enable_onSummary">Afficher la chronomètre de POI le cas échéant</string>
-    <string name="pref_poiTimer_enable_title">Afficher la chronomètre de POI</string>
-    <string name="pref_poiTimer_flashScreenMode_dialogTitle">Faire clignoter l\'écran pour les POIs</string>
-    <string name="pref_prepTimer_keepScreenOn_onSummary">Désactivate la mise en veille de l\'écran pendant le temps de préparation</string>
-    <string name="pref_countDirection_title">Direction à compter</string>
-
-    <string-array name="pref_countDirection_summaries">
-        <item>Compter vers le haut</item>
-        <item>Compter vers le bas</item>
-    </string-array>
-    <string-array name="pref_countDirection_entries">
-        <item>Compter vers le haut</item>
-        <item>Compter vers le bas</item>
-    </string-array>
-    <string-array name="pref_backgroundColourArea_summaries">
-        <item>Laisser le fond noir pendant tout le débat</item>
-        <item>Colorier seulement la barre en haut pour indiquer les périodes dans les discours</item>
-        <item>Colorier l\'écran entier pour indiquer les périodes dans les discours</item>
-    </string-array>
-    <string-array name="pref_backgroundColourArea_entries">
-        <item>Désactivé</item>
-        <item>Seulement la barre en haut</item>
-        <item>Ecran entier</item>
-    </string-array>
-    <string-array name="pref_prepTimer_countDirection_summaries">
-        <item>Compter vers le haut dans la chronomètre de préparation</item>
-        <item>Compter vers le bas dans la chronomètre de préparation</item>
-    </string-array>
-    <string-array name="pref_poiTimer_flashScreenMode_summaries">
-        <item>Ne pas faire clignoter l\'écran pour les POIs</item>
-        <item>Faire clignoter de manière stroboscopique quand le temps de POI expire</item>
-        <item>Faire clignoter en bleu brièvement quand le temps de POI expire</item>
-    </string-array>
+    <string name="pref_vibrateMode_onSummary">Faire vibrer aux temps de sonnettes</string>
+    <string name="pref_vibrateMode_offSummary">Ne pas faire vibrer</string>
+    <!-- Flash screen -->
+    <string name="pref_flashScreenMode_title">Faire clignoter l\'écran</string>
     <string-array name="pref_flashScreenMode_summaries">
         <item>Ne pas faire clignoter l\'écran</item>
         <item>Faire clignoter l\'écran de manière stroboscopique aux temps de sonnettes</item>
@@ -80,4 +43,70 @@
         <item>Stroboscope</item>
         <item>Solide</item>
     </string-array>
+    <!-- Overtime bells -->
+    <string name="pref_overtimeBellsEnable_title">Activer les sonnettes du temps excédantaire</string>
+    <string name="pref_overtimeBellsEnable_onSummary">Faire sonner les sonnettes du temps excédantaire comme indiqué ci-dessous</string>
+    <string name="pref_overtimeBellsEnable_offSummary">Ne faire sonner aucune sonnette du temps excédantaire</string>
+    <string name="pref_firstOvertimeBell_title">Première sonnette du temps excédentaire</string>
+    <string name="pref_firstOvertimeBell_summary">Faire sonner la première sonnette du temps excédantaire après %s secondes…</string>
+    <string name="pref_firstOvertimeBell_dialogMessage">"Le temps après le fin, en secondes, de la première sonnette du temps excédantaire:"</string>
+    <string name="pref_overtimeBellPeriod_title">Période des sonnettes du temps excédantaire</string>
+    <string name="pref_overtimeBellPeriod_summary">…et puis toutes les %s secondes ensuite</string>
+    <string name="pref_overtimeBellPeriod_dialogMessage">"Le temps entre les sonnettes du temps excédantaire (après la première) en seconds :"</string>
+    <!-- Count direction -->
+    <string name="pref_countDirection_title">Direction à compter</string>
+    <string-array name="pref_countDirection_summaries">
+        <item>Compter vers le haut</item>
+        <item>Compter vers le bas</item>
+    </string-array>
+    <string-array name="pref_countDirection_entries">
+        <item>Compter vers le haut</item>
+        <item>Compter vers le bas</item>
+    </string-array>
+    <!-- In case you're wondering, the reason these are called alwaysUp and alwaysDown is because
+    there used to be options called generallyUp and generallyDown. These options were obsoleted
+    in version 0.9, but to retain compatibility we keep the values for the other two as they
+    were before. Since the user never sees these, it doesn't matter what they're called. -->
+    <!-- Background colour -->
+    <string name="pref_backgroundColourArea_title">Aire du fond à colorier</string>
+    <string-array name="pref_backgroundColourArea_summaries">
+        <item>Laisser le fond noir pendant tout le débat</item>
+        <item>Colorier seulement la barre en haut pour indiquer les périodes dans les discours</item>
+        <item>Colorier l\'écran entier pour indiquer les périodes dans les discours</item>
+    </string-array>
+    <string-array name="pref_backgroundColourArea_entries">
+        <item>Désactivé</item>
+        <item>Seulement la barre en haut</item>
+        <item>Ecran entier</item>
+    </string-array>
+    <!-- Keep screen on -->
+    <string name="pref_keepScreenOn_title">Désactivation de la mise en veille</string>
+    <string name="pref_keepScreenOn_onSummary">Désactivater la mise en veille de l\'écran lorsque la chronomètre fonctionne</string>
+    <string name="pref_keepScreenOn_offSummary">Appliquer la mise en veille normale de l\'écran</string>
+    <!-- *** Preparation time *** -->
+    <string name="pref_prepTimer_enable_title">Activer le chronomètre de prép</string>
+    <string name="pref_prepTimer_enable_onSummary">Utiliser le chronomètre de préparation</string>
+    <string name="pref_prepTimer_enable_offSummary">"Ne pas utiliser le chronomètre de préparation"</string>
+    <string-array name="pref_prepTimer_countDirection_summaries">
+        <item>Compter vers le haut dans la chronomètre de préparation</item>
+        <item>Compter vers le bas dans la chronomètre de préparation</item>
+    </string-array>
+    <string name="pref_prepTimer_keepScreenOn_onSummary">Désactivate la mise en veille de l\'écran pendant le temps de préparation</string>
+    <string name="pref_prepTimer_keepScreenOn_offSummary">Appliquer la mise en veille normale de l\'écran pendant le temps de préparation</string>
+    <string name="pref_prepTimer_bells_title">Sonnettes de chronomètre de prép</string>
+    <string name="pref_prepTimer_bells_summary">Modifier les sonnettes utilisées pendant le temps de préparation</string>
+    <!-- *** Points of information *** -->
+    <string name="pref_poiTimer_enable_title">Afficher la chronomètre de POI</string>
+    <string name="pref_poiTimer_enable_onSummary">Afficher la chronomètre de POI le cas échéant</string>
+    <string name="pref_poiTimer_enable_offSummary">Cacher la chronomètre de POI</string>
+    <string name="pref_poiTimer_vibrateEnable_title">Vibration</string>
+    <string name="pref_poiTimer_vibrateEnable_onSummary">Faire vibrer quand le temps d\'un POI expire</string>
+    <string name="pref_poiTimer_vibrateEnable_offSummary">Ne pas faire vibrer pour les POIs</string>
+    <string name="pref_poiTimer_flashScreenMode_dialogTitle">Faire clignoter l\'écran pour les POIs</string>
+    <string-array name="pref_poiTimer_flashScreenMode_summaries">
+        <item>Ne pas faire clignoter l\'écran pour les POIs</item>
+        <item>Faire clignoter de manière stroboscopique quand le temps de POI expire</item>
+        <item>Faire clignoter en bleu brièvement quand le temps de POI expire</item>
+    </string-array>
+    <!-- For the entries and entry values, use the same ones as the main flash screen preference -->
 </resources>
