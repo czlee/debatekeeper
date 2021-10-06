@@ -16,12 +16,7 @@
 -->
 <resources>
 
-    <string name="app_name" translatable="false">Debatekeeper</string>
-    <string name="fragmentName_Debating_withoutFormat" translatable="false">Debatekeeper</string>
-    <string name="fragmentName_GlobalSettings">Settings</string>
-    <string name="fragmentName_FormatChooser">Styles</string>
-    <string name="fragmentName_PrepTimeBellsEdit">Prep timer bells</string>
-    <string name="fragmentName_FormatDownloader">Downloads</string>
+    <string name="fragmentName_Debating_withoutFormat">Debatekeeper</string>
     <string name="intentFilter_importStyle">Debatekeeper</string>
 
     <string name="app_marketUri" translatable="false">market://details?id=net.czlee.debatekeeper</string>
@@ -130,9 +125,6 @@
     <string name="schemaTooNewDialog_button_upgrade">Check for updates</string>
     <string name="schemaTooNewDialog_button_ignore">Ignore</string>
     <string name="schemaTooNewDialog_message">This debate format file (%4$s) uses a schema (%1$s) newer than supported (%2$s) by this app version (%3$s). Check for updates on Google Play?</string>
-
-    <!-- POI timer -->
-    <string name="poiTimer_moreInfoUrl" translatable="false">https://github.com/czlee/debatekeeper/wiki/Points-of-information</string>
 
     <!-- Changelog dialog -->
     <!-- By convention, this should be changed to match the manifest versionCode when the changelog changes. -->

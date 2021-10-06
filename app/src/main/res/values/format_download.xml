@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="fragmentName_FormatDownloader">Downloads</string>
+
     <string name="formatDownloader_actionBar_expand">Expand all</string>
     <string name="formatDownloader_actionBar_collapse">Collapse all</string>
     <string name="formatDownloader_actionBar_learnMore">Learn more</string>

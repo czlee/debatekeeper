@@ -22,18 +22,15 @@
     <!-- Common error messages -->
 
     <string name="xmlError_rootNoSchemaVersion">"This debate format has no schema version, so it's impossible to tell whether you need to update to support this file!\n"</string>
-    <string name="xmlError_rootNewSchemaVersion">"Only schema versions up to %2$s are supported (this file uses version %1$s); this might mean you need to update the app.\n"</string>
     <string name="xmlError_rootInvalidSchemaVersion">"Invalid schema version: '%1$s'"</string>
 
     <!-- Version 2 schema -->
 
-    <string name="xml2elemName_root" translatable="false">debate-format</string>
-        <string name="xml2attrName_root_schemaVersion" translatable="false">schema-version</string>
+    <string name="xml2attrName_root_schemaVersion" translatable="false">schema-version</string>
         <string name="xml2attrName_common_ref" translatable="false">ref</string>
             <string name="xml2attrValue_common_true" translatable="false">true</string>
             <string name="xml2attrValue_common_false" translatable="false">false</string>
             <string name="xml2attrValue_common_stay" translatable="false">#stay</string>
-            <string name="xml2attrValue_common_default" translatable="false">#default</string>
 
     <string name="xml2elemName_name" translatable="false">name</string>
     <string name="xml2elemName_shortName" translatable="false">short-name</string>
@@ -79,7 +76,6 @@
             <string name="xml2attrName_speech_format" translatable="false">type</string>
 
     <string name="xml2attrName_language" translatable="false">xml:lang</string>
-    <string name="xml2attrName_textElement" translatable="false">text</string>
 
     <!-- Version 2 error messages -->
 

@@ -17,6 +17,8 @@
 -->
 <resources>
 
+    <string name="fragmentName_GlobalSettings">Settings</string>
+
     <!-- Keys -->
     <!-- These strings must be unique. -->
     <string name="pref_ringBells_key" translatable="false">ringBells</string>
@@ -161,9 +163,6 @@
     <string name="pref_poiTimer_enable_offSummary">Hide the POIs timer</string>
     <bool   name="prefDefault_poiTimer_enable">true</bool>
 
-    <string name="pref_poiTimer_buzzerEnable_title">Play buzzer</string>
-    <string name="pref_poiTimer_buzzerEnable_onSummary">Play a buzzer when POI time expires</string>
-    <string name="pref_poiTimer_buzzerEnable_offSummary">Don\'t play POI buzzers</string>
     <bool   name="prefDefault_poiTimer_buzzerEnable">false</bool>
 
     <string name="pref_poiTimer_vibrateEnable_title">Vibrate</string>
