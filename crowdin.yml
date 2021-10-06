@@ -1,0 +1,7 @@
+files:
+  - source: /app/src/main/res/values/*.xml
+    ignore:
+      - colours.xml
+      - ic_debatekeeper_background.xml
+      - styles.xml
+    translation: /app/src/main/res/values-%two_letters_code%/%original_file_name%
