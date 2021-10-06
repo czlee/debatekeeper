@@ -1,30 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (C) 2013 Chuan-Zheng Lee
+
+  This file is part of the Debatekeeper app, which is licensed under the GNU General Public Licence
+  version 3 (GPLv3).  You can redistribute and/or modify it under the terms of the GPLv3, and you
+  must not use this file except in compliance with the GPLv3.
+
+  This app is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+  Public Licence for more details.
+
+  You should have received a copy of the GNU General Public Licence along with this program.  If
+  not, see <http://www.gnu.org/licenses/>.
+-->
 <resources>
     <string name="fragmentName_PrepTimeBellsEdit">Sonnettes de la chronomètre de préparation</string>
-
-    <string name="prepTimeBellsEditor_addBellDialog_confirmButton">Ajouter</string>
-    <string name="prepTimeBellsEditor_addBellDialog_title">Ajouter une sonnette</string>
     <string name="prepTimeBellsEditor_addBell_buttonText">Ajouter</string>
-    <string name="prepTimeBellsEditor_clearAllDialog_confirmButton">Supprimer tous</string>
-    <string name="prepTimeBellsEditor_clearAllDialog_message_noFinishBell"><![CDATA[Supprimer toutes les sonnette de la chronomètre de préparation ?]]></string>
-    <string name="prepTimeBellsEditor_clearAllDialog_message_withFinishBell"><![CDATA[Supprimer toutes les sonnettes de la chronomètre de préparation sauve la sonnette à la fin ?]]></string>
-    <string name="prepTimeBellsEditor_clearAllDialog_title">Effacer toutes les sonnettes</string>
     <string name="prepTimeBellsEditor_clearAll_buttonText">Effacer</string>
-    <string name="prepTimeBellsEditor_contextMenu_delete">Supprimer</string>
-    <string name="prepTimeBellsEditor_contextMenu_edit">Modifier</string>
-    <string name="prepTimeBellsEditor_contextMenu_header">Sonnette %1$s</string>
-    <string name="prepTimeBellsEditor_editBellDialog_title">Modifier la sonnette %1$s</string>
-    <string name="prepTimeBellsEditor_contextMenu_tip">Appuyez longuement pour modifier ou supprimer</string>
-    <string name="prepTimeBellsEditor_editBellDialog_confirmButton">Terminé</string>
+    <!-- Bell descriptions -->
+    <string name="prepTimeBellDescription_atStart">au début</string>
     <string name="prepTimeBellDescription_afterStart">%1$s du début</string>
     <string name="prepTimeBellDescription_atFinish">à la fin</string>
-    <string name="prepTimeBellDescription_atStart">au début</string>
     <string name="prepTimeBellDescription_beforeFinish">%1$s avant la fin</string>
     <string name="prepTimeBellDescription_proportional">à %1$s%% du temps de prép</string>
-
+    <!-- Add bell dialog -->
+    <string name="prepTimeBellsEditor_addBellDialog_title">Ajouter une sonnette</string>
+    <string name="prepTimeBellsEditor_editBellDialog_title">Modifier la sonnette %1$s</string>
     <string-array name="prepTimeBellsEditor_editBellDialog_types">
         <item>Temps du début</item>
         <item>Temps à la fin</item>
         <item>Pourcentage</item>
     </string-array>
+    <string name="prepTimeBellsEditor_addBellDialog_confirmButton">Ajouter</string>
+    <string name="prepTimeBellsEditor_editBellDialog_confirmButton">Terminé</string>
+    <!-- Clear bells dialog -->
+    <string name="prepTimeBellsEditor_clearAllDialog_title">Effacer toutes les sonnettes</string>
+    <string name="prepTimeBellsEditor_clearAllDialog_message_noFinishBell">Supprimer toutes les sonnette de la chronomètre de préparation ?</string>
+    <string name="prepTimeBellsEditor_clearAllDialog_message_withFinishBell">Supprimer toutes les sonnettes de la chronomètre de préparation sauve la sonnette à la fin ?</string>
+    <string name="prepTimeBellsEditor_clearAllDialog_confirmButton">Supprimer tous</string>
+    <!-- Context menu -->
+    <string name="prepTimeBellsEditor_contextMenu_header">Sonnette %1$s</string>
+    <string name="prepTimeBellsEditor_contextMenu_delete">Supprimer</string>
+    <string name="prepTimeBellsEditor_contextMenu_edit">Modifier</string>
+    <string name="prepTimeBellsEditor_contextMenu_tip">Appuyez longuement pour modifier ou supprimer</string>
 </resources>
