@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ClipData;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -39,6 +40,8 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -88,13 +91,17 @@ public class FormatChooserFragment extends Fragment {
     private FragmentFormatChooserBinding mViewBinding;
     private FormatXmlFilesManager mFilesManager;
     private ListView mStylesListView;
+    private ActivityResultLauncher<String[]> mImportFileLauncher;
 
     private DebateFormatEntryArrayAdapter mStylesArrayAdapter;
     private final ArrayList<DebateFormatListEntry> mStylesList = new ArrayList<>();
 
-    private static final String DIALOG_ARGUMENT_FILE_NAME = "fn";
+    private static final String DIALOG_ARGUMENT_FILE_NAME = "filename";
+    private static final String DIALOG_ARGUMENT_IMPORT_URI = "import-uri";
+    private static final String DIALOG_ARGUMENT_STYLE_NAME = "style-name";
     private static final String DIALOG_TAG_MORE_DETAILS = "details/";
     private static final String DIALOG_TAG_CONFIRM_DELETION = "delete/";
+    private static final String DIALOG_TAG_CONFIRM_OVERWRITE = "overwrite/";
 
     public static final String BUNDLE_KEY_RESULT         = "res";
     public static final String BUNDLE_KEY_XML_FILE_NAME  = "xmlfn";
@@ -199,6 +206,43 @@ public class FormatChooserFragment extends Fragment {
                     .setPositiveButton(R.string.formatChooser_dialog_confirmDelete_yes,
                             (dialog, which) -> parent.deleteFile(filename))
                     .setNegativeButton(R.string.formatChooser_dialog_confirmDelete_no, null);
+
+            return builder.create();
+        }
+    }
+
+    public static class ConfirmOverwriteDialogFragment extends DialogFragment {
+
+        static ConfirmOverwriteDialogFragment newInstance(Uri uri, String filename, String existingStyleName) {
+            ConfirmOverwriteDialogFragment fragment = new ConfirmOverwriteDialogFragment();
+            Bundle args = new Bundle();
+            args.putParcelable(DIALOG_ARGUMENT_IMPORT_URI, uri);
+            args.putString(DIALOG_ARGUMENT_FILE_NAME, filename);
+            args.putString(DIALOG_ARGUMENT_STYLE_NAME, existingStyleName);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+            FormatChooserFragment parent = (FormatChooserFragment) getParentFragment();
+            Bundle args = getArguments();
+            Activity activity = requireActivity();
+
+            assert parent != null;
+            assert args != null;
+
+            Uri uri = args.getParcelable(DIALOG_ARGUMENT_IMPORT_URI);
+            String filename = args.getString(DIALOG_ARGUMENT_FILE_NAME);
+            String styleName = args.getString(DIALOG_ARGUMENT_STYLE_NAME);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+            builder.setMessage(getString(R.string.formatChooser_dialog_confirmOverwrite_message, filename, styleName))
+                    .setPositiveButton(R.string.formatChooser_dialog_confirmOverwrite_yes,
+                            (dialog, which) -> parent.importIncomingFile(uri, filename))
+                    .setNegativeButton(R.string.formatChooser_dialog_confirmOverwrite_no, null);
 
             return builder.create();
         }
@@ -382,6 +426,9 @@ public class FormatChooserFragment extends Fragment {
                 @NonNull NavDirections action = FormatChooserFragmentDirections.actionGoToDownloads();
                 NavHostFragment.findNavController(FormatChooserFragment.this).navigate(action);
                 return true;
+            } else if (itemId == R.id.formatChooser_actionBar_importFile) {
+                mImportFileLauncher.launch(new String[]{"text/xml", "application/xml"});
+                return true;
             } else return false;
         }
     }
@@ -412,6 +459,15 @@ public class FormatChooserFragment extends Fragment {
     // Protected methods
     //******************************************************************************************
 
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mImportFileLauncher = registerForActivityResult(new ActivityResultContracts.OpenDocument(),
+                this::importIncomingFilePrompt);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -439,7 +495,6 @@ public class FormatChooserFragment extends Fragment {
         mStylesListView.setOnItemClickListener(new StylesListViewOnItemClickListener());
 
         // Populate the styles list
-        mStylesList.clear();  // sometimes it's populated from a previous instantiation
         populateStylesList();
 
         // Show the download banner if it hasn't been dismissed
@@ -487,7 +542,7 @@ public class FormatChooserFragment extends Fragment {
      * Given a filename, returns the index in the styles list where the entry is.
      * @param filename the file name of the style
      * @return integer between 0 and <code>mStylesList.length - 1</code>, or
-     * <code>ListView.INVALID_POSITION</code> if the item could not be found.
+     * {@link ListView#INVALID_POSITION} if the item could not be found.
      */
     private int convertFilenameToIndex(String filename) {
         if (filename != null) {
@@ -569,6 +624,101 @@ public class FormatChooserFragment extends Fragment {
     }
 
     /**
+     * Returns the currently selected file name.
+     *
+     * @return The currently selected file name, or <code>null</code> if nothing is selected.
+     */
+    @Nullable
+    private String getSelectedFilename() {
+        int selectedPosition = mStylesListView.getCheckedItemPosition();
+        return convertIndexToFilename(selectedPosition);
+    }
+
+    /**
+     * Checks if the incoming file would overwrite an existing one. If so, prompt the user with
+     * a dialog; if not, just import it.
+     * @param uri a {@link Uri} to the incoming content
+     */
+    private void importIncomingFilePrompt(@Nullable Uri uri) {
+        if (uri == null) {
+            showSnackbar(R.string.formatChooser_import_error_noFileChosen);
+            return;
+        }
+
+        Context context = requireContext();
+        String filename = FormatXmlFilesManager.getFilenameFromUri(context.getContentResolver(), uri);
+
+        Log.i(TAG, "saving to file: " + filename);
+        if (filename == null) {
+            try {
+                filename = mFilesManager.getFreeFileName();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                showSnackbar(R.string.formatChooser_import_error_noFilename);
+                return;
+            } catch (IOException e) {
+                e.printStackTrace();
+                showSnackbar(R.string.formatChooser_ioError);
+                return;
+            }
+        }
+        if (!filename.endsWith(".xml"))
+            filename = filename + ".xml";
+
+        String existingStyleName;
+
+        if (mFilesManager.exists(filename)) {
+            DebateFormatFieldExtractor nameExtractor = new DebateFormatFieldExtractor(context, R.string.xml2elemName_name);
+            try {
+                InputStream in = mFilesManager.open(filename);
+                existingStyleName = nameExtractor.getFieldValue(in);
+            } catch (IOException | SAXException e) {
+                Log.e(TAG, "Couldn't open existing file, even though one exists");
+                e.printStackTrace();
+                existingStyleName = "???";
+            }
+            DialogFragment fragment = ConfirmOverwriteDialogFragment.newInstance(uri, filename, existingStyleName);
+            fragment.show(getChildFragmentManager(), DIALOG_TAG_CONFIRM_OVERWRITE + filename);
+
+        } else {
+            importIncomingFile(uri, filename);
+        }
+    }
+
+    /**
+     * Imports the selected file, refreshes the list and selects the new file.
+     * @param uri a {@link Uri} to import
+     */
+    private void importIncomingFile(@NonNull Uri uri, @NonNull String filename) {
+        ContentResolver contentResolver = requireContext().getContentResolver();
+        InputStream in;
+        try {
+            in = contentResolver.openInputStream(uri);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            showSnackbar(R.string.formatChooser_import_error_opening);
+            return;
+        }
+
+        if (in == null) {
+            showSnackbar(R.string.formatChooser_import_error_opening);
+            return;
+        }
+
+        try {
+            mFilesManager.copy(in, filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showSnackbar(R.string.formatChooser_import_error_reading);
+            return;
+        }
+
+        showSnackbar(R.string.formatChooser_import_success, filename);
+        populateStylesList();
+        setSelectionAndScroll(filename);
+    }
+
+    /**
      * Populates the master styles list, <code>mStylesList</code>.  Should be called when this
      * Activity is created, or whenever we want to refresh the styles list. If there is an error so
      * serious that it can't even get the list, we show a dialog to that effect, and leave the list
@@ -587,6 +737,8 @@ public class FormatChooserFragment extends Fragment {
             mViewBinding.formatChooserStylesList.setVisibility(View.GONE);
             return;
         }
+
+        mStylesList.clear();
 
         for (String filename : fileList) {
             if (!filename.endsWith(".xml")) continue;
@@ -622,17 +774,6 @@ public class FormatChooserFragment extends Fragment {
         // Sort alphabetically by style name and tell observers
         mStylesArrayAdapter.sort(new StyleEntryComparatorByStyleName());
         mStylesArrayAdapter.notifyDataSetChanged();
-    }
-
-    /**
-     * Returns the currently selected file name.
-     *
-     * @return The currently selected file name, or <code>null</code> if nothing is selected.
-     */
-    @Nullable
-    private String getSelectedFilename() {
-        int selectedPosition = mStylesListView.getCheckedItemPosition();
-        return convertIndexToFilename(selectedPosition);
     }
 
     /**

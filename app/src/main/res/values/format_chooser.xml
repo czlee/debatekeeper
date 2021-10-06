@@ -21,6 +21,7 @@
 
     <string name="formatChooser_actionBar_confirm">Confirm</string>
     <string name="formatChooser_actionBar_searchOnline">Search online</string>
+    <string name="formatChooser_actionBar_importFile">Import file</string>
     <string name="formatChooser_button_moreInfo">More info</string>
     <string name="formatChooser_button_share">Share</string>
     <string name="formatChooser_button_delete">Delete</string>
@@ -35,10 +36,21 @@
     <string name="formatChooser_dialog_deleted_success">File %1$s deleted.</string>
     <string name="formatChooser_dialog_deleted_failure">Could not delete file %1$s.</string>
 
+    <string name="formatChooser_dialog_confirmOverwrite_message">There is already a debate style with file name %1$s (%2$s). Overwrite?</string>
+    <string name="formatChooser_dialog_confirmOverwrite_yes">Overwrite</string>
+    <string name="formatChooser_dialog_confirmOverwrite_no">Cancel</string>
+
     <string name="formatChooser_share_error_noFileSelected">No file selected.</string>
     <string name="formatChooser_share_error_notFound">File %1$s could not be found.</string>
     <string name="formatChooser_share_error_generic">There was an error sharing this file.</string>
     <string name="formatChooser_share_chooserTitle">Share debate format using…</string>
+
+    <string name="formatChooser_import_confirmOverwrite">You already have a format with the file name %1$s. Overwrite?</string>
+    <string name="formatChooser_import_error_opening">There was an error opening this file.</string>
+    <string name="formatChooser_import_error_reading">There was an error reading this file.</string>
+    <string name="formatChooser_import_error_noFileChosen">No file chosen.</string>
+    <string name="formatChooser_import_error_noFilename">Couldn\'t find a free file name to save this file.</string>
+    <string name="formatChooser_import_success">Successfully imported file %1$s.</string>
 
     <string name="viewFormat_regionLabel">Region</string>
     <string name="viewFormat_levelLabel">Level</string>

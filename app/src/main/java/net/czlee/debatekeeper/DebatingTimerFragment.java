@@ -1457,77 +1457,6 @@ public class DebatingTimerFragment extends Fragment {
     }
 
     /**
-     * Figures out what the file name should be, from the given URI.
-     * @param uri the URI
-     * @return a file name, or null if it failed to discern the file name.
-     */
-    @Nullable
-    private String getFilenameFromUri(Uri uri) {
-        String filename = null;
-        String scheme = uri.getScheme();
-
-        switch (scheme) {
-            case "file":
-                // Just retrieve the file name
-                File file = new File(uri.getPath());
-                String name = file.getName();
-                if (name.length() > 0)
-                    filename = name;
-                break;
-
-            case "content":
-                // Try to find a name for the file
-                Cursor cursor = requireContext().getContentResolver().query(uri,
-                        new String[] {MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.DATA}, null, null, null);
-                if (cursor == null) {
-                    Log.e(TAG, "getDestinationFilenameFromUri: cursor was null");
-                    return null;
-                }
-                if (!cursor.moveToFirst()) {
-                    Log.e(TAG, "getDestinationFilenameFromUri: failed moving cursor to first row");
-                    cursor.close();
-                    return null;
-                }
-                int dataIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
-                int nameIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
-                Log.i(TAG, "getDestinationFilenameFromUri: data at column " + dataIndex + ", name at column " + nameIndex);
-                if (dataIndex >= 0) {
-                    String path = cursor.getString(dataIndex);
-                    if (path == null)
-                        Log.w(TAG, "getFilenameFromUri: data column failed, path was null");
-                    else
-                        filename = (new File(path)).getName();
-                    Log.i(TAG, "getDestinationFilenameFromUri: got from data column, path: " + path + ", name: " + filename);
-                }
-                if (filename == null && nameIndex >= 0) {
-                    filename = cursor.getString(nameIndex);
-                    Log.i(TAG, "getDestinationFilenameFromUri: got from name column: " + filename);
-                }
-                if (filename == null)
-                    Log.e(TAG, "getFilenameFromUri: file name is still null after trying both columns");
-                cursor.close();
-                break;
-
-            default:
-                return null;
-        }
-
-        // If it doesn't end in the .xml extension, make it end in one
-        if (filename != null && !filename.endsWith(".xml")) {
-
-            // Do this by stripping the current extension if there is one...
-            int lastIndex = filename.lastIndexOf(".");
-            if (lastIndex > 0) filename = filename.substring(0, lastIndex);
-
-            // ...and then adding .xml.
-            filename = filename + ".xml";
-
-        }
-
-        return filename;
-    }
-
-    /**
      * Retrieves the file name and an {@link InputStream} from the {@link Intent} that started this
      * activity. If either can't be found, it shows the appropriate snackbar (so there is no need
      * for the caller to show another error message), and returns null.
@@ -1546,7 +1475,7 @@ public class DebatingTimerFragment extends Fragment {
         Log.i(TAG, String.format("importIncomingFile: mime type %s, data %s", intent.getType(), intent.getDataString()));
 
         Uri uri = intent.getData();
-        String filename = getFilenameFromUri(uri);
+        String filename = FormatXmlFilesManager.getFilenameFromUri(activity.getContentResolver(), uri);
         Log.i(TAG, "importIncomingFile: file name is " + filename);
 
         if (filename == null) {
