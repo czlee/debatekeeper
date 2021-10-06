@@ -1,33 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (C) 2013 Chuan-Zheng Lee
+
+  This file is part of the Debatekeeper app, which is licensed under the GNU General Public Licence
+  version 3 (GPLv3).  You can redistribute and/or modify it under the terms of the GPLv3, and you
+  must not use this file except in compliance with the GPLv3.
+
+  This app is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+  Public Licence for more details.
+
+  You should have received a copy of the GNU General Public Licence along with this program.  If
+  not, see <http://www.gnu.org/licenses/>.
+-->
 <resources>
-    <string name="xml2Error_periodType_defaultBgColor_invalid">L\'attribut « default-bgcolor » du type de période (period-type) « %2$s » est non valable : « %1$s »</string>
-    <string name="xml2Error_periodType_poisAllowed_invalid">L\'attribut « pois-allowed » du type de période (period-type) « %2$s » est non valable : « %1$s » (ça doit être \'true\' ou \'false\')</string>
-    <string name="xml2error_bell_number_invalid">Le nombre de sonnettes à %3$s dans %2$s est non valable : « %1$s »</string>
-    <string name="xml2error_bell_pauseOnBell_invalid">Le valeur de l\'attribut « pois-allowed » du type de période (period-type) « %2$s » est non valable : « %1$s » (ça doit être \'true\' ou \'false\')</string>
-    <string name="xml2error_bell_time_invalid">Le temps d\'une sonnette dans %2$s est non valable : « %1$s »</string>
-    <string name="xml2error_bell_time_null">Aucun nom (name) n\'est spécifié pour une sonnette dans %2$s.</string>
-    <string name="xml2error_periodType_name_blank">Le nom (name) pour le type de période (period-type) « %1$s » ne doit pas être vide</string>
-    <string name="xml2error_periodType_name_null">Aucun nom (name) n\'est spécifié pour le type de période (period-type) « %1$s »</string>
-    <string name="xml2error_periodType_ref_blank">L\'attribut \'ref\' pour les types de période (period-type) ne doit pas être vide</string>
-    <string name="xml2error_periodType_ref_null">Aucune référence (ref) n\'est spécifiée pour un type de période (period-type)</string>
-    <string name="xml2error_prepTimeControlled_length_invalid">La durée (length) du temps dirigé de préparation (prep-time-controlled) est un temps non valable : \'%1$s\'</string>
-    <string name="xml2error_prepTimeControlled_length_null">Le temps dirigé de préparation (prep-time-controlled) n\'a pas de durée (length)</string>
-    <string name="xml2error_prepTimeSimple_length_invalid">La durée (length) du temps de préparation (prep-time) est un temps non valable : « %1$s »</string>
-    <string name="xml2error_prepTimeSimple_length_null">Le temps de préparation (prep-time) n\'a pas de durée (length)</string>
-    <string name="xml2error_prepTime_multiple">Un temps de préparation (prep-time) et un temps dirigé de préparation (prep-time-controlled) sont tous deux trouvés.</string>
-    <string name="xml2error_root_noName">Aucun nom (name) n\'est spécifié pour ce format de débat</string>
-    <string name="xml2error_speechFormat_length_invalid">Le durée (length) du type de discours (speech-type) « %2$s » est un temps non valable : « %1$s »</string>
-    <string name="xml2error_speechFormat_length_null">Aucune durée est spécifiée pour le type de discours (speech-type) « %1$s »</string>
-    <string name="xml2error_speechFormat_ref_blank">L\'attribut \'ref\' pour les types de discours (speech-type) ne doit pas être vide</string>
-    <string name="xml2error_speechFormat_ref_null">Aucune référence (ref) n\'est spécifiée pour un type de discours (speech-type)</string>
-    <string name="xml2error_speech_format_null">Aucun type est spécifiée pour le discours (speech) « %1$s »</string>
-    <string name="xml2error_speech_name_null">Pour un discours, aucun nom n\'est pas spécifié</string>
-    <string name="xmlError_rootInvalidSchemaVersion">La version du schema est non valable : « %1$s »</string>
-    <string name="xmlError_rootNoSchemaVersion">Ce format de débat n\'a pas de version de schema, donc il est impossible de savoir si vous avez besoin de mettre à jour pour que l\'application puisse prendre en charge ce fichier !</string>
-    <string name="dfb2error_addSpeech_speechFormatNotFound">Le fichier ne contient pas de type de discours (speech-type) de la référence \'%1$s\' (%2$s)</string>
-    <string name="dfb2error_bell_afterFinishTime">La sonnette à %1$s dans %2$s est après le fin du discours</string>
-    <string name="dfb2error_periodInfo_builtInDuplicate">Le type de période (period-type) \'%1$s\' est intégré, vous ne pouvez pas l\'utiliser</string>
-    <string name="dfb2error_periodInfo_duplicate">Le type de période (period-type) \'%1$s\' est spécifié plus d\'une fois</string>
-    <string name="dfb2error_periodInfo_notFound">Le fichier ne contient pas de type de période (period-type) de la référence \'%1$s\'</string>
-    <string name="dfb2error_speechFormat_duplicate">Le type de discours (speech-type) \'%1$s\' est spécifié plus d\'une fois</string>
+    <!-- Common error messages -->
+    <string name="xmlError_rootNoSchemaVersion">"Ce format de débat n'a pas de version de schema, donc il est impossible de savoir si vous avez besoin de mettre à jour pour que l'application puisse prendre en charge ce fichier !"</string>
+    <string name="xmlError_rootInvalidSchemaVersion">"La version du schema est non valable : « %1$s »"</string>
+    <!-- Version 2 schema -->
+    <!-- attributes common to prep-time-controlled and speech-type -->
+    <!-- Version 2 error messages -->
+    <string name="xml2error_root_noName">"Aucun nom (name) n'est spécifié pour ce format de débat"</string>
+    <string name="xml2error_periodType_ref_null">"Aucune référence (ref) n'est spécifiée pour un type de période (period-type)"</string>
+    <string name="xml2error_periodType_ref_blank">"L'attribut 'ref' pour les types de période (period-type) ne doit pas être vide"</string>
+    <string name="xml2error_periodType_name_null">"Aucun nom (name) n'est spécifié pour le type de période (period-type) « %1$s »"</string>
+    <string name="xml2error_periodType_name_blank">"Le nom (name) pour le type de période (period-type) « %1$s » ne doit pas être vide"</string>
+    <string name="xml2Error_periodType_defaultBgColor_invalid">"L'attribut « default-bgcolor » du type de période (period-type) « %2$s » est non valable : « %1$s »"</string>
+    <string name="xml2Error_periodType_poisAllowed_invalid">"L'attribut « pois-allowed » du type de période (period-type) « %2$s » est non valable : « %1$s » (ça doit être 'true' ou 'false')"</string>
+    <string name="xml2error_prepTime_multiple">"Un temps de préparation (prep-time) et un temps dirigé de préparation (prep-time-controlled) sont tous deux trouvés."</string>
+    <string name="xml2error_prepTimeSimple_length_null">"Le temps de préparation (prep-time) n'a pas de durée (length)"</string>
+    <string name="xml2error_prepTimeSimple_length_invalid">"La durée (length) du temps de préparation (prep-time) est un temps non valable : « %1$s »"</string>
+    <string name="xml2error_prepTimeControlled_length_null">"Le temps dirigé de préparation (prep-time-controlled) n'a pas de durée (length)"</string>
+    <string name="xml2error_prepTimeControlled_length_invalid">"La durée (length) du temps dirigé de préparation (prep-time-controlled) est un temps non valable : '%1$s'"</string>
+    <string name="xml2error_speechFormat_ref_null">"Aucune référence (ref) n'est spécifiée pour un type de discours (speech-type)"</string>
+    <string name="xml2error_speechFormat_ref_blank">"L'attribut 'ref' pour les types de discours (speech-type) ne doit pas être vide"</string>
+    <string name="xml2error_speechFormat_length_null">"Aucune durée est spécifiée pour le type de discours (speech-type) « %1$s »"</string>
+    <string name="xml2error_speechFormat_length_invalid">"Le durée (length) du type de discours (speech-type) « %2$s » est un temps non valable : « %1$s »"</string>
+    <string name="xml2error_speech_name_null">"Pour un discours, aucun nom n'est pas spécifié"</string>
+    <string name="xml2error_speech_format_null">"Aucun type est spécifiée pour le discours (speech) « %1$s »"</string>
+    <string name="xml2error_bell_time_null">"Aucun nom (name) n'est spécifié pour une sonnette dans %2$s."</string>
+    <string name="xml2error_bell_time_invalid">"Le temps d'une sonnette dans %2$s est non valable : « %1$s »"</string>
+    <string name="xml2error_bell_number_invalid">"Le nombre de sonnettes à %3$s dans %2$s est non valable : « %1$s »"</string>
+    <string name="xml2error_bell_pauseOnBell_invalid">"Le valeur de l'attribut « pois-allowed » du type de période (period-type) « %2$s » est non valable : « %1$s » (ça doit être 'true' ou 'false')"</string>
+    <string name="dfb2error_periodInfo_builtInDuplicate">"Le type de période (period-type) '%1$s' est intégré, vous ne pouvez pas l'utiliser"</string>
+    <string name="dfb2error_periodInfo_duplicate">"Le type de période (period-type) '%1$s' est spécifié plus d'une fois"</string>
+    <string name="dfb2error_periodInfo_notFound">"Le fichier ne contient pas de type de période (period-type) de la référence '%1$s'"</string>
+    <string name="dfb2error_addSpeech_speechFormatNotFound">"Le fichier ne contient pas de type de discours (speech-type) de la référence '%1$s' (%2$s)"</string>
+    <string name="dfb2error_speechFormat_duplicate">"Le type de discours (speech-type) '%1$s' est spécifié plus d'une fois"</string>
+    <string name="dfb2error_bell_afterFinishTime">"La sonnette à %1$s dans %2$s est après le fin du discours"</string>
 </resources>
