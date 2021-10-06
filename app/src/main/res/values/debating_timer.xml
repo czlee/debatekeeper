@@ -165,7 +165,7 @@
     <string name="customFilesMovingSuccess_snackbar">%1$d legacy files copied and ready to use</string>
 
     <!-- Files that use to be in the assets -->
-    <string-array name="filesFormerlyInAssets">
+    <string-array name="filesFormerlyInAssets" translatable="false">
         <item>apda.xml</item>
         <item>asian.xml</item>
         <item>aueasters.xml</item>
