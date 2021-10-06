@@ -1,18 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (C) 2012 Chuan-Zheng Lee
+
+  This file is part of the Debatekeeper app, which is licensed under the GNU General Public Licence
+  version 3 (GPLv3).  You can redistribute and/or modify it under the terms of the GPLv3, and you
+  must not use this file except in compliance with the GPLv3.
+
+  This app is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+  Public Licence for more details.
+
+  You should have received a copy of the GNU General Public Licence along with this program.  If
+  not, see <http://www.gnu.org/licenses/>.
+-->
 <resources>
     <string name="fragmentName_GlobalSettings">Einstellungen</string>
-
+    <!-- Keys -->
+    <!-- These strings must be unique. -->
+    <!-- Category titles -->
     <string name="prefCategory_overtimeBells_title">Überziehungsklingeln</string>
     <string name="prefCategory_pois_title">POIs</string>
     <string name="prefCategory_prepTime_title">Vorbereitungszeit</string>
     <string name="prefCategory_bells_title">Klingeln</string>
     <string name="prefCategory_general_title">Allgemein</string>
+    <!-- Silent mode -->
     <string name="pref_ringBells_title">Klingeln</string>
     <string name="pref_ringBells_onSummary">Klingeln sind angeschaltet\n(Alle außer dem Zeitnehmer sollten dies ausschalten)</string>
     <string name="pref_ringBells_offSummary">Klingeln sind ausgeschaltet\n(Beeinflusst nicht andere Töne des Geräts)</string>
+    <!-- Vibrate mode -->
     <string name="pref_vibrateMode_title">Vibrieren</string>
     <string name="pref_vibrateMode_onSummary">Zu Klingel-Zeiten vibrieren</string>
     <string name="pref_vibrateMode_offSummary">Nicht vibrieren</string>
+    <!-- Flash screen -->
     <string name="pref_flashScreenMode_title">Bildschirmleuchten</string>
     <string-array name="pref_flashScreenMode_summaries">
         <item>Bildschirm nicht aufleuchten lassen</item>
@@ -24,6 +43,7 @@
         <item>Stroboskop</item>
         <item>Weiß</item>
     </string-array>
+    <!-- Overtime bells -->
     <string name="pref_overtimeBellsEnable_title">Überziehungsklingeln einschalten</string>
     <string name="pref_overtimeBellsEnable_onSummary">Überziehungsklingeln wie unten angegeben</string>
     <string name="pref_overtimeBellsEnable_offSummary">Kein Überziehungsklingeln</string>
@@ -33,6 +53,7 @@
     <string name="pref_overtimeBellPeriod_title">Folgendes Überziehungsklingeln</string>
     <string name="pref_overtimeBellPeriod_summary">…und danach alle %s Sekunden</string>
     <string name="pref_overtimeBellPeriod_dialogMessage">"Sekunden zwischen Überziehungsklingeln (nach dem ersten):"</string>
+    <!-- Count direction -->
     <string name="pref_countDirection_title">Zählrichtung</string>
     <string-array name="pref_countDirection_summaries">
         <item>Aufwärts zählen</item>
@@ -42,6 +63,11 @@
         <item>Aufwärts zählen</item>
         <item>Abwärts zählen</item>
     </string-array>
+    <!-- In case you're wondering, the reason these are called alwaysUp and alwaysDown is because
+    there used to be options called generallyUp and generallyDown. These options were obsoleted
+    in version 0.9, but to retain compatibility we keep the values for the other two as they
+    were before. Since the user never sees these, it doesn't matter what they're called. -->
+    <!-- Background colour -->
     <string name="pref_backgroundColourArea_title">Hintergrundfarbe</string>
     <string-array name="pref_backgroundColourArea_summaries">
         <item>Hintergrund über ganze Debatte schwarz lassen</item>
@@ -53,12 +79,14 @@
         <item>Obere Leiste</item>
         <item>Ganze Fläche</item>
     </string-array>
+    <!-- Keep screen on -->
     <string name="pref_keepScreenOn_title">Bildschirm anlassen</string>
     <string name="pref_keepScreenOn_onSummary">Bildschirm anlassen solange Zeit läuft</string>
     <string name="pref_keepScreenOn_offSummary">Normale Einstellung für Ruhezustand verwenden</string>
+    <!-- *** Preparation time *** -->
     <string name="pref_prepTimer_enable_title">Vorbereitungszeit</string>
     <string name="pref_prepTimer_enable_onSummary">Timer für Vorbereitungszeit verwenden</string>
-    <string name="pref_prepTimer_enable_offSummary">Nicht Timer für Vorbereitungszeit verwenden</string>
+    <string name="pref_prepTimer_enable_offSummary">"Nicht Timer für Vorbereitungszeit verwenden"</string>
     <string-array name="pref_prepTimer_countDirection_summaries">
         <item>Aufwärts zählen der Vorbereitungszeit</item>
         <item>Abwärts zählen der Vorbereitungszeit</item>
@@ -67,7 +95,7 @@
     <string name="pref_prepTimer_keepScreenOn_offSummary">Normale Einstellung für Ruhezustand während der Vorbereitungszeit verwenden</string>
     <string name="pref_prepTimer_bells_title">Klingeln in der Vorbereitungszeit</string>
     <string name="pref_prepTimer_bells_summary">In der Vorbereitungszeit verwendete Klingelzeiten bearbeiten</string>
-
+    <!-- *** Points of information *** -->
     <string name="pref_poiTimer_enable_title">POI-Timer</string>
     <string name="pref_poiTimer_enable_onSummary">POI-Timer anzeigen wenn angebracht</string>
     <string name="pref_poiTimer_enable_offSummary">POI-Timer verstecken</string>
@@ -80,4 +108,5 @@
         <item>Stroboskopleuchten wenn POI-Timer abläuft</item>
         <item>Kurz weiß aufleuchten wenn POI-Timer abläuft</item>
     </string-array>
+    <!-- For the entries and entry values, use the same ones as the main flash screen preference -->
 </resources>
