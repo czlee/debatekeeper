@@ -1,48 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="fragmentName_FormatChooser">Choisir style</string>
+<!--
+  Copyright (C) 2012-2021 Chuan-Zheng Lee
 
-    <string name="formatChooser_button_share">Partager</string>
+  This file is part of the Debatekeeper app, which is licensed under the GNU General Public Licence
+  version 3 (GPLv3).  You can redistribute and/or modify it under the terms of the GPLv3, and you
+  must not use this file except in compliance with the GPLv3.
+
+  This app is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+  Public Licence for more details.
+
+  You should have received a copy of the GNU General Public Licence along with this program.  If
+  not, see <http://www.gnu.org/licenses/>.
+-->
+<resources>
+    <string name="fragmentName_FormatChooser">Styles</string>
+    <string name="formatChooser_ioError">Une erreur s\'est produite lors de la lecture des fichiers des styles de débat.</string>
     <string name="formatChooser_actionBar_confirm">Confirmer</string>
-    <string name="formatChooser_share_chooserTitle">Partager ce format de débat avec…</string>
-    <string name="formatChooser_share_error_generic">Une erreur s\'est produite lors du partage de ce fichier.</string>
-    <string name="formatChooser_share_error_noFileSelected">Aucun fichier selectionné.</string>
-    <string name="formatChooser_share_error_notFound">Le fichier %1$s est introuvable.</string>
     <string name="formatChooser_actionBar_searchOnline">Rechercher en ligne</string>
     <string name="formatChooser_button_moreInfo">Plus d\'info</string>
+    <string name="formatChooser_button_share">Partager</string>
     <string name="formatChooser_button_delete">Supprimer</string>
     <string name="formatChooser_downloadBanner">Cliquez le bouton « rechercher » pour trouver plus de styles de débat en ligne.</string>
+    <string name="formatChooser_downloadBanner_dismiss">J\'ai compris</string>
+    <string name="formatChoser_downloadBanner_pointerDescription">signale un élément de menu</string>
+    <string name="formatChooser_dialog_confirmDelete_message">Supprimer le fichier de style de débat %1$s ? Impossible de le défaire, autrement qu\'en important ou en téléchargeant une nouvelle copie.</string>
     <string name="formatChooser_dialog_confirmDelete_yes">Supprimer</string>
     <string name="formatChooser_dialog_confirmDelete_no">Annuler</string>
     <string name="formatChooser_dialog_deleted_success">Le fichier %1$s supprimé.</string>
     <string name="formatChooser_dialog_deleted_failure">Échec de suppression du fichier %1$s.</string>
-
+    <string name="formatChooser_share_error_noFileSelected">Aucun fichier selectionné.</string>
+    <string name="formatChooser_share_error_notFound">Le fichier %1$s est introuvable.</string>
+    <string name="formatChooser_share_error_generic">Une erreur s\'est produite lors du partage de ce fichier.</string>
+    <string name="formatChooser_share_chooserTitle">Partager ce format de débat avec…</string>
+    <string name="viewFormat_regionLabel">Région</string>
+    <string name="viewFormat_levelLabel">Niveau</string>
+    <string name="viewFormat_usedAtLabel">Où utilisé</string>
     <string name="viewFormat_descLabel">Description</string>
+    <string name="viewFormat_languagesLabel">Langues\n fournies</string>
+    <string name="viewFormat_speechesLabel">Discours</string>
     <string name="viewFormat_fileNameLabel">Nom de fichier</string>
+    <string name="viewFormat_outdatedSchemaVersion">Utilise un schema obsolète (version %1$s)</string>
     <string name="viewFormat_futureSchemaVersion">Schema pas pris en charge (version %1$s)</string>
     <string name="viewFormat_invalidSchemaVersion">Version de schema invalide « %1$s »</string>
-    <string name="viewFormat_levelLabel">Niveau</string>
-    <string name="viewFormat_outdatedSchemaVersion">Utilise un schema obsolète (version %1$s)</string>
     <string name="viewFormat_prepTimeLabel">Temps de prépa</string>
-    <string name="viewFormat_regionLabel">Région</string>
-    <string name="viewFormat_speechesLabel">Discours</string>
-    <string name="viewFormat_timeDescription_controlledPrepSuffix">, dirigé</string>
+    <string name="viewFormat_errorLabel">Erreur avec le fichier</string>
+    <string name="viewFormat_error_fileNotFound">Fichier non trouvé : %1$s</string>
     <string name="viewFormat_timeDescription_lengthInMinutesSeconds">durée %s</string>
     <plurals name="viewFormat_timeDescription_lengthInMinutesOnly">
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>
     </plurals>
+    <string name="viewFormat_timeDescription_controlledPrepSuffix">", dirigé"</string>
     <plurals name="viewFormat_timeDescription_bellsList">
         <item quantity="one">sonnette à %s</item>
         <item quantity="other">sonnettes à %s</item>
     </plurals>
-    <string name="viewFormat_usedAtLabel">Où utilisé</string>
-
-    <string name="formatChoser_downloadBanner_pointerDescription">signale un élément de menu</string>
-    <string name="formatChooser_dialog_confirmDelete_message">Supprimer le fichier de style de débat %1$s ? Impossible de le défaire, autrement qu\'en important ou en téléchargeant une nouvelle copie.</string>
-    <string name="viewFormat_errorLabel">Erreur avec le fichier</string>
-    <string name="formatChooser_downloadBanner_dismiss">J\'ai compris</string>
-    <string name="viewFormat_error_fileNotFound">Fichier non trouvé : %1$s</string>
-    <string name="formatChooser_ioError">Une erreur s\'est produite lors de la lecture des fichiers des styles de débat.</string>
-
+    <dimen name="view_format_list_item_padding">3dp</dimen>
+    <dimen name="viewFormat_sectionGap">8dp</dimen>
+    <dimen name="viewFormat_endMargin">8dp</dimen>
 </resources>
