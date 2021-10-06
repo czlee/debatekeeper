@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="fragmentName_GlobalSettings">Einstellungen</string>
+
     <string name="prefCategory_overtimeBells_title">Überziehungsklingeln</string>
     <string name="prefCategory_pois_title">POIs</string>
     <string name="prefCategory_prepTime_title">Vorbereitungszeit</string>
@@ -69,9 +71,6 @@
     <string name="pref_poiTimer_enable_title">POI-Timer</string>
     <string name="pref_poiTimer_enable_onSummary">POI-Timer anzeigen wenn angebracht</string>
     <string name="pref_poiTimer_enable_offSummary">POI-Timer verstecken</string>
-    <string name="pref_poiTimer_buzzerEnable_title">Buzzer-Ton</string>
-    <string name="pref_poiTimer_buzzerEnable_onSummary">Buzzer-Ton wenn POI-Timer abläuft</string>
-    <string name="pref_poiTimer_buzzerEnable_offSummary">Keine POI-Buzzer</string>
     <string name="pref_poiTimer_vibrateEnable_title">Vibrieren</string>
     <string name="pref_poiTimer_vibrateEnable_onSummary">Vibrieren wenn POI-Timer abläuft</string>
     <string name="pref_poiTimer_vibrateEnable_offSummary">Nicht bei POIs vibrieren</string>

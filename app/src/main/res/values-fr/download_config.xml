@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="downloadConfigTitle">Configuration de téléchargements</string>
+    <string name="formatsRepositoryUrlExplanation">Ce paramètre configure le dépôt en ligne que cherche Debatekeeper pour trouver des fichers de style débat. Si vous le laissez vide, Debatekeeper cherchera le dépôt officiel.</string>
+</resources>

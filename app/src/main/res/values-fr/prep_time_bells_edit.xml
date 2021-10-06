@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fragmentName_PrepTimeBellsEdit">Sonnettes de la chronomètre de préparation</string>
+
+    <string name="prepTimeBellsEditor_addBellDialog_confirmButton">Ajouter</string>
+    <string name="prepTimeBellsEditor_addBellDialog_title">Ajouter une sonnette</string>
+    <string name="prepTimeBellsEditor_addBell_buttonText">Ajouter</string>
+    <string name="prepTimeBellsEditor_clearAllDialog_confirmButton">Supprimer tous</string>
+    <string name="prepTimeBellsEditor_clearAllDialog_message_noFinishBell"><![CDATA[Supprimer toutes les sonnette de la chronomètre de préparation ?]]></string>
+    <string name="prepTimeBellsEditor_clearAllDialog_message_withFinishBell"><![CDATA[Supprimer toutes les sonnettes de la chronomètre de préparation sauve la sonnette à la fin ?]]></string>
+    <string name="prepTimeBellsEditor_clearAllDialog_title">Effacer toutes les sonnettes</string>
+    <string name="prepTimeBellsEditor_clearAll_buttonText">Effacer</string>
+    <string name="prepTimeBellsEditor_contextMenu_delete">Supprimer</string>
+    <string name="prepTimeBellsEditor_contextMenu_edit">Modifier</string>
+    <string name="prepTimeBellsEditor_contextMenu_header">Sonnette %1$s</string>
+    <string name="prepTimeBellsEditor_editBellDialog_title">Modifier la sonnette %1$s</string>
+    <string name="prepTimeBellsEditor_contextMenu_tip">Appuyez longuement pour modifier ou supprimer</string>
+    <string name="prepTimeBellsEditor_editBellDialog_confirmButton">Terminé</string>
+    <string name="prepTimeBellDescription_afterStart">%1$s du début</string>
+    <string name="prepTimeBellDescription_atFinish">à la fin</string>
+    <string name="prepTimeBellDescription_atStart">au début</string>
+    <string name="prepTimeBellDescription_beforeFinish">%1$s avant la fin</string>
+    <string name="prepTimeBellDescription_proportional">à %1$s%% du temps de prép</string>
+
+    <string-array name="prepTimeBellsEditor_editBellDialog_types">
+        <item>Temps du début</item>
+        <item>Temps à la fin</item>
+        <item>Pourcentage</item>
+    </string-array>
+</resources>

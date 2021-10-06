@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fragmentName_FormatDownloader">Téléchargements</string>
+
+    <string name="formatDownloader_actionBar_expand">Agrandir tout</string>
+    <string name="formatDownloader_actionBar_collapse">Réduire tout</string>
+    <string name="formatDownloader_actionBar_learnMore">En savoir plus</string>
+    <string name="formatDownloader_actionBar_config">Configuration avancée</string>
+    <string name="formatDownloader_button_download">Télécharger</string>
+    <string name="formatDownloader_progress_description">Téléchargement…</string>
+    <string name="formatDownloader_button_downloaded">Téléchargé</string>
+    <string name="formatDownloader_image_chevron">Agrandir</string>
+    <string name="formatDownloader_updateAvailable">Mise à jour disponible</string>
+    <string name="formatDownloader_loadingText">Chargement du liste de styles à partir du dépôt en ligne…</string>
+    <string name="formatDownloader_noInternet">Aucune connection internet.</string>
+    <string name="formatDownloader_ioError">Erreur lors du chargement de la liste de styles (E/S)</string>
+    <string name="formatDownloader_jsonError">Erreur lors du chargement de la liste de styles (JSON)</string>
+    <string name="formatDownloader_button_retry">Réessayer</string>
+    <string name="formatDownloader_notFoundError">Introuvable : %1$s</string>
+    <string name="formatDownloader_wrongHostError">Mauvais hôte : %1$s</string>
+    <string name="formatDownloader_fileError">Erreur lors du téléchargement de %1$s : %2$s</string>
+
+</resources>

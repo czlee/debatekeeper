@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="fragmentName_PrepTimeBellsEdit">Klingeln Vorbereitungszeit</string>
+
     <string name="prepTimeBellsEditor_addBell_buttonText">Hinzufügen</string>
     <string name="prepTimeBellsEditor_clearAll_buttonText">Alle Entfernen</string>
     <string name="prepTimeBellDescription_atStart">zum Beginn</string>

@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="fragmentName_GlobalSettings">Einstellungen</string>
-    <string name="fragmentName_FormatChooser">Format auswählen</string>
-    <string name="fragmentName_PrepTimeBellsEdit">Klingeln Vorbereitungszeit</string>
     <string name="timer_controlButton_startTimer_text">Start</string>
     <string name="timer_controlButton_stopTimer_text">Stopp</string>
     <string name="timer_controlButton_resumeTimer_text">Fortfahren</string>

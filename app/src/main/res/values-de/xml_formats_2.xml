@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="xmlError_rootNoSchemaVersion">"Dieses Debattierformat hat keine Schema-Version, es ist deshalb unmöglich zu sagen ob ein Update zu Verwendung nötig ist!\n"</string>
-    <string name="xmlError_rootNewSchemaVersion">"Nur Schema-Versionen bis %2$s werden unterstützt (diese Datei nutzt Version %1$s); dass bedeutet dass du womöglich die App aktualisieren musst.\n"</string>
     <string name="xmlError_rootInvalidSchemaVersion">"Ungültige Schema-Version: '%1$s'"</string>
     <string name="xml2error_root_noName">"Für dieses Debattierformat wurde kein Name angegeben"</string>
     <string name="xml2error_periodType_ref_null">"Kein 'ref' für eine period-type spezifiziert"</string>

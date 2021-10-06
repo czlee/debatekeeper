@@ -16,9 +16,6 @@
 -->
 <resources>
 
-    <string name="fragmentName_GlobalSettings">Ajustes</string>
-    <string name="fragmentName_FormatChooser">Elegir estilo</string>
-    <string name="fragmentName_PrepTimeBellsEdit">Sonidos del tiempo de preparación</string>
     <string name="intentFilter_importStyle">Debatekeeper</string>
 
     <!-- Buttons -->
