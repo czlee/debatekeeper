@@ -3,8 +3,8 @@
   <name>Test errors</name>
   <info>
     <region>Nowhere</region>
-    <level>University</level>
-    <description>This format should kind of work, but give errors</description>
+    <level>None</level>
+    <description>This format should give a bunch of errors</description>
   </info>
   <period-types>
     <period-type ref="normal">
