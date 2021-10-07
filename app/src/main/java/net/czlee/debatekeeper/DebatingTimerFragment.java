@@ -762,7 +762,9 @@ public class DebatingTimerFragment extends Fragment {
 
         @Override
         public void flashScreenOff() {
-            requireActivity().runOnUiThread(() -> {
+            Activity activity = getActivity();
+            if (activity == null) return;  // doesn't matter if no activity is current
+            activity.runOnUiThread(() -> {
                 // Restore the original colours
                 // It takes a bit of brain-work to figure out what they should be.  We actually
                 // do this brain-work because the correct colours should be considered volatile
@@ -789,8 +791,9 @@ public class DebatingTimerFragment extends Fragment {
 
         @Override
         public void flashScreenOn(final int colour) {
-
-            requireActivity().runOnUiThread(() -> {
+            Activity activity = getActivity();
+            if (activity == null) return;  // doesn't matter if no activity is current
+            activity.runOnUiThread(() -> {
 
                 // We need to figure out how to colour the text.
                 // Basically we want to colour the text to whatever the background colour is now.
