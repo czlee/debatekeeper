@@ -22,7 +22,7 @@
     <string name="prepTimeBellDescription_afterStart">%1$s du début</string>
     <string name="prepTimeBellDescription_atFinish">à la fin</string>
     <string name="prepTimeBellDescription_beforeFinish">%1$s avant la fin</string>
-    <string name="prepTimeBellDescription_proportional">à %1$s%% du temps de prép</string>
+    <string name="prepTimeBellDescription_proportional">à %1$s%% du temps de prépa</string>
     <!-- Add bell dialog -->
     <string name="prepTimeBellsEditor_addBellDialog_title">Ajouter une sonnette</string>
     <string name="prepTimeBellsEditor_editBellDialog_title">Modifier la sonnette %1$s</string>
