@@ -45,10 +45,11 @@ import java.util.List;
  * <p>
  * FormatXmlFilesManager also manages the "look for custom formats" preference.
  * <p>
- * MIGRATION TO APP-SPECIFIC STORAGE Debatekeeper version 1.3 will target Android 10 (API level 29).
- * It needs to migrate its file location to the "scoped storage" location before Android 11, so the
- * current code does this: - The method migrateToScopedStorage() copies all files from the legacy
- * location to the new scoped app-specific location. -
+ * <b>Migration to app-specific storage:</b>
+ * Debatekeeper version 1.3 will target Android 10 (API level 29). It needs to migrate its file
+ * location to the "scoped storage" location before Android 11, so the current code does this: - The
+ * method migrateToScopedStorage() copies all files from the legacy location to the new scoped
+ * app-specific location. -
  *
  * @author Chuan-Zheng Lee
  * @since 2012-06-27

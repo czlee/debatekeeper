@@ -1318,6 +1318,10 @@ public class DebatingTimerFragment extends Fragment {
         queueDialog(new DialogCustomFilesMovingFragment(), DIALOG_TAG_CUSTOM_FILES_MOVING);
     }
 
+    /**
+     * Legacy support. Copies custom files in the legacy location. Note: does not check if the
+     * destination is empty - the caller should do this!
+     */
     private void copyLegacyCustomFiles() {
         FormatXmlFilesManager manager = new FormatXmlFilesManager(requireContext());
         String[] legacyFiles;
@@ -1539,6 +1543,10 @@ public class DebatingTimerFragment extends Fragment {
         updateGui();
     }
 
+    /**
+     * Imports a file that was passed in the intent that opened this activity.
+     * @param filename the file name to be saved
+     */
     private void importIncomingFile(String filename) {
         Pair<String, InputStream> incoming = getIncomingFilenameAndInputStream();
         if (incoming == null) return;
@@ -1563,6 +1571,17 @@ public class DebatingTimerFragment extends Fragment {
         resetDebate(true);
     }
 
+    /**
+     * Initialises the debate by parsing the relevant XML file, creating a {@link DebateManager},
+     * and applying the user's preferences to it.
+     * <p>
+     * If a {@link DebateManager} is already active, this skips the debate initialisation. Use
+     * {@link #resetDebate(boolean)} to reset the debate.
+     *
+     * @see #resetDebate(boolean)
+     * @param showDialogs whether dialogs should be shown, normally {@code true} but should be
+     *                    {@code false} if, for example, this was initiated by a reset.
+     */
     private void initialiseDebate(boolean showDialogs) {
         if (mFormatXmlFileName == null) {
             Log.w(TAG, "Tried to initialise debate with null file");
@@ -1615,7 +1634,7 @@ public class DebatingTimerFragment extends Fragment {
 
     /**
      * Returns whether or not this is the user's first time opening the app.
-     * @return true if it is the first time, false otherwise.
+     * @return {@code true} if it is the first time, {@code false} otherwise.
      */
     private boolean isFirstInstall() {
         PackageInfo info;
@@ -1705,6 +1724,12 @@ public class DebatingTimerFragment extends Fragment {
         }
     }
 
+    /**
+     * Releases the current {@link DebateManager} and then initialises the debate (by calling
+     * {@link #initialiseDebate(boolean)}.
+     * @param showDialogs whether dialogs should be shown, normally {@code true} but should be
+     *      *                    {@code false} if, for example, this was initiated by a reset.
+     */
     private void resetDebate(boolean showDialogs) {
         if (mServiceBinder == null) return;
         mServiceBinder.releaseDebateManager();
@@ -1915,6 +1940,14 @@ public class DebatingTimerFragment extends Fragment {
         else mDialogBlocking = false;
     }
 
+    /**
+     * Convenience function for showing a {@link Snackbar}.
+     *
+     * @param duration    a {@code Snackbar.LENGTH_*} constant, passed to {@link Snackbar#make(View,
+     *                    CharSequence, int)}
+     * @param stringResId a resource ID for a string
+     * @param formatArgs  arguments to format the string with
+     */
     private void showSnackbar(int duration, int stringResId, Object... formatArgs) {
         String string = getString(stringResId, formatArgs);
         View coordinator = mViewBinding.timerCoordinator;
@@ -1930,10 +1963,13 @@ public class DebatingTimerFragment extends Fragment {
 
     /**
      * Returns the number of seconds that would be displayed, taking into account the count
-     * direction.  If the overall count direction is <code>COUNT_DOWN</code> and there is a speech
-     * format ready, it returns (speechLength - time).  Otherwise, it just returns time.
+     * direction, for the currently active debate phase. If the overall count direction is {@code
+     * COUNT_DOWN} and there is a speech  format ready, it returns (speechLength - time). Otherwise,
+     * it just returns time.
+     *
      * @param time the time that is wished to be formatted (in seconds)
      * @return the time that would be displayed (as an integer, number of seconds)
+     * @see #subtractFromSpeechLengthIfCountingDown(long, DebatePhaseFormat)
      */
     private long subtractFromSpeechLengthIfCountingDown(long time) {
         if (mDebateManager != null)
@@ -1941,6 +1977,17 @@ public class DebatingTimerFragment extends Fragment {
         return time;
     }
 
+    /**
+     * Returns the number of seconds that would be displayed, taking into account the count
+     * direction, for the given debate phase.  If the overall count direction is
+     * <code>COUNT_DOWN</code> and there is a speech format ready, it returns (speechLength - time).
+     * Otherwise, it just returns time.
+     *
+     * @param time the time that is wished to be formatted (in seconds)
+     * @param sf   the relevant {@link DebatePhaseFormat}
+     * @return the time that would be displayed (as an integer, number of seconds)
+     * @see #subtractFromSpeechLengthIfCountingDown(long, DebatePhaseFormat)
+     */
     private long subtractFromSpeechLengthIfCountingDown(long time, DebatePhaseFormat sf) {
         if (getCountDirection(sf) == CountDirection.COUNT_DOWN)
             return sf.getLength() - time;
@@ -1950,10 +1997,12 @@ public class DebatingTimerFragment extends Fragment {
     /**
      *  Updates the buttons according to the current status of the debate
      *  The buttons are allocated as follows:
-     *  When at start:          [Start] [Next]
-     *  When running:           [Stop]
-     *  When stopped by user:   [Resume] [Restart] [Next]
-     *  When stopped by alarm:  [Resume]
+     *  <ul>
+     *  <li>When at start:          [Start] [Next] </li>
+     *  <li>When running:           [Stop] </li>
+     *  <li>When stopped by user:   [Resume] [Restart] [Next] </li>
+     *  <li>When stopped by alarm:  [Resume] </li>
+     *  </ul>
      *  The [Bell] button always is on the right of any of the above three buttons.
      */
     private void updateControls() {
@@ -2298,6 +2347,10 @@ public class DebatingTimerFragment extends Fragment {
         }
     }
 
+    /**
+     * Updates the toolbar according to the options that should be available, given the current
+     * debate load status and "ring bells" setting. This includes the title.
+     */
     private void updateToolbar() {
         if (mViewBinding == null) {
             Log.d(TAG, "No view binding, skip update toolbar");
