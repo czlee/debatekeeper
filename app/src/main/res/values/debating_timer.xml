@@ -127,10 +127,11 @@
 
     <!-- Changelog dialog -->
     <!-- By convention, this should be changed to match the manifest versionCode when the changelog changes. -->
-    <integer name="changelogDialog_versionCode">29</integer>
+    <integer name="changelogDialog_versionCode">30</integer>
     <string name="changelogDialog_title">What\'s new in version %1$s</string>
     <string name="changelogDialog_message">
-          • Debate style formats are now available for download, with only four included in the app.
+          • Removed leading zeros from minutes
+        \n• Debate style formats are now available for download, with only four included in the app.
             You may need to download the formats you were previously using to continue.
         \n• Added support for multilingual debate formats, with thanks to Frank Richter. (BP is in
             English and Spanish; OPD is in German and English.)
