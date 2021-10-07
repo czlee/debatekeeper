@@ -24,7 +24,7 @@ import androidx.annotation.Nullable;
 
 import com.ibm.icu.util.ULocale;
 
-import net.czlee.debatekeeper.DebatingTimerFragment;
+import net.czlee.debatekeeper.DebatekeeperUtils;
 import net.czlee.debatekeeper.R;
 import net.czlee.debatekeeper.debateformat.XmlUtilities.IllegalSchemaVersionException;
 import net.czlee.debatekeeper.debateformat.XmlUtilities.XmlInvalidValueException;
@@ -317,7 +317,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
                     continue; // if we couldn't interpret the time, ignore it
                 }
             }
-            bellsList.append(DebatingTimerFragment.secsToTextSigned(time));
+            bellsList.append(DebatekeeperUtils.secsToTextSigned(time));
             boolean pauseOnBell;
             try {
                 pauseOnBell = xu.isAttributeTrue(element, R.string.xml2attrName_bell_pauseOnBell);
@@ -340,7 +340,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             long minutes = length / 60;
             return mContext.getResources().getQuantityString(R.plurals.viewFormat_timeDescription_lengthInMinutesOnly, (int) minutes, minutes);
         } else
-            return mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, DebatingTimerFragment.secsToTextSigned(length));
+            return mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, DebatekeeperUtils.secsToTextSigned(length));
     }
 
 }

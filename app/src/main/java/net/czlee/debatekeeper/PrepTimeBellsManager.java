@@ -210,7 +210,7 @@ public class PrepTimeBellsManager {
         @Override
         public String toString() {
             if (time == 0) return mContext.getString(R.string.prepTimeBellDescription_atFinish);
-            return mContext.getString(R.string.prepTimeBellDescription_beforeFinish, DebatingTimerFragment.secsToTextSigned(time));
+            return mContext.getString(R.string.prepTimeBellDescription_beforeFinish, DebatekeeperUtils.secsToTextSigned(time));
         }
 
         @Override
@@ -249,7 +249,7 @@ public class PrepTimeBellsManager {
         @Override
         public String toString() {
             if (time == 0) return mContext.getString(R.string.prepTimeBellDescription_atStart);
-            return mContext.getString(R.string.prepTimeBellDescription_afterStart, DebatingTimerFragment.secsToTextSigned(time));
+            return mContext.getString(R.string.prepTimeBellDescription_afterStart, DebatekeeperUtils.secsToTextSigned(time));
         }
 
         @Override

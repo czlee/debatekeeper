@@ -912,38 +912,6 @@ public class DebatingTimerFragment extends Fragment {
     }
 
     //******************************************************************************************
-    // Public static methods
-    //******************************************************************************************
-
-    /**
-     * Converts a number of seconds to a String in the format 0:00, or +0:00 if the time
-     * given is negative.  (Note: A <i>plus</i> sign is used for <i>negative</i> numbers; this
-     * indicates overtime.)  If {@code seconds} is at least 3600, the format also includes hours,
-     * e.g. 1:00:00.
-     * @param seconds a time in seconds
-     * @return the String
-     */
-    public static String secsToTextSigned(long seconds) {
-        StringBuilder builder = new StringBuilder();
-        if (seconds < 0) {
-            builder.append("+");
-            seconds = -seconds;
-        }
-        long minutes = seconds / 60;
-        long hours = minutes / 60;
-        minutes %= 60;
-        seconds %= 60;
-        if (hours > 0) {
-            builder.append(hours).append(":");
-            if (minutes < 10) builder.append("0");
-        }
-        builder.append(minutes).append(":");
-        if (seconds < 10) builder.append("0");
-        builder.append(seconds);
-        return builder.toString();
-    }
-
-    //******************************************************************************************
     // Public methods
     //******************************************************************************************
 
@@ -1504,7 +1472,7 @@ public class DebatingTimerFragment extends Fragment {
         Log.i(TAG, String.format("importIncomingFile: mime type %s, data %s", intent.getType(), intent.getDataString()));
 
         Uri uri = intent.getData();
-        String filename = FormatXmlFilesManager.getFilenameFromUri(activity.getContentResolver(), uri);
+        String filename = DebatekeeperUtils.getFilenameFromUri(activity.getContentResolver(), uri);
         Log.i(TAG, "importIncomingFile: file name is " + filename);
 
         if (filename == null) {
@@ -2119,7 +2087,7 @@ public class DebatingTimerFragment extends Fragment {
         // Take count direction into account for display
         long timeToShow = subtractFromSpeechLengthIfCountingDown(time, dpf);
 
-        currentTimeText.setText(secsToTextSigned(timeToShow));
+        currentTimeText.setText(DebatekeeperUtils.secsToTextSigned(timeToShow));
 
         boolean overtime = time > dpf.getLength();
 
@@ -2147,7 +2115,7 @@ public class DebatingTimerFragment extends Fragment {
         if (length % 60 == 0)
             lengthStr = getResources().getQuantityString(R.plurals.timer_timeInMinutes, (int) (length / 60), length / 60);
         else
-            lengthStr = secsToTextSigned(length);
+            lengthStr = DebatekeeperUtils.secsToTextSigned(length);
 
         int finalTimeTextUnformattedResId = (dpf.isPrep()) ? R.string.timer_prepTimeLength : R.string.timer_speechLength;
         infoLine.append(String.format(this.getString(finalTimeTextUnformattedResId),
@@ -2170,7 +2138,7 @@ public class DebatingTimerFragment extends Fragment {
             else {
                 long timeToDisplay = subtractFromSpeechLengthIfCountingDown(nextOvertimeBellTime, dpf);
                 infoLine.append(getString(R.string.timer_bellsList_nextOvertimeBell,
-                        secsToTextSigned(timeToDisplay)));
+                        DebatekeeperUtils.secsToTextSigned(timeToDisplay)));
             }
 
         } else if (currentSpeechBellsIter.hasNext()) {
@@ -2180,7 +2148,7 @@ public class DebatingTimerFragment extends Fragment {
             while (currentSpeechBellsIter.hasNext()) {
                 BellInfo bi = currentSpeechBellsIter.next();
                 long bellTime = subtractFromSpeechLengthIfCountingDown(bi.getBellTime(), dpf);
-                bellsStr.append(secsToTextSigned(bellTime));
+                bellsStr.append(DebatekeeperUtils.secsToTextSigned(bellTime));
                 if (bi.isPauseOnBell())
                     bellsStr.append(getString(R.string.timer_pauseOnBellIndicator));
                 if (bi.isSilent())

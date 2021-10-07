@@ -652,7 +652,7 @@ public class FormatChooserFragment extends Fragment {
         }
 
         Context context = requireContext();
-        String filename = FormatXmlFilesManager.getFilenameFromUri(context.getContentResolver(), uri);
+        String filename = DebatekeeperUtils.getFilenameFromUri(context.getContentResolver(), uri);
 
         Log.i(TAG, "saving to file: " + filename);
         if (filename == null) {
