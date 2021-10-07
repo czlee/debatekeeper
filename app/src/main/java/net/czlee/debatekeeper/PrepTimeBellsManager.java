@@ -19,7 +19,6 @@ package net.czlee.debatekeeper;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -211,7 +210,7 @@ public class PrepTimeBellsManager {
         @Override
         public String toString() {
             if (time == 0) return mContext.getString(R.string.prepTimeBellDescription_atFinish);
-            return mContext.getString(R.string.prepTimeBellDescription_beforeFinish, DateUtils.formatElapsedTime(time));
+            return mContext.getString(R.string.prepTimeBellDescription_beforeFinish, DebatingTimerFragment.secsToTextSigned(time));
         }
 
         @Override
@@ -250,7 +249,7 @@ public class PrepTimeBellsManager {
         @Override
         public String toString() {
             if (time == 0) return mContext.getString(R.string.prepTimeBellDescription_atStart);
-            return mContext.getString(R.string.prepTimeBellDescription_afterStart, DateUtils.formatElapsedTime(time));
+            return mContext.getString(R.string.prepTimeBellDescription_afterStart, DebatingTimerFragment.secsToTextSigned(time));
         }
 
         @Override

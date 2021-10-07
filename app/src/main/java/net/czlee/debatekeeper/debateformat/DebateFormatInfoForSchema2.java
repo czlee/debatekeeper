@@ -17,7 +17,6 @@
 package net.czlee.debatekeeper.debateformat;
 
 import android.content.Context;
-import android.text.format.DateUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -25,6 +24,7 @@ import androidx.annotation.Nullable;
 
 import com.ibm.icu.util.ULocale;
 
+import net.czlee.debatekeeper.DebatingTimerFragment;
 import net.czlee.debatekeeper.R;
 import net.czlee.debatekeeper.debateformat.XmlUtilities.IllegalSchemaVersionException;
 import net.czlee.debatekeeper.debateformat.XmlUtilities.XmlInvalidValueException;
@@ -298,7 +298,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
     /**
      * Builds a string describing a list of bells
      * @param list a list of &lt;bell&gt; {@link Element}s
-     * @return the completed string e.g. "bells at 01:00, 06:00, 07:00"
+     * @return the completed string e.g. "bells at 1:00, 6:00, 7:00"
      */
     private String buildBellsString(List<Element> list, long finishTime) {
         StringBuilder bellsList = new StringBuilder();
@@ -317,7 +317,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
                     continue; // if we couldn't interpret the time, ignore it
                 }
             }
-            bellsList.append(DateUtils.formatElapsedTime(time));
+            bellsList.append(DebatingTimerFragment.secsToTextSigned(time));
             boolean pauseOnBell;
             try {
                 pauseOnBell = xu.isAttributeTrue(element, R.string.xml2attrName_bell_pauseOnBell);
@@ -340,7 +340,7 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
             long minutes = length / 60;
             return mContext.getResources().getQuantityString(R.plurals.viewFormat_timeDescription_lengthInMinutesOnly, (int) minutes, minutes);
         } else
-            return mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, DateUtils.formatElapsedTime(length));
+            return mContext.getString(R.string.viewFormat_timeDescription_lengthInMinutesSeconds, DebatingTimerFragment.secsToTextSigned(length));
     }
 
 }

@@ -45,7 +45,6 @@ import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.Pair;
@@ -910,6 +909,38 @@ public class DebatingTimerFragment extends Fragment {
                     mDebateManager.startPoiTimer();
             }
         }
+    }
+
+    //******************************************************************************************
+    // Public static methods
+    //******************************************************************************************
+
+    /**
+     * Converts a number of seconds to a String in the format 0:00, or +0:00 if the time
+     * given is negative.  (Note: A <i>plus</i> sign is used for <i>negative</i> numbers; this
+     * indicates overtime.)  If {@code seconds} is at least 3600, the format also includes hours,
+     * e.g. 1:00:00.
+     * @param seconds a time in seconds
+     * @return the String
+     */
+    public static String secsToTextSigned(long seconds) {
+        StringBuilder builder = new StringBuilder();
+        if (seconds < 0) {
+            builder.append("+");
+            seconds = -seconds;
+        }
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        minutes %= 60;
+        seconds %= 60;
+        if (hours > 0) {
+            builder.append(hours).append(":");
+            if (minutes < 10) builder.append("0");
+        }
+        builder.append(minutes).append(":");
+        if (seconds < 10) builder.append("0");
+        builder.append(seconds);
+        return builder.toString();
     }
 
     //******************************************************************************************
@@ -2116,7 +2147,7 @@ public class DebatingTimerFragment extends Fragment {
         if (length % 60 == 0)
             lengthStr = getResources().getQuantityString(R.plurals.timer_timeInMinutes, (int) (length / 60), length / 60);
         else
-            lengthStr = DateUtils.formatElapsedTime(length);
+            lengthStr = secsToTextSigned(length);
 
         int finalTimeTextUnformattedResId = (dpf.isPrep()) ? R.string.timer_prepTimeLength : R.string.timer_speechLength;
         infoLine.append(String.format(this.getString(finalTimeTextUnformattedResId),
@@ -2149,7 +2180,7 @@ public class DebatingTimerFragment extends Fragment {
             while (currentSpeechBellsIter.hasNext()) {
                 BellInfo bi = currentSpeechBellsIter.next();
                 long bellTime = subtractFromSpeechLengthIfCountingDown(bi.getBellTime(), dpf);
-                bellsStr.append(DateUtils.formatElapsedTime(bellTime));
+                bellsStr.append(secsToTextSigned(bellTime));
                 if (bi.isPauseOnBell())
                     bellsStr.append(getString(R.string.timer_pauseOnBellIndicator));
                 if (bi.isSilent())
@@ -2315,32 +2346,5 @@ public class DebatingTimerFragment extends Fragment {
         ringBellsItem.setChecked(mBellsEnabled);
         ringBellsItem.setIcon((mBellsEnabled) ? R.drawable.ic_baseline_notifications_active_24 : R.drawable.ic_baseline_notifications_off_24);
     }
-
-    /**
-     * Converts a number of seconds to a String in the format 00:00, or +00:00 if the time
-     * given is negative.  (Note: A <i>plus</i> sign is used for <i>negative</i> numbers; this
-     * indicates overtime.)
-     * @param seconds a time in seconds
-     * @return the String
-     */
-    private static String secsToTextSigned(long seconds) {
-        StringBuilder builder = new StringBuilder();
-        if (seconds < 0) {
-            builder.append("+");
-            seconds = -seconds;
-        }
-        long minutes = seconds / 60;
-        long hours = minutes / 60;
-        minutes %= 60;
-        seconds %= 60;
-        if (hours > 0) {
-            builder.append(hours).append(":");
-            if (minutes < 10) builder.append("0");
-        }
-        builder.append(minutes).append(":");
-        if (seconds < 10) builder.append("0");
-        builder.append(seconds);
-        return builder.toString();
-   }
 
 }
