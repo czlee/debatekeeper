@@ -35,7 +35,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
@@ -43,7 +42,6 @@ import android.nfc.NfcEvent;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -2322,14 +2320,27 @@ public class DebatingTimerFragment extends Fragment {
      * Converts a number of seconds to a String in the format 00:00, or +00:00 if the time
      * given is negative.  (Note: A <i>plus</i> sign is used for <i>negative</i> numbers; this
      * indicates overtime.)
-     * @param time a time in seconds
+     * @param seconds a time in seconds
      * @return the String
      */
-    private String secsToTextSigned(long time) {
-        if (time >= 0)
-            return DateUtils.formatElapsedTime(time);
-        else
-            return getResources().getString(R.string.timer_overtimeFormat, DateUtils.formatElapsedTime(-time));
-    }
+    private static String secsToTextSigned(long seconds) {
+        StringBuilder builder = new StringBuilder();
+        if (seconds < 0) {
+            builder.append("+");
+            seconds = -seconds;
+        }
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        minutes %= 60;
+        seconds %= 60;
+        if (hours > 0) {
+            builder.append(hours).append(":");
+            if (minutes < 10) builder.append("0");
+        }
+        builder.append(minutes).append(":");
+        if (seconds < 10) builder.append("0");
+        builder.append(seconds);
+        return builder.toString();
+   }
 
 }
