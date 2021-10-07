@@ -18,7 +18,7 @@
     <!-- Keys -->
     <!-- These strings must be unique. -->
     <!-- Category titles -->
-    <string name="prefCategory_overtimeBells_title">Sonnettes du temps excédantaire</string>
+    <string name="prefCategory_overtimeBells_title">Sonnettes du temps excédentaire</string>
     <string name="prefCategory_pois_title">Points d\'information</string>
     <string name="prefCategory_prepTime_title">Chronomètre de préparation</string>
     <string name="prefCategory_bells_title">Sonnettes</string>
@@ -44,15 +44,15 @@
         <item>Solide</item>
     </string-array>
     <!-- Overtime bells -->
-    <string name="pref_overtimeBellsEnable_title">Activer les sonnettes du temps excédantaire</string>
-    <string name="pref_overtimeBellsEnable_onSummary">Faire sonner les sonnettes du temps excédantaire comme indiqué ci-dessous</string>
-    <string name="pref_overtimeBellsEnable_offSummary">Ne faire sonner aucune sonnette du temps excédantaire</string>
+    <string name="pref_overtimeBellsEnable_title">Activer les sonnettes du temps excédentaire</string>
+    <string name="pref_overtimeBellsEnable_onSummary">Faire sonner les sonnettes du temps excédentaire comme indiqué ci-dessous</string>
+    <string name="pref_overtimeBellsEnable_offSummary">Ne faire sonner aucune sonnette du temps excédentaire</string>
     <string name="pref_firstOvertimeBell_title">Première sonnette du temps excédentaire</string>
-    <string name="pref_firstOvertimeBell_summary">Faire sonner la première sonnette du temps excédantaire après %s secondes…</string>
-    <string name="pref_firstOvertimeBell_dialogMessage">"Le temps après le fin, en secondes, de la première sonnette du temps excédantaire:"</string>
-    <string name="pref_overtimeBellPeriod_title">Période des sonnettes du temps excédantaire</string>
+    <string name="pref_firstOvertimeBell_summary">Faire sonner la première sonnette du temps excédentaire après %s secondes…</string>
+    <string name="pref_firstOvertimeBell_dialogMessage">"Le temps après le fin, en secondes, de la première sonnette du temps excédentaire:"</string>
+    <string name="pref_overtimeBellPeriod_title">Période des sonnettes du temps excédentaire</string>
     <string name="pref_overtimeBellPeriod_summary">…et puis toutes les %s secondes ensuite</string>
-    <string name="pref_overtimeBellPeriod_dialogMessage">"Le temps entre les sonnettes du temps excédantaire (après la première) en seconds :"</string>
+    <string name="pref_overtimeBellPeriod_dialogMessage">"Le temps entre les sonnettes du temps excédentaire (après la première) en seconds :"</string>
     <!-- Count direction -->
     <string name="pref_countDirection_title">Direction à compter</string>
     <string-array name="pref_countDirection_summaries">
@@ -81,7 +81,7 @@
     </string-array>
     <!-- Keep screen on -->
     <string name="pref_keepScreenOn_title">Désactivation de la mise en veille</string>
-    <string name="pref_keepScreenOn_onSummary">Désactivater la mise en veille de l\'écran lorsque la chronomètre fonctionne</string>
+    <string name="pref_keepScreenOn_onSummary">Désactiver la mise en veille de l\'écran lorsque la chronomètre fonctionne</string>
     <string name="pref_keepScreenOn_offSummary">Appliquer la mise en veille normale de l\'écran</string>
     <!-- *** Preparation time *** -->
     <string name="pref_prepTimer_enable_title">Activer le chronomètre de préparation</string>
