@@ -35,7 +35,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
@@ -43,7 +42,6 @@ import android.nfc.NfcEvent;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -69,6 +67,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.NavDirections;
@@ -925,7 +924,9 @@ public class DebatingTimerFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        OnBackPressedDispatcher dispatcher = requireActivity().getOnBackPressedDispatcher();
+        FragmentActivity activity = requireActivity();
+
+        OnBackPressedDispatcher dispatcher = activity.getOnBackPressedDispatcher();
         dispatcher.addCallback(this, mPreviousSpeechBackPressedCallback);
         dispatcher.addCallback(this, mFinishEditingTimeBackPressedCallback);
 
@@ -934,11 +935,10 @@ public class DebatingTimerFragment extends Fragment {
 
         // If there's a file name passed in (presumably from FormatChooserFragment), use it,
         // otherwise load from preferences.
-        SharedPreferences prefs = requireActivity().getPreferences(MODE_PRIVATE);
+        SharedPreferences prefs = activity.getPreferences(MODE_PRIVATE);
         mFormatXmlFileName = prefs.getString(PREFERENCE_XML_FILE_NAME, null);
 
         // Bind to the timer service
-        Activity activity = requireActivity();
         Intent serviceIntent = new Intent(activity, DebatingTimerService.class);
         activity.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
     }
@@ -1057,7 +1057,8 @@ public class DebatingTimerFragment extends Fragment {
     //******************************************************************************************
 
     /**
-     * Gets the preferences from the shared preferences file and applies them.
+     * Gets the preferences from the shared preferences file and applies them. If this fragment is
+     * not attached to an activity, it skips the updates that require one.
      */
     private void applyPreferences() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
@@ -1160,8 +1161,9 @@ public class DebatingTimerFragment extends Fragment {
             Log.v(TAG, "Couldn't restore AlertManager preferences; service binder doesn't yet exist");
         }
 
-        Activity activity = requireActivity();
-        activity.setVolumeControlStream((mBellsEnabled) ? AudioManager.STREAM_MUSIC : AudioManager.STREAM_RING);
+        Activity activity = getActivity();
+        if (activity != null)
+            activity.setVolumeControlStream((mBellsEnabled) ? AudioManager.STREAM_MUSIC : AudioManager.STREAM_RING);
         updateKeepScreenOn();
 
         updateToolbar();
@@ -1285,8 +1287,11 @@ public class DebatingTimerFragment extends Fragment {
      */
     private void copyLegacyCustomFilesPrompt() {
 
+        Activity activity = getActivity();
+        if (activity == null) return;  // do this later if there's no activity
+
         // Don't bother if the user has dismissed this prompt
-        SharedPreferences prefs = requireActivity().getPreferences(MODE_PRIVATE);
+        SharedPreferences prefs = activity.getPreferences(MODE_PRIVATE);
         boolean customFilesCopied = prefs.getBoolean(LEGACY_CUSTOM_FILES_DISMISSED, false);
         if (customFilesCopied) return;
 
@@ -2235,10 +2240,12 @@ public class DebatingTimerFragment extends Fragment {
      *     <li>the user preference is applied, and</li>
      *     <li>the timer starts or stops, or might start or stop.</li>
      * </ul>
+     * This is a no-op if this fragment is not attached to an activity.
      */
     private void updateKeepScreenOn() {
         boolean relevantKeepScreenOn;
-        Activity activity = requireActivity();
+        Activity activity = getActivity();
+        if (activity == null) return;
 
         if (mDebateManager != null && mDebateManager.getActivePhaseFormat().isPrep())
             relevantKeepScreenOn = mPrepTimeKeepScreenOn;
