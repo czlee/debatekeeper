@@ -26,8 +26,9 @@
     <string name="formatDownloader_updateAvailable">Mise à jour disponible</string>
     <string name="formatDownloader_loadingText">Chargement du liste de styles à partir du dépôt en ligne…</string>
     <string name="formatDownloader_noInternet">Aucune connection internet.</string>
-    <string name="formatDownloader_ioError">Erreur lors du chargement de la liste de styles (E/S)</string>
-    <string name="formatDownloader_jsonError">Erreur lors du chargement de la liste de styles (JSON)</string>
+    <string name="formatDownloader_ioError">Erreur lors du chargement de la liste de styles (E/S).</string>
+    <string name="formatDownloader_jsonError">Erreur lors du chargement de la liste de styles (JSON).</string>
+    <string name="formatDownloader_emptyList">La liste des styles du dépôt en ligne est vide.</string>
     <string name="formatDownloader_button_retry">Réessayer</string>
     <string name="formatDownloader_notFoundError">Introuvable : %1$s</string>
     <string name="formatDownloader_wrongHostError">Mauvais hôte : %1$s</string>

@@ -19,6 +19,7 @@
     <string name="formatChooser_actionBar_confirm">Confirmer</string>
     <string name="formatChooser_actionBar_searchOnline">Rechercher en ligne</string>
     <string name="formatChooser_actionBar_importFile">Importer un fichier</string>
+    <string name="formatChooser_actionBar_learnMore">En savoir plus</string>
     <string name="formatChooser_button_moreInfo">Plus d\'info</string>
     <string name="formatChooser_button_share">Partager</string>
     <string name="formatChooser_button_delete">Supprimer</string>

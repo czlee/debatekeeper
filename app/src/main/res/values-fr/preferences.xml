@@ -81,7 +81,7 @@
     </string-array>
     <!-- Keep screen on -->
     <string name="pref_keepScreenOn_title">Désactivation de la mise en veille</string>
-    <string name="pref_keepScreenOn_onSummary">Désactiver la mise en veille de l\'écran lorsque la chronomètre fonctionne</string>
+    <string name="pref_keepScreenOn_onSummary">Désactiver la mise en veille de l\'écran lorsque le chronomètre fonctionne</string>
     <string name="pref_keepScreenOn_offSummary">Appliquer la mise en veille normale de l\'écran</string>
     <!-- *** Preparation time *** -->
     <string name="pref_prepTimer_enable_title">Activer le chronomètre de préparation</string>

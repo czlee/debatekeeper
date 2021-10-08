@@ -14,7 +14,7 @@
   not, see <http://www.gnu.org/licenses/>.
 -->
 <resources>
-    <string name="fragmentName_PrepTimeBellsEdit">Sonnettes de la chronomètre de préparation</string>
+    <string name="fragmentName_PrepTimeBellsEdit">Sonnettes du chronomètre de préparation</string>
     <string name="prepTimeBellsEditor_addBell_buttonText">Ajouter</string>
     <string name="prepTimeBellsEditor_clearAll_buttonText">Effacer</string>
     <!-- Bell descriptions -->
@@ -35,8 +35,8 @@
     <string name="prepTimeBellsEditor_editBellDialog_confirmButton">Terminé</string>
     <!-- Clear bells dialog -->
     <string name="prepTimeBellsEditor_clearAllDialog_title">Effacer toutes les sonnettes</string>
-    <string name="prepTimeBellsEditor_clearAllDialog_message_noFinishBell">Supprimer toutes les sonnette de la chronomètre de préparation ?</string>
-    <string name="prepTimeBellsEditor_clearAllDialog_message_withFinishBell">Supprimer toutes les sonnettes de la chronomètre de préparation sauve la sonnette à la fin ?</string>
+    <string name="prepTimeBellsEditor_clearAllDialog_message_noFinishBell">Supprimer toutes les sonnettes du chronomètre de préparation ?</string>
+    <string name="prepTimeBellsEditor_clearAllDialog_message_withFinishBell">Supprimer toutes les sonnettes du chronomètre de préparation sauve la sonnette à la fin ?</string>
     <string name="prepTimeBellsEditor_clearAllDialog_confirmButton">Supprimer tous</string>
     <!-- Context menu -->
     <string name="prepTimeBellsEditor_contextMenu_header">Sonnette %1$s</string>
