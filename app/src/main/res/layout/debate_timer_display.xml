@@ -63,7 +63,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_percent="0.8"
         android:layout_marginHorizontal="@dimen/timer_currentTime_margin"
-        tools:text="00:00"
+        tools:text="0:00"
         tools:ignore="SpUsage" />
 
     <TextView
@@ -77,7 +77,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:text="10 minutes long; bells at 01:00, 06:00, 07:00 (silent), 09:00 (silent), 10:00" />
+        tools:text="10 minutes long; bells at 1:00, 6:00, 7:00 (silent), 9:00 (silent), 10:00" />
 
     <TimePicker
         android:id="@+id/timer_currentTimePicker"

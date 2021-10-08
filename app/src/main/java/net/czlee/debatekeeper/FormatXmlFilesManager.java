@@ -17,12 +17,8 @@
 package net.czlee.debatekeeper;
 
 import android.annotation.SuppressLint;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -239,79 +235,6 @@ class FormatXmlFilesManager {
     //******************************************************************************************
     // Static methods
     //******************************************************************************************
-
-    /**
-     * Figures out what the file name should be, from the given URI. This is mostly in this class
-     * for want of a better place to put it. Its main job is to parse a URI.
-     *
-     * @param uri a {@link Uri} to decipher
-     * @return a file name, or null if it failed to discern the file name.
-     */
-    @Nullable
-    public static String getFilenameFromUri(ContentResolver resolver, Uri uri) {
-        String filename = null;
-        String scheme = uri.getScheme();
-
-        switch (scheme) {
-            case "file":
-                // Just retrieve the file name
-                File file = new File(uri.getPath());
-                String name = file.getName();
-                if (name.length() > 0)
-                    filename = name;
-                break;
-
-            case "content":
-                // Try to find a name for the file
-                Cursor cursor = resolver.query(uri,
-                        new String[]{MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.DATA}, null, null, null);
-                if (cursor == null) {
-                    Log.e(TAG, "getDestinationFilenameFromUri: cursor was null");
-                    return null;
-                }
-                if (!cursor.moveToFirst()) {
-                    Log.e(TAG, "getDestinationFilenameFromUri: failed moving cursor to first row");
-                    cursor.close();
-                    return null;
-                }
-                int dataIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
-                int nameIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
-                Log.i(TAG, "getDestinationFilenameFromUri: data at column " + dataIndex + ", name at column " + nameIndex);
-                if (dataIndex >= 0) {
-                    String path = cursor.getString(dataIndex);
-                    if (path == null)
-                        Log.w(TAG, "getFilenameFromUri: data column failed, path was null");
-                    else
-                        filename = (new File(path)).getName();
-                    Log.i(TAG, "getDestinationFilenameFromUri: got from data column, path: " + path + ", name: " + filename);
-                }
-                if (filename == null && nameIndex >= 0) {
-                    filename = cursor.getString(nameIndex);
-                    Log.i(TAG, "getDestinationFilenameFromUri: got from name column: " + filename);
-                }
-                if (filename == null)
-                    Log.e(TAG, "getFilenameFromUri: file name is still null after trying both columns");
-                cursor.close();
-                break;
-
-            default:
-                return null;
-        }
-
-        // If it doesn't end in the .xml extension, make it end in one
-        if (filename != null && !filename.endsWith(".xml")) {
-
-            // Do this by stripping the current extension if there is one...
-            int lastIndex = filename.lastIndexOf(".");
-            if (lastIndex > 0) filename = filename.substring(0, lastIndex);
-
-            // ...and then adding .xml.
-            filename = filename + ".xml";
-
-        }
-
-        return filename;
-    }
 
     //******************************************************************************************
     // Legacy support
