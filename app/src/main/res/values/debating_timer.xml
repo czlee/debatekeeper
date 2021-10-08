@@ -130,7 +130,6 @@
     <integer name="changelogDialog_versionCode">30</integer>
     <string name="changelogDialog_title">What\'s new in version %1$s</string>
     <string name="changelogDialog_message">
-          • Removed leading zeros from minutes
         \n• Debate style formats are now available for download, with only four included in the app.
             You may need to download the formats you were previously using to continue.
         \n• Added support for multilingual debate formats, with thanks to Frank Richter. (BP is in
@@ -141,6 +140,7 @@
         \n• French, German and Spanish interface for phones in those languages
         \n• New icon, thanks to Alberto Martínez
         \n• Timer text size now auto-adjusts in Android 8.0 and higher
+        \n• Removed leading zero from minutes
         \n• Made double and triple bells more evenly timed
         \n• Added a way to initiate file imports from inside the app
         \n• Simplified handling of malformed debate style files
