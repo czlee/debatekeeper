@@ -101,7 +101,7 @@ Si vous ne voulez pas perdre %1$s, annulez, et puis réimportez avec un nom diff
     <string name="schemaTooNewDialog_message">Ce fichier de style de débat (%4$s) utilise un schema (%1$s) plus nouveau que ce que cette version de l\'application (%3$s) permet (%2$s). Rechercher les mises à jour sur Google Play ?</string>
     <!-- Changelog dialog -->
     <!-- By convention, this should be changed to match the manifest versionCode when the changelog changes. -->
-    <string name="changelogDialog_title">De nouveau dans version %1$s</string>
+    <string name="changelogDialog_title">Nouveautés dans la version %1$s</string>
     <string name="changelogDialog_message">        \n• Les formats de débat sont désormais disponibles en téléchargement; seulement quatre formats sont intégrés dans l\'application.
             Vous devrez peut-être télécharger les formats que vous utilisiez auparavant pour continuer.
         \n• Ajout de la prise en charge des formats multilingues de débat, grâce à Frank Richter. (BP est en
