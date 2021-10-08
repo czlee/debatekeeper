@@ -152,12 +152,13 @@ public class DebatingTimerFragment extends Fragment {
     private boolean              mPrepTimeKeepScreenOn;
     private boolean              mImportIntentHandled    = false;
 
-    private boolean mDialogBlocking = false;
+    private String mDialogBlockingTag = null;
     private final ArrayList<Pair<String, QueueableDialogFragment>> mDialogsInWaiting = new ArrayList<>();
 
     private static final String BUNDLE_KEY_DEBATE_MANAGER               = "dm";
     private static final String BUNDLE_KEY_XML_FILE_NAME                = "xmlfn";
     private static final String BUNDLE_KEY_IMPORT_INTENT_HANDLED        = "iih";
+    private static final String BUNDLE_KEY_BLOCKING_DIALOG              = "blocking-dialog";
     private static final String PREFERENCE_XML_FILE_NAME                = "xmlfn";
     private static final String LAST_CHANGELOG_VERSION_SHOWN            = "lastChangeLog";
     private static final String LEGACY_CUSTOM_FILES_DISMISSED           = "v1.3-custom-files-dismissed";
@@ -247,8 +248,9 @@ public class DebatingTimerFragment extends Fragment {
                 return;
             }
             if (parent != null) {
-                Log.w(TAG, "QueueableDialogFragment.onDismiss: fragment was null");
                 parent.showNextQueuedDialog();
+            } else {
+                Log.w(TAG, "QueueableDialogFragment.onDismiss: parent was null");
             }
         }
     }
@@ -974,6 +976,8 @@ public class DebatingTimerFragment extends Fragment {
         mViewPager.setPageMarginDrawable(R.drawable.divider);
 
         mLastStateBundle = savedInstanceState; // This could be null
+        if (savedInstanceState != null)
+            mDialogBlockingTag = savedInstanceState.getString(BUNDLE_KEY_BLOCKING_DIALOG);
 
         // Configure NFC
         Activity activity = requireActivity();
@@ -997,6 +1001,7 @@ public class DebatingTimerFragment extends Fragment {
         super.onSaveInstanceState(bundle);
         bundle.putString(BUNDLE_KEY_XML_FILE_NAME, mFormatXmlFileName);
         bundle.putBoolean(BUNDLE_KEY_IMPORT_INTENT_HANDLED, mImportIntentHandled);
+        bundle.putString(BUNDLE_KEY_BLOCKING_DIALOG, mDialogBlockingTag);
         if (mDebateManager != null)
             mDebateManager.saveState(BUNDLE_KEY_DEBATE_MANAGER, bundle);
     }
@@ -1685,24 +1690,44 @@ public class DebatingTimerFragment extends Fragment {
     }
 
     /**
-     * Queues a dialog to be shown after a currently-shown dialog, or immediately if there is
-     * no currently-shown dialog.  This does not happen automatically - dialogs must know whether
-     * they are potentially blocking or waiting, and set themselves up accordingly.  Dialogs
-     * that could block must set <code>mDialogBlocking</code> to true when they are shown, and call
+     * Queues a dialog to be shown after a currently-shown dialog, or immediately if there is no
+     * currently-shown dialog.  This does not happen automatically - dialogs must know whether they
+     * are potentially blocking or waiting, and set themselves up accordingly.  Dialogs that could
+     * block must set <code>mDialogBlockingTag</code> to their tag when they are shown, and call
      * <code>showQueuedDialog()</code> when they are dismissed.
-     * Dialogs that could be queued must call <code>queueDialog()</code> instead of <code>showDialog()</code>.
-     * Only one dialog may be queued at a time.  If more than one dialog is queued, only the last
-     * one is kept in the queue; all others are discarded.
+     * Dialogs that could be queued must call <code>queueDialog()</code> instead of
+     * <code>showDialog()</code>.
+     *
      * @param fragment the {@link DialogFragment} that would be passed to showDialog()
-     * @param tag the tag that would be passed to showDialog()
+     * @param tag      the tag that would be passed to showDialog()
      */
     private void queueDialog(QueueableDialogFragment fragment, String tag) {
-        Log.d(TAG, "queueing dialog: " + tag);
-        if (!mDialogBlocking) {
-            mDialogBlocking = true;
-            fragment.show(getChildFragmentManager(), tag);
+        if (getChildFragmentManager().findFragmentByTag(tag) != null) {
+            Log.w(TAG, "skipping dialog, found in fragment manager: " + tag);
+            return;
         }
-        else mDialogsInWaiting.add(Pair.create(tag, fragment));
+
+        if (mDialogBlockingTag == null) {
+            Log.d(TAG, "showing dialog immediately: " + tag);
+            mDialogBlockingTag = tag;
+            fragment.show(getChildFragmentManager(), tag);
+        } else {
+
+            // don't queue this again if the same dialog is already queued or showing
+            if (mDialogBlockingTag.equals(tag)) {
+                Log.w(TAG, "skipping dialog, duplicate of blocked: " + tag);
+                return;
+            }
+            for (Pair<String, QueueableDialogFragment> pair : mDialogsInWaiting) {
+                if (pair.first.equals(tag)) {
+                    Log.w(TAG, "skipping dialog, already queued: " + tag);
+                    return;
+                }
+            }
+
+            Log.d(TAG, "queueing dialog: " + tag + " (currently blocking: " + mDialogBlockingTag + ")");
+            mDialogsInWaiting.add(Pair.create(tag, fragment));
+        }
     }
 
     /**
@@ -1930,14 +1955,12 @@ public class DebatingTimerFragment extends Fragment {
         }
 
         // Then, show the next one
-        if (mDialogsInWaiting.size() > 0) {
-            if (isResumed()) {
-                Pair<String, QueueableDialogFragment> pair = mDialogsInWaiting.remove(0);
-                pair.second.show(getChildFragmentManager(), pair.first);
-            }
-            mDialogBlocking = true;  // it should already be true, but just to be safe
+        if (mDialogsInWaiting.size() > 0 && isResumed()) {
+            Pair<String, QueueableDialogFragment> pair = mDialogsInWaiting.remove(0);
+            pair.second.show(getChildFragmentManager(), pair.first);
+            mDialogBlockingTag = pair.first;
         }
-        else mDialogBlocking = false;
+        else mDialogBlockingTag = null;
     }
 
     /**
