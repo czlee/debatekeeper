@@ -27,4 +27,5 @@ Most strings are in fragment-specific files:
 <resources>
     <string name="app_name">Debatekeeper</string>
     <string name="nav_back">Retour</string>
+    <string name="notificationChannel_timer_name">Chronomètre</string>
 </resources>
