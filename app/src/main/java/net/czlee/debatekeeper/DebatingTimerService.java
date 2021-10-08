@@ -152,7 +152,7 @@ public class DebatingTimerService extends Service  {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Log.i(TAG, "hello, I am createNotificationChannel");
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
-                    getString(R.string.app_name), NotificationManager.IMPORTANCE_LOW);
+                    getString(R.string.notificationChannel_timer_name), NotificationManager.IMPORTANCE_LOW);
             channel.setDescription(getString(R.string.channel_description));
 
             NotificationManager notificationManager = getSystemService(NotificationManager.class);

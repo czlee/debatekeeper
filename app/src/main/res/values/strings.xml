@@ -30,6 +30,7 @@ Most strings are in fragment-specific files:
 
     <string name="app_name">Debatekeeper</string>
     <string name="nav_back">Back</string>
+    <string name="notificationChannel_timer_name">Timer</string>
 
     <string name="formats_learnMoreUrl" translatable="false">https://github.com/czlee/debatekeeper/wiki/Debate-format-files</string>
 
