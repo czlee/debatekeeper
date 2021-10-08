@@ -1,91 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (C) 2012-2021 Phillip Cao, Chuan-Zheng Lee
+
+  This file is part of the Debatekeeper app, which is licensed under the GNU General Public Licence
+  version 3 (GPLv3).  You can redistribute and/or modify it under the terms of the GPLv3, and you
+  must not use this file except in compliance with the GPLv3.
+
+  This app is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+  Public Licence for more details.
+
+  You should have received a copy of the GNU General Public Licence along with this program.  If
+  not, see <http://www.gnu.org/licenses/>.
+-->
 <resources>
+    <string name="fragmentName_Debating_withoutFormat">Debatekeeper</string>
+    <string name="intentFilter_importStyle">Debatekeeper</string>
+    <!-- Buttons -->
+    <string name="timer_controlButton_startTimer_text">Démarrer</string>
+    <string name="timer_controlButton_stopTimer_text">Arrêter</string>
+    <string name="timer_controlButton_resumeTimer_text">Reprendre</string>
+    <string name="timer_controlButton_resetTimer_text">Réinit.</string>
+    <string name="timer_controlButton_nextPhase_text">Suivant</string>
+    <string name="timer_controlButton_chooseStyle_text">Choisir style</string>
+    <string name="timer_playBell_buttonText">Sonnette</string>
+    <string name="timer_poiTimer_buttonText">POI</string>
+    <!-- Notices -->
+    <string name="channel_description">Affichage lors de l\'opération du chronomètre de Debatekeeper</string>
+    <string name="notification_text">Chronomètre en marche : %1$s</string>
+    <string name="timer_overtimeFormat">+%1$s</string>
+    <string name="timer_bellsList_noBells">"; pas de sonnettes"</string>
     <plurals name="timer_bellsList_normal">
         <item quantity="one">"; sonnette à %1$s"</item>
         <item quantity="other">"; sonnettes à %1$s"</item>
     </plurals>
+    <string name="timer_bellsList_nextOvertimeBell">"; prochaine sonnette du temps excédentaire à %1$s"</string>
+    <string name="timer_bellsList_noOvertimeBells">"; pas de sonnettes du temps excédentaire"</string>
     <plurals name="timer_timeInMinutes">
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>
     </plurals>
-    <string name="timer_bellsList_nextOvertimeBell">"; prochaine sonnette du temps excédantaire à %1$s"</string>
-    <string name="timer_bellsList_noBells">"; pas de sonnettes"</string>
-    <string name="timer_bellsList_noOvertimeBells">"; pas de sonnettes du temps excédantaire"</string>
-    <string name="timer_controlButton_chooseStyle_text">Choisir style</string>
-    <string name="timer_controlButton_nextPhase_text">Suivant</string>
-    <string name="timer_controlButton_resetTimer_text">Réinit.</string>
-    <string name="timer_controlButton_resumeTimer_text">Reprendre</string>
-    <string name="timer_controlButton_startTimer_text">Démarrer</string>
-    <string name="timer_controlButton_stopTimer_text">Arrêter</string>
-    <string name="timer_menuItem_chooseFormat">Styles de débat</string>
-    <string name="timer_menuItem_resetDebate">Réinitialiser le débat</string>
-    <string name="timer_menuItem_settings">Paramètres</string>
-    <string name="timer_noDebateLoaded_text">Aucun débat chargé</string>
-    <string name="timer_playBell_buttonText">Sonnette</string>
-    <string name="timer_poiTimer_buttonText">POI</string>
-    <string name="timer_snackbar_editTextDiscardChangesInfo_limitedAbove">Pour rejeter vos changements, appuyez le bouton de retour. (Vous ne pouvez pas régler la chronomètre pour un temps plus de 23:59.)</string>
-    <string name="timer_snackbar_editTextDiscardChangesInfo_limitedBelow">Pour rejeter vos changements, appuyez le bouton de retour. (Vous ne pouvez pas régler la chronomètre pour un temps excédantaire.)</string>
-    <string name="timer_snackbar_resetDebate">Toutes les chronomètres sont réinitialisées</string>
-    <string name="timer_pauseOnBellIndicator">" (pause)"</string>
-    <string name="timer_prepTimeLength">%s permis</string>
-    <string name="prepTime_title">Temps de préparation</string>
-    <string name="timer_prepTimeControlledIndicator">", dirigé"</string>
-    <string name="timer_silentBellIndicator">" (silencieux)"</string>
     <string name="timer_speechLength">durée %s</string>
-    <string name="changelogDialog_dontShow">Ne plus afficher ce message</string>
-    <string name="changelogDialog_ok">D\'accord, continuons !</string>
-    <string name="changelogDialog_title">De nouveau dans version %1$s</string>
-    <string name="debateLoadErrorScreen_button">Choisir style</string>
-    <string name="schemaTooNewDialog_title"><![CDATA[Mise à jour l\'application ?]]></string>
-    <string name="schemaTooNewDialog_message"><![CDATA[Ce fichier de style de débat (%4$s) utilise un schema (%1$s) plus nouveau que ce que cette version de l\'application (%3$s) permet (%2$s). Rechercher les mises à jour sur Google Play ?]]></string>
-    <string name="schemaTooNewDialog_button_upgrade">Rechercher les mises à jour</string>
-    <string name="schemaTooNewDialog_button_ignore">Ignorer</string>
-    <string name="debateLoadError_badXml">"Il y a un problème avec le XML dans ce fichier de format de débat. L\'erreur est comme suit :\n\n%1$s\n"</string>
-    <string name="debateLoadError_cannotFind">J\'ai rencontré une problème en ouvrant ce fichier de format de débat. Si c\'est un format d\'utilisateur, c\'est peut-être parce que l\'autorisation de stockage est désactivée.</string>
-    <string name="debateLoadError_cannotRead">J\'ai rencontré une problème en ouvrant ce fichier de format de débat. Si c\'est un format d\'utilisateur, c\'est peut-être parce que l\'autorisation de stockage est désactivée.</string>
-    <string name="debateLoadError_noSpeeches">Ce ficher de format de débat ne contient aucun discours. Il se peut que le fichier ne soit pas pris en charge ou ne soit pas bien formé. &lt;a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">En savoir plus.&lt;/a></string>
-    <string name="debateLoadError_suffix">Veuillez choisir un autre style.</string>
-    <string name="timer_overtimeFormat">+%1$s</string>
-    <string name="timer_menuItem_ringBells">Faire sonner les sonnettes</string>
-    <string name="debateLoadError_schemaOutdated">Ce fichier de format de débat utilise la version de schema 1.0, qui n\'est plus prise en charge.
-        Veuillez convertir ce fichier en version de schema 2.2.
-        &lt;a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">En savoir plus.&lt;/a>
-    </string>
-
-    <string name="importDebateFormat_dialog_button_no">Annuler</string>
-    <string name="importDebateFormat_dialog_button_yes">Importer</string>
-    <string name="importDebateFormat_dialog_message_question">Voulez-vous importer le fichier de format de débat %1$s, qui décrit la style %2$s ?</string>
-    <string name="importDebateFormat_dialog_title">Importer style de débat ?</string>
-    <string name="importDebateFormat_snackbar_error_generic">Une erreur s\'est produite lors de l\'ouverture de ce fichier.</string>
-    <string name="importDebateFormat_snackbar_success">Importé le fichier %1$s avec succès</string>
-    <string name="timer_snackbar_beam_error_existence">Vous ne pouvez pas utiliser Android Beam pour partager les styles intégrées.</string>
+    <string name="timer_prepTimeLength">%s permis</string>
+    <string name="timer_prepTimeControlledIndicator">", dirigé"</string>
+    <string name="timer_pauseOnBellIndicator">" (pause)"</string>
+    <string name="timer_silentBellIndicator">" (silencieux)"</string>
+    <string name="timer_snackbar_resetDebate">Tous les chronomètres sont réinitialisés</string>
+    <string name="timer_noDebateLoaded_text">Aucun débat chargé</string>
+    <string name="prepTime_title">Temps de préparation</string>
+    <string name="timer_snackbar_copyAssetsError">Échec de l\'accès au système de ficher afin de copier les formats initiaux.</string>
+    <string name="timer_snackbar_editTextDiscardChangesInfo_limitedBelow">Pour rejeter vos changements, appuyez le bouton de retour. (Vous ne pouvez pas régler le chronomètre pour un temps excédentaire.)</string>
+    <string name="timer_snackbar_editTextDiscardChangesInfo_limitedAbove">Pour rejeter vos changements, appuyez le bouton de retour. (Vous ne pouvez pas régler le chronomètre pour un temps plus de 23:59.)</string>
+    <string name="timer_snackbar_beam_error_existence">Impossible de trouver ce fichier de format de débat.</string>
     <string name="timer_snackbar_beam_error_generic">Une erreur s\'est produite lors de l\'envoi de ce fichier de format de débat.</string>
-    <string name="importDebateFormat_dialog_addendum_overwriteExistingDifferentName">Cette action écrasera la style existante d\'utilisateur « %1$s », parce que le fichier qui la décrit a le même nom. Si vous ne voulez pas perdre %1$s, annulez, et puis réimportez avec un nom différent.</string>
+    <!-- Sharing debate formats -->
+    <string name="importDebateFormat_dialog_title">Importer style de débat ?</string>
+    <string name="importDebateFormat_dialog_message_question">Voulez-vous importer le fichier de format de débat &lt;b&gt;%1$s&lt;/b&gt;, qui décrit la style \"%2$s\" ?</string>
     <string name="importDebateFormat_dialog_addendum_overwriteExistingSameName">Cette action écrasera la style existant « %1$s ».</string>
+    <string name="importDebateFormat_dialog_addendum_overwriteExistingDifferentName">Cette action écrasera la style existante d\'utilisateur « %1$s », parce que le fichier qui la décrit a le même nom.
+Si vous ne voulez pas perdre %1$s, annulez, et puis réimportez avec un nom différent.</string>
     <string name="importDebateFormat_placeholder_unknownStyleName">(indéterminé)</string>
+    <string name="importDebateFormat_dialog_button_yes">Importer</string>
+    <string name="importDebateFormat_dialog_button_no">Annuler</string>
+    <string name="replaceDebateFormat_dialog_title">Remplacer style de débat ?</string>
+    <string name="replaceDebateFormat_dialog_message">Vous avez déjà une style de débat appelée « %1$s ». Voulez-vous &lt;b&gt;la remplacer&lt;/b&gt;, en écrasant le fichier %2$s, ou &lt;b&gt;ajouter une nouvelle style&lt;/b&gt; « %1$s » en utilisant le nom de fichier %3$s ?</string>
+    <string name="replaceDebateFormat_dialog_button_replace">Remplacer</string>
     <string name="replaceDebateFormat_dialog_button_addNew">Ajouter une nouvelle</string>
     <string name="replaceDebateFormat_dialog_button_cancel">Annuler</string>
-    <string name="replaceDebateFormat_dialog_button_replace">Remplacer</string>
-    <string name="replaceDebateFormat_dialog_message">Vous avez déjà une style de débat appelée « %1$s ». Voulez-vous &lt;b>la remplacer&lt;/b>, en écrasant le fichier %2$s, ou &lt;b>ajouter une nouvelle style&lt;/b> « %1$s » en utilisant le nom de fichier %3$s ?</string>
-    <string name="replaceDebateFormat_dialog_title">Remplacer style de débat ?</string>
+    <string name="importDebateFormat_snackbar_error_generic">Une erreur s\'est produite lors de l\'ouverture de ce fichier.</string>
+    <string name="importDebateFormat_snackbar_success">Importé le fichier %1$s avec succès</string>
+    <!-- Menu -->
+    <string name="timer_menuItem_resetDebate">Réinitialiser le débat</string>
+    <string name="timer_menuItem_settings">Paramètres</string>
+    <string name="timer_menuItem_chooseFormat">Styles de débat</string>
+    <string name="timer_menuItem_ringBells">Faire sonner les sonnettes</string>
+    <!-- Debate load error screen -->
     <string name="debateLoadErrorScreen_title">Erreur lors du chargement de débat</string>
-    <string name="debateLoadErrorScreen_filename">Échec du chargement du fichier : %1$s</string>
-    <string name="intentFilter_importStyle">Debatekeeper</string>
+    <string name="debateLoadErrorScreen_filename">"Échec du chargement du fichier : %1$s"</string>
+    <string name="debateLoadErrorScreen_button">Choisir style</string>
+    <!-- These messages are loaded using Html.fromHtml(), so should be written as "fake HTML" (as in, with HTML tags escaped) -->
+    <string name="debateLoadError_noSpeeches">Ce ficher de format de débat ne contient aucun discours. Il se peut que le fichier ne soit pas pris en charge ou ne soit pas bien formé. &lt;a href=\"https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file\"&gt;En savoir plus.&lt;/a&gt;</string>
+    <string name="debateLoadError_cannotRead">"J'ai rencontré une problème en ouvrant ce fichier de format de débat. Si c'est un format d'utilisateur, c'est peut-être parce que l'autorisation de stockage est désactivée."</string>
+    <string name="debateLoadError_cannotFind">"J'ai rencontré une problème en ouvrant ce fichier de format de débat. Si c'est un format d'utilisateur, c'est peut-être parce que l'autorisation de stockage est désactivée."</string>
+    <string name="debateLoadError_badXml">"Il y a un problème avec le XML dans ce fichier de format de débat. L'erreur est comme suit :\n\n%1$s\n"</string>
+    <string name="debateLoadError_schemaOutdated">Ce fichier de format de débat utilise la version de schema 1.0, qui n\'est plus prise en charge.
+        Veuillez convertir ce fichier en version de schema 2.2.
+        &lt;a href=\"https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file\"&gt;En savoir plus.&lt;/a&gt;
+    </string>
+    <string name="debateLoadError_generalErrors">&lt;p&gt;Il y a quelques problèmes dans ce fichier de format de débat :&lt;/p&gt;\n        %1$s\n    </string>
+    <string name="debateLoadError_suffix">Veuillez choisir un autre style.</string>
     <string name="formerAssetsError_title">Veuillez télécharger ce format</string>
     <string name="formerAssetsError_filename">Fichier : %1$s</string>
-    <string name="timer_snackbar_copyAssetsError">Échec de l\'accès au système de ficher afin de copier les formats initiaux.</string>
-    <string name="debateLoadError_generalErrors">"&lt;p>Il y a quelques problèmes dans ce fichier de format de débat :&lt;/p>\n        %1$s\n    "</string>
-    <string name="formerAssetsError_message">Debatekeeper évolue ! Les formats de débat sont désormais disponible en téléchargement, plûtot que inclus dans l\'application comme auparavant.</string>
-    <string name="formerAssetsError_suffix">Veullez visiter la section de téléchargements pour télécharger ce style.</string>
+    <string name="formerAssetsError_message">Debatekeeper évolue ! Les formats de débat sont désormais disponible en téléchargement, plutôt que inclus dans l\'application comme auparavant.</string>
+    <string name="formerAssetsError_suffix">Veuillez visiter la section de téléchargements pour télécharger ce style.</string>
     <string name="formerAssetsError_button">Aller aux téléchargements</string>
+    <!-- Dialogs -->
+    <string name="schemaTooNewDialog_title">Mise à jour l\'application ?</string>
+    <string name="schemaTooNewDialog_button_upgrade">Rechercher les mises à jour</string>
+    <string name="schemaTooNewDialog_button_ignore">Ignorer</string>
+    <string name="schemaTooNewDialog_message">Ce fichier de style de débat (%4$s) utilise un schema (%1$s) plus nouveau que ce que cette version de l\'application (%3$s) permet (%2$s). Rechercher les mises à jour sur Google Play ?</string>
+    <!-- Changelog dialog -->
+    <!-- By convention, this should be changed to match the manifest versionCode when the changelog changes. -->
+    <string name="changelogDialog_title">De nouveau dans version %1$s</string>
+    <string name="changelogDialog_message">        \n• Les formats de débat sont désormais disponibles en téléchargement; seulement quatre formats sont intégrés dans l\'application.
+            Vous devrez peut-être télécharger les formats que vous utilisiez auparavant pour continuer.
+        \n• Ajout de la prise en charge des formats multilingues de débat, grâce à Frank Richter. (BP est en
+            anglais et espagnol ; OPD est en allemand et anglais.)
+        \n• Tous les formats sont désormais stockés dans un emplacement spécifique à l\'application que fournit Android. Si vous avez des formats personnalisés,
+            vous serez invité à les copier. Remarque : Si vous désinstallez Debatekeeper,
+            les formats personnalisés seront supprimés, alors assurez-vous d\'avoir une sauvegarde ailleurs.
+        \n• L\'interface en français, en allemand et en espagnol pour ceux dont les appareils sont en ces langues
+        \n• Nouvelle icône, grâce à Alberto Martinez
+        \n• La taille du texte du chronomètre s\'ajuste automatiquement dans Android 8.0 et plus récent
+        \n• Suppression du zéro non significatif des minutes
+        \n• Egalisation temporelle des sonnettes doubles et triples
+        \n• Ajout d\'un moyen de lancer les importations de fichiers depuis l\'application
+        \n• Simplification du traitement des fichiers de style de débat mal formés
+        \n• Correction de la gestion du service et des notifications
+        \n• Autres mises à jour en général pour actualiser l\'application pour Android 10
+    </string>
+    <string name="changelogDialog_dontShow">Ne plus afficher ce message</string>
+    <string name="changelogDialog_ok">D\'accord, continuons !</string>
+    <!-- Copying legacy custom files -->
     <string name="customFilesMovingDialog_title">Les formats personnalisés se déplacent !</string>
     <string name="customFilesMovingDialog_message">Vous avez des fichiers de format de débat personnalisés dans la répertoire « debatekeeper ». Dans cette mise à jour, l\'emplacement du fichier se déplace.\nDebatekeeper peut copier ces fichiers au nouveau emplacement pour vous. Une fois cela fait, vous pouvez les supprimer de l\'ancien emplacement vous-même.\n(Assurez-vous de garder une copie de sauvegarde !)\n\nCopier les fichiers personnalisés ?</string>
     <string name="customFilesMovingDialog_button_learnMore">En savoir plus</string>
     <string name="customFilesMovingDialog_button_cancel">Ne pas copier</string>
     <string name="customFilesMovingDialog_button_ok">Copier</string>
-    <string name="customFilesMovingErrorDirectory_snackbar">Une erreur s\'est produite lors de l\'ouveture de la répertoire de formats personnalisés existants pour copier les fichiers.</string>
+    <string name="customFilesMovingErrorDirectory_snackbar">Une erreur s\'est produite lors de l\'ouverture de la répertoire de formats personnalisés existants pour copier les fichiers.</string>
     <string name="customFilesMovingErrorFiles_snackbar">%1$d fichiers existants copiés, mais une erreur s\'est produite lors du copiage de %2$d fichiers : %3$s</string>
     <string name="customFilesMovingSuccess_snackbar">%1$d fichiers existants copiés et prêts à utiliser</string>
-    <string name="notification_text">Chronomètre en marche : %1$s</string>
-    <string name="channel_description">Affichage lors de l\'opération du chronomètre de Debatekeeper</string>
+    <!-- Files that use to be in the assets -->
 </resources>
