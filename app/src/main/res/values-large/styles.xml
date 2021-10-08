@@ -29,6 +29,7 @@
     <dimen name="timer_horizontalGuidelineLandscape">50sp</dimen>
 
     <dimen name="timer_poiTimerButton_textSize">48sp</dimen>
+    <dimen name="timer_poiTimerButton_portraitMaxHeight">240sp</dimen> <!-- 5 times the text size -->
     <dimen name="timer_poiTimerButton_marginRightLandscape">25dp</dimen>
 
 </resources>

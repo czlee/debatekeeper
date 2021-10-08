@@ -112,6 +112,7 @@
         app:layout_constraintBottom_toTopOf="@+id/timer_informationLine"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_max="@dimen/timer_poiTimerButton_portraitMaxHeight"
         app:layout_constraintWidth_percent="0.5"
         android:layout_marginBottom="4dp"
         android:text="@string/timer_poiTimer_buttonText"
