@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (C) 2013 Chuan-Zheng Lee
+
+  This file is part of the Debatekeeper app, which is licensed under the GNU General Public Licence
+  version 3 (GPLv3).  You can redistribute and/or modify it under the terms of the GPLv3, and you
+  must not use this file except in compliance with the GPLv3.
+
+  This app is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+  Public Licence for more details.
+
+  You should have received a copy of the GNU General Public Licence along with this program.  If
+  not, see <http://www.gnu.org/licenses/>.
+-->
 <resources>
+    <!-- Common error messages -->
     <string name="xmlError_rootNoSchemaVersion">"Dieses Debattierformat hat keine Schema-Version, es ist deshalb unmöglich zu sagen ob ein Update zu Verwendung nötig ist!\n"</string>
     <string name="xmlError_rootInvalidSchemaVersion">"Ungültige Schema-Version: '%1$s'"</string>
+    <!-- Version 2 schema -->
+    <!-- attributes common to prep-time-controlled and speech-type -->
+    <!-- Version 2 error messages -->
     <string name="xml2error_root_noName">"Für dieses Debattierformat wurde kein Name angegeben"</string>
     <string name="xml2error_periodType_ref_null">"Kein 'ref' für eine period-type spezifiziert"</string>
     <string name="xml2error_periodType_ref_blank">"Das 'ref' für period-types darf nicht leer sein"</string>
@@ -24,7 +42,6 @@
     <string name="xml2error_bell_time_invalid">"Ungültige Zeit für ein bell in %2$s: '%1$s'"</string>
     <string name="xml2error_bell_number_invalid">"Ungültige Anzahl an bells bei %3$s in %2$s: '%1$s'"</string>
     <string name="xml2error_bell_pauseOnBell_invalid">"Ungültiger pause-on-bell-Wert für bell bei %3$s in %2$s: '%1$s'"</string>
-
     <string name="dfb2error_periodInfo_builtInDuplicate">"Der period-type '%1$s' ist ein eingebauter period-type; du kannst ihn nicht verwenden"</string>
     <string name="dfb2error_periodInfo_duplicate">"Der period-type '%1$s' wurde mehr als einmal spezifiziert"</string>
     <string name="dfb2error_periodInfo_notFound">"Es gibt kein period-type mit ref '%1$s'"</string>
