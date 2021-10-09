@@ -61,7 +61,7 @@
     </string-array>
     <string-array name="pref_countDirection_entries">
         <item>Compte croissant</item>
-        <item>Compter décroissant</item>
+        <item>Compte décroissant</item>
     </string-array>
     <!-- In case you're wondering, the reason these are called alwaysUp and alwaysDown is because
     there used to be options called generallyUp and generallyDown. These options were obsoleted
