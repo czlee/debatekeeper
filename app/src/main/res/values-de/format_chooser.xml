@@ -1,40 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (C) 2012-2021 Chuan-Zheng Lee
+
+  This file is part of the Debatekeeper app, which is licensed under the GNU General Public Licence
+  version 3 (GPLv3).  You can redistribute and/or modify it under the terms of the GPLv3, and you
+  must not use this file except in compliance with the GPLv3.
+
+  This app is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+  Public Licence for more details.
+
+  You should have received a copy of the GNU General Public Licence along with this program.  If
+  not, see <http://www.gnu.org/licenses/>.
+-->
 <resources>
-    <string name="fragmentName_FormatChooser">Format auswählen</string>
-
+    <string name="fragmentName_FormatChooser">Formate</string>
     <string name="formatChooser_ioError">Konnte Dateien mit Debattierformaten nicht finden.</string>
-
     <string name="formatChooser_actionBar_confirm">Bestätigen</string>
+    <string name="formatChooser_actionBar_searchOnline">Online suchen</string>
+    <string name="formatChooser_actionBar_importFile">Datei importieren</string>
+    <string name="formatChooser_actionBar_learnMore">Mehr erfahren</string>
+    <string name="formatChooser_button_moreInfo">Mehr Informationen</string>
     <string name="formatChooser_button_share">Teilen</string>
-
+    <string name="formatChooser_button_delete">Entfernen</string>
+    <string name="formatChooser_downloadBanner">Klicke auf den Suchknopf um online nach weiteren Debattierformaten zu suchen.</string>
+    <string name="formatChooser_downloadBanner_dismiss">Alles klar</string>
+    <string name="formatChoser_downloadBanner_pointerDescription">verweist auf ein Element im Menü</string>
+    <string name="formatChooser_dialog_confirmDelete_message">Debattierformatdatei %1$s entfernen? Dies kann nicht rückgängig gemacht werden, es sei denn du importierst eine andere Kopie oder lädst eine neue herunter.</string>
+    <string name="formatChooser_dialog_confirmDelete_yes">Entfernen</string>
+    <string name="formatChooser_dialog_confirmDelete_no">Abbrechen</string>
+    <string name="formatChooser_dialog_deleted_success">Datei %1$s entfernt.</string>
+    <string name="formatChooser_dialog_deleted_failure">Datei %1$s konnte nicht entfernt werden.</string>
+    <string name="formatChooser_dialog_confirmOverwrite_message">Es gibt bereits ein Debattierformat mit dem Dateinamen %1$s (%2$s). Überschreiben?</string>
+    <string name="formatChooser_dialog_confirmOverwrite_yes">Überschreiben</string>
+    <string name="formatChooser_dialog_confirmOverwrite_no">Abbrechen</string>
     <string name="formatChooser_share_error_noFileSelected">Keine Datei ausgewählt.</string>
     <string name="formatChooser_share_error_notFound">Datei %1$s nicht gefunden.</string>
     <string name="formatChooser_share_error_generic">Es gab ein Fehler beim Teilen dieses Formats.</string>
     <string name="formatChooser_share_chooserTitle">Debattierformat teilen mit…</string>
-
+    <string name="formatChooser_import_confirmOverwrite">Du hast bereits ein Format mit dem Dateinamen %1$s. Überschreiben?</string>
+    <string name="formatChooser_import_error_opening">Es gab ein Fehler beim Öffnen dieser Datei.</string>
+    <string name="formatChooser_import_error_reading">Es gab ein Fehler beim Lesen dieser Datei.</string>
+    <string name="formatChooser_import_error_noFileChosen">Keine Datei ausgewählt.</string>
+    <string name="formatChooser_import_error_noFilename">Es konnte kein freier Dateiname zum Speichern dieser Datei gefunden werden.</string>
+    <string name="formatChooser_import_success">Datei %1$s erfolgreich importiert.</string>
     <string name="viewFormat_regionLabel">Region</string>
     <string name="viewFormat_levelLabel">Niveau</string>
     <string name="viewFormat_usedAtLabel">Verwendung</string>
     <string name="viewFormat_descLabel">Beschreibung</string>
+    <string name="viewFormat_languagesLabel">Unterstützte\n Sprachen</string>
     <string name="viewFormat_speechesLabel">Reden</string>
     <string name="viewFormat_fileNameLabel">Dateiname</string>
     <string name="viewFormat_outdatedSchemaVersion">Verwendet veraltetes Schema (Version %1$s)</string>
     <string name="viewFormat_futureSchemaVersion">Schema nicht unterstützt (Version %1$s)</string>
     <string name="viewFormat_invalidSchemaVersion">Ungültige Schema-Version \"%1$s\"</string>
     <string name="viewFormat_prepTimeLabel">Vorbereitungszeit</string>
-
+    <string name="viewFormat_errorLabel">Fehler bei Datei</string>
+    <string name="viewFormat_error_fileNotFound">Datei nicht gefunden: %1$s</string>
     <string name="viewFormat_timeDescription_lengthInMinutesSeconds">%s lang</string>
-
     <plurals name="viewFormat_timeDescription_lengthInMinutesOnly">
         <item quantity="one">%d Minute</item>
         <item quantity="other">%d Minuten</item>
     </plurals>
-
     <string name="viewFormat_timeDescription_controlledPrepSuffix">", kontrolliert"</string>
-
     <plurals name="viewFormat_timeDescription_bellsList">
         <item quantity="one">Klingel bei %s</item>
         <item quantity="other">Klingeln bei %s</item>
     </plurals>
-
+    <dimen name="view_format_list_item_padding">3dp</dimen>
+    <dimen name="viewFormat_sectionGap">8dp</dimen>
+    <dimen name="viewFormat_endMargin">8dp</dimen>
 </resources>
