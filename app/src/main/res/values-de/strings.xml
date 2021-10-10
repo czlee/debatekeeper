@@ -28,4 +28,27 @@ Most strings are in fragment-specific files:
     <string name="app_name">Debatekeeper</string>
     <string name="nav_back">Zurück</string>
     <string name="notificationChannel_timer_name">Zeit</string>
+    <!-- Changelog dialog -->
+    <!-- By convention, this should be changed to match the manifest versionCode when the changelog changes. -->
+    <string name="changelogDialog_title">Was ist neu in version %1$s</string>
+    <!-- This is the changelog shown to users just after an update. -->
+    <string name="changelogDialog_message">        \n• Debattierformate stehen jetzt zum Download zur Verfügung, nur noch vier sind in der App enthalten.
+            Möglicherweise musst du Formate herunterladen, die du zuvor verwendest hast, um sie weiter zu verwenden.
+        \n• Unterstützung für mehrsprachige Debattierformate, mit Dank an Frank Richter. (BP gibt es in
+            Englisch und Spanisch; OPD gibt es in Deutsch und Englisch.)
+        \n• Alle Formatdateien werden jetzt an app-spezifischen Android-Standorten gespeichert. Wenn du benutzerdefinierte
+            Formate hast, wirst du aufgefordert, diese zu kopieren. Hinweis: Wenn du Debatekeepper deinstallierst werden
+            benutzerdefinierte Formate gelöscht, also stelle sicher, dass du ein Backup woanders hast.
+        \n• Französisch, Deutsches und spanisches Interface für Geräte in diesen Sprachen
+        \n• Neues Symbol, mit Dank am Alberto Martínez
+        \n• Timer-Textgröße passt sich in Android 8 und höher jetzt automatisch an
+        \n• Führende Null aus Minuten entfernt
+        \n• Doppelte und dreifache Klingeln haben gleichmäßigere Abstände
+        \n• Möglichkeit hinzugefügt, Dateiimporte aus der App heraus zu initiieren
+        \n• Vereinfachte Handhabung von fehlerhaften Debattierformaten
+        \n• Benachrichtigung und Service-Handhabung verbessert
+        \n• Weitere allgemeine Anpassungen an Android 10
+    </string>
+    <string name="changelogDialog_dontShow">Nicht noch einmal zeigen</string>
+    <string name="changelogDialog_ok">Okay, weiter gehts!</string>
 </resources>
