@@ -52,16 +52,30 @@ The exception is the bell sounds.  I bought the single bell sound from SFXSource
 be now defunct), so I can't make it freely available.  If you want to contribute and need this file,
 get in touch with me.
 
-Getting started
----------------
-Before you can build this project, you'll need to:
+Files you need to build this project
+------------------------------------
+To build this project, you'll need to:
 
 1. Check out this repository (and put it somewhere useful)
 
 2. Add the bell sounds, called `desk_bell.mp3`, `desk_bell_double.mp3` and `desk_bell_triple.mp3`,
    all to the `app/src/main/res/raw/` directory. The app won't build without a sound file of some
-   sort there.  Any sound file will do, but if you want to help with this app, it'll probably be
-   useful for it to be the same one I'm using.  In that case, contact me at the details below.
+   sort there.  Any sound file will do.  I'm happy to provide the file to interested developers, on
+   the understanding that it is _not_ available under a free-distribution license (as discussed
+   above)—contact me at the details below.  Of course, future developers may also use other sounds,
+   including more freely available ones, if they can find a satisfactory one.
+
+### Sound file specifications
+
+If you wish to use your own sound files for the `desk_bell*.mp3` files, here is some information
+about them:
+- The sound is a desk bell (as the name suggests), also known as a counter bell or call bell.
+- The original `desk_bell.mp3` sound is about 2 seconds long, but this shouldn't in principle
+  matter; there is code that stops any existing playback if a new one needs to be started.
+- The `desk_bell_double.mp3` and `desk_bell_triple.mp3` sounds are just the `desk_bell.mp3` sound,
+  but repeated at an interval of 0.5 seconds. Any sound editing tool should be able to do this; I
+  used [Audacity](https://www.audacityteam.org/). The purpose of these files is just to make the
+  interval more predictable and to avoid abrupt audio stops for common multiple-bell cases.
 
 Adding debate styles
 --------------------
