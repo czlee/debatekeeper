@@ -16,12 +16,6 @@ The app is [available on the Google Play Store](https://play.google.com/store/ap
 <a href="https://play.google.com/store/apps/details?id=net.czlee.debatekeeper&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1" target="_blank">
 <img alt='Get it on Google Play' height="96" src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
 
-Some kind people have also built this app and made it [available on F-Droid](https://f-droid.org/packages/net.czlee.debatekeeper),
-though I'm not involved in that distribution, so I'm not in a position to vouch for it.
-
-<a href="https://f-droid.org/packages/net.czlee.debatekeeper" target="_blank">
-<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="96"/></a>
-
 What is the status of this app?
 -------------------------------
 _9 October 2021:_ After five years, an update is forthcoming. It's currently in beta testing, and
