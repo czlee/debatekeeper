@@ -26,7 +26,7 @@
     </style>
 
     <style name="Debatekeeper.Dark" parent="Theme.AppCompat.NoActionBar" >
-        <item name="colorAccent">@color/debatekeeper_primary</item>
+        <item name="colorAccent">@color/debatekeeper_accent</item>
         <item name="backgroundTint">?attr/colorPrimary</item>
     </style>
 

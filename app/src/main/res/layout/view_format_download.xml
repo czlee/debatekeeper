@@ -103,7 +103,7 @@
         android:id="@+id/viewFormat_updateAvailableText"
         style="@style/viewFormat_tableLabelStyle"
         android:text="@string/formatDownloader_updateAvailable"
-        android:textColor="@color/debatekeeper_primary"
+        android:textColor="@color/debatekeeper_accent"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/viewFormat_title" />

@@ -46,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:elevation="4dp"
-            android:background="@color/debatekeeper_primary" />
+            android:background="@color/debatekeeper_accent" />
 
         <LinearLayout
             android:id="@+id/timer_controlButtons"
