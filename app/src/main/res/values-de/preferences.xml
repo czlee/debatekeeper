@@ -49,10 +49,8 @@
     <string name="pref_overtimeBellsEnable_offSummary">Kein Überziehungsklingeln</string>
     <string name="pref_firstOvertimeBell_title">Erstes Überziehungsklingeln</string>
     <string name="pref_firstOvertimeBell_summary">Erstes Überziehungsklingeln nach %s Sekunden…</string>
-    <string name="pref_firstOvertimeBell_dialogMessage">"Sekunden nach Ablauf der Zeit bis zum ersten Überziehungsklingeln:"</string>
     <string name="pref_overtimeBellPeriod_title">Folgendes Überziehungsklingeln</string>
     <string name="pref_overtimeBellPeriod_summary">…und danach alle %s Sekunden</string>
-    <string name="pref_overtimeBellPeriod_dialogMessage">"Sekunden zwischen Überziehungsklingeln (nach dem ersten):"</string>
     <!-- Count direction -->
     <string name="pref_countDirection_title">Zählrichtung</string>
     <string-array name="pref_countDirection_summaries">
