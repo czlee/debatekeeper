@@ -47,7 +47,7 @@
     <string name="viewFormat_levelLabel">Nivel</string>
     <string name="viewFormat_usedAtLabel">Utilizado en</string>
     <string name="viewFormat_descLabel">Descripción</string>
-    <string name="viewFormat_languagesLabel">Idiomas\n compatibles</string>
+    <string name="viewFormat_languagesLabel">Idiomas compatibles</string>
     <string name="viewFormat_speechesLabel">Discursos</string>
     <string name="viewFormat_fileNameLabel">Nombre del archivo</string>
     <string name="viewFormat_outdatedSchemaVersion">Utiliza un esquema anticuado (versión %1$s)</string>
@@ -63,10 +63,11 @@
     </plurals>
     <string name="viewFormat_timeDescription_controlledPrepSuffix">", controlado"</string>
     <plurals name="viewFormat_timeDescription_bellsList">
-        <item quantity="one">campana al %s</item>
+        <item quantity="one">campana a los %s</item>
         <item quantity="other">campanas a los %s</item>
     </plurals>
     <dimen name="view_format_list_item_padding">3dp</dimen>
     <dimen name="viewFormat_sectionGap">8dp</dimen>
     <dimen name="viewFormat_endMargin">8dp</dimen>
+    <dimen name="viewFormat_labelMaxWidth">100sp</dimen>
 </resources>
