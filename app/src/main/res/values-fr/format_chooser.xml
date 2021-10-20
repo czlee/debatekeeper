@@ -47,7 +47,7 @@
     <string name="viewFormat_levelLabel">Niveau</string>
     <string name="viewFormat_usedAtLabel">Où utilisé</string>
     <string name="viewFormat_descLabel">Description</string>
-    <string name="viewFormat_languagesLabel">Langues\n fournies</string>
+    <string name="viewFormat_languagesLabel">Langues fournies</string>
     <string name="viewFormat_speechesLabel">Discours</string>
     <string name="viewFormat_fileNameLabel">Nom de fichier</string>
     <string name="viewFormat_outdatedSchemaVersion">Utilise un schema obsolète (version %1$s)</string>
@@ -69,4 +69,5 @@
     <dimen name="view_format_list_item_padding">3dp</dimen>
     <dimen name="viewFormat_sectionGap">8dp</dimen>
     <dimen name="viewFormat_endMargin">8dp</dimen>
+    <dimen name="viewFormat_labelMaxWidth">100sp</dimen>
 </resources>
