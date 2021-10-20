@@ -83,7 +83,7 @@
     <string name="debateLoadError_cannotFind">"\"He encontrado un problema abriendo este archivo de estilo de debate. Si es un formato personallizado puede que el archivo se haya eliminado o porque los permisos de almacenamiento están deshabilitados."</string>
     <string name="debateLoadError_badXml">"Hay un problema con el archivo XML en este estilo de debate. El error es:\n\n%1$s\n"</string>
     <string name="debateLoadError_schemaOutdated">El archivo del formato de debate usa un esquema con la versión 1.0, que ya no está soportada.
-        Por favor, convierta el esquema del archivo a la versión 2.2.
+        Por favor, convierte el esquema del archivo a la versión 2.2.
         &lt;a href=\"https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file\"&gt;Leer más.&lt;/a&gt;
     </string>
     <string name="debateLoadError_generalErrors">&lt;p&gt;Hay varios problemas con este archivo de formato de debate:&lt;/p&gt;
