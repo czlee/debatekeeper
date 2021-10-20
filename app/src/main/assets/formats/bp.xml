@@ -2,7 +2,7 @@
 <debate-format schema-version="2.2">
   <name xml:lang="en">British Parliamentary</name>
   <name xml:lang="es">Parlamentario Británico</name>
-  <version>1</version>
+  <version>2</version>
   <languages>
     <language>en</language>
     <language>es</language>
@@ -19,7 +19,7 @@
     <level>Universidad</level>
     <used-at>World Universities Debating Championship</used-at>
     <used-at>Campeonato Mundial Universitario de Debate en Español</used-at>
-    <description>Cuatro equipos de dos oradores, discursos de 7 minutos, POIs permitidos</description>
+    <description>Cuatro equipos de dos oradores, discursos de 7 minutos, los PdI permitidos</description>
   </info>
   <prep-time length="15:00"/>
   <speech-types>
@@ -34,35 +34,35 @@
   <speeches>
     <speech type="all">
       <name xml:lang="en">Prime Minister</name>
-      <name xml:lang="es">Primer Ministro</name>
+      <name xml:lang="es">Primer ministro</name>
     </speech>
     <speech type="all">
       <name xml:lang="en">Leader of the Opposition</name>
-      <name xml:lang="es">Líder de Oposoción</name>
+      <name xml:lang="es">Líder de la oposoción</name>
     </speech>
     <speech type="all">
       <name xml:lang="en">Deputy Prime Minister</name>
-      <name xml:lang="es">Viceprimer Ministro</name>
+      <name xml:lang="es">Viceprimer ministro</name>
     </speech>
     <speech type="all">
       <name xml:lang="en">Deputy Leader of the Opposition</name>
-      <name xml:lang="es">Vicelíder de Oposoción</name>
+      <name xml:lang="es">Vicelíder de la oposoción</name>
     </speech>
     <speech type="all">
       <name xml:lang="en">Member for the Government</name>
-      <name xml:lang="es">Miembro de Gobierno</name>
+      <name xml:lang="es">Miembro del gobierno</name>
     </speech>
     <speech type="all">
       <name xml:lang="en">Member for the Opposition</name>
-      <name xml:lang="es">Miembro de Oposoción</name>
+      <name xml:lang="es">Miembro de la oposoción</name>
     </speech>
     <speech type="all">
       <name xml:lang="en">Government Whip</name>
-      <name xml:lang="es">Látigo de Gobierno</name>
+      <name xml:lang="es">Látigo del gobierno</name>
     </speech>
     <speech type="all">
       <name xml:lang="en">Opposition Whip</name>
-      <name xml:lang="es">Látigo de Oposoción</name>
+      <name xml:lang="es">Látigo de la oposoción</name>
     </speech>
   </speeches>
 </debate-format>
