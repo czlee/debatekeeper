@@ -28,7 +28,6 @@
     <!-- Notices -->
     <string name="channel_description">Zeigt an, wenn in Debatekeeper die Zeit läuft</string>
     <string name="notification_text">Zeit läuft: %1$s</string>
-    <string name="timer_overtimeFormat">+%1$s</string>
     <string name="timer_bellsList_noBells">"; keine Klingeln"</string>
     <plurals name="timer_bellsList_normal">
         <item quantity="one">"; Klingel bei %1$s"</item>
