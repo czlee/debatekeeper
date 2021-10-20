@@ -94,15 +94,15 @@
     <string name="pref_prepTimer_bells_title">Campanas del tiempo de preparación</string>
     <string name="pref_prepTimer_bells_summary">Editar las campanas utilizadas durante el tiempo de preparación</string>
     <!-- *** Points of information *** -->
-    <string name="pref_poiTimer_enable_title">Mostrar el temporizador de los PdI</string>
+    <string name="pref_poiTimer_enable_title">Mostrar el temporizador de PdI</string>
     <string name="pref_poiTimer_enable_onSummary">Mostrar el temporizador de PdI cuando sea apropiado</string>
     <string name="pref_poiTimer_enable_offSummary">Ocultar el temporizador de PdI</string>
     <string name="pref_poiTimer_vibrateEnable_title">Vibración</string>
     <string name="pref_poiTimer_vibrateEnable_onSummary">Vibrar cuando el tiempo de PdI expire</string>
     <string name="pref_poiTimer_vibrateEnable_offSummary">No vibrar para los PdI</string>
-    <string name="pref_poiTimer_flashScreenMode_dialogTitle">Flash de pantalla para PdI</string>
+    <string name="pref_poiTimer_flashScreenMode_dialogTitle">Flash de pantalla para los PdI</string>
     <string-array name="pref_poiTimer_flashScreenMode_summaries">
-        <item>No flashear la pantalla para PdI</item>
+        <item>No flashear la pantalla para los PdI</item>
         <item>Flashear la pantalla de manera estroboscópica cuando el tiempo de PdI expire</item>
         <item>Iluminar la pantalla en azul brevemente cuando el tiempo de PdI expire</item>
     </string-array>
