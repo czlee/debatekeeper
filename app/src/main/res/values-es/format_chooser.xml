@@ -38,7 +38,6 @@
     <string name="formatChooser_share_error_notFound">Archivo %1$s no puede ser encontrado.</string>
     <string name="formatChooser_share_error_generic">Se ha producido un error al compartir el archivo.</string>
     <string name="formatChooser_share_chooserTitle">Compartir formato de debate usando…</string>
-    <string name="formatChooser_import_confirmOverwrite">Ya tienes un formato con el nombre de archivo %1$s. ¿Sobrescribir?</string>
     <string name="formatChooser_import_error_opening">Se ha producido un error al abrir el archivo.</string>
     <string name="formatChooser_import_error_reading">Se ha producido un error al leer el archivo.</string>
     <string name="formatChooser_import_error_noFileChosen">Ningún archivo seleccionado.</string>
