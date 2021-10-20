@@ -26,7 +26,8 @@
     </style>
 
     <style name="Debatekeeper.Dark" parent="Theme.AppCompat.NoActionBar" >
-        <item name="colorAccent">@color/debatekeeper_primary</item>
+        <item name="colorAccent">@color/debatekeeper_accent</item>
+        <item name="backgroundTint">?attr/colorPrimary</item>
     </style>
 
     <dimen name="timer_currentTime_fallbackTextSize">72dp</dimen> <!-- not sp, we want this to be independent of font size preference -->

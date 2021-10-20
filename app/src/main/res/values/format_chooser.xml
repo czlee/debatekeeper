@@ -46,10 +46,9 @@
     <string name="formatChooser_share_error_generic">There was an error sharing this file.</string>
     <string name="formatChooser_share_chooserTitle">Share debate format using…</string>
 
-    <string name="formatChooser_import_confirmOverwrite">You already have a format with the file name %1$s. Overwrite?</string>
     <string name="formatChooser_import_error_opening">There was an error opening this file.</string>
     <string name="formatChooser_import_error_reading">There was an error reading this file.</string>
-    <string name="formatChooser_import_error_noFileChosen">No file chosen.</string>
+    <string name="formatChooser_import_error_noFileChosen">No file selected.</string>
     <string name="formatChooser_import_error_noFilename">Couldn\'t find a free file name to save this file.</string>
     <string name="formatChooser_import_success">Successfully imported file %1$s.</string>
 

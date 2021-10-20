@@ -28,7 +28,6 @@
 
         <SeekBarPreference
             android:dependency="@string/pref_overtimeBellsEnable_key"
-            android:dialogMessage="@string/pref_firstOvertimeBell_dialogMessage"
             android:key="@string/pref_firstOvertimeBell_key"
             android:summary="@string/pref_firstOvertimeBell_summary"
             android:title="@string/pref_firstOvertimeBell_title"
@@ -38,7 +37,6 @@
             app:min="3" />
         <SeekBarPreference
             android:dependency="@string/pref_overtimeBellsEnable_key"
-            android:dialogMessage="@string/pref_overtimeBellPeriod_dialogMessage"
             android:key="@string/pref_overtimeBellPeriod_key"
             android:summary="@string/pref_overtimeBellPeriod_summary"
             android:title="@string/pref_overtimeBellPeriod_title"

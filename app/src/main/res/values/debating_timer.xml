@@ -35,8 +35,6 @@
     <string name="channel_description">Shows when a Debatekeeper timer is running</string>
     <string name="notification_text">Timer running: %1$s</string>
 
-    <string name="timer_overtimeFormat">+%1$s</string>
-
     <string name="timer_bellsList_noBells">"; no bells"</string>
     <plurals name="timer_bellsList_normal">
         <item quantity="one">"; bell at %1$s"</item>

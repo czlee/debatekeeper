@@ -15,14 +15,14 @@
 -->
 <resources>
 
-    <color name="overtimeTextColour">#ffff7878</color>
+    <color name="overtimeTextColour">#f78a7c</color>
 
-    <color name="prepTimeBackgroundColour">#ff3A1552</color>
+    <color name="prepTimeBackgroundColour">#291238</color>
 
-    <color name="xmlFileWarningColour">#ffffff77</color>
+    <color name="xmlFileWarningColour">@color/debatekeeper_accent</color>
 
-    <color name="debatekeeper_primary">#ffd42a</color>
+    <color name="debatekeeper_accent">#ffd42a</color>
 
-    <color name="snackbar_background">@color/debatekeeper_primary</color>
+    <color name="snackbar_background">@color/debatekeeper_accent</color>
     <color name="snackbar_text">@android:color/black</color>
 </resources>
