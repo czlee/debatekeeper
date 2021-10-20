@@ -53,7 +53,7 @@
     <string name="viewFormat_outdatedSchemaVersion">Utilise un schema obsolète (version %1$s)</string>
     <string name="viewFormat_futureSchemaVersion">Schema pas pris en charge (version %1$s)</string>
     <string name="viewFormat_invalidSchemaVersion">Version de schema invalide « %1$s »</string>
-    <string name="viewFormat_prepTimeLabel">Temps de prépa</string>
+    <string name="viewFormat_prepTimeLabel">Temps de préparation</string>
     <string name="viewFormat_errorLabel">Erreur avec le fichier</string>
     <string name="viewFormat_error_fileNotFound">Fichier non trouvé : %1$s</string>
     <string name="viewFormat_timeDescription_lengthInMinutesSeconds">durée %s</string>
@@ -69,5 +69,5 @@
     <dimen name="view_format_list_item_padding">3dp</dimen>
     <dimen name="viewFormat_sectionGap">8dp</dimen>
     <dimen name="viewFormat_endMargin">8dp</dimen>
-    <dimen name="viewFormat_labelMaxWidth">100sp</dimen>
+    <dimen name="viewFormat_labelMaxWidth">120sp</dimen>
 </resources>
