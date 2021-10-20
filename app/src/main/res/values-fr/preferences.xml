@@ -49,10 +49,8 @@
     <string name="pref_overtimeBellsEnable_offSummary">Ne faire sonner aucune sonnette du temps excédentaire</string>
     <string name="pref_firstOvertimeBell_title">Première sonnette du temps excédentaire</string>
     <string name="pref_firstOvertimeBell_summary">Faire sonner la première sonnette du temps excédentaire après %s secondes…</string>
-    <string name="pref_firstOvertimeBell_dialogMessage">"Le temps après le fin, en secondes, de la première sonnette du temps excédentaire:"</string>
     <string name="pref_overtimeBellPeriod_title">Période des sonnettes du temps excédentaire</string>
     <string name="pref_overtimeBellPeriod_summary">…et puis toutes les %s secondes ensuite</string>
-    <string name="pref_overtimeBellPeriod_dialogMessage">"Le temps entre les sonnettes du temps excédentaire (après la première) en seconds :"</string>
     <!-- Count direction -->
     <string name="pref_countDirection_title">Direction à compter</string>
     <string-array name="pref_countDirection_summaries">
