@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (C) 2021 Chuan-Zheng Lee
+
+  This file is part of the Debatekeeper app, which is licensed under the GNU General Public Licence
+  version 3 (GPLv3).  You can redistribute and/or modify it under the terms of the GPLv3, and you
+  must not use this file except in compliance with the GPLv3.
+
+  This app is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+  Public Licence for more details.
+
+  You should have received a copy of the GNU General Public Licence along with this program.  If
+  not, see <http://www.gnu.org/licenses/>.
+-->
+<resources>
+    <string name="fragmentName_FormatDownloader">Descargas</string>
+    <string name="formatDownloader_actionBar_expand">Expandir todo</string>
+    <string name="formatDownloader_actionBar_collapse">Contraer todo</string>
+    <string name="formatDownloader_actionBar_learnMore">Aprender más</string>
+    <string name="formatDownloader_actionBar_config">Configuración avanzada</string>
+    <string name="formatDownloader_button_download">Descargar</string>
+    <string name="formatDownloader_progress_description">Descargando…</string>
+    <string name="formatDownloader_button_downloaded">Descargado</string>
+    <string name="formatDownloader_image_chevron">Expandir</string>
+    <string name="formatDownloader_updateAvailable">Actualización disponible</string>
+    <string name="formatDownloader_loadingText">Cargando la lista de estilos desde el repositorio en línea…</string>
+    <string name="formatDownloader_noInternet">No hay conexión a internet.</string>
+    <string name="formatDownloader_ioError">Error al cargar la lista de estilos (E/S).</string>
+    <string name="formatDownloader_jsonError">Error al cargar la lista de estilos (JSON).</string>
+    <string name="formatDownloader_emptyList">Lista de estilos del repositorio en línea está vacía.</string>
+    <string name="formatDownloader_button_retry">Reintentar</string>
+    <string name="formatDownloader_notFoundError">No encontrado: %1$s</string>
+    <string name="formatDownloader_wrongHostError">Anfitrión incorrecto: %1$s</string>
+    <string name="formatDownloader_fileError">Error al descargar %1$s: %2$s</string>
+</resources>

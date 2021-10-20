@@ -1,4 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (C) 2012-2021 Chuan-Zheng Lee
+
+  This file is part of the Debatekeeper app, which is licensed under the GNU General Public Licence
+  version 3 (GPLv3).  You can redistribute and/or modify it under the terms of the GPLv3, and you
+  must not use this file except in compliance with the GPLv3.
+
+  This app is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+  Public Licence for more details.
+
+  You should have received a copy of the GNU General Public Licence along with this program.  If
+  not, see <http://www.gnu.org/licenses/>.
+-->
 <resources>
-    <string name="fragmentName_FormatChooser">Elegir estilo</string>
+    <string name="fragmentName_FormatChooser">Estilos</string>
+    <string name="formatChooser_ioError">Se ha producido un error al leer los archivos de estilos de debate.</string>
+    <string name="formatChooser_actionBar_confirm">Confirmar</string>
+    <string name="formatChooser_actionBar_searchOnline">Buscar en línea</string>
+    <string name="formatChooser_actionBar_importFile">Importar archivo</string>
+    <string name="formatChooser_actionBar_learnMore">Aprender más</string>
+    <string name="formatChooser_button_moreInfo">Más información</string>
+    <string name="formatChooser_button_share">Compartir</string>
+    <string name="formatChooser_button_delete">Borrar</string>
+    <string name="formatChooser_downloadBanner">Busque en línea más estilos de debate haciendo clic en el botón de búsqueda.</string>
+    <string name="formatChooser_downloadBanner_dismiss">Entendido</string>
+    <string name="formatChoser_downloadBanner_pointerDescription">apunta a un elemento del menú</string>
+    <string name="formatChooser_dialog_confirmDelete_message">¿Borrar archivo de estilo de debate %1$s? Esto no se puede deshacer, excepto importando o descargando otra copia.</string>
+    <string name="formatChooser_dialog_confirmDelete_yes">Borrar</string>
+    <string name="formatChooser_dialog_confirmDelete_no">Cancelar</string>
+    <string name="formatChooser_dialog_deleted_success">Archivo %1$s borrado.</string>
+    <string name="formatChooser_dialog_deleted_failure">No se pudo borrar el archivo %1$s.</string>
+    <string name="formatChooser_dialog_confirmOverwrite_message">Ya hay un estilo de debate con el nombre de archivo %1$s (%2$s). ¿Sobrescribir?</string>
+    <string name="formatChooser_dialog_confirmOverwrite_yes">Sobrescribir</string>
+    <string name="formatChooser_dialog_confirmOverwrite_no">Cancelar</string>
+    <string name="formatChooser_share_error_noFileSelected">Ningún archivo seleccionado.</string>
+    <string name="formatChooser_share_error_notFound">Archivo %1$s no puede ser encontrado.</string>
+    <string name="formatChooser_share_error_generic">Se ha producido un error al compartir el archivo.</string>
+    <string name="formatChooser_share_chooserTitle">Compartir formato de debate usando…</string>
+    <string name="formatChooser_import_error_opening">Se ha producido un error al abrir el archivo.</string>
+    <string name="formatChooser_import_error_reading">Se ha producido un error al leer el archivo.</string>
+    <string name="formatChooser_import_error_noFileChosen">Ningún archivo seleccionado.</string>
+    <string name="formatChooser_import_error_noFilename">No se pudo encontrar un nombre de archivo libre para guardar este archivo.</string>
+    <string name="formatChooser_import_success">Se ha importado el archivo %1$s de forma exitosa.</string>
+    <string name="viewFormat_regionLabel">Región</string>
+    <string name="viewFormat_levelLabel">Nivel</string>
+    <string name="viewFormat_usedAtLabel">Utilizado en</string>
+    <string name="viewFormat_descLabel">Descripción</string>
+    <string name="viewFormat_languagesLabel">Idiomas\n compatibles</string>
+    <string name="viewFormat_speechesLabel">Discursos</string>
+    <string name="viewFormat_fileNameLabel">Nombre del archivo</string>
+    <string name="viewFormat_outdatedSchemaVersion">Utiliza un esquema anticuado (versión %1$s)</string>
+    <string name="viewFormat_futureSchemaVersion">Esquema no compatible (versión %1$s)</string>
+    <string name="viewFormat_invalidSchemaVersion">Versión de esquema inválida \"%1$s\"</string>
+    <string name="viewFormat_prepTimeLabel">Tiempo de preparación</string>
+    <string name="viewFormat_errorLabel">Error con el archivo</string>
+    <string name="viewFormat_error_fileNotFound">Archivo no encontrado: %1$s</string>
+    <string name="viewFormat_timeDescription_lengthInMinutesSeconds">%s en total</string>
+    <plurals name="viewFormat_timeDescription_lengthInMinutesOnly">
+        <item quantity="one">%d minuto</item>
+        <item quantity="other">%d minutos</item>
+    </plurals>
+    <string name="viewFormat_timeDescription_controlledPrepSuffix">", controlado"</string>
+    <plurals name="viewFormat_timeDescription_bellsList">
+        <item quantity="one">campana al %s</item>
+        <item quantity="other">campanas a los %s</item>
+    </plurals>
+    <dimen name="view_format_list_item_padding">3dp</dimen>
+    <dimen name="viewFormat_sectionGap">8dp</dimen>
+    <dimen name="viewFormat_endMargin">8dp</dimen>
 </resources>

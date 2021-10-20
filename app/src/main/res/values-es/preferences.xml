@@ -1,4 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (C) 2012 Chuan-Zheng Lee
+
+  This file is part of the Debatekeeper app, which is licensed under the GNU General Public Licence
+  version 3 (GPLv3).  You can redistribute and/or modify it under the terms of the GPLv3, and you
+  must not use this file except in compliance with the GPLv3.
+
+  This app is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+  Public Licence for more details.
+
+  You should have received a copy of the GNU General Public Licence along with this program.  If
+  not, see <http://www.gnu.org/licenses/>.
+-->
 <resources>
     <string name="fragmentName_GlobalSettings">Ajustes</string>
+    <!-- Keys -->
+    <!-- These strings must be unique. -->
+    <!-- Category titles -->
+    <string name="prefCategory_overtimeBells_title">Campanas de tiempo excesivo</string>
+    <string name="prefCategory_pois_title">Puntos de información</string>
+    <string name="prefCategory_prepTime_title">Temporizador de preparación</string>
+    <string name="prefCategory_bells_title">Campanas</string>
+    <string name="prefCategory_general_title">General</string>
+    <!-- Silent mode -->
+    <string name="pref_ringBells_title">Hacer sonar las campanas</string>
+    <string name="pref_ringBells_onSummary">Las campanas sonarán\n(Todo el mundo excepto el cronometrador debe desactivarlas)</string>
+    <string name="pref_ringBells_offSummary">Las campanas no sonarán\n(no afectará otros sonidos de tu teléfono)</string>
+    <!-- Vibrate mode -->
+    <string name="pref_vibrateMode_title">Vibración</string>
+    <string name="pref_vibrateMode_onSummary">Vibrar en tiempos de campana</string>
+    <string name="pref_vibrateMode_offSummary">No vibrar</string>
+    <!-- Flash screen -->
+    <string name="pref_flashScreenMode_title">Flash de pantalla</string>
+    <string-array name="pref_flashScreenMode_summaries">
+        <item>No flashear la pantalla</item>
+        <item>Flashear la pantalla de manera estroboscópica en los tiempos de campana</item>
+        <item>Iluminar la pantalla en blanco brevemente a los tiempos de campana</item>
+    </string-array>
+    <string-array name="pref_flashScreenMode_entries">
+        <item>Desactivado</item>
+        <item>Flash estroboscópico</item>
+        <item>Flash sólido</item>
+    </string-array>
+    <!-- Overtime bells -->
+    <string name="pref_overtimeBellsEnable_title">Activar las campanas de tiempo excedente</string>
+    <string name="pref_overtimeBellsEnable_onSummary">Sonar las campanas de tiempo excedente como se especifica abajo</string>
+    <string name="pref_overtimeBellsEnable_offSummary">No sonar las campanas de tiempo excedente</string>
+    <string name="pref_firstOvertimeBell_title">Primera campana de tiempo excedente</string>
+    <string name="pref_firstOvertimeBell_summary">Sonar la primera campana de tiempo excedente después de %s segundos…</string>
+    <string name="pref_overtimeBellPeriod_title">Período de campanas de tiempo excedente</string>
+    <string name="pref_overtimeBellPeriod_summary">…y luego cada %s segundos después</string>
+    <!-- Count direction -->
+    <string name="pref_countDirection_title">Dirección de cuenta</string>
+    <string-array name="pref_countDirection_summaries">
+        <item>Cuenta ascedente</item>
+        <item>Cuenta regresiva</item>
+    </string-array>
+    <string-array name="pref_countDirection_entries">
+        <item>Cuenta ascendente</item>
+        <item>Cuenta regresiva</item>
+    </string-array>
+    <!-- In case you're wondering, the reason these are called alwaysUp and alwaysDown is because
+    there used to be options called generallyUp and generallyDown. These options were obsoleted
+    in version 0.9, but to retain compatibility we keep the values for the other two as they
+    were before. Since the user never sees these, it doesn't matter what they're called. -->
+    <!-- Background colour -->
+    <string name="pref_backgroundColourArea_title">Área de color de fondo</string>
+    <string-array name="pref_backgroundColourArea_summaries">
+        <item>Dejar el fondo negro para todo el debate</item>
+        <item>Colorear solo la barra superior para indicar los períodos dentro de los discursos</item>
+        <item>Colorear toda la pantalla para indicar los períodos dentro de los discursos</item>
+    </string-array>
+    <string-array name="pref_backgroundColourArea_entries">
+        <item>Desactivado</item>
+        <item>Solo la barra superior</item>
+        <item>Pantalla entera</item>
+    </string-array>
+    <!-- Keep screen on -->
+    <string name="pref_keepScreenOn_title">Mantener pantalla encencida</string>
+    <string name="pref_keepScreenOn_onSummary">Mantener pantalla encendida mientras se ejecute el temporizador</string>
+    <string name="pref_keepScreenOn_offSummary">Aplicar tiempo espera pantalla normal</string>
+    <!-- *** Preparation time *** -->
+    <string name="pref_prepTimer_enable_title">Activar temporizador de preparación</string>
+    <string name="pref_prepTimer_enable_onSummary">Utilizar el temporizador de preparación</string>
+    <string name="pref_prepTimer_enable_offSummary">"No utilizar el temporizador de preparación"</string>
+    <string-array name="pref_prepTimer_countDirection_summaries">
+        <item>Cuenta ascendente en el temporizador de preparación</item>
+        <item>Cuenta regresiva en el temporizador de preparación</item>
+    </string-array>
+    <string name="pref_prepTimer_keepScreenOn_onSummary">Mantener pantalla encendida mientras se ejecute el temporizador de preparación</string>
+    <string name="pref_prepTimer_keepScreenOn_offSummary">Aplicar tiempo espera pantalla normal durante el tiempo de preparación</string>
+    <string name="pref_prepTimer_bells_title">Campanas del tiempo de preparación</string>
+    <string name="pref_prepTimer_bells_summary">Editar las campanas utilizadas durante el tiempo de preparación</string>
+    <!-- *** Points of information *** -->
+    <string name="pref_poiTimer_enable_title">Mostrar el temporizador de PdI</string>
+    <string name="pref_poiTimer_enable_onSummary">Mostrar el temporizador de PdI cuando sea apropiado</string>
+    <string name="pref_poiTimer_enable_offSummary">Ocultar el temporizador de PdI</string>
+    <string name="pref_poiTimer_vibrateEnable_title">Vibración</string>
+    <string name="pref_poiTimer_vibrateEnable_onSummary">Vibrar cuando el tiempo de PdI expire</string>
+    <string name="pref_poiTimer_vibrateEnable_offSummary">No vibrar para los PdI</string>
+    <string name="pref_poiTimer_flashScreenMode_dialogTitle">Flash de pantalla para los PdI</string>
+    <string-array name="pref_poiTimer_flashScreenMode_summaries">
+        <item>No flashear la pantalla para los PdI</item>
+        <item>Flashear la pantalla de manera estroboscópica cuando el tiempo de PdI expire</item>
+        <item>Iluminar la pantalla en azul brevemente cuando el tiempo de PdI expire</item>
+    </string-array>
+    <!-- For the entries and entry values, use the same ones as the main flash screen preference -->
 </resources>

@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (C) 2012-2021 Phillip Cao, Chuan-Zheng Lee
+
+  This file is part of the Debatekeeper app, which is licensed under the GNU General Public Licence
+  version 3 (GPLv3).  You can redistribute and/or modify it under the terms of the GPLv3, and you
+  must not use this file except in compliance with the GPLv3.
+
+  This app is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+  Public Licence for more details.
+
+  You should have received a copy of the GNU General Public Licence along with this program.  If
+  not, see <http://www.gnu.org/licenses/>.
+-->
 <resources>
+    <string name="fragmentName_Debating_withoutFormat">Debatekeeper</string>
+    <string name="intentFilter_importStyle">Debatekeeper</string>
+    <!-- Buttons -->
     <string name="timer_controlButton_startTimer_text">Start</string>
     <string name="timer_controlButton_stopTimer_text">Stopp</string>
     <string name="timer_controlButton_resumeTimer_text">Fortfahren</string>
@@ -7,34 +24,39 @@
     <string name="timer_controlButton_nextPhase_text">Weiter</string>
     <string name="timer_controlButton_chooseStyle_text">Format auswählen</string>
     <string name="timer_playBell_buttonText">Klingel</string>
-    <string name="timer_bellsList_noBells">; keine Klingeln</string>
+    <string name="timer_poiTimer_buttonText">POI</string>
+    <!-- Notices -->
+    <string name="channel_description">Zeigt an, wenn in Debatekeeper die Zeit läuft</string>
+    <string name="notification_text">Zeit läuft: %1$s</string>
+    <string name="timer_bellsList_noBells">"; keine Klingeln"</string>
     <plurals name="timer_bellsList_normal">
         <item quantity="one">"; Klingel bei %1$s"</item>
         <item quantity="other">"; Klingeln bei %1$s"</item>
     </plurals>
-    <string name="timer_bellsList_nextOvertimeBell">; nächste Überziehungsklingel bei %1$s</string>
-    <string name="timer_bellsList_noOvertimeBells">; keine Überziehungsklingeln</string>
+    <string name="timer_bellsList_nextOvertimeBell">"; nächste Überziehungsklingel bei %1$s"</string>
+    <string name="timer_bellsList_noOvertimeBells">"; keine Überziehungsklingeln"</string>
     <plurals name="timer_timeInMinutes">
         <item quantity="one">%d Minute</item>
         <item quantity="other">%d Minuten</item>
     </plurals>
     <string name="timer_speechLength">%s lang</string>
     <string name="timer_prepTimeLength">%s erlaubt</string>
-    <string name="timer_prepTimeControlledIndicator">, kontrolliert</string>
+    <string name="timer_prepTimeControlledIndicator">", kontrolliert"</string>
     <string name="timer_pauseOnBellIndicator">" (Pause)"</string>
     <string name="timer_silentBellIndicator">" (Still)"</string>
     <string name="timer_snackbar_resetDebate">Alle Timer zurückgesetzt</string>
     <string name="timer_noDebateLoaded_text">Keine Debatte geladen</string>
     <string name="prepTime_title">Vorbereitungszeit</string>
+    <string name="timer_snackbar_copyAssetsError">Konnte nicht auf das Dateisystem zugreifen, um ursprüngliche Formate zu kopieren.</string>
     <string name="timer_snackbar_editTextDiscardChangesInfo_limitedBelow">Um Änderungen zu verwerfen drücke auf Zurück. (Die Zeit kann nicht auf eine Überziehungszeit gesetzt werden.)</string>
     <string name="timer_snackbar_editTextDiscardChangesInfo_limitedAbove">Um Änderungen zu verwerfen drücke auf Zurück. (Die Zeit kann nicht größer als 23:59 gesetzt werden.)</string>
-    <string name="timer_snackbar_beam_error_existence">Android Beam kann nicht verwendet werden um eingebaute Formate zu teilen.</string>
+    <string name="timer_snackbar_beam_error_existence">Datei für Debatten-Format nicht gefunden.</string>
     <string name="timer_snackbar_beam_error_generic">Fehler beim Beamen der Debattierformatdatei.</string>
+    <!-- Sharing debate formats -->
     <string name="importDebateFormat_dialog_title">Debattierformat importieren?</string>
     <string name="importDebateFormat_dialog_message_question">Möchten Sie die Debattierformatdatei <b>%1$s</b>, welche das Format %2$s beschreibt, importieren?</string>
     <string name="importDebateFormat_dialog_addendum_overwriteExistingSameName">Das eingebaute Debattierformat %1$s wird überschrieben.</string>
-    <string name="importDebateFormat_dialog_addendum_overwriteExistingDifferentName">
-        Das benutzerdefinierte Debattierformat %1$s wird überschrieben da dessen Datei den gleichen Namen hat.
+    <string name="importDebateFormat_dialog_addendum_overwriteExistingDifferentName">        Das benutzerdefinierte Debattierformat %1$s wird überschrieben da dessen Datei den gleichen Namen hat.
         Wenn Sie %1$s nicht verlieren wollen, brechen sie ab und importieren Sie mit einem anderen Dateinamen.</string>
     <string name="importDebateFormat_placeholder_unknownStyleName">(Unbekannt)</string>
     <string name="importDebateFormat_dialog_button_yes">Importieren</string>
@@ -46,29 +68,51 @@
     <string name="replaceDebateFormat_dialog_button_cancel">Abbrechen</string>
     <string name="importDebateFormat_snackbar_error_generic">Fehler beim Öffnen der Datei.</string>
     <string name="importDebateFormat_snackbar_success">Datei %1$s erfolgreich importiert.</string>
+    <!-- Menu -->
     <string name="timer_menuItem_resetDebate">Debatte Zurücksetzen</string>
     <string name="timer_menuItem_settings">Einstellungen</string>
     <string name="timer_menuItem_chooseFormat">Debattierformate</string>
     <string name="timer_menuItem_ringBells">Klingeln</string>
+    <!-- Debate load error screen -->
+    <string name="debateLoadErrorScreen_title">Fehler beim Laden der Debatte</string>
+    <string name="debateLoadErrorScreen_filename">"Datei konnte nicht geladen werden: %1$s"</string>
     <string name="debateLoadErrorScreen_button">Debattierformat auswählen</string>
+    <!-- These messages are loaded using Html.fromHtml(), so should be written as "fake HTML" (as in, with HTML tags escaped) -->
     <string name="debateLoadError_noSpeeches">Es gibt keine Reden in dieser Debattierformatdatei. (Es könnte sein dass die Datei nicht unterstützt wird oder fehlerhaft ist.)</string>
-    <string name="debateLoadError_cannotRead">Es gab ein Problem beim Öffnen dieser Debattierformatdatei. Wenn es ein benutzerdefiniertes Format ist wurde möglicherweise die Datei gelöscht oder Zugriffsberechtigungen wurden entzogen.</string>
-    <string name="debateLoadError_cannotFind">Es gab ein Problem beim Öffnen dieser Debattierformatdatei. Wenn es ein benutzerdefiniertes Format ist wurde möglicherweise die Datei gelöscht oder Zugriffsberechtigungen wurden entzogen.</string>
-    <string name="debateLoadError_badXml">Es gibt ein Problem mit dem XML in dieser Debattierformatdatei. Der Fehler war:\n\n%1$s</string>
-    <string name="debateLoadError_suffix">"Bitte wählen Sie ein anderes Format."</string>
-    <string name="debateLoadError_generalErrors">&lt;p>Es gibt ein paar Probleme mit dieser Debattierformatdatei.&lt;/p>
+    <string name="debateLoadError_cannotRead">"Es gab ein Problem beim Öffnen dieser Debattierformatdatei. Wenn es ein benutzerdefiniertes Format ist wurde möglicherweise die Datei gelöscht oder Zugriffsberechtigungen wurden entzogen."</string>
+    <string name="debateLoadError_cannotFind">"Es gab ein Problem beim Öffnen dieser Debattierformatdatei. Wenn es ein benutzerdefiniertes Format ist wurde möglicherweise die Datei gelöscht oder Zugriffsberechtigungen wurden entzogen."</string>
+    <string name="debateLoadError_badXml">"Es gibt ein Problem mit dem XML in dieser Debattierformatdatei. Der Fehler war:\n\n%1$s"</string>
+    <string name="debateLoadError_schemaOutdated">Diese Debattierformatdatei verwendet Schema-Version 1.0 welches nicht mehr unterstützt wird.
+        Bitte konvertieren Sie es zu Schema-Version 2.2.
+        &lt;a href=\"https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file\"&gt;Mehr erfahren.&lt;/a&gt;
+    </string>
+    <string name="debateLoadError_generalErrors">&lt;p&gt;Es gibt ein paar Probleme mit dieser Debattierformatdatei.&lt;/p&gt;
         %1$s
     </string>
+    <string name="debateLoadError_suffix">Bitte wählen Sie ein anderes Format.</string>
+    <string name="formerAssetsError_title">Bitte dieses Format herunterladen</string>
+    <string name="formerAssetsError_filename">Datei: %1$s</string>
+    <string name="formerAssetsError_message">Debatekeeper wird anders! Debatten-Formate werden jetzt zum Download
+bereitgestellt anstatt wie vorher in der App enthalten zu sein.</string>
+    <string name="formerAssetsError_suffix">Bitte gehe in den Download-Bereich um dieses Debattierformat herunterzuladen.</string>
+    <string name="formerAssetsError_button">Zu Downloads gehen</string>
+    <!-- Dialogs -->
     <string name="schemaTooNewDialog_title">App aktualisieren?</string>
     <string name="schemaTooNewDialog_button_upgrade">Nach Updates suchen</string>
     <string name="schemaTooNewDialog_button_ignore">Ignorieren</string>
     <string name="schemaTooNewDialog_message">Diese Debattierformatdatei (%4$s) verwendet ein Schema (%1$s) welches zu neu ist. Diese App-Version (%3$s) unterstützt Schema %2$s. Auf Google Play nach Updates suchen?</string>
-    <string name="debateLoadError_schemaOutdated">Diese Debattierformatdatei verwendet Schema-Version 1.0 welches nicht mehr unterstützt wird.
-        Bitte konvertieren Sie es zu Schema-Version 2.2.
-        &lt;a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">Mehr erfahren.&lt;/a>
+    <!-- Copying legacy custom files -->
+    <string name="customFilesMovingDialog_title">Benutzerdefinierte Formate werden verschoben!</string>
+    <string name="customFilesMovingDialog_message">Du hast ein paar benutzerdefinierte Debattierformatdateien im Verzeichnis \"debatekeeper\".
+        In diesem Update bewegt sich der Ort der benutzerdefinierten Formate. Debatekeeper kann diese Dateien
+        an den neuen Ort für dich kopieren. Sobald dies erledigt ist kannst du diese aus dem alten Verzeichnis
+        selbst löschen. (Ersteller sicherheitshalber ein Backup!)\n\nDateien mit benutzerdefinierten Formaten kopieren?
     </string>
-    <string name="changelogDialog_title">Was ist neu in version %1$s</string>
-    <string name="changelogDialog_dontShow">Nicht noch einmal zeigen</string>
-    <string name="changelogDialog_ok">Okay, weiter gehts!</string>
-    <string name="intentFilter_importStyle">Debatekeeper</string>
+    <string name="customFilesMovingDialog_button_learnMore">Mehr erfahren</string>
+    <string name="customFilesMovingDialog_button_cancel">Nicht kopieren</string>
+    <string name="customFilesMovingDialog_button_ok">Kopieren</string>
+    <string name="customFilesMovingErrorDirectory_snackbar">Fehler: Konnte das alte Verzeichnis für benutzerdefinierte Formate nicht zum Kopieren der Dateien öffnen.</string>
+    <string name="customFilesMovingErrorFiles_snackbar">%1$d alte Format-Dateien kopiert, aber Fehler beim Kopieren von %2$d Dateien: %3$s</string>
+    <string name="customFilesMovingSuccess_snackbar">%1$d alte Format-Dateien kopiert und verwendbar</string>
+    <!-- Files that used to be in the assets -->
 </resources>

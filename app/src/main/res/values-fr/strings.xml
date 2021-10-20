@@ -33,7 +33,7 @@ Most strings are in fragment-specific files:
     <string name="changelogDialog_title">Nouveautés dans la version %1$s</string>
     <!-- This is the changelog shown to users just after an update. -->
     <string name="changelogDialog_message">        \n• Les formats de débat sont désormais disponibles en téléchargement; seulement quatre formats sont intégrés dans l\'application.
-            Vous devrez peut-être télécharger les formats que vous utilisiez auparavant pour continuer.
+            Vous devrez peut-être télécharger les formats que vous utilisiez auparavant avant de continuer.
         \n• Ajout de la prise en charge des formats multilingues de débat, grâce à Frank Richter. (BP est en
             anglais et espagnol ; OPD est en allemand et anglais.)
         \n• Tous les formats sont désormais stockés dans un emplacement spécifique à l\'application que fournit Android. Si vous avez des formats personnalisés,

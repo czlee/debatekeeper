@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (C) 2021 Chuan-Zheng Lee
+
+  This file is part of the Debatekeeper app, which is licensed under the GNU General Public Licence
+  version 3 (GPLv3).  You can redistribute and/or modify it under the terms of the GPLv3, and you
+  must not use this file except in compliance with the GPLv3.
+
+  This app is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+  Public Licence for more details.
+
+  You should have received a copy of the GNU General Public Licence along with this program.  If
+  not, see <http://www.gnu.org/licenses/>.
+-->
+<!--
+This file only contains strings that are common to multiple fragments.
+Most strings are in fragment-specific files:
+    - debating_timer.xml
+    - format_chooser.xml
+    - format_download.xml
+    - preferences.xml
+    - prep_time_bells_edit.xml
+    - xml_formats_1.xml
+    - xml_formats_2.xml
+-->
+<resources>
+    <string name="app_name">Debatekeeper</string>
+    <string name="nav_back">Atrás</string>
+    <string name="notificationChannel_timer_name">Temporizador</string>
+    <!-- Changelog dialog -->
+    <!-- By convention, this should be changed to match the manifest versionCode when the changelog changes. -->
+    <string name="changelogDialog_title">Lo nuevo en la versión %1$s</string>
+    <!-- This is the changelog shown to users just after an update. -->
+    <string name="changelogDialog_message">        \n• Los formatos de estilo de debate están disponibles para descargar, con solo cuatro incluidos en la aplicación.
+            Es posible que necesite descargar los formatos que utilizó anteriormente para continuar.
+        \n• Añadido soporte para formatos de debate multilingües, gracias a Frank Richter. (BP está en
+            inglés y español; OPD está en alemán e inglés.)
+        \n• Todos los formatos ahora se almacenan en una ubicación de Android específica para la aplicación. Si tienes formatos
+            personalizados, se te pedirá que los copies. Nota: Si desinstalas Debatekeeper,
+            se eliminarán los formatos personalizados, así que asegúrate de tener una copia de seguridad en otro lugar.
+        \n• Interfaz en español, alemán y francés para dispositivos en esos idiomas
+        \n• Nuevo icono, gracias a Alberto Martínez
+        \n• Tamaño del texto del temporizador ahora se ajusta automáticamente en Android 8.0 y superior
+        \n• Eliminado cero a la izquierda de minutos
+        \n• Hecho campanas dobles y triples más uniformemente cronometrado
+        \n• Añadido una forma de iniciar las importaciones de archivos desde dentro de la aplicación
+        \n• Manejo simplificado de archivos de estilo de debate mal formados
+        \n• Arreglado menejo de notificaciones y de servicios
+        \n• Otras actualizaciones generales para actualizar la aplicación conforme a Android 10
+    </string>
+    <string name="changelogDialog_dontShow">No volver a mostrar esto</string>
+    <string name="changelogDialog_ok">Ok, continuemos!</string>
+</resources>

@@ -1,4 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (C) 2013 Chuan-Zheng Lee
+
+  This file is part of the Debatekeeper app, which is licensed under the GNU General Public Licence
+  version 3 (GPLv3).  You can redistribute and/or modify it under the terms of the GPLv3, and you
+  must not use this file except in compliance with the GPLv3.
+
+  This app is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+  Public Licence for more details.
+
+  You should have received a copy of the GNU General Public Licence along with this program.  If
+  not, see <http://www.gnu.org/licenses/>.
+-->
 <resources>
     <string name="fragmentName_PrepTimeBellsEdit">Sonidos del tiempo de preparación</string>
+    <string name="prepTimeBellsEditor_addBell_buttonText">Agregar</string>
+    <string name="prepTimeBellsEditor_clearAll_buttonText">Borrar todas</string>
+    <!-- Bell descriptions -->
+    <string name="prepTimeBellDescription_atStart">al principio</string>
+    <string name="prepTimeBellDescription_afterStart">%1$s después del comienzo</string>
+    <string name="prepTimeBellDescription_atFinish">al final</string>
+    <string name="prepTimeBellDescription_beforeFinish">%1$s antes del final</string>
+    <string name="prepTimeBellDescription_proportional">%1$s%% a través del tiempo de preparación</string>
+    <!-- Add bell dialog -->
+    <string name="prepTimeBellsEditor_addBellDialog_title">Agregar campana</string>
+    <string name="prepTimeBellsEditor_editBellDialog_title">Editar la campana %1$s</string>
+    <string-array name="prepTimeBellsEditor_editBellDialog_types">
+        <item>Tiempo después del comienzo</item>
+        <item>Tiempo antes del final</item>
+        <item>Porcentaje a través del tiempo de preparación</item>
+    </string-array>
+    <string name="prepTimeBellsEditor_addBellDialog_confirmButton">Agregar</string>
+    <string name="prepTimeBellsEditor_editBellDialog_confirmButton">Terminado</string>
+    <!-- Clear bells dialog -->
+    <string name="prepTimeBellsEditor_clearAllDialog_title">Borrar todas las campanas</string>
+    <string name="prepTimeBellsEditor_clearAllDialog_message_noFinishBell">¿Borrar todas las campanas del temporizador de preparación?</string>
+    <string name="prepTimeBellsEditor_clearAllDialog_message_withFinishBell">¿Borrar todas las campanas de tiempo de preparación excepto la campana al final?</string>
+    <string name="prepTimeBellsEditor_clearAllDialog_confirmButton">Borrar todas</string>
+    <!-- Context menu -->
+    <string name="prepTimeBellsEditor_contextMenu_header">Campana %1$s</string>
+    <string name="prepTimeBellsEditor_contextMenu_delete">Borrar</string>
+    <string name="prepTimeBellsEditor_contextMenu_edit">Editar</string>
+    <string name="prepTimeBellsEditor_contextMenu_tip">Pulsación larga para editar o borrar</string>
 </resources>

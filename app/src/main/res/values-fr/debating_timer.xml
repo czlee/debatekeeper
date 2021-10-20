@@ -24,7 +24,7 @@
     <string name="timer_controlButton_nextPhase_text">Suivant</string>
     <string name="timer_controlButton_chooseStyle_text">Choisir style</string>
     <string name="timer_playBell_buttonText">Sonnette</string>
-    <string name="timer_poiTimer_buttonText">POI</string>
+    <string name="timer_poiTimer_buttonText">PI</string>
     <!-- Notices -->
     <string name="channel_description">Affichage lors de l\'opération du chronomètre de Debatekeeper</string>
     <string name="notification_text">Chronomètre en marche : %1$s</string>
@@ -53,7 +53,7 @@
     <string name="timer_snackbar_beam_error_existence">Impossible de trouver ce fichier de format de débat.</string>
     <string name="timer_snackbar_beam_error_generic">Une erreur s\'est produite lors de l\'envoi de ce fichier de format de débat.</string>
     <!-- Sharing debate formats -->
-    <string name="importDebateFormat_dialog_title">Importer style de débat ?</string>
+    <string name="importDebateFormat_dialog_title">Importer le style de débat ?</string>
     <string name="importDebateFormat_dialog_message_question">Voulez-vous importer le fichier de format de débat &lt;b&gt;%1$s&lt;/b&gt;, qui décrit la style \"%2$s\" ?</string>
     <string name="importDebateFormat_dialog_addendum_overwriteExistingSameName">Cette action écrasera la style existant « %1$s ».</string>
     <string name="importDebateFormat_dialog_addendum_overwriteExistingDifferentName">Cette action écrasera la style existante d\'utilisateur « %1$s », parce que le fichier qui la décrit a le même nom.
