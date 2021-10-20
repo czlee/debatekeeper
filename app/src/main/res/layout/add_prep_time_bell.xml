@@ -21,7 +21,10 @@
     <Spinner
         android:id="@+id/addPrepTimeBellDialog_typeSpinner"
         android:layout_width="match_parent"
-        android:layout_height="50dip" />
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="8dp"
+        android:layout_marginHorizontal="16dp"
+        android:paddingVertical="12dp" />
 
     <!-- The time picker is for "time from start" and "time from finish" -->
 
