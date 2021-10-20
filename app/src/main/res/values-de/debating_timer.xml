@@ -76,7 +76,7 @@
     <!-- Debate load error screen -->
     <string name="debateLoadErrorScreen_title">Fehler beim Laden der Debatte</string>
     <string name="debateLoadErrorScreen_filename">"Datei konnte nicht geladen werden: %1$s"</string>
-    <string name="debateLoadErrorScreen_button">Debattierformat auswählen</string>
+    <string name="debateLoadErrorScreen_button">Format auswählen</string>
     <!-- These messages are loaded using Html.fromHtml(), so should be written as "fake HTML" (as in, with HTML tags escaped) -->
     <string name="debateLoadError_noSpeeches">Es gibt keine Reden in dieser Debattierformatdatei. (Es könnte sein dass die Datei nicht unterstützt wird oder fehlerhaft ist.)</string>
     <string name="debateLoadError_cannotRead">"Es gab ein Problem beim Öffnen dieser Debattierformatdatei. Wenn es ein benutzerdefiniertes Format ist wurde möglicherweise die Datei gelöscht oder Zugriffsberechtigungen wurden entzogen."</string>
