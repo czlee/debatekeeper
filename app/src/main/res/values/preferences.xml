@@ -83,12 +83,10 @@
 
     <string name="pref_firstOvertimeBell_title">First overtime bell</string>
     <string name="pref_firstOvertimeBell_summary">Ring the first overtime bell after %s seconds…</string>
-    <string name="pref_firstOvertimeBell_dialogMessage">"The time after finish in seconds of the first overtime bell:"</string>
     <integer name="prefDefault_firstOvertimeBell">15</integer>
 
     <string name="pref_overtimeBellPeriod_title">Overtime bell period</string>
     <string name="pref_overtimeBellPeriod_summary">…and then every %s seconds after that</string>
-    <string name="pref_overtimeBellPeriod_dialogMessage">"The time between overtime bells (after the first) in seconds:"</string>
     <integer name="prefDefault_overtimeBellPeriod">15</integer>
 
     <!-- Count direction -->

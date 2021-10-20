@@ -29,7 +29,6 @@
     <string name="timer_poiTimer_buttonText">Pregunta</string>
 
     <!-- Notices -->
-    <string name="timer_overtimeFormat">+%1$s</string>
 
     <string name="timer_bellsList_noBells">"; sin campanas"</string>
     <plurals name="timer_bellsList_normal">

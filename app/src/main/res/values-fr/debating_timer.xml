@@ -28,7 +28,6 @@
     <!-- Notices -->
     <string name="channel_description">Affichage lors de l\'opération du chronomètre de Debatekeeper</string>
     <string name="notification_text">Chronomètre en marche : %1$s</string>
-    <string name="timer_overtimeFormat">+%1$s</string>
     <string name="timer_bellsList_noBells">"; pas de sonnettes"</string>
     <plurals name="timer_bellsList_normal">
         <item quantity="one">"; sonnette à %1$s"</item>
