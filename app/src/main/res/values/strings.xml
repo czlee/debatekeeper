@@ -36,7 +36,7 @@ Most strings are in fragment-specific files:
 
     <!-- Changelog dialog -->
     <!-- By convention, this should be changed to match the manifest versionCode when the changelog changes. -->
-    <integer name="changelogDialog_versionCode">32</integer>
+    <integer name="changelogDialog_versionCode">34</integer>
     <string name="changelogDialog_title">What\'s new in version %1$s</string>
 
     <!-- This is the changelog shown to users just after an update. -->
