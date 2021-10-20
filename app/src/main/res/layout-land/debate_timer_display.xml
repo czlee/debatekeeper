@@ -129,6 +129,9 @@
         android:layout_marginEnd="@dimen/timer_poiTimerButton_marginRightLandscape"
         android:layout_marginRight="@dimen/timer_poiTimerButton_marginRightLandscape"
         android:text="@string/timer_poiTimer_buttonText"
+        android:textAllCaps="false"
+        app:autoSizeTextType="uniform"
+        app:autoSizeMaxTextSize="@dimen/timer_poiTimerButton_textSize"
         android:textSize="@dimen/timer_poiTimerButton_textSize" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

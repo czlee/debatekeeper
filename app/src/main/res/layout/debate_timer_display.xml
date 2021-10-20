@@ -116,6 +116,7 @@
         app:layout_constraintWidth_percent="0.5"
         android:layout_marginBottom="4dp"
         android:text="@string/timer_poiTimer_buttonText"
+        android:textAllCaps="false"
         app:autoSizeTextType="uniform"
         app:autoSizeMaxTextSize="@dimen/timer_poiTimerButton_textSize"
         android:textSize="@dimen/timer_poiTimerButton_textSize" />
