@@ -38,7 +38,6 @@
     <string name="formatChooser_share_error_notFound">Datei %1$s nicht gefunden.</string>
     <string name="formatChooser_share_error_generic">Es gab ein Fehler beim Teilen dieses Formats.</string>
     <string name="formatChooser_share_chooserTitle">Debattierformat teilen mit…</string>
-    <string name="formatChooser_import_confirmOverwrite">Du hast bereits ein Format mit dem Dateinamen %1$s. Überschreiben?</string>
     <string name="formatChooser_import_error_opening">Es gab ein Fehler beim Öffnen dieser Datei.</string>
     <string name="formatChooser_import_error_reading">Es gab ein Fehler beim Lesen dieser Datei.</string>
     <string name="formatChooser_import_error_noFileChosen">Keine Datei ausgewählt.</string>
