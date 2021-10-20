@@ -30,10 +30,10 @@
     <string name="notification_text">Temporizador en ejecución: %1$s</string>
     <string name="timer_bellsList_noBells">"; sin campanas"</string>
     <plurals name="timer_bellsList_normal">
-        <item quantity="one">"; campana a los %1$s min"</item>
-        <item quantity="other">"; campanas a los %1$s min"</item>
+        <item quantity="one">"; campana a los %1$s"</item>
+        <item quantity="other">"; campanas a los %1$s"</item>
     </plurals>
-    <string name="timer_bellsList_nextOvertimeBell">"; siguiente campana de tiempo límite a los %1$s min"</string>
+    <string name="timer_bellsList_nextOvertimeBell">"; siguiente campana de tiempo excedente a los %1$s"</string>
     <string name="timer_bellsList_noOvertimeBells">"; sin campanas de tiempo límite"</string>
     <plurals name="timer_timeInMinutes">
         <item quantity="one">%d minuto</item>
