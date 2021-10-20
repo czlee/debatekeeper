@@ -34,7 +34,7 @@ Most strings are in fragment-specific files:
     <!-- This is the changelog shown to users just after an update. -->
     <string name="changelogDialog_message">        \n• Los formatos de estilo de debate están disponibles para descargar, con solo cuatro incluidos en la aplicación.
             Es posible que necesite descargar los formatos que utilizó anteriormente para continuar.
-        \n• Soporte añadido para formatos de debate multilingües, gracias a Frank Richter. (BP está en
+        \n• Añadido soporte para formatos de debate multilingües, gracias a Frank Richter. (BP está en
             inglés y español; OPD está en alemán e inglés.)
         \n• Todos los formatos ahora se almacenan en una ubicación de Android específica para la aplicación. Si tienes formatos
             personalizados, se te pedirá que los copies. Nota: Si desinstalas Debatekeeper,
@@ -44,7 +44,7 @@ Most strings are in fragment-specific files:
         \n• Tamaño del texto del temporizador ahora se ajusta automáticamente en Android 8.0 y superior
         \n• Eliminado cero a la izquierda de minutos
         \n• Hecho campanas dobles y triples más uniformemente cronometrado
-        \n• Añadida una forma de iniciar las importaciones de archivos desde dentro de la aplicación
+        \n• Añadido una forma de iniciar las importaciones de archivos desde dentro de la aplicación
         \n• Manejo simplificado de archivos de estilo de debate mal formados
         \n• Arreglado menejo de notificaciones y de servicios
         \n• Otras actualizaciones generales para actualizar la aplicación conforme a Android 10
