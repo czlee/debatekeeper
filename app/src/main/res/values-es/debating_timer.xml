@@ -76,7 +76,7 @@
     <!-- Debate load error screen -->
     <string name="debateLoadErrorScreen_title">Error al cargar debate</string>
     <string name="debateLoadErrorScreen_filename">"No se pudo cargar el archivo: %1$s"</string>
-    <string name="debateLoadErrorScreen_button">Elija el estilo</string>
+    <string name="debateLoadErrorScreen_button">Elegir estilo</string>
     <!-- These messages are loaded using Html.fromHtml(), so should be written as "fake HTML" (as in, with HTML tags escaped) -->
     <string name="debateLoadError_noSpeeches">No hay intervenciones en este estilo de debate. (Puede deberse a que el archivo no esté soportado o a que no se ha formado bien.)</string>
     <string name="debateLoadError_cannotRead">"He encontrado un problema abriendo este archivo de estilo de debate. Si es un formato personallizado puede que el archivo se haya eliminado o porque los permisos de almacenamiento están deshabilitados."</string>
