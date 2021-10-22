@@ -94,17 +94,17 @@
     <string name="pref_prepTimer_bells_title">Sonnettes de chronomètre de préparation</string>
     <string name="pref_prepTimer_bells_summary">Modifier les sonnettes utilisées pendant le temps de préparation</string>
     <!-- *** Points of information *** -->
-    <string name="pref_poiTimer_enable_title">Afficher le chronomètre de PI</string>
-    <string name="pref_poiTimer_enable_onSummary">Afficher le chronomètre de PI le cas échéant</string>
-    <string name="pref_poiTimer_enable_offSummary">Cacher le chronomètre de PI</string>
+    <string name="pref_poiTimer_enable_title">Afficher le chronomètre des PI</string>
+    <string name="pref_poiTimer_enable_onSummary">Afficher le chronomètre des PI le cas échéant</string>
+    <string name="pref_poiTimer_enable_offSummary">Cacher le chronomètre des PI</string>
     <string name="pref_poiTimer_vibrateEnable_title">Vibration</string>
     <string name="pref_poiTimer_vibrateEnable_onSummary">Faire vibrer quand le temps d\'un PI expire</string>
-    <string name="pref_poiTimer_vibrateEnable_offSummary">Ne pas faire vibrer pour les PIs</string>
-    <string name="pref_poiTimer_flashScreenMode_dialogTitle">Faire clignoter l\'écran pour les PIs</string>
+    <string name="pref_poiTimer_vibrateEnable_offSummary">Ne pas faire vibrer pour les PI</string>
+    <string name="pref_poiTimer_flashScreenMode_dialogTitle">Faire clignoter l\'écran pour les PI</string>
     <string-array name="pref_poiTimer_flashScreenMode_summaries">
-        <item>Ne pas faire clignoter l\'écran pour les PIs</item>
-        <item>Faire clignoter de manière stroboscopique quand le temps de PI expire</item>
-        <item>Faire clignoter en bleu brièvement quand le temps de PI expire</item>
+        <item>Ne pas faire clignoter l\'écran pour les PI</item>
+        <item>Faire clignoter de manière stroboscopique quand le temps d\'un PI expire</item>
+        <item>Faire clignoter en bleu brièvement quand le temps d\'un PI expire</item>
     </string-array>
     <!-- For the entries and entry values, use the same ones as the main flash screen preference -->
 </resources>
