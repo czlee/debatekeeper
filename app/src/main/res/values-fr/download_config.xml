@@ -16,5 +16,5 @@
 -->
     <string name="downloadConfigTitle">Configuration de téléchargements</string>
     <string name="formatsRepositoryUrlLabel">Dépôt de fichiers de style de débat</string>
-    <string name="formatsRepositoryUrlExplanation">Ce paramètre configure le dépôt en ligne que cherche Debatekeeper pour trouver des fichers de style débat. Si vous le laissez vide, Debatekeeper cherchera le dépôt officiel.</string>
+    <string name="formatsRepositoryUrlExplanation">Ce paramètre configure le dépôt en ligne que cherche Debatekeeper pour trouver des fichiers de style débat. Si vous le laissez vide, Debatekeeper cherchera le dépôt officiel.    </string>
 </resources>

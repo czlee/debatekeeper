@@ -22,7 +22,7 @@
     <!-- Version 2 error messages -->
     <string name="xml2error_root_noName">"Aucun nom n'est spécifié pour ce format de débat"</string>
     <string name="xml2error_periodType_ref_null">"Aucune « ref » n'est spécifiée pour un « period-type »"</string>
-    <string name="xml2error_periodType_ref_blank">"L'attribut « ref » pour les types de période (period-type) ne doit pas être vide"</string>
+    <string name="xml2error_periodType_ref_blank">"L'attribut « ref » du « period-type » ne doit pas être vide"</string>
     <string name="xml2error_periodType_name_null">"Aucun nom n'est spécifié pour le « period-type » « %1$s »"</string>
     <string name="xml2error_periodType_name_blank">"Le nom pour le « period-type » « %1$s » ne doit pas être vide"</string>
     <string name="xml2Error_periodType_defaultBgColor_invalid">"L'attribut « default-bgcolor » du « period-type » « %2$s » est non valable : « %1$s »"</string>

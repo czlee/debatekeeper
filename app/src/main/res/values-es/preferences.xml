@@ -34,8 +34,8 @@
     <!-- Flash screen -->
     <string name="pref_flashScreenMode_title">Flash de pantalla</string>
     <string-array name="pref_flashScreenMode_summaries">
-        <item>No flashear la pantalla</item>
-        <item>Flashear la pantalla de manera estroboscópica en los tiempos de campana</item>
+        <item>No destellar la pantalla</item>
+        <item>Destellar la pantalla de manera estroboscópica en los tiempos de campana</item>
         <item>Iluminar la pantalla en blanco brevemente a los tiempos de campana</item>
     </string-array>
     <string-array name="pref_flashScreenMode_entries">
@@ -54,7 +54,7 @@
     <!-- Count direction -->
     <string name="pref_countDirection_title">Dirección de cuenta</string>
     <string-array name="pref_countDirection_summaries">
-        <item>Cuenta ascedente</item>
+        <item>Cuenta ascendente</item>
         <item>Cuenta regresiva</item>
     </string-array>
     <string-array name="pref_countDirection_entries">
@@ -78,7 +78,7 @@
         <item>Pantalla entera</item>
     </string-array>
     <!-- Keep screen on -->
-    <string name="pref_keepScreenOn_title">Mantener pantalla encencida</string>
+    <string name="pref_keepScreenOn_title">Mantener pantalla encendida</string>
     <string name="pref_keepScreenOn_onSummary">Mantener pantalla encendida mientras se ejecute el temporizador</string>
     <string name="pref_keepScreenOn_offSummary">Aplicar tiempo espera pantalla normal</string>
     <!-- *** Preparation time *** -->
@@ -102,8 +102,8 @@
     <string name="pref_poiTimer_vibrateEnable_offSummary">No vibrar para los PdI</string>
     <string name="pref_poiTimer_flashScreenMode_dialogTitle">Flash de pantalla para los PdI</string>
     <string-array name="pref_poiTimer_flashScreenMode_summaries">
-        <item>No flashear la pantalla para los PdI</item>
-        <item>Flashear la pantalla de manera estroboscópica cuando el tiempo de PdI expire</item>
+        <item>No destellar la pantalla para los PdI</item>
+        <item>Destellar la pantalla de manera estroboscópica cuando el tiempo de PdI expire</item>
         <item>Iluminar la pantalla en azul brevemente cuando el tiempo de PdI expire</item>
     </string-array>
     <!-- For the entries and entry values, use the same ones as the main flash screen preference -->

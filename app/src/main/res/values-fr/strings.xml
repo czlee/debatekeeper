@@ -43,12 +43,12 @@ Most strings are in fragment-specific files:
         \n• Nouvelle icône, grâce à Alberto Martinez
         \n• La taille du texte du chronomètre s\'ajuste automatiquement dans Android 8.0 et plus récent
         \n• Suppression du zéro non significatif des minutes
-        \n• Egalisation temporelle des sonnettes doubles et triples
+        \n• Égalisation temporelle des sonnettes doubles et triples
         \n• Ajout d\'un moyen de lancer les importations de fichiers depuis l\'application
         \n• Simplification du traitement des fichiers de style de débat mal formés
         \n• Correction de la gestion du service et des notifications
         \n• Autres mises à jour en général pour actualiser l\'application pour Android 10
     </string>
     <string name="changelogDialog_dontShow">Ne plus afficher ce message</string>
-    <string name="changelogDialog_ok">D\'accord, continuons !</string>
+    <string name="changelogDialog_ok">D\'accord, c\'est parti !</string>
 </resources>

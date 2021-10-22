@@ -37,7 +37,7 @@ Most strings are in fragment-specific files:
         \n• Unterstützung für mehrsprachige Debattierformate, mit Dank an Frank Richter. (BP gibt es in
             Englisch und Spanisch; OPD gibt es in Deutsch und Englisch.)
         \n• Alle Formatdateien werden jetzt an app-spezifischen Android-Standorten gespeichert. Wenn du benutzerdefinierte
-            Formate hast, wirst du aufgefordert, diese zu kopieren. Hinweis: Wenn du Debatekeepper deinstallierst werden
+            Formate hast, wirst du aufgefordert, diese zu kopieren. Hinweis: Wenn du Debatekeeper deinstallierst werden
             benutzerdefinierte Formate gelöscht, also stelle sicher, dass du ein Backup woanders hast.
         \n• Französisch, Deutsches und spanisches Interface für Geräte in diesen Sprachen
         \n• Neues Symbol, mit Dank am Alberto Martínez
@@ -50,5 +50,5 @@ Most strings are in fragment-specific files:
         \n• Weitere allgemeine Anpassungen an Android 10
     </string>
     <string name="changelogDialog_dontShow">Nicht noch einmal zeigen</string>
-    <string name="changelogDialog_ok">Okay, weiter gehts!</string>
+    <string name="changelogDialog_ok">Okay, weiter geht\'s!</string>
 </resources>

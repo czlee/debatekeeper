@@ -44,7 +44,7 @@
     <string name="timer_prepTimeControlledIndicator">", controlado"</string>
     <string name="timer_pauseOnBellIndicator">" (pausa)"</string>
     <string name="timer_silentBellIndicator">" (silencio)"</string>
-    <string name="timer_snackbar_resetDebate">Todos los temporizadores del debate se reinician</string>
+    <string name="timer_snackbar_resetDebate">Todos los temporizadores del debate se han reiniciado</string>
     <string name="timer_noDebateLoaded_text">No se ha cargado ningún debate</string>
     <string name="prepTime_title">Tiempo de preparación</string>
     <string name="timer_snackbar_copyAssetsError">No se pudo acceder al sistema de archivos para copiar los formatos iniciales.</string>
@@ -62,12 +62,12 @@
     <string name="importDebateFormat_dialog_button_yes">Importar</string>
     <string name="importDebateFormat_dialog_button_no">Cancelar</string>
     <string name="replaceDebateFormat_dialog_title">¿Reemplazar el estilo de debate?</string>
-    <string name="replaceDebateFormat_dialog_message">Ya tienes un estilo de debate llamado \"%1$s\". ¿Quieres &lt;b&gt;reemplazarlo&lt;/b&gt;, sobreescribiendo el archivo %2$s, o &lt;b&gt;añadir otro&lt;/b&gt; \"%1$s\" usando el nombre del archivo %3$s?</string>
+    <string name="replaceDebateFormat_dialog_message">Ya tienes un estilo de debate llamado \"%1$s\". ¿Quieres &lt;b&gt;reemplazarlo&lt;/b&gt;, sobrescribiendo el archivo %2$s, o &lt;b&gt;añadir otro&lt;/b&gt; \"%1$s\" usando el nombre del archivo %3$s?</string>
     <string name="replaceDebateFormat_dialog_button_replace">Reemplazar</string>
     <string name="replaceDebateFormat_dialog_button_addNew">Añadir otro</string>
     <string name="replaceDebateFormat_dialog_button_cancel">Cancelar</string>
     <string name="importDebateFormat_snackbar_error_generic">Se ha producido un error al abrir este archivo.</string>
-    <string name="importDebateFormat_snackbar_success">Se ha importado el archivo %1$s de forma excitosa</string>
+    <string name="importDebateFormat_snackbar_success">Se ha importado el archivo %1$s de forma exitosa</string>
     <!-- Menu -->
     <string name="timer_menuItem_resetDebate">Reiniciar debate</string>
     <string name="timer_menuItem_settings">Ajustes</string>
@@ -78,9 +78,9 @@
     <string name="debateLoadErrorScreen_filename">"No se pudo cargar el archivo: %1$s"</string>
     <string name="debateLoadErrorScreen_button">Elegir estilo</string>
     <!-- These messages are loaded using Html.fromHtml(), so should be written as "fake HTML" (as in, with HTML tags escaped) -->
-    <string name="debateLoadError_noSpeeches">No hay intervenciones en este estilo de debate. (Puede deberse a que el archivo no esté soportado o a que no se ha formado bien.)</string>
-    <string name="debateLoadError_cannotRead">"He encontrado un problema abriendo este archivo de estilo de debate. Si es un formato personallizado puede que el archivo se haya eliminado o porque los permisos de almacenamiento están deshabilitados."</string>
-    <string name="debateLoadError_cannotFind">"\"He encontrado un problema abriendo este archivo de estilo de debate. Si es un formato personallizado puede que el archivo se haya eliminado o porque los permisos de almacenamiento están deshabilitados."</string>
+    <string name="debateLoadError_noSpeeches">No hay intervenciones en este estilo de debate. Puede deberse a que el archivo no esté soportado o a que no se ha formado bien. &lt;a href=\"https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file\"&gt;Leer más.&lt;/a&gt;    </string>
+    <string name="debateLoadError_cannotRead">"He encontrado un problema abriendo este archivo de estilo de debate. Si es un formato personalizado puede que el archivo se haya eliminado o porque los permisos de almacenamiento están desactivados."</string>
+    <string name="debateLoadError_cannotFind">"He encontrado un problema abriendo este archivo de estilo de debate. Si es un formato personalizado puede que el archivo se haya eliminado o porque los permisos de almacenamiento están desactivados."</string>
     <string name="debateLoadError_badXml">"Hay un problema con el archivo XML en este estilo de debate. El error es:\n\n%1$s\n"</string>
     <string name="debateLoadError_schemaOutdated">El archivo del formato de debate usa un esquema con la versión 1.0, que ya no está soportada.
         Por favor, convierte el esquema del archivo a la versión 2.2.
@@ -100,7 +100,7 @@
     <string name="schemaTooNewDialog_title">¿Actualizar aplicación?</string>
     <string name="schemaTooNewDialog_button_upgrade">Revisar actualizaciones</string>
     <string name="schemaTooNewDialog_button_ignore">Ignorar</string>
-    <string name="schemaTooNewDialog_message">El archivo del formato (%4$s) de este debate usa un esquema (%1$s) más nuevo que el soportado (%2$s) por esta verisón de la aplicación (%3$s). ¿Revisar si hay actualizaciones en Google Play?</string>
+    <string name="schemaTooNewDialog_message">El archivo del formato (%4$s) de este debate usa un esquema (%1$s) más nuevo que el soportado (%2$s) por esta versión de la aplicación (%3$s). ¿Revisar si hay actualizaciones en Google Play?</string>
     <!-- Copying legacy custom files -->
     <string name="customFilesMovingDialog_title">¡Los formatos personalizados se están moviendo!</string>
     <string name="customFilesMovingDialog_message">Tienes algunos archivos de formato de debate personalizados en el directorio \"debatekeeper\".
