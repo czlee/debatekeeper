@@ -46,9 +46,9 @@ Most strings are in fragment-specific files:
         \n• Hecho campanas dobles y triples más uniformemente cronometrado
         \n• Añadido una forma de iniciar las importaciones de archivos desde dentro de la aplicación
         \n• Manejo simplificado de archivos de estilo de debate mal formados
-        \n• Arreglado menejo de notificaciones y de servicios
+        \n• Arreglado manejo de notificaciones y de servicios
         \n• Otras actualizaciones generales para actualizar la aplicación conforme a Android 10
     </string>
     <string name="changelogDialog_dontShow">No volver a mostrar esto</string>
-    <string name="changelogDialog_ok">Ok, continuemos!</string>
+    <string name="changelogDialog_ok">Ok, ¡continuemos!</string>
 </resources>
