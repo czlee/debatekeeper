@@ -23,7 +23,7 @@
     <string name="xml2error_root_noName">"Für dieses Debattierformat wurde kein Name angegeben"</string>
     <string name="xml2error_periodType_ref_null">"Kein 'ref' für eine period-type spezifiziert"</string>
     <string name="xml2error_periodType_ref_blank">"Das 'ref' für period-types darf nicht leer sein"</string>
-    <string name="xml2error_periodType_name_null">"Für period-type '%1$s' "</string>
+    <string name="xml2error_periodType_name_null">"Für period-type '%1$s' wurde kein Name angegeben"</string>
     <string name="xml2error_periodType_name_blank">"Der 'name' für period-type '%1$s' darf nicht leer sein"</string>
     <string name="xml2Error_periodType_defaultBgColor_invalid">"Ungültige default-bgcolor für period-type '%2$s' spezifiziert: '%1$s'"</string>
     <string name="xml2Error_periodType_poisAllowed_invalid">"Ungültiges pois-allowed für period-type '%2$s' spezifiziert: '%1$s' (muss 'true' oder 'false' sein)"</string>
