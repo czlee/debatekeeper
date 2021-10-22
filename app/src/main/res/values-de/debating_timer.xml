@@ -54,7 +54,7 @@
     <string name="timer_snackbar_beam_error_generic">Fehler beim Beamen der Debattierformatdatei.</string>
     <!-- Sharing debate formats -->
     <string name="importDebateFormat_dialog_title">Debattierformat importieren?</string>
-    <string name="importDebateFormat_dialog_message_question">Möchten Sie die Debattierformatdatei <b>%1$s</b>, welche das Format %2$s beschreibt, importieren?</string>
+    <string name="importDebateFormat_dialog_message_question">Möchten Sie die Debattierformatdatei &lt;b&gt;%1$s&lt;/b&gt;, welche das Format %2$s beschreibt, importieren?</string>
     <string name="importDebateFormat_dialog_addendum_overwriteExistingSameName">Das eingebaute Debattierformat %1$s wird überschrieben.</string>
     <string name="importDebateFormat_dialog_addendum_overwriteExistingDifferentName">        Das benutzerdefinierte Debattierformat %1$s wird überschrieben da dessen Datei den gleichen Namen hat.
         Wenn Sie %1$s nicht verlieren wollen, brechen sie ab und importieren Sie mit einem anderen Dateinamen.</string>
@@ -62,12 +62,12 @@
     <string name="importDebateFormat_dialog_button_yes">Importieren</string>
     <string name="importDebateFormat_dialog_button_no">Abbrechen</string>
     <string name="replaceDebateFormat_dialog_title">Debattierformat ersetzen?</string>
-    <string name="replaceDebateFormat_dialog_message">Sie haben bereits ein Debattierformat mit dem Namen %1$s. Möchten Sie es <b>ersetzen</b> und dabei die Datei %2$s überschreiben, oder ein weiteres %1$s <b>hinzufügen</b> mit dem Dateinamen %3$s?</string>
+    <string name="replaceDebateFormat_dialog_message">Sie haben bereits ein Debattierformat mit dem Namen %1$s. Möchten Sie es &lt;b&gt;ersetzen&lt;/b&gt; und dabei die Datei %2$s überschreiben, oder ein weiteres %1$s &lt;b&gt;hinzufügen&lt;/b&gt; mit dem Dateinamen %3$s?</string>
     <string name="replaceDebateFormat_dialog_button_replace">Ersetzen</string>
     <string name="replaceDebateFormat_dialog_button_addNew">Hinzufügen</string>
     <string name="replaceDebateFormat_dialog_button_cancel">Abbrechen</string>
     <string name="importDebateFormat_snackbar_error_generic">Fehler beim Öffnen der Datei.</string>
-    <string name="importDebateFormat_snackbar_success">Datei %1$s erfolgreich importiert.</string>
+    <string name="importDebateFormat_snackbar_success">Datei %1$s erfolgreich importiert</string>
     <!-- Menu -->
     <string name="timer_menuItem_resetDebate">Debatte Zurücksetzen</string>
     <string name="timer_menuItem_settings">Einstellungen</string>
@@ -78,10 +78,10 @@
     <string name="debateLoadErrorScreen_filename">"Datei konnte nicht geladen werden: %1$s"</string>
     <string name="debateLoadErrorScreen_button">Format auswählen</string>
     <!-- These messages are loaded using Html.fromHtml(), so should be written as "fake HTML" (as in, with HTML tags escaped) -->
-    <string name="debateLoadError_noSpeeches">Es gibt keine Reden in dieser Debattierformatdatei. (Es könnte sein dass die Datei nicht unterstützt wird oder fehlerhaft ist.)</string>
+    <string name="debateLoadError_noSpeeches">Es gibt keine Reden in dieser Debattierformatdatei. Es könnte sein dass die Datei nicht unterstützt wird oder fehlerhaft ist. &lt;a href=\"https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file\"&gt;Mehr erfahren.&lt;/a&gt;    </string>
     <string name="debateLoadError_cannotRead">"Es gab ein Problem beim Öffnen dieser Debattierformatdatei. Wenn es ein benutzerdefiniertes Format ist wurde möglicherweise die Datei gelöscht oder Zugriffsberechtigungen wurden entzogen."</string>
     <string name="debateLoadError_cannotFind">"Es gab ein Problem beim Öffnen dieser Debattierformatdatei. Wenn es ein benutzerdefiniertes Format ist wurde möglicherweise die Datei gelöscht oder Zugriffsberechtigungen wurden entzogen."</string>
-    <string name="debateLoadError_badXml">"Es gibt ein Problem mit dem XML in dieser Debattierformatdatei. Der Fehler war:\n\n%1$s"</string>
+    <string name="debateLoadError_badXml">"Es gibt ein Problem mit dem XML in dieser Debattierformatdatei. Der Fehler war:\n\n%1$s\n"</string>
     <string name="debateLoadError_schemaOutdated">Diese Debattierformatdatei verwendet Schema-Version 1.0 welches nicht mehr unterstützt wird.
         Bitte konvertieren Sie es zu Schema-Version 2.2.
         &lt;a href=\"https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file\"&gt;Mehr erfahren.&lt;/a&gt;
@@ -100,7 +100,7 @@ bereitgestellt anstatt wie vorher in der App enthalten zu sein.</string>
     <string name="schemaTooNewDialog_title">App aktualisieren?</string>
     <string name="schemaTooNewDialog_button_upgrade">Nach Updates suchen</string>
     <string name="schemaTooNewDialog_button_ignore">Ignorieren</string>
-    <string name="schemaTooNewDialog_message">Diese Debattierformatdatei (%4$s) verwendet ein Schema (%1$s) welches zu neu ist. Diese App-Version (%3$s) unterstützt Schema %2$s. Auf Google Play nach Updates suchen?</string>
+    <string name="schemaTooNewDialog_message">Diese Debattierformatdatei (%4$s) verwendet ein Schema (%1$s) welches zu neu ist. Diese App-Version (%3$s) unterstützt Schema (%2$s). Auf Google Play nach Updates suchen?</string>
     <!-- Copying legacy custom files -->
     <string name="customFilesMovingDialog_title">Benutzerdefinierte Formate werden verschoben!</string>
     <string name="customFilesMovingDialog_message">Du hast ein paar benutzerdefinierte Debattierformatdateien im Verzeichnis \"debatekeeper\".
