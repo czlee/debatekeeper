@@ -78,7 +78,7 @@ Si vous ne voulez pas perdre %1$s, annulez, et puis réimportez avec un nom diff
     <string name="debateLoadErrorScreen_filename">"Échec du chargement du fichier : %1$s"</string>
     <string name="debateLoadErrorScreen_button">Choisir style</string>
     <!-- These messages are loaded using Html.fromHtml(), so should be written as "fake HTML" (as in, with HTML tags escaped) -->
-    <string name="debateLoadError_noSpeeches">Ce ficher de format de débat ne contient aucun discours. Il se peut que le fichier ne soit pas pris en charge ou ne soit pas bien formé. &lt;a href=\"https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file\"&gt;En savoir plus.&lt;/a&gt;</string>
+    <string name="debateLoadError_noSpeeches">Ce ficher de format de débat ne contient aucun discours. Il se peut que le fichier ne soit pas pris en charge ou ne soit pas bien formé. &lt;a href=\"https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file\"&gt;En savoir plus.&lt;/a&gt;    </string>
     <string name="debateLoadError_cannotRead">"J'ai rencontré une problème en ouvrant ce fichier de format de débat. Si c'est un format d'utilisateur, c'est peut-être parce que l'autorisation de stockage est désactivée."</string>
     <string name="debateLoadError_cannotFind">"J'ai rencontré une problème en ouvrant ce fichier de format de débat. Si c'est un format d'utilisateur, c'est peut-être parce que l'autorisation de stockage est désactivée."</string>
     <string name="debateLoadError_badXml">"Il y a un problème avec le XML dans ce fichier de format de débat. L'erreur est comme suit :\n\n%1$s\n"</string>
@@ -100,7 +100,7 @@ Si vous ne voulez pas perdre %1$s, annulez, et puis réimportez avec un nom diff
     <string name="schemaTooNewDialog_message">Ce fichier de style de débat (%4$s) utilise un schema (%1$s) plus nouveau que ce que cette version de l\'application (%3$s) permet (%2$s). Rechercher les mises à jour sur Google Play ?</string>
     <!-- Copying legacy custom files -->
     <string name="customFilesMovingDialog_title">Les formats personnalisés se déplacent !</string>
-    <string name="customFilesMovingDialog_message">Vous avez des fichiers de format de débat personnalisés dans la répertoire « debatekeeper ». Dans cette mise à jour, l\'emplacement du fichier se déplace.\nDebatekeeper peut copier ces fichiers au nouveau emplacement pour vous. Une fois cela fait, vous pouvez les supprimer de l\'ancien emplacement vous-même.\n(Assurez-vous de garder une copie de sauvegarde !)\n\nCopier les fichiers personnalisés ?</string>
+    <string name="customFilesMovingDialog_message">Vous avez des fichiers de format de débat personnalisés dans la répertoire « debatekeeper ». Dans cette mise à jour, l\'emplacement du fichier se déplace.\nDebatekeeper peut copier ces fichiers au nouveau emplacement pour vous. Une fois cela fait, vous pouvez les supprimer de l\'ancien emplacement vous-même.\n(Assurez-vous de garder une copie de sauvegarde !)\n\nCopier les fichiers personnalisés ?    </string>
     <string name="customFilesMovingDialog_button_learnMore">En savoir plus</string>
     <string name="customFilesMovingDialog_button_cancel">Ne pas copier</string>
     <string name="customFilesMovingDialog_button_ok">Copier</string>
