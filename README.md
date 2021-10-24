@@ -1,5 +1,11 @@
+<div align="center">
+
+<img width="120" src="/misc/icon/overall.svg" />
+
 Debatekeeper &mdash; a timekeeper for debate speeches
 =====================================================
+
+</div>
 
 Debatekeeper is an Android app that times speeches in debates and rings bells automatically at the
 correct times.  It supports most parliamentary styles of debating, including British Parliamentary,
@@ -13,22 +19,19 @@ A small amount of documentation for this app is at https://github.com/czlee/deba
 
 The app is [available on the Google Play Store](https://play.google.com/store/apps/details?id=net.czlee.debatekeeper&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1).
 
+<div align="center">
 <a href="https://play.google.com/store/apps/details?id=net.czlee.debatekeeper&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1" target="_blank">
 <img alt='Get it on Google Play' height="96" src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
+</div>
 
 What is the status of this app?
 -------------------------------
-_9 October 2021:_ After five years, an update is forthcoming. It's currently in beta testing, and
-will be released in late October 2021. Users interested in [joining the beta testing programme may
-do so here](https://play.google.com/apps/testing/net.czlee.debatekeeper).
+Version 1.3, released on 24 October 2021, is the last work I intend to do on Debatekeeper, other
+than maintaining the new [online formats repository](https://github.com/czlee/debatekeeper-formats).
 
-I've decided to create a new [online formats
-repository](https://github.com/czlee/debatekeeper-formats), which the app will query. All pull
-requests with new formats will be asked to resubmit their formats to the new repository.
-
-A lot of the motivation for this new online repository is to make it easier to make new debate
-formats available. They were previously distributed with app updates, I haven't released an update
-since 2016, and I don't imagine I'll be doing any more updates in the future.
+The main motivation for the new online repository is to make it easier to make new debate formats
+available. Before version 1.3, new formats were distributed with app updates, and there hadn't been
+one for five years. I don't anticipate doing any further development on the app.
 
 Consider this an open invitation for anyone else to pick up this project and run with it. It's
 licensed under the GPLv3, so any prospective developer would be bound by those licensing terms.
