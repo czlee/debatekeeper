@@ -758,12 +758,11 @@ public class FormatChooserFragment extends Fragment {
                 continue;
             }
 
-            String styleName;
+            String styleName = null;
             try {
                 styleName = nameExtractor.getFieldValue(is);
             } catch (SAXException|IOException e) {
                 Log.e(TAG, "populateStylesList: Couldn't get name from " + filename);
-                continue;
             }
 
             try {
@@ -772,8 +771,9 @@ public class FormatChooserFragment extends Fragment {
                 Log.e(TAG, "populateStylesList: error closing file " + filename);
             }
 
-            if (styleName != null)
-                mStylesList.add(new DebateFormatListEntry(filename, styleName));
+            if (styleName == null)
+                styleName = filename;
+            mStylesList.add(new DebateFormatListEntry(filename, styleName));
 
         }
 
