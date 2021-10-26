@@ -233,69 +233,8 @@ class FormatXmlFilesManager {
     }
 
     //******************************************************************************************
-    // Static methods
-    //******************************************************************************************
-
-    //******************************************************************************************
-    // Legacy support
-    //******************************************************************************************
-
-    /**
-     * Copies a legacy file to the new app-specific destination. To be removed in a future version.
-     *
-     * @param filename the name of the file to be copied
-     */
-    public void copyLegacyFile(@NonNull String filename) throws IOException {
-        File source = new File(getLegacyUserFilesDirectory(), filename);
-        InputStream in = new FileInputStream(source);
-        copy(in, filename);
-    }
-
-    /**
-     * Returns a list of all user files in the app-specific external storage location.
-     *
-     * @return an array of Strings, possibly empty, each being an existent file name in external
-     * storage.
-     * @throws IOException if there is a problem with some file
-     */
-    @NonNull
-    public String[] legacyUserFileList() throws IOException {
-        File userFilesDirectory = getLegacyUserFilesDirectory();
-        if (userFilesDirectory == null) return new String[0];
-
-        String[] list = userFilesDirectory.list();
-        if (list == null) return new String[0];
-
-        return list;
-    }
-
-    //******************************************************************************************
     // Private methods
     //******************************************************************************************
-
-    private boolean isExternalStorageReadable() {
-        String state = Environment.getExternalStorageState();
-        return Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
-    }
-
-    /**
-     * Legacy user files directory. Deprecated from Android 10 (API level 29).
-     *
-     * @return the user files directory if it exists, or <code>null</code> if it does not exist or
-     * is not a directory.  If this method returns something non-null, you can assume it is a
-     * directory.
-     */
-    private File getLegacyUserFilesDirectory() {
-        if (!isExternalStorageReadable())
-            return null;
-
-        File root = Environment.getExternalStorageDirectory();
-        File userFilesDirectory = new File(root, LEGACY_DIRECTORY_NAME);
-        if (!userFilesDirectory.isDirectory())
-            return null;
-
-        return userFilesDirectory;
-    }
 
     /**
      * App-specific user files directory.

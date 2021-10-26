@@ -110,56 +110,10 @@
     </string>
     <string name="debateLoadError_suffix">Please choose another style.</string>
 
-    <string name="formerAssetsError_title">Please download this format</string>
-    <string name="formerAssetsError_filename">File: %1$s</string>
-    <string name="formerAssetsError_message">Debatekeeper is changing! Debate formats are now provided for download,
-    rather than included with the app like they were previously.</string>
-    <string name="formerAssetsError_suffix">Please go to the downloads section to download this style.</string>
-    <string name="formerAssetsError_button">Go to downloads</string>
-
     <!-- Dialogs -->
     <string name="schemaTooNewDialog_title">Update app?</string>
     <string name="schemaTooNewDialog_button_upgrade">Check for updates</string>
     <string name="schemaTooNewDialog_button_ignore">Ignore</string>
     <string name="schemaTooNewDialog_message">This debate format file (%4$s) uses a schema (%1$s) newer than supported (%2$s) by this app version (%3$s). Check for updates on Google Play?</string>
 
-    <!-- Copying legacy custom files -->
-    <string name="customFilesMovingDialog_title">Custom formats are moving!</string>
-    <string name="customFilesMovingDialog_message">You have some custom debate format files in the \"debatekeeper\" directory.
-        In this update, the location of custom formats is moving. Debatekeeper can copy these files
-        to the new location for you. Once this is done, you can delete them from the old location
-        yourself. (Be sure to keep a backup!)\n\nCopy custom files?
-    </string>
-    <string name="customFilesMoving_moreInfoUrl" translatable="false">https://github.com/czlee/debatekeeper/wiki/Custom-format-changes-in-version-1.3</string>
-    <string name="customFilesMovingDialog_button_learnMore">Learn more</string>
-    <string name="customFilesMovingDialog_button_cancel">Don\'t copy</string>
-    <string name="customFilesMovingDialog_button_ok">Copy</string>
-
-    <string name="customFilesMovingErrorDirectory_snackbar">Error: Couldn\'t open the legacy custom formats directory to copy the files.</string>
-    <string name="customFilesMovingErrorFiles_snackbar">%1$d legacy files copied, but errors copying %2$d files: %3$s</string>
-    <string name="customFilesMovingSuccess_snackbar">%1$d legacy files copied and ready to use</string>
-
-    <!-- Files that used to be in the assets -->
-    <string-array name="filesFormerlyInAssets" translatable="false">
-        <item>apda.xml</item>
-        <item>asian.xml</item>
-        <item>aueasters.xml</item>
-        <item>australs.xml</item>
-        <item>bp.xml</item>
-        <item>bp5.xml</item>
-        <item>canadian-pmre-splitopp.xml</item>
-        <item>canadian-pmre.xml</item>
-        <item>canadian-splitopp.xml</item>
-        <item>canadian.xml</item>
-        <item>joyntscroll.xml</item>
-        <item>mspdp.xml</item>
-        <item>nzeasters.xml</item>
-        <item>opd.xml</item>
-        <item>parisv.xml</item>
-        <item>test1.xml</item>
-        <item>test2.xml</item>
-        <item>thropy.xml</item>
-        <item>thropybreak.xml</item>
-        <item>worldschools.xml</item>
-    </string-array>
 </resources>

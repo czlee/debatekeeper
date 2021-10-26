@@ -44,7 +44,6 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.Spanned;
-import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.Pair;
@@ -127,7 +126,6 @@ public class DebatingTimerFragment extends Fragment {
     private final ServiceConnection mServiceConnection = new DebatingTimerServiceConnection();
 
     private DebateManager    mDebateManager;
-    private boolean          mDebateLoadErrorIsFormerAsset = false;
     private Spanned          mDebateLoadError = null;
     private Bundle           mLastStateBundle;
     private boolean          mIsEditingTime = false;
@@ -159,7 +157,6 @@ public class DebatingTimerFragment extends Fragment {
     private static final String BUNDLE_KEY_BLOCKING_DIALOG              = "blocking-dialog";
     private static final String PREFERENCE_XML_FILE_NAME                = "xmlfn";
     private static final String LAST_CHANGELOG_VERSION_SHOWN            = "lastChangeLog";
-    private static final String LEGACY_CUSTOM_FILES_DISMISSED           = "v1.3-custom-files-dismissed";
     private static final String DIALOG_ARGUMENT_SCHEMA_USED             = "used";
     private static final String DIALOG_ARGUMENT_SCHEMA_SUPPORTED        = "supp";
     private static final String DIALOG_ARGUMENT_FILE_NAME               = "fn";
@@ -174,7 +171,6 @@ public class DebatingTimerFragment extends Fragment {
     private static final String DIALOG_TAG_CHANGELOG                    = "changelog";
     private static final String DIALOG_TAG_IMPORT_CONFIRM               = "import";
     private static final String DIALOG_TAG_IMPORT_SUGGEST_REPLACEMENT   = "replace";
-    private static final String DIALOG_TAG_CUSTOM_FILES_MOVING          = "custom-files-moving";
 
     private static final int SNACKBAR_DURATION_RESET_DEBATE               = 1200;
     private static final int COLOUR_TRANSPARENT                           = 0;
@@ -280,46 +276,6 @@ public class DebatingTimerFragment extends Fragment {
             return builder.create();
         }
 
-    }
-
-    public static class DialogCustomFilesMovingFragment extends QueueableDialogFragment {
-
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-            final Resources res = getResources();
-            final Activity activity = requireActivity();
-            final DebatingTimerFragment parent = (DebatingTimerFragment) getParentFragment();
-            final DialogWithDontShowBinding binding = DialogWithDontShowBinding.inflate(LayoutInflater.from(activity));
-            assert parent != null;
-
-            binding.message.setText(R.string.customFilesMovingDialog_message);
-            binding.dontShowAgain.setChecked(false);
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-            builder.setTitle(res.getString(R.string.customFilesMovingDialog_title))
-                    .setView(binding.getRoot())
-                    .setNeutralButton(R.string.customFilesMovingDialog_button_learnMore, (dialog, which) -> {
-                        // Open web browser with page about schema versions
-                        Uri uri = Uri.parse(getString(R.string.customFilesMoving_moreInfoUrl));
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(uri);
-                        startActivity(intent);
-                    })
-                    .setNegativeButton(R.string.customFilesMovingDialog_button_cancel, (dialog, which) -> {
-                        // Take note of "do not show again" setting
-                        if (binding.dontShowAgain.isChecked()) {
-                            SharedPreferences prefs = activity.getPreferences(MODE_PRIVATE);
-                            SharedPreferences.Editor editor = prefs.edit();
-                            editor.putBoolean(LEGACY_CUSTOM_FILES_DISMISSED, true);
-                            editor.apply();
-                        }
-                    })
-                    .setPositiveButton(R.string.customFilesMovingDialog_button_ok,
-                            (dialog, which) -> parent.copyLegacyCustomFiles());
-
-            return builder.create();
-        }
     }
 
     public static class DialogImportFileConfirmFragment extends QueueableDialogFragment {
@@ -1036,7 +992,6 @@ public class DebatingTimerFragment extends Fragment {
         updateGui();
 
         showChangelogDialog();
-        copyLegacyCustomFilesPrompt();
 
         if (mDebateLoadError != null)
             // May as well try again (sometimes the error is cleared, e.g., if the error was because
@@ -1250,7 +1205,6 @@ public class DebatingTimerFragment extends Fragment {
     }
 
     private void clearDebateLoadError() {
-        mDebateLoadErrorIsFormerAsset = false;
         mDebateLoadError = null;
         updateGui();
     }
@@ -1262,80 +1216,6 @@ public class DebatingTimerFragment extends Fragment {
         } catch (IOException e) {
             showSnackbar(Snackbar.LENGTH_LONG, R.string.timer_snackbar_copyAssetsError);
         }
-    }
-
-    /**
-     * Legacy support. If there are custom files in the legacy location, prompt the user to copy
-     * them over. Note: does not check if the destination is empty - the caller should do this!
-     */
-    private void copyLegacyCustomFilesPrompt() {
-
-        Activity activity = getActivity();
-        if (activity == null) return;  // do this later if there's no activity
-
-        // Don't bother if the user has dismissed this prompt
-        SharedPreferences prefs = activity.getPreferences(MODE_PRIVATE);
-        boolean customFilesCopied = prefs.getBoolean(LEGACY_CUSTOM_FILES_DISMISSED, false);
-        if (customFilesCopied) return;
-
-        // Don't bother if the legacy location is empty
-        FormatXmlFilesManager manager = new FormatXmlFilesManager(requireContext());
-        String[] legacyFiles;
-        try {
-            legacyFiles = manager.legacyUserFileList();
-        } catch (IOException e) {
-            return; // fail silently
-        }
-        if (legacyFiles.length == 0) {
-            Log.i(TAG, "No legacy files found, no need to copy");
-            return;
-        }
-
-        // Don't bother if there are any files in the new location other than initial files
-        try {
-            if (!manager.hasOnlyInitialFiles()) return;
-        } catch (IOException e){
-            return; // file silently
-        }
-
-        queueDialog(new DialogCustomFilesMovingFragment(), DIALOG_TAG_CUSTOM_FILES_MOVING);
-    }
-
-    /**
-     * Legacy support. Copies custom files in the legacy location. Note: does not check if the
-     * destination is empty - the caller should do this!
-     */
-    private void copyLegacyCustomFiles() {
-        FormatXmlFilesManager manager = new FormatXmlFilesManager(requireContext());
-        String[] legacyFiles;
-        try {
-            legacyFiles = manager.legacyUserFileList();
-        } catch (IOException e) {
-            showSnackbar(Snackbar.LENGTH_INDEFINITE, R.string.customFilesMovingErrorDirectory_snackbar);
-            return;
-        }
-
-        ArrayList<String> errorFilenames = new ArrayList<>();
-        int successes = 0;
-
-        for (String filename : legacyFiles) {
-            try {
-                manager.copyLegacyFile(filename);
-            } catch (IOException e) {
-                errorFilenames.add(filename);
-                continue;
-            }
-            successes++;
-        }
-
-        if (errorFilenames.isEmpty()) {
-            showSnackbar(Snackbar.LENGTH_INDEFINITE, R.string.customFilesMovingSuccess_snackbar, successes);
-        } else {
-            showSnackbar(Snackbar.LENGTH_INDEFINITE, R.string.customFilesMovingErrorFiles_snackbar,
-                    successes, errorFilenames.size(), TextUtils.join(", ", errorFilenames));
-        }
-
-        if (mDebateLoadError != null) initialiseDebate(true); // retry
     }
 
     /**
@@ -1580,10 +1460,8 @@ public class DebatingTimerFragment extends Fragment {
             try {
                 df = buildDebateFromXml(mFormatXmlFileName, showDialogs);
             } catch (FatalXmlError e) {
-                boolean isFormerAsset = isFormerAssetsFile(mFormatXmlFileName);
-                String message = (isFormerAsset) ? getString(R.string.formerAssetsError_message)
-                        : e.getLocalizedMessage();
-                setDebateLoadError(message, isFormerAsset);
+                String message = e.getLocalizedMessage();
+                setDebateLoadError(message);
                 notifyViewPagerDataSetChanged();
                 return;
             }
@@ -1630,19 +1508,6 @@ public class DebatingTimerFragment extends Fragment {
 
         Log.v(TAG, String.format("isFirstInstall: %d vs %d", info.firstInstallTime, info.lastUpdateTime));
         return info.firstInstallTime == info.lastUpdateTime;
-    }
-
-    /**
-     * Legacy support - remove in future version.
-     * @param filename a file name
-     * @return {@code true} if the file used to be an assets file, {@code false} otherwise
-     */
-    private boolean isFormerAssetsFile(String filename) {
-        String[] oldAssets = getResources().getStringArray(R.array.filesFormerlyInAssets);
-        for (String oldAsset : oldAssets)
-            if (oldAsset.equals(filename))
-                return true;
-        return false;
     }
 
     /**
@@ -1805,8 +1670,7 @@ public class DebatingTimerFragment extends Fragment {
         mViewBinding.timerRightControlButton.setEnabled(enable && !mDebateManager.isInLastPhase());
     }
 
-    private void setDebateLoadError(String message, boolean isFormerAsset) {
-        mDebateLoadErrorIsFormerAsset = isFormerAsset;
+    private void setDebateLoadError(String message) {
         mDebateLoadError = Html.fromHtml(message);
         if (mServiceBinder != null) mServiceBinder.releaseDebateManager();
         mDebateManager = null;
@@ -2057,30 +1921,13 @@ public class DebatingTimerFragment extends Fragment {
     private void updateDebateLoadErrorDisplay() {
         DebateLoadErrorBinding binding = mViewBinding.timerDebateLoadError;
         binding.debateLoadErrorMessage.setText(mDebateLoadError);
-        if (mDebateLoadErrorIsFormerAsset) {
-            binding.debateLoadErrorTitle.setText(R.string.formerAssetsError_title);
-            binding.debateLoadErrorFileName.setText(getString(R.string.formerAssetsError_filename, mFormatXmlFileName));
-            binding.debateLoadErrorChooseAnother.setText(R.string.formerAssetsError_suffix);
-            binding.debateLoadErrorChooseStyleButton.setText(R.string.formerAssetsError_button);
-            binding.debateLoadErrorChooseStyleButton.setOnClickListener(
-                    (v) -> {
-                        DebatingTimerFragmentDirections.ActionStraightToDownloads action = DebatingTimerFragmentDirections.actionStraightToDownloads();
-                        mIsOpeningFormatChooser = true;
-                        if (mFormatXmlFileName != null)
-                            action.setXmlFileName(mFormatXmlFileName);
-                        NavHostFragment.findNavController(this).navigate(action);
-                    }
-            );
-
-        } else {
-            binding.debateLoadErrorTitle.setText(R.string.debateLoadErrorScreen_title);
-            binding.debateLoadErrorFileName.setText(getString(R.string.debateLoadErrorScreen_filename, mFormatXmlFileName));
-            binding.debateLoadErrorChooseAnother.setText(R.string.debateLoadError_suffix);
-            binding.debateLoadErrorChooseStyleButton.setText(R.string.debateLoadErrorScreen_button);
-            binding.debateLoadErrorChooseStyleButton.setOnClickListener(
-                    (v) -> navigateToFormatChooser(null)
-            );
-        }
+        binding.debateLoadErrorTitle.setText(R.string.debateLoadErrorScreen_title);
+        binding.debateLoadErrorFileName.setText(getString(R.string.debateLoadErrorScreen_filename, mFormatXmlFileName));
+        binding.debateLoadErrorChooseAnother.setText(R.string.debateLoadError_suffix);
+        binding.debateLoadErrorChooseStyleButton.setText(R.string.debateLoadErrorScreen_button);
+        binding.debateLoadErrorChooseStyleButton.setOnClickListener(
+                (v) -> navigateToFormatChooser(null)
+        );
     }
 
     /**
