@@ -90,7 +90,6 @@ import net.czlee.debatekeeper.debateformat.DebateFormatFieldExtractor;
 import net.czlee.debatekeeper.debateformat.DebatePhaseFormat;
 import net.czlee.debatekeeper.debateformat.PeriodInfo;
 import net.czlee.debatekeeper.debateformat.PrepTimeFormat;
-import net.czlee.debatekeeper.debateformat.SchemaVersion1Checker;
 import net.czlee.debatekeeper.debateformat.SpeechFormat;
 import net.czlee.debatekeeper.debatemanager.DebateManager;
 
@@ -1211,7 +1210,6 @@ public class DebatingTimerFragment extends Fragment {
 
         dfbfx = new DebateFormatBuilderFromXmlForSchema2(context);
 
-        // First try schema 2.0
         try {
             df = dfbfx.buildDebateFromXml(is);
         } catch (IOException e) {
@@ -1222,27 +1220,8 @@ public class DebatingTimerFragment extends Fragment {
                     R.string.debateLoadError_badXml, e.getLocalizedMessage()), e);
         }
 
-        // If the schema wasn't supported, check if it looks like it might be a schema 1.0 file.
-        // If it does, show an error and refuse to load the file.
-        if (!dfbfx.isSchemaSupported()) {
-
-            try {
-                is.close();
-                is = filesManager.open(filename);
-            } catch (IOException e) {
-                throw new FatalXmlError(getString(R.string.debateLoadError_cannotFind), e);
-            }
-
-            try {
-                if (SchemaVersion1Checker.checkIfVersion1(context, is))
-                    throw new FatalXmlError(getString(R.string.debateLoadError_schemaOutdated));
-            } catch (SAXException e) {
-                throw new FatalXmlError(getString(
-                        R.string.debateLoadError_badXml, e.getLocalizedMessage()), e);
-            } catch (IOException e) {
-                throw new FatalXmlError(getString(R.string.debateLoadError_cannotRead), e);
-            }
-        }
+        if (dfbfx.isSchemaOutdated())
+            throw new FatalXmlError(getString(R.string.debateLoadError_schemaOutdated));
 
         if (showDialogs && dfbfx.isSchemaTooNew()) {
             QueueableDialogFragment fragment = DialogSchemaTooNewFragment.newInstance(dfbfx.getSchemaVersion(), dfbfx.getSupportedSchemaVersion(), filename);

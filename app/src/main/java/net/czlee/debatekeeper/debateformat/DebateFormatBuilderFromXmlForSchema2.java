@@ -214,12 +214,11 @@ public class DebateFormatBuilderFromXmlForSchema2 implements DebateFormatBuilder
 
 
     @Override
-    public boolean isSchemaSupported() {
+    public boolean isSchemaOutdated() {
         if (mSchemaVersion == null)
             return false; // either not built, or if it was built then probably the wrong schema
         try {
-            return (XmlUtilities.compareSchemaVersions(mSchemaVersion, MAXIMUM_SCHEMA_VERSION) <= 0)
-                    && (XmlUtilities.compareSchemaVersions(mSchemaVersion, MINIMUM_SCHEMA_VERSION) >= 0);
+            return XmlUtilities.compareSchemaVersions(mSchemaVersion, MINIMUM_SCHEMA_VERSION) < 0;
         } catch (IllegalSchemaVersionException e) {
             return false;
         }

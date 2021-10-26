@@ -44,11 +44,11 @@ public interface DebateFormatBuilderFromXml {
     boolean hasErrors();
 
     /**
-     * @return <code>true</code> if the schema version is supported.
-     * <code>false</code> if there is no schema version, this includes if this builder hasn't parsed
-     * an XML file yet.
+     * @return <code>true</code> if the schema version is too old for this class, <code>false</code>
+     * otherwise. Returns <code>false</code> if there is no schema version, this includes if this
+     * builder hasn't parsed an XML file yet.
      */
-    boolean isSchemaSupported() throws IllegalArgumentException;
+    boolean isSchemaOutdated();
 
     /**
      * @return <code>true</code> if the schema is too new for this class, <code>false</code> otherwise.

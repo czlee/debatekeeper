@@ -61,7 +61,6 @@ import net.czlee.debatekeeper.databinding.ViewFormatFullBinding;
 import net.czlee.debatekeeper.databinding.ViewFormatShortBinding;
 import net.czlee.debatekeeper.debateformat.DebateFormatFieldExtractor;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfo;
-import net.czlee.debatekeeper.debateformat.DebateFormatInfoForSchema1;
 import net.czlee.debatekeeper.debateformat.DebateFormatInfoForSchema2;
 import net.czlee.debatekeeper.debateformat.XmlUtilities;
 import net.czlee.debatekeeper.debateformat.XmlUtilities.IllegalSchemaVersionException;
@@ -612,21 +611,7 @@ public class FormatChooserFragment extends Fragment {
     private DebateFormatInfo getDebateFormatInfo(String filename) throws IOException, SAXException {
         InputStream is;
         is = mFilesManager.open(filename);
-
-        // Assume it's a 2.0 schema first.
-        DebateFormatInfoForSchema2 dfi2 = new DebateFormatInfoForSchema2(requireContext(), is);
-
-        // If it's not 2.0, check to see if it is 1.0 or 1.1
-        if (!dfi2.isSchemaSupported()) {
-            is.close();
-            is = mFilesManager.open(filename); // open again to try schema 1.0
-            DebateFormatInfo dfi1 = new DebateFormatInfoForSchema1(requireContext(), is);
-            if (dfi1.isSchemaSupported()) return dfi1;
-        }
-
-        // If it isn't, keep pretending it was 2.0.
-        return dfi2;
-
+        return new DebateFormatInfoForSchema2(requireContext(), is);
     }
 
     /**

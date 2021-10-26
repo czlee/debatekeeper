@@ -140,17 +140,7 @@ public class DebateFormatFieldExtractor {
             if (!uri.equals(DEBATING_TIMER_URI))
                 return;
 
-            // Schema 1: Use the attribute of the root element
-            // (in the only relevant use case to schema 1, the information is in the root element)
-
-            if (localName.equals(mResources.getString(R.string.xml1elemName_root))) {
-                mFieldValue = atts.getValue(DEBATING_TIMER_URI, mFieldName);
-                throw new AllInformationFoundException();
-                // We don't need to parse any more once we find the style name
-            }
-
-            // Schema 2: Track all elements of the root, stored by language
-
+            // Track all elements of the root, stored by language
             if (localName.equals(mFieldName)) {
                 mFieldValueBuffer = new StringBuilder();
                 mCurrentLang = atts.getValue(mResources.getString(R.string.xml2attrName_language));
