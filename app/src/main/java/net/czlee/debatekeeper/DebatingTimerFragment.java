@@ -1960,13 +1960,8 @@ public class DebatingTimerFragment extends Fragment {
                         mDebateManager.getActivePhaseName(),
                         mDebateManager.getActivePhaseCurrentTime(),
                         mDebateManager.getActivePhaseNextOvertimeBellTime());
-            } else {
-                Log.w(TAG, "mDebateTimerDisplay is either null or not a debate timer display");
-                if (mTimerDisplay == null)
-                    Log.w(TAG, "mDebateTimerDisplay is null");
-                else
-                    Log.w(TAG, "mDebateTimerDisplay is a " + mTimerDisplay.getClass().getName());
             }
+            else Log.w(TAG, "mDebateTimerDisplay is null");
         }
     }
 
