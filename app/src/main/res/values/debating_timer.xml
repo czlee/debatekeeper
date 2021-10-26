@@ -98,8 +98,8 @@
         This might be because the file isn\'t supported or isn\'t well-formed.
         &lt;a href="https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file">Learn more.&lt;/a>
     </string>
-    <string name="debateLoadError_cannotRead">"There was a problem opening this debate style file. If this is a custom format, it might be because the file is deleted or because storage permissions are disabled."</string>
-    <string name="debateLoadError_cannotFind">"There was a problem opening this debate style file. If this is a custom format, it might be because the file is deleted or because storage permissions are disabled."</string>
+    <string name="debateLoadError_cannotRead">"There was a problem opening this debate style file. This might be because the file has been deleted."</string>
+    <string name="debateLoadError_cannotFind">"There was a problem opening this debate style file. This might be because the file has been deleted."</string>
     <string name="debateLoadError_badXml">"There's a problem with the XML in this debate style file. The error was:\n\n%1$s\n"</string>
     <string name="debateLoadError_schemaOutdated">This debate format file uses schema version 1.0, which is no longer supported.
         Please convert this file to schema version 2.2.
