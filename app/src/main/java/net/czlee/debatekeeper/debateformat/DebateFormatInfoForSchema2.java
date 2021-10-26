@@ -66,17 +66,11 @@ public class DebateFormatInfoForSchema2 implements DebateFormatInfo {
     private static final String MINIMUM_SCHEMA_VERSION = "2.0";
     private static final String MAXIMUM_SCHEMA_VERSION = "2.2";
 
-    public DebateFormatInfoForSchema2(Context context, InputStream is) {
+    public DebateFormatInfoForSchema2(Context context, InputStream is) throws IOException, SAXException {
         mContext = context;
         xu = new XmlUtilities(context.getResources());
 
-        Document doc;
-        try {
-            doc = getDocumentFromInputStream(is);
-        } catch (SAXException | IOException e) {
-            e.printStackTrace();
-            doc = null;
-        }
+        Document doc = getDocumentFromInputStream(is);
 
         if (doc != null) mRootElement = doc.getDocumentElement();
 
