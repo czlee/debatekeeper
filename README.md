@@ -35,9 +35,7 @@ one for five years. I don't anticipate doing any further development on the app.
 
 Consider this an open invitation for anyone else to pick up this project and run with it. It's
 licensed under the GPLv3, so any prospective developer would be bound by those licensing terms.
-You're welcome to contact me if you have any questions (find my email address in the commit logs of
-this repository). I'll probably encourage you to release it under a new Play Store listing that is
-controlled from your account.
+You're welcome to contact me if you have any questions
 
 Licence
 -------
@@ -49,8 +47,36 @@ The exception is the bell sounds.  I bought the single bell sound from SFXSource
 be now defunct), so I can't make it freely available.  If you want to contribute and need this file,
 get in touch with me.
 
-Files you need to build this project
-------------------------------------
+Adding debate styles
+--------------------
+New debate styles should be submitted to the online debate formats repository at
+https://github.com/czlee/debatekeeper-formats. Instructions are in that repository.
+
+I've written a page on [how to write a debate format XML
+file](https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file). But
+it's probably easiest in the first instance to look in the [formats
+repository](https://github.com/czlee/debatekeeper-formats) for the XML files there, and modify one
+of those.
+
+This app doesn't do the public forum, Lincoln-Douglas or policy debate styles. There are other
+Android apps that do this. The reason this app can't currently do this is that it doesn't currently
+support preparation time that can be used by teams between speeches at their election. A discussion
+of this is in [issue #6](https://github.com/czlee/debatekeeper/issues/6).
+
+Notes for prospective developers
+--------------------------------
+
+I don't intend to work on this app beyond version 1.3 (October 2021), so if you're interested in
+helping with development, I'd love for you to dive in and possibly take over the project. Contact me
+if you want to discuss anything, or feel free to just fork the repository and get going.
+
+_Note:_ The master branch has legacy support code for version 1.3 that should be removed in the next
+version. I've done this on the [**remove-legacy**
+branch](https://github.com/czlee/debatekeeper/tree/remove-legacy), so for any non-minor development,
+please start from that branch (and merge it into master).
+
+### Files you need to build this project
+
 To build this project, you'll need to:
 
 1. Check out this repository (and put it somewhere useful)
@@ -74,31 +100,21 @@ about them:
   used [Audacity](https://www.audacityteam.org/). The purpose of these files is just to make the
   interval more predictable and to avoid abrupt audio stops for common multiple-bell cases.
 
-Adding debate styles
---------------------
-New debate styles should be submitted to the online debate formats repository at
-https://github.com/czlee/debatekeeper-formats. Instructions are in that repository.
+### Publishing to the Play Store
 
-I've written a page on [how to write a debate format XML
-file](https://github.com/czlee/debatekeeper/wiki/Writing-your-own-custom-debate-format-file). But
-it's probably easiest in the first instance to look in the [formats
-repository](https://github.com/czlee/debatekeeper-formats) for the XML files there, and modify one
-of those.
+If you work on a significant update, I'll encourage you to list it under a separate Play Store
+listing on your own account. To do this, you'll need to change the package name from
+net.czlee.debatekeeper to something else. Feel free to rename/rebrand it if you like. Don't forget
+that, under [the GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.html), you're required to make your
+code publicly available. Please credit me in your distribution (_e.g._ in the store listing).
 
-This app doesn't do the public forum, Lincoln-Douglas or policy debate styles. There are other
-Android apps that do this. The reason this app can't currently do this is that it doesn't currently
-support preparation time that can be used by teams between speeches at their election. A discussion
-of this is in [issue #6](https://github.com/czlee/debatekeeper/issues/6).
+For minor updates, I might consider pull requests and releasing it under the existing Play Store
+listing. Just be aware that some pull requests have sat around for several years before I got a
+chance to look at them, and this is likely to be longer in the future.
 
-Contributions
--------------
-I don't intend to work on this app beyond version 1.3 (October 2021), so if you're interested in
-helping with development, I'd love for you to dive in and possibly take over the project. Contact me
-if you want to discuss anything, or feel free to just fork the repository and get going.
-
-You won't be able to release to the Play Store under the same listing, because you don't have access
-to my account. If you work on a significant update, you're welcome to release it under a separate
-Play Store listing.
+Please don't hesitate to email me if you have any questions about how to proceed with this. I'm
+likely to take forever with reviewing code, but I should be able to respond to emails about a
+developer transition much more quickly.
 
 Contacting the author
 ---------------------
