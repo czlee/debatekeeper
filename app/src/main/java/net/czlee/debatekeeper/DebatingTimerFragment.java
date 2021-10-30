@@ -1876,17 +1876,21 @@ public class DebatingTimerFragment extends Fragment {
         FormatXmlFilesManager filesManager = new FormatXmlFilesManager(context);
         boolean exists = filesManager.exists(incomingFilename);
 
-        String incomingStyleName, existingStyleName;
+        String incomingStyleName = null, existingStyleName = null;
 
         try {
             incomingStyleName = nameExtractor.getFieldValue(is);
             is.close();
-        } catch (IOException | SAXException e) {
+        } catch (IOException e) {
             showSnackbar(Snackbar.LENGTH_LONG, R.string.importDebateFormat_snackbar_error_generic);
             return;
+        } catch (SAXException e) {
+            Log.e(TAG, "showDialogToConfirmImport: error parsing incoming file");
+            // continue with unknown file name
         }
+        if (incomingStyleName == null)
+            incomingStyleName = getString(R.string.importDebateFormat_placeholder_unknownStyleName);
 
-        existingStyleName = null;
         if (exists) {
             // If there's an existing file, grab its style name and prompt to replace. (We don't
             // give an option not to replace.
@@ -1895,9 +1899,10 @@ public class DebatingTimerFragment extends Fragment {
                 existingStyleName = nameExtractor.getFieldValue(existingIs);
                 existingIs.close();
             } catch (IOException | SAXException e) {
-                existingStyleName = getString(R.string.importDebateFormat_placeholder_unknownStyleName);
                 Log.e(TAG, "showDialogToConfirmImport: error parsing existing file");
             }
+            if (existingStyleName == null)
+                existingStyleName = getString(R.string.importDebateFormat_placeholder_unknownStyleName);
 
         } else {
             // If it wasn't found, check if the style name happens to match any other file, since we

@@ -134,6 +134,12 @@ public class DebateFormatDownloadManager {
                 return;
             }
 
+            if (versionStr == null) {
+                Log.e(TAG, "No version found in " + this.filename);
+                this.state = DownloadState.UPDATE_AVAILABLE;
+                return;
+            }
+
             int existingVersion;
             try {
                 existingVersion = Integer.parseInt(versionStr);
