@@ -35,7 +35,8 @@ one for five years. I don't anticipate doing any further development on the app.
 
 Consider this an open invitation for anyone else to pick up this project and run with it. It's
 licensed under the GPLv3, so any prospective developer would be bound by those licensing terms.
-You're welcome to contact me if you have any questions
+You're welcome to contact me if you have any questions. See the [notes for prospective developers
+below](#notes-for-prospective-developers).
 
 Licence
 -------

@@ -71,7 +71,7 @@
     <string name="importDebateFormat_dialog_addendum_overwriteExistingDifferentName">
         This will overwrite the existing custom style \"%1$s\", because its file has the same name.
         If you don\'t want to lose %1$s, cancel and then import using a different file name.</string>
-    <string name="importDebateFormat_placeholder_unknownStyleName">(unknown)</string>
+    <string name="importDebateFormat_placeholder_unknownStyleName">[name unknown]</string>
     <string name="importDebateFormat_dialog_button_yes">Import</string>
     <string name="importDebateFormat_dialog_button_no">Cancel</string>
     <string name="replaceDebateFormat_dialog_title">Replace debate style?</string>

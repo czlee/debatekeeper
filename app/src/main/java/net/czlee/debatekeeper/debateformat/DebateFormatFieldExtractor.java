@@ -20,9 +20,12 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.util.Xml;
 
+import androidx.annotation.Nullable;
+
 import net.czlee.debatekeeper.R;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -63,7 +66,10 @@ public class DebateFormatFieldExtractor {
      * @param is an {@link InputStream}
      * @return the name of the style, e.g. "British Parliamentary", or null if the file is not a
      * valid debate format XML file.
+     * @throws IOException if thrown by {@link Xml#parse(InputStream, Xml.Encoding, ContentHandler)}
+     * @throws SAXException if thrown by {@link Xml#parse(InputStream, Xml.Encoding, ContentHandler)}
      */
+    @Nullable
     public String getFieldValue(InputStream is) throws IOException, SAXException {
         mFieldValue = null;
 

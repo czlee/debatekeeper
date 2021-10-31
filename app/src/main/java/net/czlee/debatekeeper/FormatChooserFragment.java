@@ -656,7 +656,7 @@ public class FormatChooserFragment extends Fragment {
         if (!filename.endsWith(".xml"))
             filename = filename + ".xml";
 
-        String existingStyleName;
+        String existingStyleName = null;
 
         if (mFilesManager.exists(filename)) {
             DebateFormatFieldExtractor nameExtractor = new DebateFormatFieldExtractor(context, R.string.xml2elemName_name);
@@ -666,8 +666,10 @@ public class FormatChooserFragment extends Fragment {
             } catch (IOException | SAXException e) {
                 Log.e(TAG, "Couldn't open existing file, even though one exists");
                 e.printStackTrace();
-                existingStyleName = "???";
             }
+            if (existingStyleName == null)
+                existingStyleName = getString(R.string.importDebateFormat_placeholder_unknownStyleName);
+
             DialogFragment fragment = ConfirmOverwriteDialogFragment.newInstance(uri, filename, existingStyleName);
             fragment.show(getChildFragmentManager(), DIALOG_TAG_CONFIRM_OVERWRITE + filename);
 
