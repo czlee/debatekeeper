@@ -58,7 +58,7 @@
     <string name="importDebateFormat_dialog_addendum_overwriteExistingSameName">Esto sobrescribirá el actual estilo \"%1$s\".</string>
     <string name="importDebateFormat_dialog_addendum_overwriteExistingDifferentName">        Esto sobrescribirá el actual estilo personalizado \"%1$s\", porque comparten el mismo nombre.
         Si no quieres perder %1$s, cancela y entonces impórtalo con un archivo de otro nombre.</string>
-    <string name="importDebateFormat_placeholder_unknownStyleName">(desconocido)</string>
+    <string name="importDebateFormat_placeholder_unknownStyleName">[nombre desconocido]</string>
     <string name="importDebateFormat_dialog_button_yes">Importar</string>
     <string name="importDebateFormat_dialog_button_no">Cancelar</string>
     <string name="replaceDebateFormat_dialog_title">¿Reemplazar el estilo de debate?</string>
