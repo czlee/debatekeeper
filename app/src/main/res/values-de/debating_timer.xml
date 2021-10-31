@@ -58,7 +58,7 @@
     <string name="importDebateFormat_dialog_addendum_overwriteExistingSameName">Das eingebaute Debattierformat %1$s wird überschrieben.</string>
     <string name="importDebateFormat_dialog_addendum_overwriteExistingDifferentName">        Das benutzerdefinierte Debattierformat %1$s wird überschrieben da dessen Datei den gleichen Namen hat.
         Wenn Sie %1$s nicht verlieren wollen, brechen sie ab und importieren Sie mit einem anderen Dateinamen.</string>
-    <string name="importDebateFormat_placeholder_unknownStyleName">(Unbekannt)</string>
+    <string name="importDebateFormat_placeholder_unknownStyleName">[Name unbekannt]</string>
     <string name="importDebateFormat_dialog_button_yes">Importieren</string>
     <string name="importDebateFormat_dialog_button_no">Abbrechen</string>
     <string name="replaceDebateFormat_dialog_title">Debattierformat ersetzen?</string>
