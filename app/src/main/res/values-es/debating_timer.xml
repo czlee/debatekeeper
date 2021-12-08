@@ -18,13 +18,13 @@
     <string name="intentFilter_importStyle">Debatekeeper</string>
     <!-- Buttons -->
     <string name="timer_controlButton_startTimer_text">Comenzar</string>
-    <string name="timer_controlButton_stopTimer_text">Parar</string>
+    <string name="timer_controlButton_stopTimer_text">Stop</string>
     <string name="timer_controlButton_resumeTimer_text">Continuar</string>
     <string name="timer_controlButton_resetTimer_text">Reiniciar</string>
     <string name="timer_controlButton_nextPhase_text">Siguiente</string>
-    <string name="timer_controlButton_chooseStyle_text">Elegir estilo</string>
+    <string name="timer_controlButton_chooseStyle_text">Elegir formato</string>
     <string name="timer_playBell_buttonText">Campana</string>
-    <string name="timer_poiTimer_buttonText">PdI</string>
+    <string name="timer_poiTimer_buttonText">Pregunta</string>
     <!-- Notices -->
     <string name="channel_description">Muestra cuando se está ejecutando un temporizador de Debatekeeper</string>
     <string name="notification_text">Temporizador en ejecución: %1$s</string>
@@ -34,7 +34,7 @@
         <item quantity="other">"; campanas a los %1$s"</item>
     </plurals>
     <string name="timer_bellsList_nextOvertimeBell">"; siguiente campana de tiempo excedente a los %1$s"</string>
-    <string name="timer_bellsList_noOvertimeBells">"; sin campanas de tiempo límite"</string>
+    <string name="timer_bellsList_noOvertimeBells">"; sin campanas de tiempo excedente"</string>
     <plurals name="timer_timeInMinutes">
         <item quantity="one">%d minuto</item>
         <item quantity="other">%d minutos</item>
@@ -44,16 +44,16 @@
     <string name="timer_prepTimeControlledIndicator">", controlado"</string>
     <string name="timer_pauseOnBellIndicator">" (pausa)"</string>
     <string name="timer_silentBellIndicator">" (silencio)"</string>
-    <string name="timer_snackbar_resetDebate">Todos los temporizadores del debate se han reiniciado</string>
+    <string name="timer_snackbar_resetDebate">Cronómetro del debate reiniciado</string>
     <string name="timer_noDebateLoaded_text">No se ha cargado ningún debate</string>
     <string name="prepTime_title">Tiempo de preparación</string>
     <string name="timer_snackbar_copyAssetsError">No se pudo acceder al sistema de archivos para copiar los formatos iniciales.</string>
-    <string name="timer_snackbar_editTextDiscardChangesInfo_limitedBelow">Para descartar los cambios, pulsa el botón de atrás. (No puedes establecer el tiempo límite.)</string>
-    <string name="timer_snackbar_editTextDiscardChangesInfo_limitedAbove">Para descartar los cambios, pulsa el botón de atrás. (No puedes establecer un tiempo mayor que 23:59.)</string>
+    <string name="timer_snackbar_editTextDiscardChangesInfo_limitedBelow">Para descartar los cambios, pulsa el botón de retroceso. (No puedes establecer el tiempo límite.)</string>
+    <string name="timer_snackbar_editTextDiscardChangesInfo_limitedAbove">Para descartar los cambios, pulsa el botón de retroceso. (No puedes establecer un tiempo mayor que 23:59.)</string>
     <string name="timer_snackbar_beam_error_existence">No se pudo encontrar este archivo de formato de debate.</string>
     <string name="timer_snackbar_beam_error_generic">Se ha producido un error al leer este archivo de estilo de debate.</string>
     <!-- Sharing debate formats -->
-    <string name="importDebateFormat_dialog_title">¿Importar estilo de debate?</string>
+    <string name="importDebateFormat_dialog_title">¿Importar formato de debate?</string>
     <string name="importDebateFormat_dialog_message_question">¿Quieres importar el archivo del formato del debate &lt;b&gt;%1$s&lt;/b&gt;, que describe el estilo \"%2$s\"?</string>
     <string name="importDebateFormat_dialog_addendum_overwriteExistingSameName">Esto sobrescribirá el actual estilo \"%1$s\".</string>
     <string name="importDebateFormat_dialog_addendum_overwriteExistingDifferentName">        Esto sobrescribirá el actual estilo personalizado \"%1$s\", porque comparten el mismo nombre.
@@ -74,7 +74,7 @@
     <string name="timer_menuItem_chooseFormat">Estilos de debate</string>
     <string name="timer_menuItem_ringBells">Hacer sonar las campanas</string>
     <!-- Debate load error screen -->
-    <string name="debateLoadErrorScreen_title">Error al cargar debate</string>
+    <string name="debateLoadErrorScreen_title">Error al cargar el debate</string>
     <string name="debateLoadErrorScreen_filename">"No se pudo cargar el archivo: %1$s"</string>
     <string name="debateLoadErrorScreen_button">Elegir estilo</string>
     <!-- These messages are loaded using Html.fromHtml(), so should be written as "fake HTML" (as in, with HTML tags escaped) -->
