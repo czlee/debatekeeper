@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Debatekeeper.Dark" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorAccent">@color/debatekeeper_accent</item>
+        <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="android:navigationBarColor">@android:color/black</item>
+    </style>
+</resources>
