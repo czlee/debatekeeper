@@ -1,4 +1,4 @@
-<resources>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   Copyright (C) 2021 Chuan-Zheng Lee
 
@@ -13,6 +13,10 @@
   You should have received a copy of the GNU General Public Licence along with this program.  If
   not, see <http://www.gnu.org/licenses/>.
 -->
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:locale="en">
+
     <string name="downloadConfigTitle">Downloads configuration</string>
     <string name="formatsRepositoryUrlLabel">Debate style files repository</string>
     <string name="formatsRepositoryUrlExplanation">This configures the online repository that Debatekeeper
