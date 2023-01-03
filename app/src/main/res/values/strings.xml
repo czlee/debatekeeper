@@ -25,7 +25,9 @@ Most strings are in fragment-specific files:
     - xml_formats_2.xml
 -->
 
-<resources>
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:locale="en">
 
     <string name="app_name">Debatekeeper</string>
     <string name="nav_back">Back</string>
@@ -35,27 +37,15 @@ Most strings are in fragment-specific files:
 
     <!-- Changelog dialog -->
     <!-- By convention, this should be changed to match the manifest versionCode when the changelog changes. -->
-    <integer name="changelogDialog_versionCode">34</integer>
+    <integer name="changelogDialog_versionCode">38</integer>
     <string name="changelogDialog_title">What\'s new in version %1$s</string>
 
     <!-- This is the changelog shown to users just after an update. -->
     <string name="changelogDialog_message">
-        \n• Debate style formats are now available for download, with only four included in the app.
-            You may need to download the formats you were previously using to continue.
-        \n• Added support for multilingual debate formats, with thanks to Frank Richter. (BP is in
-            English and Spanish; OPD is in German and English.)
-        \n• All formats are now stored in an app-specific Android location. If you have custom
-            formats, you\'ll be prompted to copy them over. Note: If you uninstall Debatekeeper,
-            custom formats will be deleted, so be sure to have a backup somewhere else.
-        \n• French, German and Spanish interface for devices in those languages
-        \n• New icon, thanks to Alberto Martínez
-        \n• Timer text size now auto-adjusts in Android 8.0 and higher
-        \n• Removed leading zero from minutes
-        \n• Made double and triple bells more evenly timed
-        \n• Added a way to initiate file imports from inside the app
-        \n• Simplified handling of malformed debate style files
-        \n• Fixed notification and service handling
-        \n• Other general updates to bring up to date with Android 10
+          • Updated to target Android 13
+        \n• Fixed the colour of the navigation bar where present
+        \n• Removed legacy support for debate formats in the \"debatekeeper\" directory
+        \n• Removed legacy support for debate formats written in schema version 1.0
     </string>
     <string name="changelogDialog_dontShow">Don\'t show this again</string>
     <string name="changelogDialog_ok">Okay, roll on!</string>
