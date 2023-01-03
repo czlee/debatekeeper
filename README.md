@@ -26,8 +26,12 @@ The app is [available on the Google Play Store](https://play.google.com/store/ap
 
 What is the status of this app?
 -------------------------------
-Version 1.3, released on 24 October 2021, is the last work I intend to do on Debatekeeper, other
-than maintaining the new [online formats repository](https://github.com/czlee/debatekeeper-formats).
+As of January 2023, I'm working through the release process of version 1.4. This is mostly just to
+comply with Android's [target API level
+requirements](https://support.google.com/googleplay/android-developer/answer/11926878), so that the
+app doesn't get pulled from the Play Store. I don't intend to do any other work on Debatekeeper,
+other than maintaining the new [online formats
+repository](https://github.com/czlee/debatekeeper-formats) and further target API updates.
 
 The main motivation for the new online repository is to make it easier to make new debate formats
 available. Before version 1.3, new formats were distributed with app updates, and there hadn't been
