@@ -43,7 +43,7 @@ Most strings are in fragment-specific files:
     <!-- This is the changelog shown to users just after an update. -->
     <string name="changelogDialog_message">
           • Updated to target Android 13
-        \n• Fixed the colour of the navigation bar where present
+        \n• Fixed the colour of the navigation bar
         \n• Removed legacy support for debate formats in the \"debatekeeper\" directory
         \n• Removed legacy support for debate formats written in schema version 1.0
     </string>
