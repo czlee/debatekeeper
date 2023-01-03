@@ -13,7 +13,7 @@
   You should have received a copy of the GNU General Public Licence along with this program.  If
   not, see <http://www.gnu.org/licenses/>.
 -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="de">
     <string name="fragmentName_FormatDownloader">Downloads</string>
     <string name="formatDownloader_actionBar_expand">Alle ausklappen</string>
     <string name="formatDownloader_actionBar_collapse">Alle einklappen</string>
