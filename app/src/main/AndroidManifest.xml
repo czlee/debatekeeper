@@ -18,8 +18,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.czlee.debatekeeper"
     android:installLocation="auto"
-    android:versionCode="38"
-    android:versionName="1.4-dev">
+    android:versionCode="39"
+    android:versionName="1.4-beta">
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -41,7 +41,6 @@
         <activity
             android:name=".DebatingActivity"
             android:icon="@mipmap/ic_debatekeeper"
-            android:label="@string/app_name"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
