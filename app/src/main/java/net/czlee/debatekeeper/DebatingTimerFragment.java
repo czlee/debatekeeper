@@ -70,6 +70,7 @@ import androidx.fragment.app.FragmentResultListener;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.viewbinding.BuildConfig;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -260,7 +261,7 @@ public class DebatingTimerFragment extends Fragment {
             binding.message.setText(R.string.changelogDialog_message);
 
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-            builder.setTitle(res.getString(R.string.changelogDialog_title, BuildConfig.VERSION_NAME))
+            builder.setTitle(res.getString(R.string.changelogDialog_title))
                     .setView(binding.getRoot())
                     .setPositiveButton(res.getString(R.string.changelogDialog_ok), (dialog, which) -> {
                         // Take note of "do not show again" setting

@@ -29,7 +29,7 @@ Most strings are in fragment-specific files:
     <string name="notificationChannel_timer_name">Temporizador</string>
     <!-- Changelog dialog -->
     <!-- By convention, this should be changed to match the manifest versionCode when the changelog changes. -->
-    <string name="changelogDialog_title">Lo nuevo en la versión %1$s</string>
+    <string name="changelogDialog_title">Lo nuevo en la versión 1.4-beta</string>
     <!-- This is the changelog shown to users just after an update. -->
     <string name="changelogDialog_message">        \n• Los formatos de estilo de debate están disponibles para descargar, con solo cuatro incluidos en la aplicación.
             Es posible que necesite descargar los formatos que utilizó anteriormente para continuar.

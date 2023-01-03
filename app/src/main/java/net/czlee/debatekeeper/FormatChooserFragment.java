@@ -26,7 +26,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -269,7 +268,7 @@ public class FormatChooserFragment extends Fragment {
             assert parent != null;
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
-            ViewFormatFullBinding binding = ViewFormatFullBinding.inflate(LayoutInflater.from(activity));
+            ViewFormatFullBinding binding = ViewFormatFullBinding.inflate(getLayoutInflater());
 
             DebateFormatInfo dfi = null;
             try {
@@ -838,17 +837,14 @@ public class FormatChooserFragment extends Fragment {
         boolean bannerDismissed = prefs.getBoolean(PREFERENCE_DOWNLOAD_BANNER_DISMISSED, false);
         if (!bannerDismissed) {
             mViewBinding.downloadBannerGroup.setVisibility(View.VISIBLE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                mViewBinding.toolbarFormatChooser.setElevation(0);
+            mViewBinding.toolbarFormatChooser.setElevation(0);
             mViewBinding.downloadBannerDismiss.setOnClickListener((v) -> {
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putBoolean(PREFERENCE_DOWNLOAD_BANNER_DISMISSED, true);
                 editor.apply();
                 mViewBinding.downloadBannerGroup.setVisibility(View.GONE);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    final float scale = context.getResources().getDisplayMetrics().density;
-                    mViewBinding.toolbarFormatChooser.setElevation(4 * scale + 0.5f);
-                }
+                final float scale = context.getResources().getDisplayMetrics().density;
+                mViewBinding.toolbarFormatChooser.setElevation(4 * scale + 0.5f);
             });
         }
     }

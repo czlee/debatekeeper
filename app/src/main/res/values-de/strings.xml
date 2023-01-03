@@ -29,7 +29,7 @@ Most strings are in fragment-specific files:
     <string name="notificationChannel_timer_name">Zeit</string>
     <!-- Changelog dialog -->
     <!-- By convention, this should be changed to match the manifest versionCode when the changelog changes. -->
-    <string name="changelogDialog_title">Was ist neu in version %1$s</string>
+    <string name="changelogDialog_title">Was ist neu in version 1.4-beta</string>
     <!-- This is the changelog shown to users just after an update. -->
     <string name="changelogDialog_message">        \n• Debattierformate stehen jetzt zum Download zur Verfügung, nur noch vier sind in der App enthalten.
             Möglicherweise musst du Formate herunterladen, die du zuvor verwendest hast, um sie weiter zu verwenden.
