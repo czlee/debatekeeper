@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <debate-format schema-version="2.2">
   <name>Australs</name>
-  <version>1</version>
+  <version>2</version>
   <info>
     <region>Australasia</region>
     <level>University</level>
@@ -39,10 +39,10 @@
       <name>3rd Negative</name>
     </speech>
     <speech type="reply">
-      <name>Negative Leader's Reply</name>
+      <name>Negative Reply</name>
     </speech>
     <speech type="reply">
-      <name>Affirmative Leader's Reply</name>
+      <name>Affirmative Reply</name>
     </speech>
   </speeches>
 </debate-format>
