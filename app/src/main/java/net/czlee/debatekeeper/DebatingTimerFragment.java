@@ -553,7 +553,7 @@ public class DebatingTimerFragment extends Fragment {
             DebateManager.DebatePhaseTag dpt = (DebateManager.DebatePhaseTag) object;
             DebateTimerDisplayBinding binding = mDisplaysMap.get(dpt);
             if (binding == null)
-                Log.e(TAG, "Nothing found to destroy at position " + position + " - " + object.toString());
+                Log.e(TAG, "Nothing found to destroy at position " + position + " - " + object);
             else
                 container.removeView(binding.getRoot());
             mDisplaysMap.remove(dpt);
@@ -877,7 +877,7 @@ public class DebatingTimerFragment extends Fragment {
             File file = filesManager.getFileFromExternalStorage(mFormatXmlFileName);
             Uri fileUri = Uri.fromFile(file);
             if (fileUri != null) {
-                Log.i(TAG, "createBeamUris: Sharing URI " + fileUri.toString());
+                Log.i(TAG, "createBeamUris: Sharing URI " + fileUri);
                 return new Uri[]{fileUri};
             } else {
                 showSnackbar(Snackbar.LENGTH_LONG, R.string.timer_snackbar_beam_error_generic);
@@ -1398,7 +1398,7 @@ public class DebatingTimerFragment extends Fragment {
             is = activity.getContentResolver().openInputStream(uri);
         } catch (FileNotFoundException e) {
             showSnackbar(Snackbar.LENGTH_LONG, R.string.importDebateFormat_snackbar_error_generic);
-            Log.e(TAG, "importIncomingFile: Could not resolve file " + uri.toString());
+            Log.e(TAG, "importIncomingFile: Could not resolve file " + uri);
             return null;
         }
         return Pair.create(filename, is);
