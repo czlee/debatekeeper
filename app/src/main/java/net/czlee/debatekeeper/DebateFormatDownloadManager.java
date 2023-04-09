@@ -105,7 +105,7 @@ public class DebateFormatDownloadManager {
         public String description = "";
         @NonNull
         public DownloadState state = DownloadState.NOT_DOWNLOADED;
-        public boolean expanded = true;
+        public boolean expanded = false;
 
         /**
          * Given a format XML files manager and version extractor, checks the version number in the
@@ -466,7 +466,7 @@ public class DebateFormatDownloadManager {
         Log.i(TAG, "Downloading file from server: " + entry.filename);
 
         URL url = new URL(entry.url);
-        Log.d(TAG, "url: " + url.toString());
+        Log.d(TAG, "url: " + url);
         if (!verifyHostMatch(url)) {
             String message = mContext.getString(R.string.formatDownloader_wrongHostError, url.toString());
             throw new MalformedURLException(message);

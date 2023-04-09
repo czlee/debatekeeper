@@ -92,10 +92,7 @@ public class DownloadableFormatRecyclerAdapter extends RecyclerView.Adapter<Down
                     break;
                 case DOWNLOADED:
                     binding.viewFormatStatusIcon.setImageResource(R.drawable.ic_outline_file_download_done_24);
-                    if (entry.expanded) {
-                        doneVisibility = View.VISIBLE;
-                        statusIconVisibility = View.GONE;
-                    }
+                    if (entry.expanded) doneVisibility = View.VISIBLE;
                     else statusIconVisibility = View.VISIBLE;  // show the status icon only when collapsed
                     break;
             }
