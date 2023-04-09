@@ -8,8 +8,8 @@ android {
         applicationId "net.czlee.debatekeeper"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 41
-        versionName "1.4"
+        versionCode 42
+        versionName "1.4.1"
         vectorDrawables.useSupportLibrary = true
     }
 
