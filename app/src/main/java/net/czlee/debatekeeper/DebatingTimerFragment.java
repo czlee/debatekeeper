@@ -19,6 +19,7 @@ package net.czlee.debatekeeper;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -39,6 +40,7 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -60,9 +62,12 @@ import android.widget.TimePicker;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcher;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -70,7 +75,6 @@ import androidx.fragment.app.FragmentResultListener;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.viewbinding.BuildConfig;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -158,6 +162,7 @@ public class DebatingTimerFragment extends Fragment {
     private static final String BUNDLE_KEY_BLOCKING_DIALOG              = "blocking-dialog";
     private static final String PREFERENCE_XML_FILE_NAME                = "xmlfn";
     private static final String LAST_CHANGELOG_VERSION_SHOWN            = "lastChangeLog";
+    private static final String NOTIFICATIONS_PERMISSION_DIALOG_SHOWN   = "notifications-dialog";
     private static final String DIALOG_ARGUMENT_SCHEMA_USED             = "used";
     private static final String DIALOG_ARGUMENT_SCHEMA_SUPPORTED        = "supp";
     private static final String DIALOG_ARGUMENT_FILE_NAME               = "fn";
@@ -172,6 +177,7 @@ public class DebatingTimerFragment extends Fragment {
     private static final String DIALOG_TAG_CHANGELOG                    = "changelog";
     private static final String DIALOG_TAG_IMPORT_CONFIRM               = "import";
     private static final String DIALOG_TAG_IMPORT_SUGGEST_REPLACEMENT   = "replace";
+    private static final String DIALOG_TAG_NOTIFICATIONS_DENIED         = "notifications";
 
     private static final int SNACKBAR_DURATION_RESET_DEBATE               = 1200;
     private static final int COLOUR_TRANSPARENT                           = 0;
@@ -226,6 +232,15 @@ public class DebatingTimerFragment extends Fragment {
                 updateGui();
             });
 
+    private final ActivityResultLauncher<String> mRequestPermissionLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            isGranted -> {
+                if (!isGranted) {
+                    Log.e(TAG, "mRequestPermissionLauncher: permission denied");
+                    showNotificationsPermissionDeniedDialog();
+                }
+            }
+    );
 
     //******************************************************************************************
     // Public classes
@@ -277,6 +292,24 @@ public class DebatingTimerFragment extends Fragment {
             return builder.create();
         }
 
+    }
+
+    public static class DialogNotificationPermissionDeniedFragment extends QueueableDialogFragment {
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            builder.setMessage(R.string.notificationsPermissionDenied_message)
+                    .setPositiveButton(R.string.notificationsPermissionDenied_button,
+                            (dialog, which) -> {
+                        SharedPreferences prefs = requireActivity().getPreferences(MODE_PRIVATE);
+                        Editor editor = prefs.edit();
+                        editor.putBoolean(NOTIFICATIONS_PERMISSION_DIALOG_SHOWN, true);
+                        editor.apply();
+                    });
+
+            return builder.create();
+        }
     }
 
     public static class DialogImportFileConfirmFragment extends QueueableDialogFragment {
@@ -393,7 +426,7 @@ public class DebatingTimerFragment extends Fragment {
             Bundle args = getArguments();
             assert args != null;
 
-            String schemaUsed      = args.getString(DIALOG_ARGUMENT_SCHEMA_USED);
+            String schemaUsed = args.getString(DIALOG_ARGUMENT_SCHEMA_USED);
             String schemaSupported = args.getString(DIALOG_ARGUMENT_SCHEMA_SUPPORTED);
 
             String appVersion;
@@ -1492,6 +1525,7 @@ public class DebatingTimerFragment extends Fragment {
         }
         applyPreferences();
         updateToolbar();
+        requestNotificationsPermission();
     }
 
     /**
@@ -1571,6 +1605,18 @@ public class DebatingTimerFragment extends Fragment {
 
             Log.d(TAG, "queueing dialog: " + tag + " (currently blocking: " + mDialogBlockingTag + ")");
             mDialogsInWaiting.add(Pair.create(tag, fragment));
+        }
+    }
+
+    private void requestNotificationsPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                Log.w(TAG, "requestNotificationsPermission: permission denied");
+                showNotificationsPermissionDeniedDialog();
+            } else {
+                mRequestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            }
         }
     }
 
@@ -1809,6 +1855,13 @@ public class DebatingTimerFragment extends Fragment {
             mDialogBlockingTag = pair.first;
         }
         else mDialogBlockingTag = null;
+    }
+
+    private void showNotificationsPermissionDeniedDialog() {
+        SharedPreferences prefs = requireActivity().getPreferences(MODE_PRIVATE);
+        boolean dialogShown = prefs.getBoolean(NOTIFICATIONS_PERMISSION_DIALOG_SHOWN, false);
+        if (!dialogShown)
+            queueDialog(new DialogNotificationPermissionDeniedFragment(), DIALOG_TAG_NOTIFICATIONS_DENIED);
     }
 
     /**

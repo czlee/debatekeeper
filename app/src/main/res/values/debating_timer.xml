@@ -117,5 +117,8 @@
     <string name="schemaTooNewDialog_button_upgrade">Check for updates</string>
     <string name="schemaTooNewDialog_button_ignore">Ignore</string>
     <string name="schemaTooNewDialog_message">This debate format file (%4$s) uses a schema (%1$s) newer than supported (%2$s) by this app version (%3$s). Check for updates on Google Play?</string>
+    <string name="notificationsPermissionDenied_message">"Without the notifications permission, Debatekeeper can't show an ongoing notification while the timer is running."
+        "Allow notifications in the Android settings for this app if you'd like to enable this feature."</string>
+    <string name="notificationsPermissionDenied_button">Understood</string>
 
 </resources>
