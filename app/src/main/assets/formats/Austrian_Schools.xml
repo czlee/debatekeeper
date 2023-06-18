@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<debate-format schema-version="2.1">
+  <name>Österreichisches Schülerdebattieren</name>
+  <info>
+    <region>Austria</region>
+    <level>School</level>
+    <used-at>German-Language School Championships</used-at>
+    <description>Two teams of three (5-minute speeches) plus three nonaligned speakers (2:30 speeches, 1-minute reply by teams), POIs allowed</description>
+  </info>
+  <period-types>
+    <period-type ref="opd.nonaligned-reply">
+      <name>OPD: Nonaligned reply</name>
+      <display>by side opposed by previous nonaligned speaker</display>
+    </period-type>
+  </period-types>
+  <prep-time length="15:00"/>
+  <speech-types>
+    <speech-type ref="team" length="5:00" first-period="normal">
+      <bell time="1:00" number="1" next-period="pois-allowed"/>
+      <bell time="4:00" number="1" next-period="warning"/>
+      <bell time="finish" number="2" next-period="overtime"/>
+    </speech-type>
+    <speech-type ref="nonaligned" length="2:30" first-period="normal">
+      <bell time="1:00" number="1" next-period="pois-allowed"/>
+      <bell time="2:00" number="1" next-period="warning"/>
+      <bell time="finish" number="2" next-period="overtime"/>
+    </speech-type>
+    <speech-type ref="reply" length="1:00" first-period="opd.nonaligned-reply">
+      <bell time="finish" number="2" next-period="overtime"/>
+    </speech-type>
+  </speech-types>
+  <speeches>
+    <speech type="team">
+      <name>Opening Speaker for the Government</name>
+    </speech>
+    <speech type="team">
+      <name>Opening Speaker for the Opposition</name>
+    </speech>
+    <speech type="team">
+      <name>Extension Speaker for the Government</name>
+    </speech>
+    <speech type="team">
+      <name>Extension Speaker for the Opposition</name>
+    </speech>
+    <speech type="nonaligned">
+      <name>1st Nonaligned Speaker</name>
+    </speech>
+    <speech type="reply">
+      <name>1st Reply Speech</name>
+    </speech>
+    <speech type="nonaligned">
+      <name>2nd Nonaligned Speaker</name>
+    </speech>
+    <speech type="reply">
+      <name>2nd Reply Speech</name>
+    </speech>
+    <speech type="nonaligned">
+      <name>3rd Nonaligned Speaker</name>
+    </speech>
+    <speech type="reply">
+      <name>3rd Reply Speech</name>
+    </speech>
+    <speech type="team">
+      <name>Closing Speaker for the Government</name>
+    </speech>
+    <speech type="team">
+      <name>Closing Speaker for the Opposition</name>
+    </speech>
+  </speeches>
+</debate-format>
