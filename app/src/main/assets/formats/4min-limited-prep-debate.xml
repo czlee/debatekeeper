@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<debate-format schema-version="2.1">
+  <name>4 min Limited Prep Debate</name>
+  <info>
+    <region>Australia and New Zealand</region>
+    <level>School</level>
+    <used-at>Wellington Speaking Union Schools Debating (Junior and Senior Certificate)</used-at>
+    <description>3 vs 3, 3-4 minute speeches, 2-3 minute replies, no POIs, 30 minutes of prep</description>
+  </info>
+  <prep-time length="30:00"/>
+  <speech-types>
+    <speech-type ref="substantive" length="4:00" first-period="normal">
+      <bell time="3:00" number="1" next-period="warning"/>
+      <bell time="finish" number="2" next-period="overtime"/>
+    </speech-type>
+    <speech-type ref="reply" length="3:00" first-period="normal">
+      <bell time="2:00" number="1" next-period="warning"/>
+      <bell time="finish" number="2" next-period="overtime"/>
+    </speech-type>
+  </speech-types>
+  <speeches>
+    <speech type="substantive">
+      <name>1st Affirmative</name>
+    </speech>
+    <speech type="substantive">
+      <name>1st Negative</name>
+    </speech>
+    <speech type="substantive">
+      <name>2nd Affirmative</name>
+    </speech>
+    <speech type="substantive">
+      <name>2nd Negative</name>
+    </speech>
+    <speech type="substantive">
+      <name>3rd Affirmative</name>
+    </speech>
+    <speech type="substantive">
+      <name>3rd Negative</name>
+    </speech>
+    <speech type="reply">
+      <name>Negative Leader's Reply</name>
+    </speech>
+    <speech type="reply">
+      <name>Affirmative Leader's Reply</name>
+    </speech>
+  </speeches>
+</debate-format>
