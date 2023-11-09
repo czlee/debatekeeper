@@ -23,7 +23,7 @@ Most strings are in fragment-specific files:
     - prep_time_bells_edit.xml
     - xml_formats_2.xml
 -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="fr">
     <string name="app_name">Debatekeeper</string>
     <string name="nav_back">Retour</string>
     <string name="notificationChannel_timer_name">Chronomètre</string>
@@ -31,22 +31,10 @@ Most strings are in fragment-specific files:
     <!-- By convention, this should be changed to match the manifest versionCode when the changelog changes. -->
     <string name="changelogDialog_title">Nouveautés dans la version 1.4-beta</string>
     <!-- This is the changelog shown to users just after an update. -->
-    <string name="changelogDialog_message">        \n• Les formats de débat sont désormais disponibles en téléchargement; seulement quatre formats sont intégrés dans l\'application.
-            Vous devrez peut-être télécharger les formats que vous utilisiez auparavant avant de continuer.
-        \n• Ajout de la prise en charge des formats multilingues de débat, grâce à Frank Richter. (BP est en
-            anglais et espagnol ; OPD est en allemand et anglais.)
-        \n• Tous les formats sont désormais stockés dans un emplacement spécifique à l\'application que fournit Android. Si vous avez des formats personnalisés,
-            vous serez invité à les copier. Remarque : Si vous désinstallez Debatekeeper,
-            les formats personnalisés seront supprimés, alors assurez-vous d\'avoir une sauvegarde ailleurs.
-        \n• L\'interface en français, en allemand et en espagnol pour ceux dont les appareils sont en ces langues
-        \n• Nouvelle icône, grâce à Alberto Martinez
-        \n• La taille du texte du chronomètre s\'ajuste automatiquement dans Android 8.0 et plus récent
-        \n• Suppression du zéro non significatif des minutes
-        \n• Égalisation temporelle des sonnettes doubles et triples
-        \n• Ajout d\'un moyen de lancer les importations de fichiers depuis l\'application
-        \n• Simplification du traitement des fichiers de style de débat mal formés
-        \n• Correction de la gestion du service et des notifications
-        \n• Autres mises à jour en général pour actualiser l\'application pour Android 10
+    <string name="changelogDialog_message">          • Mis à jour afin de cibler Android 13
+        \n• Correction de la couleur de la barre de navigation
+        \n• Suppression de la prise en charge hérité des formats de débat dans le répertoire \"debatekeeper\"
+        \n• Suppression de la prise en charge hérité des formats de débat suivant la version 1.0 du schéma
     </string>
     <string name="changelogDialog_dontShow">Ne plus afficher ce message</string>
     <string name="changelogDialog_ok">D\'accord, c\'est parti !</string>

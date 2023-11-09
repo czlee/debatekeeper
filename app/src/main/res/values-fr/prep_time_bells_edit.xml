@@ -13,7 +13,7 @@
   You should have received a copy of the GNU General Public Licence along with this program.  If
   not, see <http://www.gnu.org/licenses/>.
 -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="fr">
     <string name="fragmentName_PrepTimeBellsEdit">Sonnettes du chronomètre de préparation</string>
     <string name="prepTimeBellsEditor_addBell_buttonText">Ajouter</string>
     <string name="prepTimeBellsEditor_clearAll_buttonText">Effacer</string>

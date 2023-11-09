@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!--
+<!--
   Copyright (C) 2021 Chuan-Zheng Lee
 
   This file is part of the Debatekeeper app, which is licensed under the GNU General Public Licence
@@ -14,6 +13,7 @@
   You should have received a copy of the GNU General Public Licence along with this program.  If
   not, see <http://www.gnu.org/licenses/>.
 -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="de">
     <string name="downloadConfigTitle">Downloadkonfiguration</string>
     <string name="formatsRepositoryUrlLabel">Online-Speicher für Debattierformate</string>
     <string name="formatsRepositoryUrlExplanation">Konfiguriert den Online-Speicher, den Debatekeeper nach Debattierformaten durchsucht.
