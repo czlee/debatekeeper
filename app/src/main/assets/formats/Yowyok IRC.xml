@@ -1,23 +1,25 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <debate-format schema-version="2.2">
-  <name>Asian Parliamentary</name>
+  <name>Asian Parliamentary IRC Yoyok</name>
   <version>1</version>
   <info>
     <region>Asia</region>
     <level>University</level>
-    <used-at>United Asian Debating Championship</used-at>
-    <description>3 vs 3, 7-minute speeches, 4-minute replies, POIs allowed</description>
+    <used-at>United Asian Debating Championship IRC 2025</used-at>
+    <description>3 vs 3, 7.20-minute speeches, 4.20-minute replies, POIs allowed</description>
   </info>
   <prep-time length="30:00"/>
   <speech-types>
-    <speech-type ref="substantive" length="7:00" first-period="normal">
+    <speech-type ref="substantive" length="7:20" first-period="normal">
       <bell time="1:00" number="1" next-period="pois-allowed"/>
       <bell time="6:00" number="1" next-period="warning"/>
-      <bell time="finish" number="2" next-period="overtime"/>
+      <bell time="7:00" number="2" next-period="warning"/>
+      <bell time="finish" number="3" next-period="overtime"/>
     </speech-type>
-    <speech-type ref="reply" length="4:00" first-period="normal">
+    <speech-type ref="reply" length="4:20" first-period="normal">
       <bell time="3:00" number="1" next-period="warning"/>
-      <bell time="finish" number="2" next-period="overtime"/>
+      <bell time="4:00" number="2" next-period="warning"/>
+      <bell time="finish" number="3" next-period="overtime"/>
     </speech-type>
   </speech-types>
   <speeches>
