@@ -31,6 +31,12 @@ android {
     buildFeatures {
         viewBinding true
     }
+
+    lint {
+        // Records pre-existing issues (mostly untranslated strings) so that
+        // lint only fails the build on newly introduced problems.
+        baseline = file('lint-baseline.xml')
+    }
 }
 
 dependencies {

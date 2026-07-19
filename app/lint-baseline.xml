@@ -1,0 +1,1529 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.13.0" type="baseline" client="gradle" dependencies="false" name="AGP (8.13.0)" variant="all" version="8.13.0">
+
+    <issue
+        id="InlinedApi"
+        message="Field requires API level 34 (current min is 21): `android.content.pm.ServiceInfo#FOREGROUND_SERVICE_TYPE_SPECIAL_USE`"
+        errorLine1="                    ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/net/czlee/debatekeeper/AlertManager.java"
+            line="244"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="UnusedAttribute"
+        message="Attribute `tooltipText` is only used in API level 26 and higher (current min is 21)"
+        errorLine1="        android:tooltipText=&quot;@string/formatDownloader_button_download&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/view_format_download.xml"
+            line="71"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UnusedAttribute"
+        message="Attribute `textFontWeight` is only used in API level 28 and higher (current min is 21)"
+        errorLine1="   android:textFontWeight=&quot;500&quot;"
+        errorLine2="   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/view_format_full.xml"
+            line="40"
+            column="4"/>
+    </issue>
+
+    <issue
+        id="UnusedAttribute"
+        message="Attribute `tooltipText` is only used in API level 26 and higher (current min is 21)"
+        errorLine1="   android:tooltipText=&quot;@string/formatChooser_button_delete&quot;"
+        errorLine2="   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/view_format_full.xml"
+            line="53"
+            column="4"/>
+    </issue>
+
+    <issue
+        id="UnusedAttribute"
+        message="Attribute `tooltipText` is only used in API level 26 and higher (current min is 21)"
+        errorLine1="   android:tooltipText=&quot;@string/formatChooser_button_share&quot;"
+        errorLine2="   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/view_format_full.xml"
+            line="65"
+            column="4"/>
+    </issue>
+
+    <issue
+        id="UnusedAttribute"
+        message="Attribute `tooltipText` is only used in API level 26 and higher (current min is 21)"
+        errorLine1="        android:tooltipText=&quot;@string/formatChooser_button_moreInfo&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/view_format_short.xml"
+            line="28"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.android.material:material than 1.12.0 is available: 1.14.0"
+        errorLine1="    implementation &apos;com.google.android.material:material:1.12.0&apos;"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="44"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.navigation:navigation-fragment than 2.9.1 is available: 2.9.8"
+        errorLine1="    implementation &quot;androidx.navigation:navigation-fragment:$nav_version&quot;"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="51"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.navigation:navigation-ui than 2.9.1 is available: 2.9.8"
+        errorLine1="    implementation &quot;androidx.navigation:navigation-ui:$nav_version&quot;"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="52"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of com.ibm.icu:icu4j than 61.1 is available: 78.3"
+        errorLine1="    implementation &apos;com.ibm.icu:icu4j:61.1&apos;"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="48"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Use of `scheduleAtFixedRate` is strongly discouraged because it can lead to unexpected behavior when Android processes become cached (tasks may unexpectedly execute hundreds or thousands of times in quick succession when a process changes from cached to uncached); prefer using `schedule`"
+        errorLine1="        repeatTimer.scheduleAtFixedRate(new TimerTask() {"
+        errorLine2="        ^">
+        <location
+            file="src/main/java/net/czlee/debatekeeper/AlertManager.java"
+            line="427"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Use of `scheduleAtFixedRate` is strongly discouraged because it can lead to unexpected behavior when Android processes become cached (tasks may unexpectedly execute hundreds or thousands of times in quick succession when a process changes from cached to uncached); prefer using `schedule`"
+        errorLine1="        strobeTimer.scheduleAtFixedRate(new TimerTask() {"
+        errorLine2="        ^">
+        <location
+            file="src/main/java/net/czlee/debatekeeper/AlertManager.java"
+            line="505"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Use of `scheduleAtFixedRate` is strongly discouraged because it can lead to unexpected behavior when Android processes become cached (tasks may unexpectedly execute hundreds or thousands of times in quick succession when a process changes from cached to uncached); prefer using `schedule`"
+        errorLine1="        mTimer.scheduleAtFixedRate(new IncrementTimeTask(), TIMER_DELAY, TIMER_PERIOD);"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/net/czlee/debatekeeper/debatemanager/DebatePhaseManager.java"
+            line="166"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Use of `scheduleAtFixedRate` is strongly discouraged because it can lead to unexpected behavior when Android processes become cached (tasks may unexpectedly execute hundreds or thousands of times in quick succession when a process changes from cached to uncached); prefer using `schedule`"
+        errorLine1="        mTimer.scheduleAtFixedRate(new DecrementTimeTask(), TIMER_DELAY, TIMER_PERIOD);"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/net/czlee/debatekeeper/debatemanager/PoiManager.java"
+            line="92"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;es&quot; (Spanish) the following quantity should also be defined: `many`"
+        errorLine1="    &lt;plurals name=&quot;timer_bellsList_normal&quot;>"
+        errorLine2="    ^">
+        <location
+            file="src/main/res/values-es/debating_timer.xml"
+            line="32"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;fr&quot; (French) the following quantity should also be defined: `many` (e.g. &quot;1000000 de jours&quot;)"
+        errorLine1="    &lt;plurals name=&quot;timer_bellsList_normal&quot;>"
+        errorLine2="    ^">
+        <location
+            file="src/main/res/values-fr/debating_timer.xml"
+            line="32"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;es&quot; (Spanish) the following quantity should also be defined: `many`"
+        errorLine1="    &lt;plurals name=&quot;timer_timeInMinutes&quot;>"
+        errorLine2="    ^">
+        <location
+            file="src/main/res/values-es/debating_timer.xml"
+            line="38"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;fr&quot; (French) the following quantity should also be defined: `many` (e.g. &quot;1000000 de jours&quot;)"
+        errorLine1="    &lt;plurals name=&quot;timer_timeInMinutes&quot;>"
+        errorLine2="    ^">
+        <location
+            file="src/main/res/values-fr/debating_timer.xml"
+            line="38"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;es&quot; (Spanish) the following quantity should also be defined: `many`"
+        errorLine1="    &lt;plurals name=&quot;viewFormat_timeDescription_lengthInMinutesOnly&quot;>"
+        errorLine2="    ^">
+        <location
+            file="src/main/res/values-es/format_chooser.xml"
+            line="60"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;fr&quot; (French) the following quantity should also be defined: `many` (e.g. &quot;1000000 de jours&quot;)"
+        errorLine1="    &lt;plurals name=&quot;viewFormat_timeDescription_lengthInMinutesOnly&quot;>"
+        errorLine2="    ^">
+        <location
+            file="src/main/res/values-fr/format_chooser.xml"
+            line="60"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;es&quot; (Spanish) the following quantity should also be defined: `many`"
+        errorLine1="    &lt;plurals name=&quot;viewFormat_timeDescription_bellsList&quot;>"
+        errorLine2="    ^">
+        <location
+            file="src/main/res/values-es/format_chooser.xml"
+            line="65"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;fr&quot; (French) the following quantity should also be defined: `many` (e.g. &quot;1000000 de jours&quot;)"
+        errorLine1="    &lt;plurals name=&quot;viewFormat_timeDescription_bellsList&quot;>"
+        errorLine2="    ^">
+        <location
+            file="src/main/res/values-fr/format_chooser.xml"
+            line="65"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;notificationsPermissionDenied_message&quot; is not translated in &quot;de&quot; (German), &quot;fr&quot; (French), &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;notificationsPermissionDenied_message&quot;>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/debating_timer.xml"
+            line="118"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;notificationsPermissionDenied_button&quot; is not translated in &quot;de&quot; (German), &quot;fr&quot; (French), &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;notificationsPermissionDenied_button&quot;>Understood&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/debating_timer.xml"
+            line="122"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xmlError_rootNoSchemaVersion&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xmlError_rootNoSchemaVersion&quot;>&quot;This debate format has no schema version, so it&apos;s impossible to tell whether you need to update to support this file!\n&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="24"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xmlError_rootInvalidSchemaVersion&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xmlError_rootInvalidSchemaVersion&quot;>&quot;Invalid schema version: &apos;%1$s&apos;&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="25"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xml2error_root_noName&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xml2error_root_noName&quot;>&quot;No name was specified for this debate format&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="82"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xml2error_periodType_ref_null&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xml2error_periodType_ref_null&quot;>&quot;No &apos;ref&apos; was specified for a period-type&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="83"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xml2error_periodType_ref_blank&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xml2error_periodType_ref_blank&quot;>&quot;The &apos;ref&apos; for period-types must not be blank&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="84"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xml2error_periodType_name_null&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xml2error_periodType_name_null&quot;>&quot;No name was specified for period-type &apos;%1$s&apos;&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="85"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xml2error_periodType_name_blank&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xml2error_periodType_name_blank&quot;>&quot;The &apos;name&apos; for period-type &apos;%1$s&apos; must not be blank&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="86"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xml2Error_periodType_defaultBgColor_invalid&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xml2Error_periodType_defaultBgColor_invalid&quot;>&quot;Invalid default-bgcolor specified for period-type &apos;%2$s&apos;: &apos;%1$s&apos;&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="87"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xml2Error_periodType_poisAllowed_invalid&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xml2Error_periodType_poisAllowed_invalid&quot;>&quot;Invalid pois-allowed specified for period-type &apos;%2$s&apos;: &apos;%1$s&apos; (must be &apos;true&apos; or &apos;false&apos;)&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="88"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xml2error_prepTime_multiple&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xml2error_prepTime_multiple&quot;>&quot;Both a prep-time and a prep-time-controlled were found&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="89"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xml2error_prepTimeSimple_length_null&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xml2error_prepTimeSimple_length_null&quot;>&quot;The prep-time had no length&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="90"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xml2error_prepTimeSimple_length_invalid&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xml2error_prepTimeSimple_length_invalid&quot;>&quot;Invalid time for length of prep-time: &apos;%1$s&apos;&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="91"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xml2error_prepTimeControlled_length_null&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xml2error_prepTimeControlled_length_null&quot;>&quot;The prep-time-controlled had no length&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="92"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xml2error_prepTimeControlled_length_invalid&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xml2error_prepTimeControlled_length_invalid&quot;>&quot;Invalid time for length of prep-time-controlled: &apos;%1$s&apos;&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="93"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xml2error_speechFormat_ref_null&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xml2error_speechFormat_ref_null&quot;>&quot;No &apos;ref&apos; was specified for a speech-type&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="94"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xml2error_speechFormat_ref_blank&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xml2error_speechFormat_ref_blank&quot;>&quot;The &apos;ref&apos; for speech-types must not be blank&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="95"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xml2error_speechFormat_length_null&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xml2error_speechFormat_length_null&quot;>&quot;No length was specified for speech-type &apos;%1$s&apos;&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="96"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xml2error_speechFormat_length_invalid&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xml2error_speechFormat_length_invalid&quot;>&quot;Invalid time for length of speech-type &apos;%2$s&apos;: &apos;%1$s&apos;&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="97"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xml2error_speech_name_null&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xml2error_speech_name_null&quot;>&quot;A speech did not specify a name&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="98"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xml2error_speech_format_null&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xml2error_speech_format_null&quot;>&quot;No type was specified for speech &apos;%1$s&apos;&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="99"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xml2error_bell_time_null&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xml2error_bell_time_null&quot;>&quot;No name was specified for a bell in %2$s.&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="100"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xml2error_bell_time_invalid&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xml2error_bell_time_invalid&quot;>&quot;Invalid time for a bell in %2$s: &apos;%1$s&apos;&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="101"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xml2error_bell_number_invalid&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xml2error_bell_number_invalid&quot;>&quot;Invalid number of bells at %3$s in %2$s: &apos;%1$s&apos;&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="102"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;xml2error_bell_pauseOnBell_invalid&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;xml2error_bell_pauseOnBell_invalid&quot;>&quot;Invalid pause-on-bell value for bell at %3$s in %2$s: &apos;%1$s&apos;&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="103"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;dfb2error_periodInfo_builtInDuplicate&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;dfb2error_periodInfo_builtInDuplicate&quot;>&quot;The period-type &apos;%1$s&apos; is a built-in period-type; you can&apos;t use it&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="105"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;dfb2error_periodInfo_duplicate&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;dfb2error_periodInfo_duplicate&quot;>&quot;The period-type &apos;%1$s&apos; was specified more than once&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="106"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;dfb2error_periodInfo_notFound&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;dfb2error_periodInfo_notFound&quot;>&quot;There is no period-type with ref &apos;%1$s&apos;&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="107"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;dfb2error_addSpeech_speechFormatNotFound&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;dfb2error_addSpeech_speechFormatNotFound&quot;>&quot;There is no speech-type with ref &apos;%1$s&apos; (%2$s)&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="108"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;dfb2error_speechFormat_duplicate&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;dfb2error_speechFormat_duplicate&quot;>&quot;The speech-type &apos;%1$s&apos; was specified more than once&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="109"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;dfb2error_bell_afterFinishTime&quot; is not translated in &quot;es&quot; (Spanish)"
+        errorLine1="    &lt;string name=&quot;dfb2error_bell_afterFinishTime&quot;>&quot;The bell at %1$s in %2$s is after the finish time&quot;&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="110"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;formerAssetsError_title&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;formerAssetsError_title&quot;>Veuillez télécharger ce format&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-fr/debating_timer.xml"
+            line="89"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;formerAssetsError_filename&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;formerAssetsError_filename&quot;>Fichier : %1$s&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-fr/debating_timer.xml"
+            line="90"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;formerAssetsError_message&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;formerAssetsError_message&quot;>Debatekeeper évolue ! Les formats de débat sont désormais disponible en téléchargement, plutôt que inclus dans l\&apos;application comme auparavant.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-fr/debating_timer.xml"
+            line="91"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;formerAssetsError_title&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;formerAssetsError_title&quot;>Bitte dieses Format herunterladen&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="91"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;formerAssetsError_title&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;formerAssetsError_title&quot;>Por favor, descarga este formato&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-es/debating_timer.xml"
+            line="91"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;formerAssetsError_filename&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;formerAssetsError_filename&quot;>Datei: %1$s&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="92"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;formerAssetsError_filename&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;formerAssetsError_filename&quot;>Archivo: %1$s&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-es/debating_timer.xml"
+            line="92"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;formerAssetsError_suffix&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;formerAssetsError_suffix&quot;>Veuillez visiter la section de téléchargements pour télécharger ce style.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-fr/debating_timer.xml"
+            line="92"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;formerAssetsError_button&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;formerAssetsError_button&quot;>Aller aux téléchargements&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-fr/debating_timer.xml"
+            line="93"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;formerAssetsError_message&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;formerAssetsError_message&quot;>Debatekeeper wird anders! Debatten-Formate werden jetzt zum Download"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="93"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;formerAssetsError_message&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;formerAssetsError_message&quot;>¡Debatekeeper está cambiando! Ahora se proporcionan formatos de debate para la descarga,"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-es/debating_timer.xml"
+            line="93"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;formerAssetsError_suffix&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;formerAssetsError_suffix&quot;>Bitte gehe in den Download-Bereich um dieses Debattierformat herunterzuladen.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="95"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;formerAssetsError_suffix&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;formerAssetsError_suffix&quot;>Por favor, ve a la sección de descargas para descargar este estilo.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-es/debating_timer.xml"
+            line="95"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;formerAssetsError_button&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;formerAssetsError_button&quot;>Zu Downloads gehen&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="96"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;formerAssetsError_button&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;formerAssetsError_button&quot;>Ir a descargas&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-es/debating_timer.xml"
+            line="96"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingDialog_title&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingDialog_title&quot;>Les formats personnalisés se déplacent !&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-fr/debating_timer.xml"
+            line="100"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingDialog_message&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingDialog_message&quot;>Vous avez des fichiers de format de débat personnalisés dans la répertoire « debatekeeper ». Dans cette mise à jour, l\&apos;emplacement du fichier se déplace.\nDebatekeeper peut copier ces fichiers au nouveau emplacement pour vous. Une fois cela fait, vous pouvez les supprimer de l\&apos;ancien emplacement vous-même.\n(Assurez-vous de garder une copie de sauvegarde !)\n\nCopier les fichiers personnalisés ?    &lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-fr/debating_timer.xml"
+            line="101"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingDialog_button_learnMore&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingDialog_button_learnMore&quot;>En savoir plus&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-fr/debating_timer.xml"
+            line="102"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingDialog_button_cancel&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingDialog_button_cancel&quot;>Ne pas copier&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-fr/debating_timer.xml"
+            line="103"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingDialog_title&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingDialog_title&quot;>Benutzerdefinierte Formate werden verschoben!&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="103"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingDialog_title&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingDialog_title&quot;>¡Los formatos personalizados se están moviendo!&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-es/debating_timer.xml"
+            line="103"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingDialog_button_ok&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingDialog_button_ok&quot;>Copier&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-fr/debating_timer.xml"
+            line="104"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingDialog_message&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingDialog_message&quot;>Du hast ein paar benutzerdefinierte Debattierformatdateien im Verzeichnis \&quot;debatekeeper\&quot;."
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="104"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingDialog_message&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingDialog_message&quot;>Tienes algunos archivos de formato de debate personalizados en el directorio \&quot;debatekeeper\&quot;."
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-es/debating_timer.xml"
+            line="104"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingErrorDirectory_snackbar&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingErrorDirectory_snackbar&quot;>Une erreur s\&apos;est produite lors de l\&apos;ouverture de la répertoire de formats personnalisés existants pour copier les fichiers.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-fr/debating_timer.xml"
+            line="105"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingErrorFiles_snackbar&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingErrorFiles_snackbar&quot;>%1$d fichiers existants copiés, mais une erreur s\&apos;est produite lors du copiage de %2$d fichiers : %3$s&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-fr/debating_timer.xml"
+            line="106"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingSuccess_snackbar&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingSuccess_snackbar&quot;>%1$d fichiers existants copiés et prêts à utiliser&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-fr/debating_timer.xml"
+            line="107"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingDialog_button_learnMore&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingDialog_button_learnMore&quot;>Mehr erfahren&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="109"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingDialog_button_learnMore&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingDialog_button_learnMore&quot;>Aprender más&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-es/debating_timer.xml"
+            line="109"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingDialog_button_cancel&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingDialog_button_cancel&quot;>Nicht kopieren&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="110"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingDialog_button_cancel&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingDialog_button_cancel&quot;>No copiar&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-es/debating_timer.xml"
+            line="110"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingDialog_button_ok&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingDialog_button_ok&quot;>Kopieren&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="111"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingDialog_button_ok&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingDialog_button_ok&quot;>Copiar&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-es/debating_timer.xml"
+            line="111"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingErrorDirectory_snackbar&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingErrorDirectory_snackbar&quot;>Fehler: Konnte das alte Verzeichnis für benutzerdefinierte Formate nicht zum Kopieren der Dateien öffnen.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="112"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingErrorDirectory_snackbar&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingErrorDirectory_snackbar&quot;>Error: No se pudo abrir el directorio de formatos personalizados antiguos para copiar los archivos.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-es/debating_timer.xml"
+            line="112"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingErrorFiles_snackbar&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingErrorFiles_snackbar&quot;>%1$d alte Format-Dateien kopiert, aber Fehler beim Kopieren von %2$d Dateien: %3$s&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="113"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingErrorFiles_snackbar&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingErrorFiles_snackbar&quot;>%1$d archivos antiguos copiados, pero errores al copiar %2$d archivos: %3$s&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-es/debating_timer.xml"
+            line="113"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingSuccess_snackbar&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingSuccess_snackbar&quot;>%1$d alte Format-Dateien kopiert und verwendbar&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="114"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ExtraTranslation"
+        message="&quot;customFilesMovingSuccess_snackbar&quot; is translated here but not found in default locale"
+        errorLine1="    &lt;string name=&quot;customFilesMovingSuccess_snackbar&quot;>%1$d archivos antiguos copiados y listos para utilizar&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-es/debating_timer.xml"
+            line="114"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="StringFormatCount"
+        message="Formatting string &apos;`xml2error_bell_time_null`&apos; is not referencing numbered arguments [1]"
+        errorLine1="    &lt;string name=&quot;xml2error_bell_time_null&quot;>&quot;Kein name für bell in %2$s spezifiziert.&quot;&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/xml_formats_2.xml"
+            line="41"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="StringFormatCount"
+        message="Formatting string &apos;`xml2error_bell_time_null`&apos; is not referencing numbered arguments [1]"
+        errorLine1="    &lt;string name=&quot;xml2error_bell_time_null&quot;>&quot;Aucun nom n&apos;est spécifié pour une sonnette dans %2$s.&quot;&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-fr/xml_formats_2.xml"
+            line="41"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="StringFormatCount"
+        message="Formatting string &apos;`xml2error_bell_time_null`&apos; is not referencing numbered arguments [1]"
+        errorLine1="    &lt;string name=&quot;xml2error_bell_time_null&quot;>&quot;No name was specified for a bell in %2$s.&quot;&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="100"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="StringFormatCount"
+        message="Formatting string &apos;`xml2error_bell_time_null`&apos; is not referencing numbered arguments [1]"
+        errorLine1="    &lt;string name=&quot;xml2error_bell_time_null&quot;>&quot;No name was specified for a bell in %2$s.&quot;&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="100"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="StringFormatCount"
+        message="Formatting string &apos;`xml2error_bell_time_null`&apos; is not referencing numbered arguments [1]"
+        errorLine1="    &lt;string name=&quot;xml2error_bell_time_null&quot;>&quot;No name was specified for a bell in %2$s.&quot;&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/xml_formats_2.xml"
+            line="100"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="DataExtractionRules"
+        message="The attribute `android:dataExtractionRules` only applies for Android 12 and higher; since `minSdkVersion` is API 21 you should also set `android:fullBackupContent`"
+        errorLine1="        android:dataExtractionRules=&quot;@xml/data_extraction_rules&quot;"
+        errorLine2="                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="32"
+            column="38"/>
+    </issue>
+
+    <issue
+        id="VectorPath"
+        message="Very long vector path (4080 characters), which is bad for performance. Considering reducing precision, removing minor details or rasterizing vector."
+        errorLine1="        android:pathData=&quot;M79.793,24.829L79.793,24.829C79.72,24.828 79.646,24.829 79.573,24.832C78.844,24.866 78.121,25.155 77.571,25.706C76.544,26.733 76.39,28.325 77.237,29.507C77.238,29.508 77.238,29.508 77.239,29.509C77.397,29.728 77.549,29.95 77.697,30.173C79.977,33.628 81.076,37.603 81.003,41.594L80.952,42.487C78.273,39.823 75.564,37.088 73.312,34.848C73.307,34.842 73.302,34.837 73.296,34.832L73.296,34.831C73.292,34.826 73.287,34.822 73.282,34.817C73.28,34.815 73.277,34.813 73.275,34.811C73.273,34.808 73.271,34.806 73.268,34.804C73.265,34.8 73.261,34.796 73.257,34.792C73.257,34.792 73.256,34.792 73.256,34.792C73.253,34.788 73.25,34.785 73.247,34.782L73.244,34.779L73.242,34.777C73.24,34.776 73.24,34.774 73.238,34.773C73.236,34.771 73.233,34.769 73.231,34.766L73.229,34.764L73.226,34.761L73.226,34.761C73.225,34.76 73.225,34.76 73.224,34.76L73.223,34.759C73.223,34.758 73.223,34.758 73.222,34.757C73.222,34.756 73.22,34.755 73.219,34.754C73.215,34.75 73.211,34.747 73.207,34.743C73.202,34.738 73.198,34.734 73.193,34.729C73.19,34.725 73.186,34.721 73.182,34.717C73.179,34.714 73.175,34.71 73.172,34.707C73.163,34.699 73.155,34.69 73.147,34.682C73.127,34.663 73.109,34.643 73.089,34.624C73.085,34.62 73.081,34.616 73.077,34.612C73.033,34.571 72.988,34.532 72.942,34.495C72.933,34.487 72.924,34.479 72.915,34.472C72.915,34.471 72.914,34.471 72.913,34.47C72.375,34.035 71.709,33.8 71.031,33.779C70.186,33.752 69.322,34.056 68.659,34.719L68.633,34.744C67.76,35.643 67.555,37.03 68.043,38.236C68.759,40.004 68.85,41.948 68.318,43.761C64.658,40.17 62.024,37.472 58.876,34.317C58.872,34.313 58.869,34.309 58.865,34.305C58.861,34.302 58.857,34.298 58.853,34.295C58.849,34.291 58.846,34.286 58.842,34.283C58.839,34.279 58.835,34.276 58.832,34.273C58.828,34.269 58.825,34.266 58.821,34.262C58.818,34.259 58.815,34.256 58.811,34.253C58.808,34.249 58.805,34.246 58.802,34.243C58.799,34.24 58.796,34.237 58.793,34.234C58.79,34.231 58.787,34.228 58.784,34.225C58.781,34.222 58.778,34.22 58.776,34.217C58.773,34.214 58.771,34.211 58.768,34.209C58.763,34.204 58.758,34.199 58.753,34.194C58.752,34.194 58.752,34.194 58.751,34.193C58.747,34.189 58.744,34.185 58.74,34.181L58.734,34.175L58.729,34.169L58.724,34.164L58.718,34.159C58.716,34.156 58.713,34.154 58.71,34.151L58.703,34.144L58.7,34.141L58.698,34.138L58.694,34.134L58.691,34.132C58.646,34.087 58.598,34.045 58.552,34.001C58.478,33.929 58.405,33.856 58.328,33.787C58.203,33.673 58.074,33.563 57.944,33.456C57.942,33.455 57.941,33.453 57.94,33.452C57.939,33.452 57.938,33.45 57.938,33.45C57.677,33.236 57.407,33.037 57.129,32.851C56.193,32.227 55.161,31.764 54.076,31.474C52.292,29.69 50.508,27.905 48.723,26.121L48.722,26.124L48.722,26.12C46.705,26.12 45.102,27.748 45.102,29.765L45.102,31.417C43.626,31.767 42.288,32.323 41.091,33.05C39.435,31.39 37.779,29.733 36.111,28.065L36.11,28.064C35.649,27.603 35.041,27.365 34.431,27.356C33.82,27.347 33.207,27.566 32.733,28.015C28.578,31.806 25.71,36.957 24.787,42.741C24.659,43.612 25.004,44.429 25.614,44.958L25.849,45.193C28.794,48.083 31.619,51.03 34.167,53.51L34.167,58.923L31.008,62.058C29.933,63.134 30.144,64.745 31.113,65.61L31.108,65.617L65.492,100L97.95,132.459L132.459,132.459L132.459,76.324L100,43.865L82.178,26.043C82.166,26.031 82.154,26.019 82.142,26.007L82.085,25.95C82.075,25.94 82.064,25.929 82.054,25.919L82.007,25.872C81.998,25.863 81.989,25.853 81.98,25.844C81.973,25.838 81.967,25.831 81.96,25.825C81.954,25.819 81.948,25.813 81.942,25.807C81.935,25.799 81.928,25.791 81.92,25.784C81.916,25.78 81.911,25.776 81.907,25.772L81.907,25.771C81.9,25.765 81.894,25.758 81.888,25.751C81.884,25.747 81.88,25.744 81.876,25.74C81.872,25.736 81.869,25.733 81.865,25.729C81.86,25.724 81.856,25.72 81.851,25.715C81.849,25.713 81.847,25.711 81.846,25.709C81.842,25.705 81.837,25.701 81.834,25.698L81.833,25.697C81.833,25.697 81.833,25.696 81.833,25.696C81.832,25.696 81.832,25.695 81.832,25.695C81.829,25.693 81.827,25.69 81.824,25.687C81.824,25.687 81.824,25.687 81.823,25.687C81.738,25.6 81.647,25.521 81.553,25.447C81.458,25.374 81.36,25.307 81.259,25.247C80.813,24.982 80.306,24.842 79.793,24.829z&quot;"
+        errorLine2="                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/drawable-v24/ic_debatekeeper_foreground.xml"
+            line="12"
+            column="27"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        message="Possible overdraw: Root element paints background `@android:color/black` with a theme that also paints a background (inferred theme is `@style/Debatekeeper.Dark`)"
+        errorLine1="    android:background=&quot;@android:color/black&quot;>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_main.xml"
+            line="23"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.formerAssetsError_title` appears to be unused"
+        errorLine1="    &lt;string name=&quot;formerAssetsError_title&quot;>Bitte dieses Format herunterladen&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="91"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.formerAssetsError_filename` appears to be unused"
+        errorLine1="    &lt;string name=&quot;formerAssetsError_filename&quot;>Datei: %1$s&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="92"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.formerAssetsError_message` appears to be unused"
+        errorLine1="    &lt;string name=&quot;formerAssetsError_message&quot;>Debatekeeper wird anders! Debatten-Formate werden jetzt zum Download"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="93"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.formerAssetsError_suffix` appears to be unused"
+        errorLine1="    &lt;string name=&quot;formerAssetsError_suffix&quot;>Bitte gehe in den Download-Bereich um dieses Debattierformat herunterzuladen.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="95"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.formerAssetsError_button` appears to be unused"
+        errorLine1="    &lt;string name=&quot;formerAssetsError_button&quot;>Zu Downloads gehen&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="96"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.customFilesMovingDialog_title` appears to be unused"
+        errorLine1="    &lt;string name=&quot;customFilesMovingDialog_title&quot;>Benutzerdefinierte Formate werden verschoben!&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="103"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.customFilesMovingDialog_message` appears to be unused"
+        errorLine1="    &lt;string name=&quot;customFilesMovingDialog_message&quot;>Du hast ein paar benutzerdefinierte Debattierformatdateien im Verzeichnis \&quot;debatekeeper\&quot;."
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="104"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.customFilesMovingDialog_button_learnMore` appears to be unused"
+        errorLine1="    &lt;string name=&quot;customFilesMovingDialog_button_learnMore&quot;>Mehr erfahren&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="109"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.customFilesMovingDialog_button_cancel` appears to be unused"
+        errorLine1="    &lt;string name=&quot;customFilesMovingDialog_button_cancel&quot;>Nicht kopieren&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="110"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.customFilesMovingDialog_button_ok` appears to be unused"
+        errorLine1="    &lt;string name=&quot;customFilesMovingDialog_button_ok&quot;>Kopieren&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="111"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.customFilesMovingErrorDirectory_snackbar` appears to be unused"
+        errorLine1="    &lt;string name=&quot;customFilesMovingErrorDirectory_snackbar&quot;>Fehler: Konnte das alte Verzeichnis für benutzerdefinierte Formate nicht zum Kopieren der Dateien öffnen.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="112"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.customFilesMovingErrorFiles_snackbar` appears to be unused"
+        errorLine1="    &lt;string name=&quot;customFilesMovingErrorFiles_snackbar&quot;>%1$d alte Format-Dateien kopiert, aber Fehler beim Kopieren von %2$d Dateien: %3$s&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="113"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.customFilesMovingSuccess_snackbar` appears to be unused"
+        errorLine1="    &lt;string name=&quot;customFilesMovingSuccess_snackbar&quot;>%1$d alte Format-Dateien kopiert und verwendbar&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-de/debating_timer.xml"
+            line="114"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MonochromeLauncherIcon"
+        message="The application adaptive icon is missing a monochrome tag"
+        errorLine1="&lt;adaptive-icon xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;>"
+        errorLine2="^">
+        <location
+            file="src/main/res/mipmap-anydpi-v26/ic_debatekeeper.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="    &lt;EditText"
+        errorLine2="     ~~~~~~~~">
+        <location
+            file="src/main/res/layout/add_prep_time_bell.xml"
+            line="42"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="ClickableViewAccessibility"
+        message="Custom view `EnableableViewPager` overrides `onTouchEvent` but not `performClick`"
+        errorLine1="    public boolean onTouchEvent(MotionEvent event) {"
+        errorLine2="                   ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/net/czlee/debatekeeper/EnableableViewPager.java"
+            line="48"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="LabelFor"
+        message="Missing accessibility label: provide either a view with an `android:labelFor` that references this view or provide an `android:hint`"
+        errorLine1="    &lt;EditText"
+        errorLine2="     ~~~~~~~~">
+        <location
+            file="src/main/res/layout/add_prep_time_bell.xml"
+            line="42"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Redundant attribute `layout_marginRight`; already defining `layout_marginEnd` with `targetSdkVersion` 36"
+        errorLine1="        android:layout_marginRight=&quot;24dp&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout-land/debate_load_error.xml"
+            line="65"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Redundant attribute `layout_marginRight`; already defining `layout_marginEnd` with `targetSdkVersion` 36"
+        errorLine1="        android:layout_marginRight=&quot;@dimen/timer_poiTimerButton_marginRightLandscape&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout-land/debate_timer_display.xml"
+            line="130"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Redundant attribute `layout_marginRight`; already defining `layout_marginEnd` with `targetSdkVersion` 36"
+        errorLine1="            android:layout_marginRight=&quot;4dp&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/fragment_format_chooser.xml"
+            line="79"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Redundant attribute `layout_marginRight`; already defining `layout_marginEnd` with `targetSdkVersion` 36"
+        errorLine1="            android:layout_marginRight=&quot;100dp&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/fragment_format_chooser.xml"
+            line="95"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Redundant attribute `paddingLeft`; already defining `paddingStart` with `targetSdkVersion` 36"
+        errorLine1="    android:paddingLeft=&quot;?android:attr/listPreferredItemPaddingLeft&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/simple_list_item_single_choice.xml"
+            line="24"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Redundant attribute `paddingRight`; already defining `paddingEnd` with `targetSdkVersion` 36"
+        errorLine1="    android:paddingRight=&quot;?android:attr/listPreferredItemPaddingRight&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/simple_list_item_single_choice.xml"
+            line="25"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Redundant attribute `paddingLeft`; already defining `paddingStart` with `targetSdkVersion` 36"
+        errorLine1="        android:paddingLeft=&quot;10dip&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/speech_row.xml"
+            line="30"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Redundant attribute `paddingRight`; already defining `paddingEnd` with `targetSdkVersion` 36"
+        errorLine1="        android:paddingRight=&quot;10dip&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/speech_type_row.xml"
+            line="25"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Redundant attribute `layout_marginLeft`; already defining `layout_marginStart` with `targetSdkVersion` 36"
+        errorLine1="        android:layout_marginLeft=&quot;6dp&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/view_format_download.xml"
+            line="31"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Redundant attribute `layout_marginRight`; already defining `layout_marginEnd` with `targetSdkVersion` 36"
+        errorLine1="        android:layout_marginRight=&quot;8dp&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/view_format_download.xml"
+            line="44"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Redundant attribute `layout_marginRight`; already defining `layout_marginEnd` with `targetSdkVersion` 36"
+        errorLine1="        android:layout_marginRight=&quot;4dp&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/view_format_download.xml"
+            line="70"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Redundant attribute `layout_marginRight`; already defining `layout_marginEnd` with `targetSdkVersion` 36"
+        errorLine1="        android:layout_marginRight=&quot;4dp&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/view_format_download.xml"
+            line="83"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Redundant attribute `layout_marginRight`; already defining `layout_marginEnd` with `targetSdkVersion` 36"
+        errorLine1="        android:layout_marginRight=&quot;4dp&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/view_format_download.xml"
+            line="95"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Redundant attribute `paddingLeft`; already defining `paddingStart` with `targetSdkVersion` 36"
+        errorLine1=" android:paddingLeft=&quot;12dp&quot;"
+        errorLine2=" ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/view_format_full.xml"
+            line="21"
+            column="2"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Redundant attribute `paddingRight`; already defining `paddingEnd` with `targetSdkVersion` 36"
+        errorLine1=" android:paddingRight=&quot;6dp&quot;"
+        errorLine2=" ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/view_format_full.xml"
+            line="23"
+            column="2"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Redundant attribute `layout_marginRight`; already defining `layout_marginEnd` with `targetSdkVersion` 36"
+        errorLine1="   android:layout_marginRight=&quot;16dp&quot;"
+        errorLine2="   ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/view_format_full.xml"
+            line="37"
+            column="4"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Redundant attribute `layout_marginRight`; already defining `layout_marginEnd` with `targetSdkVersion` 36"
+        errorLine1="   android:layout_marginRight=&quot;@dimen/viewFormat_endMargin&quot;"
+        errorLine2="   ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/view_format_full.xml"
+            line="268"
+            column="4"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Redundant attribute `layout_marginRight`; already defining `layout_marginEnd` with `targetSdkVersion` 36"
+        errorLine1="   android:layout_marginRight=&quot;@dimen/viewFormat_endMargin&quot;"
+        errorLine2="   ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/view_format_full.xml"
+            line="280"
+            column="4"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Redundant attribute `layout_marginRight`; already defining `layout_marginEnd` with `targetSdkVersion` 36"
+        errorLine1="   android:layout_marginRight=&quot;@dimen/viewFormat_endMargin&quot;"
+        errorLine2="   ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/view_format_full.xml"
+            line="291"
+            column="4"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Redundant attribute `layout_marginRight`; already defining `layout_marginEnd` with `targetSdkVersion` 36"
+        errorLine1="        android:layout_marginRight=&quot;4dp&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/view_format_short.xml"
+            line="32"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="RtlEnabled"
+        message="The project references RTL attributes, but does not explicitly enable or disable RTL support with `android:supportsRtl` in the manifest">
+        <location
+            file="src/main/AndroidManifest.xml"/>
+    </issue>
+
+</issues>
