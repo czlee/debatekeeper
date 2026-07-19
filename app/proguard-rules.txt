@@ -1,0 +1,4 @@
+# ProGuard/R8 rules for Debatekeeper.
+# This file is referenced from app/build.gradle. Minification is currently
+# disabled (minifyEnabled false), so these rules are not applied; add keep
+# rules here if minification is ever enabled.

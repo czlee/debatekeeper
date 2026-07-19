@@ -1,5 +1,9 @@
 # Sound files
+# The real desk_bell*.mp3 files are licensed and must not be committed (see
+# README). Locally generated placeholder desk_bell*.wav files (any decodable
+# audio works, since R.raw.desk_bell ignores the extension) are also ignored.
 app/src/main/res/raw/desk_bell*.mp3
+app/src/main/res/raw/desk_bell*.wav
 
 # Standard Android .gitignore
 # https://github.com/github/gitignore/blob/master/Android.gitignore
