@@ -50,8 +50,6 @@
     <string name="timer_snackbar_copyAssetsError">No se pudo acceder al sistema de archivos para copiar los formatos iniciales.</string>
     <string name="timer_snackbar_editTextDiscardChangesInfo_limitedBelow">Para descartar los cambios, pulsa el botón de retroceso. (No puedes establecer el tiempo límite.)</string>
     <string name="timer_snackbar_editTextDiscardChangesInfo_limitedAbove">Para descartar los cambios, pulsa el botón de retroceso. (No puedes establecer un tiempo mayor que 23:59.)</string>
-    <string name="timer_snackbar_beam_error_existence">No se pudo encontrar este archivo de formato de debate.</string>
-    <string name="timer_snackbar_beam_error_generic">Se ha producido un error al leer este archivo de estilo de debate.</string>
     <!-- Sharing debate formats -->
     <string name="importDebateFormat_dialog_title">¿Importar formato de debate?</string>
     <string name="importDebateFormat_dialog_message_question">¿Quieres importar el archivo del formato del debate &lt;b&gt;%1$s&lt;/b&gt;, que describe el estilo \"%2$s\"?</string>

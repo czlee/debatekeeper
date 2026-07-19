@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12+ backup rules. Mirrors the pre-existing behavior of
+     android:allowBackup="true" with android:fullBackupOnly="true": everything
+     is included by default for both cloud backups and device transfers. -->
+<data-extraction-rules>
+    <cloud-backup />
+    <device-transfer />
+</data-extraction-rules>

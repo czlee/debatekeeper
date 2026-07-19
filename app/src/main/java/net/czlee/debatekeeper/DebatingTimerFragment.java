@@ -38,12 +38,9 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.nfc.NfcAdapter;
-import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
@@ -73,6 +70,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.preference.PreferenceManager;
 import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewbinding.ViewBinding;
@@ -99,7 +97,6 @@ import net.czlee.debatekeeper.debatemanager.DebateManager;
 
 import org.xml.sax.SAXException;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -864,29 +861,6 @@ public class DebatingTimerFragment extends Fragment {
         }
     }
 
-    private class BeamFileUriCallback implements NfcAdapter.CreateBeamUrisCallback {
-
-        @Override
-        public Uri[] createBeamUris(NfcEvent event) {
-            FormatXmlFilesManager filesManager = new FormatXmlFilesManager(requireActivity());
-            if (!filesManager.exists(mFormatXmlFileName)) {
-                Log.e(TAG, "createBeamUris: Tried to share non-existent file");
-                showSnackbar(Snackbar.LENGTH_LONG, R.string.timer_snackbar_beam_error_existence);
-                return new Uri[0];
-            }
-            File file = filesManager.getFileFromExternalStorage(mFormatXmlFileName);
-            Uri fileUri = Uri.fromFile(file);
-            if (fileUri != null) {
-                Log.i(TAG, "createBeamUris: Sharing URI " + fileUri);
-                return new Uri[]{fileUri};
-            } else {
-                showSnackbar(Snackbar.LENGTH_LONG, R.string.timer_snackbar_beam_error_generic);
-                Log.e(TAG, "createBeamUris: file URI was null");
-                return new Uri[0];
-            }
-        }
-    }
-
     private final class GuiUpdateBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -966,14 +940,6 @@ public class DebatingTimerFragment extends Fragment {
         mLastStateBundle = savedInstanceState; // This could be null
         if (savedInstanceState != null)
             mDialogBlockingTag = savedInstanceState.getString(BUNDLE_KEY_BLOCKING_DIALOG);
-
-        // Configure NFC
-        Activity activity = requireActivity();
-        if (activity.getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)) {
-            NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(activity);
-            if (nfcAdapter != null)
-                nfcAdapter.setBeamPushUrisCallback(new BeamFileUriCallback(), activity);
-        }
     }
 
     @Override

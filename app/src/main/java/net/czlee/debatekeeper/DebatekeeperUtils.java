@@ -86,9 +86,10 @@ public class DebatekeeperUtils {
                 break;
 
             case "content":
-                // Try to find a name for the file
+                // Try to find a name for the file. (The DATA column, once used as a fallback
+                // here, is deprecated and unreliable from API 29, so only DISPLAY_NAME is used.)
                 Cursor cursor = resolver.query(uri,
-                        new String[]{MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.DATA}, null, null, null);
+                        new String[]{MediaStore.MediaColumns.DISPLAY_NAME}, null, null, null);
                 if (cursor == null) {
                     Log.e(TAG, "getFilenameFromUri: cursor was null");
                     return null;
@@ -98,23 +99,13 @@ public class DebatekeeperUtils {
                     cursor.close();
                     return null;
                 }
-                int dataIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
                 int nameIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
-                Log.i(TAG, "getFilenameFromUri: data at column " + dataIndex + ", name at column " + nameIndex);
-                if (dataIndex >= 0) {
-                    String path = cursor.getString(dataIndex);
-                    if (path == null)
-                        Log.w(TAG, "getFilenameFromUri: data column failed, path was null");
-                    else
-                        filename = (new File(path)).getName();
-                    Log.i(TAG, "getFilenameFromUri: got from data column, path: " + path + ", name: " + filename);
-                }
-                if (filename == null && nameIndex >= 0) {
+                if (nameIndex >= 0) {
                     filename = cursor.getString(nameIndex);
                     Log.i(TAG, "getFilenameFromUri: got from name column: " + filename);
                 }
                 if (filename == null)
-                    Log.e(TAG, "getFilenameFromUri: file name is still null after trying both columns");
+                    Log.e(TAG, "getFilenameFromUri: file name is null after trying the name column");
                 cursor.close();
                 break;
 

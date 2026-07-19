@@ -24,11 +24,14 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.content.pm.ServiceInfo;
 import android.os.Build;
 import android.os.PowerManager;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.ServiceCompat;
 
 import net.czlee.debatekeeper.debateformat.BellSoundInfo;
 
@@ -237,7 +240,8 @@ public class AlertManager
                    .setPriority(NotificationCompat.PRIORITY_LOW);
 
             mNotification = builder.build();
-            mService.startForeground(NOTIFICATION_ID, mNotification);
+            ServiceCompat.startForeground(mService, NOTIFICATION_ID, mNotification,
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);
             mShowingNotification = true;
         }
 
@@ -250,7 +254,7 @@ public class AlertManager
     public void makeInactive() {
         if(mShowingNotification) {
             mWakeLock.release();
-            mService.stopForeground(true);
+            ServiceCompat.stopForeground(mService, ServiceCompat.STOP_FOREGROUND_REMOVE);
             if (mBellRepeater != null) mBellRepeater.stop();
             mVibrator.cancel();
             mShowingNotification = false;
@@ -284,7 +288,7 @@ public class AlertManager
         if (mVibrateMode) {
             final long[] vibratePattern = getVibratePattern(bsi);
             if (vibratePattern != null)
-                mVibrator.vibrate(vibratePattern, -1);
+                vibrate(vibratePattern);
         }
 
         if (mFlashScreenMode != FlashScreenMode.OFF) {
@@ -343,7 +347,7 @@ public class AlertManager
         //    ;
 
         if (mPoiVibrateEnabled)
-            mVibrator.vibrate(POI_VIBRATE_TIME);
+            vibrate(POI_VIBRATE_TIME);
 
         if (mFlashScreenListener != null) {
             switch (mPoiFlashScreenMode) {
@@ -556,6 +560,33 @@ public class AlertManager
         pattern[pattern.length - 1] = vibrateOnTime;
 
         return pattern;
+    }
+
+    /**
+     * Vibrates once for the given duration, using {@link VibrationEffect} on API 26+ where the
+     * old <code>vibrate(long)</code> is deprecated.
+     * @param milliseconds duration of the vibration
+     */
+    @SuppressWarnings("deprecation")
+    private void vibrate(long milliseconds) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            mVibrator.vibrate(VibrationEffect.createOneShot(milliseconds,
+                    VibrationEffect.DEFAULT_AMPLITUDE));
+        else
+            mVibrator.vibrate(milliseconds);
+    }
+
+    /**
+     * Vibrates with the given pattern (not repeating), using {@link VibrationEffect} on API 26+
+     * where the old <code>vibrate(long[], int)</code> is deprecated.
+     * @param pattern a pattern as accepted by {@link VibrationEffect#createWaveform(long[], int)}
+     */
+    @SuppressWarnings("deprecation")
+    private void vibrate(long[] pattern) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            mVibrator.vibrate(VibrationEffect.createWaveform(pattern, -1));
+        else
+            mVibrator.vibrate(pattern, -1);
     }
 
 }

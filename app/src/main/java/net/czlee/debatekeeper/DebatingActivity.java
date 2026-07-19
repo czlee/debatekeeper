@@ -24,7 +24,12 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import android.view.View;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import net.czlee.debatekeeper.debatemanager.DebateManager;
 
@@ -60,6 +65,18 @@ public class DebatingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Under edge-to-edge (enforced from Android 15 when targeting SDK 35+), inset the whole
+        // container so that no screen draws under the system bars; the container's black
+        // background shows behind the bars instead. On older versions the insets are zero and
+        // this is a no-op, preserving the pre-edge-to-edge appearance everywhere.
+        View topLayout = findViewById(R.id.top_layout);
+        ViewCompat.setOnApplyWindowInsetsListener(topLayout, (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(
+                    WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+            v.setPadding(insets.left, insets.top, insets.right, insets.bottom);
+            return WindowInsetsCompat.CONSUMED;
+        });
 
         // Start the timer service in the background
         // (DebateManager will push it to the foreground when the timer is started.)

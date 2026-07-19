@@ -46,6 +46,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
+import androidx.core.os.BundleCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavDirections;
@@ -232,7 +233,7 @@ public class FormatChooserFragment extends Fragment {
             assert parent != null;
             assert args != null;
 
-            Uri uri = args.getParcelable(DIALOG_ARGUMENT_IMPORT_URI);
+            Uri uri = BundleCompat.getParcelable(args, DIALOG_ARGUMENT_IMPORT_URI, Uri.class);
             String filename = args.getString(DIALOG_ARGUMENT_FILE_NAME);
             String styleName = args.getString(DIALOG_ARGUMENT_STYLE_NAME);
 

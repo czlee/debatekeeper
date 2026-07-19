@@ -13,11 +13,14 @@
   You should have received a copy of the GNU General Public Licence along with this program.  If
   not, see <http://www.gnu.org/licenses/>.
 -->
+<!-- The black background shows behind the system bars under edge-to-edge
+     (Android 15+), where the container is padded in by the bar insets. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/top_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/main_container"
