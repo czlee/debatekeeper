@@ -1,0 +1,42 @@
+name: World Schools
+short name: null
+prep: simple, length 3600
+speeches: 8
+speech 0: 1st Affirmative, length 480
+  first period: [null, name=null, desc=, color=#ff000000, pois=false]
+  bell at 60: count 1, silent false, pause false, next period [pois-allowed, name=POIs allowed, desc=null, color=#ff25541c, pois=true]
+  bell at 420: count 1, silent false, pause false, next period [warning, name=Warning, desc=null, color=#ffa14e21, pois=false]
+  bell at 480: count 2, silent false, pause false, next period [overtime, name=Overtime, desc=, color=#ff770000, pois=false]
+speech 1: 1st Negative, length 480
+  first period: [null, name=null, desc=, color=#ff000000, pois=false]
+  bell at 60: count 1, silent false, pause false, next period [pois-allowed, name=POIs allowed, desc=null, color=#ff25541c, pois=true]
+  bell at 420: count 1, silent false, pause false, next period [warning, name=Warning, desc=null, color=#ffa14e21, pois=false]
+  bell at 480: count 2, silent false, pause false, next period [overtime, name=Overtime, desc=, color=#ff770000, pois=false]
+speech 2: 2nd Affirmative, length 480
+  first period: [null, name=null, desc=, color=#ff000000, pois=false]
+  bell at 60: count 1, silent false, pause false, next period [pois-allowed, name=POIs allowed, desc=null, color=#ff25541c, pois=true]
+  bell at 420: count 1, silent false, pause false, next period [warning, name=Warning, desc=null, color=#ffa14e21, pois=false]
+  bell at 480: count 2, silent false, pause false, next period [overtime, name=Overtime, desc=, color=#ff770000, pois=false]
+speech 3: 2nd Negative, length 480
+  first period: [null, name=null, desc=, color=#ff000000, pois=false]
+  bell at 60: count 1, silent false, pause false, next period [pois-allowed, name=POIs allowed, desc=null, color=#ff25541c, pois=true]
+  bell at 420: count 1, silent false, pause false, next period [warning, name=Warning, desc=null, color=#ffa14e21, pois=false]
+  bell at 480: count 2, silent false, pause false, next period [overtime, name=Overtime, desc=, color=#ff770000, pois=false]
+speech 4: 3rd Affirmative, length 480
+  first period: [null, name=null, desc=, color=#ff000000, pois=false]
+  bell at 60: count 1, silent false, pause false, next period [pois-allowed, name=POIs allowed, desc=null, color=#ff25541c, pois=true]
+  bell at 420: count 1, silent false, pause false, next period [warning, name=Warning, desc=null, color=#ffa14e21, pois=false]
+  bell at 480: count 2, silent false, pause false, next period [overtime, name=Overtime, desc=, color=#ff770000, pois=false]
+speech 5: 3rd Negative, length 480
+  first period: [null, name=null, desc=, color=#ff000000, pois=false]
+  bell at 60: count 1, silent false, pause false, next period [pois-allowed, name=POIs allowed, desc=null, color=#ff25541c, pois=true]
+  bell at 420: count 1, silent false, pause false, next period [warning, name=Warning, desc=null, color=#ffa14e21, pois=false]
+  bell at 480: count 2, silent false, pause false, next period [overtime, name=Overtime, desc=, color=#ff770000, pois=false]
+speech 6: Negative Reply, length 240
+  first period: [null, name=null, desc=, color=#ff000000, pois=false]
+  bell at 180: count 1, silent false, pause false, next period [warning, name=Warning, desc=null, color=#ffa14e21, pois=false]
+  bell at 240: count 2, silent false, pause false, next period [overtime, name=Overtime, desc=, color=#ff770000, pois=false]
+speech 7: Affirmative Reply, length 240
+  first period: [null, name=null, desc=, color=#ff000000, pois=false]
+  bell at 180: count 1, silent false, pause false, next period [warning, name=Warning, desc=null, color=#ffa14e21, pois=false]
+  bell at 240: count 2, silent false, pause false, next period [overtime, name=Overtime, desc=, color=#ff770000, pois=false]

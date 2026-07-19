@@ -37,6 +37,14 @@ android {
         // lint only fails the build on newly introduced problems.
         baseline = file('lint-baseline.xml')
     }
+
+    testOptions {
+        unitTests {
+            // Robolectric needs the real resources (XML element names used by
+            // the format parser are defined as string resources).
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -50,6 +58,18 @@ dependencies {
     def nav_version = "2.9.1"
     implementation "androidx.navigation:navigation-fragment:$nav_version"
     implementation "androidx.navigation:navigation-ui:$nav_version"
+
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.15.1'
+    testImplementation 'androidx.test:core:1.6.1'
+}
+
+// Robolectric pulls in a newer icu4j whose LocaleMatcher API is incompatible with the
+// icu4j 61.1 the app code uses; force the app's version on the test classpath so tests
+// exercise the same library the app ships.
+configurations.configureEach {
+    if (name.contains('UnitTestRuntimeClasspath'))
+        resolutionStrategy.force 'com.ibm.icu:icu4j:61.1'
 }
 
 apply plugin: "androidx.navigation.safeargs"

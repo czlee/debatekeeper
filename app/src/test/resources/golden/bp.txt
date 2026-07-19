@@ -1,0 +1,44 @@
+name: British Parliamentary
+short name: null
+prep: simple, length 900
+speeches: 8
+speech 0: Prime Minister, length 420
+  first period: [null, name=null, desc=, color=#ff000000, pois=false]
+  bell at 60: count 1, silent false, pause false, next period [pois-allowed, name=POIs allowed, desc=null, color=#ff25541c, pois=true]
+  bell at 360: count 1, silent false, pause false, next period [warning, name=Warning, desc=null, color=#ffa14e21, pois=false]
+  bell at 420: count 2, silent false, pause false, next period [overtime, name=Overtime, desc=, color=#ff770000, pois=false]
+speech 1: Leader of the Opposition, length 420
+  first period: [null, name=null, desc=, color=#ff000000, pois=false]
+  bell at 60: count 1, silent false, pause false, next period [pois-allowed, name=POIs allowed, desc=null, color=#ff25541c, pois=true]
+  bell at 360: count 1, silent false, pause false, next period [warning, name=Warning, desc=null, color=#ffa14e21, pois=false]
+  bell at 420: count 2, silent false, pause false, next period [overtime, name=Overtime, desc=, color=#ff770000, pois=false]
+speech 2: Deputy Prime Minister, length 420
+  first period: [null, name=null, desc=, color=#ff000000, pois=false]
+  bell at 60: count 1, silent false, pause false, next period [pois-allowed, name=POIs allowed, desc=null, color=#ff25541c, pois=true]
+  bell at 360: count 1, silent false, pause false, next period [warning, name=Warning, desc=null, color=#ffa14e21, pois=false]
+  bell at 420: count 2, silent false, pause false, next period [overtime, name=Overtime, desc=, color=#ff770000, pois=false]
+speech 3: Deputy Leader of the Opposition, length 420
+  first period: [null, name=null, desc=, color=#ff000000, pois=false]
+  bell at 60: count 1, silent false, pause false, next period [pois-allowed, name=POIs allowed, desc=null, color=#ff25541c, pois=true]
+  bell at 360: count 1, silent false, pause false, next period [warning, name=Warning, desc=null, color=#ffa14e21, pois=false]
+  bell at 420: count 2, silent false, pause false, next period [overtime, name=Overtime, desc=, color=#ff770000, pois=false]
+speech 4: Member for the Government, length 420
+  first period: [null, name=null, desc=, color=#ff000000, pois=false]
+  bell at 60: count 1, silent false, pause false, next period [pois-allowed, name=POIs allowed, desc=null, color=#ff25541c, pois=true]
+  bell at 360: count 1, silent false, pause false, next period [warning, name=Warning, desc=null, color=#ffa14e21, pois=false]
+  bell at 420: count 2, silent false, pause false, next period [overtime, name=Overtime, desc=, color=#ff770000, pois=false]
+speech 5: Member for the Opposition, length 420
+  first period: [null, name=null, desc=, color=#ff000000, pois=false]
+  bell at 60: count 1, silent false, pause false, next period [pois-allowed, name=POIs allowed, desc=null, color=#ff25541c, pois=true]
+  bell at 360: count 1, silent false, pause false, next period [warning, name=Warning, desc=null, color=#ffa14e21, pois=false]
+  bell at 420: count 2, silent false, pause false, next period [overtime, name=Overtime, desc=, color=#ff770000, pois=false]
+speech 6: Government Whip, length 420
+  first period: [null, name=null, desc=, color=#ff000000, pois=false]
+  bell at 60: count 1, silent false, pause false, next period [pois-allowed, name=POIs allowed, desc=null, color=#ff25541c, pois=true]
+  bell at 360: count 1, silent false, pause false, next period [warning, name=Warning, desc=null, color=#ffa14e21, pois=false]
+  bell at 420: count 2, silent false, pause false, next period [overtime, name=Overtime, desc=, color=#ff770000, pois=false]
+speech 7: Opposition Whip, length 420
+  first period: [null, name=null, desc=, color=#ff000000, pois=false]
+  bell at 60: count 1, silent false, pause false, next period [pois-allowed, name=POIs allowed, desc=null, color=#ff25541c, pois=true]
+  bell at 360: count 1, silent false, pause false, next period [warning, name=Warning, desc=null, color=#ffa14e21, pois=false]
+  bell at 420: count 2, silent false, pause false, next period [overtime, name=Overtime, desc=, color=#ff770000, pois=false]

@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- This file is intended to be downloaded separately (i.e., not available via
+the official downlaods), as a means of checking the "update available"
+mechanism. This file will be removed from the repository once Debatekeeper 1.3
+finishes beta testing. -->
+<debate-format schema-version="2.2">
+  <name>ZZ Test - Version update</name>
+  <version>1</version>
+  <info>
+    <region>Nowhere</region>
+    <level>None</level>
+    <used-at>Nowhere</used-at>
+    <description>Test entry to check that the "update available" mechanism works. With this file imported, the relevant entry in the downloads screen should say "update available".</description>
+  </info>
+  <speech-types>
+    <speech-type ref="all" length="7:00" first-period="normal">
+      <bell time="finish" number="2" next-period="overtime"/>
+    </speech-type>
+  </speech-types>
+  <speeches>
+    <speech type="all">
+      <name>The Speech</name>
+    </speech>
+  </speeches>
+</debate-format>
