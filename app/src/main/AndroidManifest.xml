@@ -16,7 +16,6 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="net.czlee.debatekeeper"
     android:installLocation="auto">
 
     <uses-permission android:name="android.permission.VIBRATE" />
