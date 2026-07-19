@@ -14,39 +14,35 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.czlee.debatekeeper;
+package net.czlee.debatekeeper
 
-import android.content.Context;
-import androidx.viewpager.widget.ViewPager;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
+import android.annotation.SuppressLint
+import android.content.Context
+import android.util.AttributeSet
+import android.view.MotionEvent
+import androidx.viewpager.widget.ViewPager
 
 /**
- * EnableableViewPager is a subclass of {@link ViewPager} that allows for paging to be enabled
- * or disabled.  Enable or disable paging by using the <code>setPagingEnabled(boolean)</code>
+ * EnableableViewPager is a subclass of [ViewPager] that allows for paging to be enabled
+ * or disabled.  Enable or disable paging by using the [setPagingEnabled]
  * method.  This implementation allows for paging to be enabled or disabled in the middle of
  * a swipe gesture: when enabled, it starts the gesture from wherever it is at the time; when
  * disabled, it cancels the gesture.
  *
  * @author Chuan-Zheng Lee
- *
  */
-public class EnableableViewPager extends ViewPager {
+class EnableableViewPager : ViewPager {
 
-    private boolean mLastPagingEnabled = false;
-    private boolean mPagingEnabled = true;
+    private var mLastPagingEnabled = false
+    private var mPagingEnabled = true
 
-    public EnableableViewPager(Context context) {
-        super(context);
-    }
+    constructor(context: Context) : super(context)
 
-    public EnableableViewPager(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        boolean execute = false;
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        var execute = false
 
         // Allow for situations where paging becomes enabled or disabled in the middle of a touch.
         // This can create awkward situations where a gesture starts to be seen in the middle of it
@@ -57,27 +53,26 @@ public class EnableableViewPager extends ViewPager {
         // i.e. ACTION_DOWN.  If paging has just been disabled, change it to an ACTION_CANCEL so
         // that the ViewPager will scroll back to the current item.
         if (mLastPagingEnabled && !mPagingEnabled) {
-            event.setAction(MotionEvent.ACTION_CANCEL);
-            execute = true;
-        } else if (!mLastPagingEnabled && mPagingEnabled && event.getAction() == MotionEvent.ACTION_MOVE) {
-            event.setAction(MotionEvent.ACTION_DOWN);
-            execute = true;
+            event.action = MotionEvent.ACTION_CANCEL
+            execute = true
+        } else if (!mLastPagingEnabled && mPagingEnabled
+                && event.action == MotionEvent.ACTION_MOVE) {
+            event.action = MotionEvent.ACTION_DOWN
+            execute = true
         } else if (mPagingEnabled) {
-            execute = true;
+            execute = true
         }
 
-        mLastPagingEnabled = mPagingEnabled;
+        mLastPagingEnabled = mPagingEnabled
 
-        return execute && super.onTouchEvent(event);
+        return execute && super.onTouchEvent(event)
     }
 
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent event) {
-        return (mPagingEnabled || mLastPagingEnabled) && super.onInterceptTouchEvent(event);
+    override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
+        return (mPagingEnabled || mLastPagingEnabled) && super.onInterceptTouchEvent(event)
     }
 
-    public void setPagingEnabled(boolean enable) {
-        mPagingEnabled = enable;
+    fun setPagingEnabled(enable: Boolean) {
+        mPagingEnabled = enable
     }
-
 }
