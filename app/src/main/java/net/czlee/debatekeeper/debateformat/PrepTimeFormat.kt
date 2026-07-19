@@ -14,20 +14,16 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.czlee.debatekeeper.debateformat;
-
+package net.czlee.debatekeeper.debateformat
 
 /**
- * <p>PrepTimeFormat is an extension of {@link DebatePhaseFormat} that adds methods relevant
- * only to prep times.</p>
- * @author Chuan-Zheng Lee
+ * PrepTimeFormat is an extension of [DebatePhaseFormat] that adds methods relevant
+ * only to prep times.
  *
+ * @author Chuan-Zheng Lee
  */
-public interface PrepTimeFormat extends DebatePhaseFormat {
+interface PrepTimeFormat : DebatePhaseFormat {
 
-    /**
-     * @return <code>true</code> if this format is "controlled" prep time
-     */
-    boolean isControlled();
-
+    /** `true` if this format is "controlled" prep time. */
+    val isControlled: Boolean
 }

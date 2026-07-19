@@ -14,37 +14,26 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.czlee.debatekeeper.debateformat;
-
+package net.czlee.debatekeeper.debateformat
 
 /**
  * PrepTimeControlledFormat is a passive data class that holds information about a prep
  * time format which is controlled by the chair.  This is in contrast to
- * {@link PrepTimeSimpleFormat} which is not controlled by the chair and applies
+ * [PrepTimeSimpleFormat] which is not controlled by the chair and applies
  * to the majority of debate formats.  In a controlled prep time, bells are rung
  * by the chair to indicate certain events, and all teams are in the room for all
  * preparation.
  *
- * Its functionality is mostly derived from {@link ControlledDebatePhaseFormat}.
+ * Its functionality is mostly derived from [ControlledDebatePhaseFormat].
  *
  * @author Chuan-Zheng Lee
- *
  */
-public class PrepTimeControlledFormat extends ControlledDebatePhaseFormat
-        implements PrepTimeFormat {
+class PrepTimeControlledFormat(length: Long) :
+        ControlledDebatePhaseFormat(length), PrepTimeFormat {
 
-    public PrepTimeControlledFormat(long length) {
-        super(length);
-    }
+    override val isControlled: Boolean
+        get() = true
 
-    @Override
-    public boolean isControlled() {
-        return true;
-    }
-
-    @Override
-    public boolean isPrep() {
-        return true;
-    }
-
+    override val isPrep: Boolean
+        get() = true
 }

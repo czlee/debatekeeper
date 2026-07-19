@@ -14,8 +14,7 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.czlee.debatekeeper.debateformat;
-
+package net.czlee.debatekeeper.debateformat
 
 /**
  * SpeechFormat is a passive data class that holds information about a speech format.
@@ -29,55 +28,29 @@ package net.czlee.debatekeeper.debateformat;
  * This class doesn't have much brains, but it does have the ability to intelligently pick a
  * useful bell, i.e. the first bell after a time that is given to it.
  *
- * The SpeechFormat class is processed by BellChain.
- *
  * You can't change the speech length after you've instantiated this object.
  *
- *  @author Chuan-Zheng Lee
- *  @since  2012-06-09
+ * @param reference a reference string, not strictly part of the speech format but users
+ *   may find it useful to know what the reference was that was used to create this
+ *   `SpeechFormat`.
+ *
+ * @author Chuan-Zheng Lee
+ * @since  2012-06-09
  */
-public class SpeechFormat extends ControlledDebatePhaseFormat {
+class SpeechFormat(val reference: String?, speechLength: Long) :
+        ControlledDebatePhaseFormat(speechLength) {
 
-    private final String mReference;
-
-    public SpeechFormat(String reference, long speechLength) {
-        super(speechLength);
-        mReference = reference;
-    }
-
-    //******************************************************************************************
-    // Public methods
-    //******************************************************************************************
-
-    /**
-     * @return a reference string, not strictly part of the speech format but users
-     * may find it useful to know what the reference was that was used to create this
-     * <code>SpeechFormat</code>.  This may return <code>null</code> if the <code>SpeechFormat</code>
-     * was created from a version 1 schema.
-     */
-    public String getReference() {
-        return mReference;
-    }
+    override val isPrep: Boolean
+        get() = false
 
     /**
      * Finds whether any period anywhere in the speech has POIs allowed.
-     * @return <code>true</code> if POIs are allowed somewhere in the speech,
-     * <code>false</code> otherwise.
+     * @return `true` if POIs are allowed somewhere in the speech, `false` otherwise.
      */
-    public boolean hasPoisAllowedSomewhere() {
-        if (mFirstPeriodInfo.isPoisAllowed()) return true;
+    fun hasPoisAllowedSomewhere(): Boolean {
+        if (firstPeriodInfo.isPoisAllowed) return true
 
-        for (BellInfo thisBell : mBells) {
-            // Return true as soon as we find one with POIs allowed
-            if (thisBell.getNextPeriodInfo().isPoisAllowed()) return true;
-        }
-
-        return false;
+        // Return true as soon as we find one with POIs allowed
+        return bells.any { it.nextPeriodInfo.isPoisAllowed }
     }
-
-    @Override
-    public boolean isPrep() {
-        return false;
-    }
-
 }
