@@ -77,4 +77,4 @@ configurations.configureEach {
         resolutionStrategy.force 'com.ibm.icu:icu4j:61.1'
 }
 
-apply plugin: "androidx.navigation.safeargs"
+apply plugin: "androidx.navigation.safeargs.kotlin"
