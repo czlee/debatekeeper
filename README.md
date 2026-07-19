@@ -32,7 +32,13 @@ requirements](https://support.google.com/googleplay/android-developer/answer/119
 app doesn't get pulled from the Play Store. I don't intend to do any other work on Debatekeeper,
 other than maintaining the new [online formats
 repository](https://github.com/czlee/debatekeeper-formats) (whose main purpose is to make it easier
-to accept new debate formats without having to update the app) and further target API upd
+to accept new debate formats without having to update the app) and further target API updates.
+
+In July 2026, the codebase was modernised: it was translated from Java to Kotlin, moved to
+current build tooling (Gradle 8, AGP 8, version catalogs) and updated to target SDK 36,
+with behaviour kept the same as far as possible. The now-defunct Android Beam sharing feature
+was removed as part of this. A small characterization test suite (`./gradlew test`) pins the
+format-parsing and bell-timing behaviour.
 
 I would love for someone new to pick up this project and run with it. It's licensed under the GPLv3,
 so any prospective developer would be bound by those licensing terms. You're welcome to contact me
@@ -68,14 +74,9 @@ of this is in [issue #6](https://github.com/czlee/debatekeeper/issues/6).
 Notes for prospective developers
 --------------------------------
 
-I don't intend to work on this app beyond version 1.3 (October 2021), so if you're interested in
-helping with development, I'd love for you to dive in and possibly take over the project. Contact me
-if you want to discuss anything, or feel free to just fork the repository and get going.
-
-_Note:_ The master branch has legacy support code for version 1.3 that should be removed in the next
-version. I've done this on the [**remove-legacy**
-branch](https://github.com/czlee/debatekeeper/tree/remove-legacy), so for any non-minor development,
-please start from that branch (and merge it into master).
+I don't intend to do further feature work on this app, so if you're interested in helping with
+development, I'd love for you to dive in and possibly take over the project. Contact me if you
+want to discuss anything, or feel free to just fork the repository and get going.
 
 ### Files you need to build this project
 
@@ -85,7 +86,9 @@ To build this project, you'll need to:
 
 2. Add the bell sounds, called `desk_bell.mp3`, `desk_bell_double.mp3` and `desk_bell_triple.mp3`,
    all to the `app/src/main/res/raw/` directory. The app won't build without a sound file of some
-   sort there.  Any sound file will do.  I'm happy to provide the file to interested developers, on
+   sort there.  Any sound file will do — Android resource IDs ignore the file extension, so
+   `desk_bell.wav` (e.g. a locally generated placeholder tone) works too; these files are
+   git-ignored either way.  I'm happy to provide the file to interested developers, on
    the understanding that it is _not_ available under a free-distribution license (as discussed
    above)—contact me at the details below.  Of course, future developers may also use other sounds,
    including more freely available ones, if they can find a satisfactory one.
